@@ -49,8 +49,6 @@ public:
     // access operators
     float& operator [](const uint32_t index);
     const float& operator [](const uint32_t index) const;
-    Vector4* Vec4Ptr();
-    const Vector4* Vec4Ptr() const;
 
     static Quaternion AngleAxis(const Vector3& axis, float angle);
     

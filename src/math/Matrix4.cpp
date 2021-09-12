@@ -22,18 +22,18 @@ Matrix4& Matrix4::operator =(const Matrix4& other) {
 }
 
 bool Matrix4::operator ==(const Matrix4& other) const {
-    return memcmp(_m, other[0], MAT4_SIZE) == 0; // same values == 0
+    return std::memcmp(_m, other[0], MAT4_SIZE) == 0; // same values == 0
 }
 
 Matrix4& Matrix4::operator +=(const Matrix4& other) {
     for (uint32_t e = 0; e < MAT4_ELEMENTS; ++e)
-        _m[e] += other[e >> 2][e & 3];
+        _m[e] += other._m[e];
     return *this;
 }
     
 Matrix4& Matrix4::operator -=(const Matrix4& other) {
     for (uint32_t e = 0; e < MAT4_ELEMENTS; ++e)
-        _m[e] -= other[e >> 2][e & 3];
+        _m[e] -= other._m[e];
     return *this;
 }
 
@@ -45,10 +45,10 @@ Matrix4& Matrix4::operator *=(const Matrix4& other) {
         r = e >> 2; // divide by 4
         c = e & 3;  // modulo 4
         p._m[e] = 
-            _m[r]      * other[c][0] + // column major product
-            _m[4 + r]  * other[c][1] +
-            _m[8 + r]  * other[c][2] +
-            _m[12 + r] * other[c][3];
+            _m[r]      * other._m[c * 4] + // column major product
+            _m[4 + r]  * other._m[c * 4 + 1] +
+            _m[8 + r]  * other._m[c * 4 + 2] +
+            _m[12 + r] * other._m[c * 4 + 3];
     }
     *this = p;
     return *this;
@@ -74,8 +74,6 @@ float* Matrix4::operator [](const uint32_t index) {
 const float* Matrix4::operator [](const uint32_t index) const {
     return &_m[index * 4];
 }
-
-
 
 Matrix4 Matrix4::Transpose() {
     Matrix4 t = *this; // copy this

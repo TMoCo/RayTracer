@@ -73,14 +73,6 @@ const float& Quaternion::operator [](const uint32_t index) const {
     return _q[index];
 }
 
-Vector4* Quaternion::Vec4Ptr() {
-    return &_q;
-}
-
-const Vector4* Quaternion::Vec4Ptr() const {
-    return &_q;
-}
-
 Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
     return Quaternion(axis.Normalize() * std::sin(angle), std::cos(angle)); 
 }
@@ -90,7 +82,7 @@ Vector3 Quaternion::Axis() const {
 }
 
 float Quaternion::Angle() const {
-    return _q[3];    
+    return _q[3];
 }
 
 float Quaternion::Norm() const {
@@ -123,9 +115,9 @@ Quaternion operator *(const float lhs, Quaternion& rhs) {
 
 
 std::istream& operator >> (std::istream &inStream, Quaternion &quaternion) {
-    return inStream >> *quaternion.Vec4Ptr();
+    return inStream >> *((Vector4*)&quaternion); // POD convert to Vector4
 }
 
 std::ostream & operator << (std::ostream &outStream, const Quaternion &quaternion) {
-    return outStream << *quaternion.Vec4Ptr();
+    return outStream << *((Vector4*)&quaternion); 
 }

@@ -18,6 +18,8 @@ void TestMatrix() {
         std::cout << "not equal\n";
     }
 
+    std::cout << "transpose:\n" << n.Transpose() << '\n';
+
     std::cout << "add:\n" << n + m << '\n';
     std::cout << "sub:\n" << n - m << '\n';
     std::cout << "prod:\n" << n * m << '\n';
