@@ -11,11 +11,13 @@
 #include <QOpenGLWidget>
 
 class OpenGLWidget : public QOpenGLWidget {
-    Q_OBJECT
-    
+Q_OBJECT
+private:
     const Model& model;
     
     ArcBall arcBall;
+
+    int rotate = 0;
 
 public:
     OpenGLWidget(const Model& m, QWidget* parent);
@@ -29,6 +31,9 @@ public:
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
+
+public slots:
+    void Rotate();
 };
 
 #endif // !OPENGLWIDGET_H

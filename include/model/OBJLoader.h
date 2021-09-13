@@ -10,6 +10,7 @@
 #include <string>
 
 #define MAX_LINE 1024 // reading obj, we can expect lines to be smaller than 1024
+#define EPS 0.0000001f // smaller than this is clamped to 0
 
 class OBJLoader {
 public:

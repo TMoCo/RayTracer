@@ -2,6 +2,7 @@
 // OBJLoader class definition
 //
 
+#include <model/Material.h>
 #include <model/OBJLoader.h>
 
 #include <cstdio>
@@ -23,7 +24,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         std::perror("Error opening file!");
 
     char dir[std::strlen(path)];
-    std::strcpy(dir, path); // get a modifiable copy of the directory
+    std::strcpy(dir, path); // get a modifiable copy of given .obj path
 
     char* slash = std::strchr(dir,'/');
     uint32_t pos = 0;
@@ -31,6 +32,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         pos = slash-dir+1;
         slash = std::strchr(slash+1, '/');
     }
+
     dir[pos] = '\0'; // terminate string 
 
     // input
@@ -38,12 +40,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     char* token;
 
     // model data
-    Object* obj;
-
-    // vertex data (initialised with empty)
-    std::vector<Vector3> vertices = {};
-    std::vector<Vector3> normals = {};
-    std::vector<Vector2> uvs = {};
+    std::vector<Object>::iterator obj;
 
     // while there are lines available
     while (fgets(buffer, MAX_LINE, pFile) != NULL) {
@@ -52,19 +49,19 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         case 'v':
             switch(buffer[1]) {
             case ' ':
-                vertices.push_back({
+                model.vertices.push_back({
                     std::strtof(&buffer[2], &token), 
-                    std::strtof(token, &token), 
+                    std::strtof(token, &token),
                     std::strtof(token, NULL)});
                 break;
             case 'n':
-                normals.push_back({
+                model.normals.push_back({
                     std::strtof(&buffer[3], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)});
                 break;
             case 't':
-                uvs.push_back({
+                model.texCoords.push_back({
                     std::strtof(&buffer[3], &token), 
                     std::strtof(token, NULL)});
                 break;
@@ -74,12 +71,12 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         case 'f': {
             // count occurences of whitespace
             uint32_t size = 0;
-            char* face[4]; // max 4 accepted for quad
+            char* faceData[4]; // max 4 accepted for quad
 
             token = std::strtok(&buffer[2], " ");
             // tokenise the faces string
             while ((token != NULL) && (size < 4)) {
-                face[size] = token;
+                faceData[size] = token;
                 ++size;
                 token = std::strtok(NULL, " \n");
             }
@@ -87,15 +84,17 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             switch ((kPrimitives)size)
             {
             case kPrimitives::TRIANGLE: {
-                obj->triangles.push_back(Tri{(uint32_t)obj->faces.size()});
+                uint32_t offset = (uint32_t)model.faces.size(); // offset into indices vector
 
-                uint32_t primitiveData = obj->faces.size();
-                obj->faces.resize(primitiveData + Tri::size);
+                obj->triangles.push_back(Tri{offset, offset + 3, offset + 6});
+
+                uint32_t primitiveData = model.faces.size();
+                model.faces.resize(primitiveData + TRI_SIZE); // resize indices for new tri
                 
                 for (uint32_t f = 0; f < size; ++f) {
-                    token = std::strtok(face[size], "/");
+                    token = std::strtok(faceData[size], "/");
                     while (token != NULL) {
-                        obj->faces[primitiveData] = 
+                        model.faces[primitiveData] = 
                             std::strlen(token) == 0 
                                 ? 0 
                                 : (uint32_t)std::strtol(token, NULL, 10);
@@ -108,26 +107,47 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
                 break;
             }
             case kPrimitives::QUAD: {
-                // push a new quad, using current indices size as offset
-                obj->quads.push_back(Quad((uint32_t)obj->faces.size()));
-                uint32_t primitiveData = obj->faces.size();
-                obj->faces.resize(primitiveData + Quad::size);
+                uint32_t offset, j;
+                offset = j = (uint32_t)model.faces.size(); // offset into indices vector
+
+                obj->quads.push_back( Quad{offset, offset + 4, offset + 8});
+
+                model.faces.resize(offset + QUAD_SIZE); // accomodate new primitive
+
                 // tokenise the face strings into int
-                for (uint32_t f = 0; f < size; ++f) {
-                    token = std::strtok(face[f], "/");
-                    while (token != NULL) {
-                        obj->faces[primitiveData] = std::strlen(token) == 0 
+                std::cout << "\ntokenise face\n";
+                for (uint32_t k = 0; k < 4; ++k) {
+                    std::cout << "\nnew face vertex:\n\n";
+                    token = std::strtok(faceData[offset & 3], "/"); // modulus offset by 4 for quad
+                    for (uint32_t i = 0; token != NULL; i+=4) {
+                        std::cout << "token: " << token << '\n';
+                        model.faces[offset+i] = std::strlen(token) == 0 
                             ? 0 
-                            : (uint32_t)std::strtol(token, NULL, 10);
-                        ++primitiveData;
+                            : (uint32_t)std::strtol(token, NULL, 10) - 1; // obj are 1 indexed
+                        std::cout << "offset: " << offset + i << '\n';
+                        std::cout << "face index: " << model.faces[offset+i] << '\n';
                         token = strtok(NULL, "/");
                     }
+                    ++offset;
                 }
-                // append primitive
-                obj->primitives.push_back(&(*(obj->quads.rbegin())));
+                std::cout << "face indices\n\n";
+                for (uint32_t i = 0; i < QUAD_SIZE; i++) {
+                    std::cout << model.faces[j+i] << ' ';
+                }
+                std::cout << "\nfrom quad:\n";
+                for (uint32_t i = 0; i < 4; i++) {
+                    std::cout << model.faces[(obj->quads.end() - 1)->_ver + i] + 1 << '/';
+                    std::cout << model.faces[(obj->quads.end() - 1)->_tex + i] + 1 << '/';
+                    std::cout << model.faces[(obj->quads.end() - 1)->_nor + i] + 1 << ' ';
+                }
+                std::cout << std::endl;
+                // pad zeros if indices missing?
+
+                // append primitive pointer
+                obj->primitives.push_back( &(*(obj->quads.rbegin())) );
                 break;
             }
-            default:
+            default: // unrecognised face
                 break;
             }
         }
@@ -136,7 +156,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         case 'o':
             // create a new object in the model
             model.objects.push_back({});
-            obj = &(*model.objects.rbegin());
+            obj = model.objects.end() - 1;
             std::strcpy(obj->name, &buffer[2]);
             break;
         // comments
@@ -147,15 +167,6 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         // other string type
         default:
             token = std::strtok(buffer, " ");
-            if (std::strcmp(token, "mtllib") == 0) {
-                token = std::strtok(NULL, " \n");
-                // concatenate 
-                char mtlPath[std::strlen(token) + std::strlen(dir)];
-                std::strcpy(mtlPath, dir);
-                std::strcat(mtlPath, token);
-                LoadMtl(mtlPath, model);
-                break;
-            }
 
             if (std::strcmp(token, "usemtl") == 0) {
                 token = std::strtok(NULL, " \n");
@@ -163,8 +174,57 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
                 std::strncpy(obj->material, token, MAX_NAME_LENGTH);
                 break;
             }
+
+            if (std::strcmp(token, "mtllib") == 0) {
+                token = std::strtok(NULL, " \n");
+                // concatenate mtl path to current dir
+                char mtlPath[std::strlen(token) + std::strlen(dir)];
+                std::strcpy(mtlPath, dir);
+                std::strcat(mtlPath, token);
+                LoadMtl(mtlPath, model);
+                break;
+            }
             break;
         }
+    }
+
+    std::cout << "print face indices\n" << model.objects.size() << '\n';
+    for (auto& f :  model.faces) {
+        std::cout << f << ' ';
+    }
+
+    auto q = model.objects[0].quads.begin();
+    std::cout << "\n\nprint obj\n";
+    do {
+        for (uint32_t i = 0; i < 4; i++) {
+            std::cout << model.faces[q->_ver + i] + 1 << '/';
+            std::cout << model.faces[q->_tex + i] + 1 << '/';
+            std::cout << model.faces[q->_nor + i] + 1 << ' ';
+        }
+    }
+    while (++q != model.objects[0].quads.end());
+
+    for (uint32_t v = 0; v < model.vertices.size(); ++v) 
+        std::cout << model.vertices[v] << '\n';
+    for (uint32_t f = 0; f < model.faces.size(); ++f) 
+        std::cout << model.faces[f] << '\n';
+
+    // using quads
+    for (Object& object : model.objects) {
+        q = object.quads.begin();
+        std::cout << "\n\nprint object " << object.name << " quads\n";
+        std::cout << model.vertices.size() << "\n\n";
+
+        do {
+            for (uint32_t i = 0; i < 4; i++) {
+                std::cout << model.vertices[model.faces[q->_ver + i]] << ' ';
+                std::cout << model.texCoords[model.faces[q->_tex + i]].x << ' ';
+                std::cout << model.texCoords[model.faces[q->_tex + i]].y << ' ';
+                std::cout << model.normals[model.faces[q->_nor + i]] << '\n';
+            }
+            std::cout << "\n\n";
+        }
+        while (++q != object.quads.end());
     }
 
     std::fclose(pFile);
@@ -185,7 +245,7 @@ bool OBJLoader::LoadMtl(const char* path, Model& model) {
     char buffer[MAX_LINE];
     char* token;
 
-    Material* material;
+    Material* material = nullptr;
 
     while (std::fgets(buffer, MAX_LINE, pFile) != NULL) {
         switch (buffer[0]) {
@@ -236,8 +296,7 @@ bool OBJLoader::LoadMtl(const char* path, Model& model) {
             if (std::strcmp(token, "newmtl") == 0) {
                 token = std::strtok(NULL, " \n");
                 // insert a new material into the map
-                model.materialMap[token] = Material{};
-                material = &model.materialMap[token];                 
+                material = &model.materials[token];             
             }
 
             if (std::strcmp(token, "illum") == 0) {
@@ -247,7 +306,6 @@ bool OBJLoader::LoadMtl(const char* path, Model& model) {
             break;
         }
     }
-
     std::fclose(pFile);
     return true;
 }

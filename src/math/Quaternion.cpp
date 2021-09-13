@@ -28,7 +28,7 @@ Quaternion& Quaternion::operator = (const Quaternion &other) {
 }
 
 bool Quaternion::operator ==(const Quaternion& other) const {
-    return _q == _q; 
+    return _q == other._q; 
 }
 
 Quaternion& Quaternion::operator +=(const Quaternion& other) {
@@ -90,7 +90,7 @@ float Quaternion::Norm() const {
 }
 
 Quaternion Quaternion::Unit() const {
-    return *this * (1.0f / Norm());
+    return *this / Norm(); 
 }
 
 Quaternion Quaternion::Conjugate() const {
@@ -105,14 +105,13 @@ Quaternion operator /(Quaternion lhs, const float rhs) {
     return lhs /= rhs;
 }
 
-Quaternion operator *(Quaternion rhs, const float lhs) {
+Quaternion operator *(const float lhs, Quaternion& rhs) {
     return rhs *= lhs;
 }
 
-Quaternion operator *(const float lhs, Quaternion& rhs) {
+Quaternion operator *(Quaternion lhs, const float rhs) {
     return rhs * lhs;
 }
-
 
 std::istream& operator >> (std::istream &inStream, Quaternion &quaternion) {
     return inStream >> *((Vector4*)&quaternion); // POD convert to Vector4

@@ -6,6 +6,7 @@
 #define MODEL_H 1
 
 #include <math/Vectors.h>
+#include <model/Material.h>
 #include <model/Primitives.h>
 
 #ifdef __APPLE__
@@ -14,44 +15,12 @@
 #include <GL/gl.h>
 #endif
 
-#include <map>
 #include <vector>
-#include <cstring>
 
 #define MAX_NAME_LENGTH 128
 
-// POD structs
-struct Vertex {
-    Vector3 position;
-    Vector3 normal;
-    Vector2 texture;
-
-    Vertex();
-};
-
-struct Material {
-    // pod as defined in .mtl
-    Vector4 ambient; // Ka
-    Vector4 diffuse; // Kd
-    Vector4 specular; // Ks
-    Vector4 emissive; // Ke
-    float dissolve; // d
-    float specularExp; // Ns
-    float ior; // Ni
-
-    Material();
-};
-
-class Object {
+struct Object {
 public:
-    // vertex data
-    std::vector<Vector3> vertices;
-    std::vector<Vector3> normals;
-    std::vector<Vector2> uvs;
-
-    // face indices into vertex data
-    std::vector<uint32_t> faces;
-
     // primitives
     std::vector<Tri> triangles;
     std::vector<Quad> quads;
@@ -64,26 +33,28 @@ public:
     char name[MAX_NAME_LENGTH];
 
     Object();
-
-    void DrawTriangles() const;
-    void DrawQuads() const;
-};
-
-// compare function
-struct StrCompare {
-    inline bool operator()(const char* l, const char* r) const {
-        return std::strcmp(l, r) < 0;
-    }
 };
 
 class Model {
 public:
+    // vertex data
+    std::vector<Vector3> vertices;
+    std::vector<Vector3> normals;
+    std::vector<Vector2> texCoords;
+
+    // face indices into vertex data
+    std::vector<uint32_t> faces;
+
+    // objects
     std::vector<Object> objects;
-    std::map<const char*, Material, StrCompare> materialMap;
+    MaterialMap materials;
     
     Model();
 
     void Render() const;
+
+    void DrawQuads(const Object& object) const;
+    void DrawTris(const Object& object) const;
     void UseMaterial(const char* material) const;
 };
 

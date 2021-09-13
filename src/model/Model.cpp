@@ -4,43 +4,7 @@
 
 #include <model/Model.h>
 
-Vertex::Vertex() : position{}, normal{}, texture{} {}
-
-Material::Material() : ambient{}, diffuse{}, specular{}, emissive{}, dissolve(1.0f),
-    specularExp (1.0f), ior(1.0f) {}
-
-Object::Object() : vertices{}, normals{}, uvs{}, faces{}, triangles{}, quads{}, 
-    primitives{} {}
-
-void Object::DrawTriangles() const {
-    if (triangles.empty())
-        return;
-
-    glBegin(GL_TRIANGLES);
-
-    for (uint32_t t = 0; t < triangles.size(); ++t)
-        for (uint32_t v = 0; v < 3; ++v) {
-            glNormal3fv(   &((normals[faces[triangles[t].offset + v * 3 + 2]])[0]));
-            glTexCoord2fv( &((uvs[faces[triangles[t].offset + v * 3 + 1]])[0]));
-            glVertex3fv(   &((vertices[faces[triangles[t].offset + v * 3]])[0]));
-        }
-    glEnd();
-}
-
-void Object::DrawQuads() const {
-    if (quads.empty())
-        return;
-
-    glBegin(GL_TRIANGLES);
-
-    for (uint32_t t = 0; t < quads.size(); ++t)
-        for (uint32_t v = 0; v < 4; ++v) {
-            glNormal3fv(   &((normals[faces[triangles[t].offset + v * 3 + 2]])[0]));
-            glTexCoord2fv( &((uvs[faces[triangles[t].offset + v * 3 + 1]])[0]));
-            glVertex3fv(   &((vertices[faces[triangles[t].offset + v * 3]])[0]));
-        }
-    glEnd();
-}
+Object::Object() : triangles{}, quads{}, primitives{} {}
 
 Model::Model() : objects{} {}
 
@@ -48,12 +12,50 @@ void Model::Render() const {
     // draw all objects in the scene
     for (uint32_t o = 0; o < objects.size(); ++o) {
         UseMaterial(objects[o].material);
-        objects[o].DrawQuads();
-        objects[o].DrawTriangles();
+        // quads
+        DrawQuads(objects[o]);
+        // tris
+        DrawTris(objects[o]);
     }
 }
 
+
+void Model::DrawTris(const Object& obj) const {
+    glBegin(GL_TRIANGLES);
+    std::vector<Tri>::const_iterator t = obj.triangles.begin();
+    while (t != obj.triangles.end()) { // automatically exits when tri is empty
+        for (uint32_t v = 0; v < 3; ++v) {
+            glNormal3fv(
+                &(normals  [faces[t->_nor + v]][0]));
+            glTexCoord2fv(
+                &(texCoords[faces[t->_tex + v]][0]));
+            glVertex3fv(
+                &(vertices [faces[t->_ver + v]][0]));
+        }
+        t++;
+    }
+    glEnd();
+}
+
+void Model::DrawQuads(const Object& obj) const {
+    glBegin(GL_QUADS);
+    std::vector<Quad>::const_iterator q = obj.quads.begin();
+    while (q != obj.quads.end()) { // automatically exits when tri is empty
+        for (uint32_t v = 0; v < 4; ++v) {
+            glNormal3fv(
+                &(normals  [faces[q->_nor + v]][0]));
+            glTexCoord2fv(
+                &(texCoords[faces[q->_tex + v]][0]));
+            glVertex3fv(
+                &(vertices [faces[q->_ver + v]][0]));
+        }
+        q++;
+    }
+    glEnd();
+}
+
+
 void Model::UseMaterial(const char* name) const {
-    const Material& material = materialMap.at(name);
+    const Material& material = materials.at(name);
     glMaterialfv(GL_FRONT, GL_AMBIENT, &material.ambient[0]);
 }

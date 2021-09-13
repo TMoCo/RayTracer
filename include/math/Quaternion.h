@@ -21,7 +21,7 @@ public:
     Quaternion(const Vector3& vector, float scalar);
     Quaternion(const Vector4& vector);
 
-    // assignment operator
+    // binary operators
     Quaternion &operator = (const Quaternion &other);
     bool operator ==(const Quaternion& other) const;
     Quaternion& operator +=(const Quaternion& other);
@@ -44,6 +44,7 @@ public:
         return lhs *= rhs;
     }
 
+    // unary operators
     Quaternion& operator -();
 
     // access operators

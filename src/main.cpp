@@ -5,6 +5,7 @@
 #include <math/Vector3.h>
 #include <math/Matrix4.h>
 #include <model/OBJLoader.h>
+#include <window/Window.h>
 #include <test.h>
 
 #include <chrono>
@@ -15,7 +16,7 @@
 #include <cmath>
 #include <unistd.h>
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
     if (argc < 2) {
         std::cerr << "Usage: ./RayTracer ./path/to/model.obj" << std::endl;
@@ -28,12 +29,27 @@ int main(int argc, char const *argv[])
             std::cerr << "No test function selected\n";
             return 1;
         }
-        Test(argv[2][0]);
+        Test(argv[2]);
         return 0;
     }
-    Model model;
-    
-    OBJLoader::LoadObj(argv[1], model);
 
-    return 0;
+    QApplication app(argc, argv);
+
+    Model model;
+    OBJLoader::LoadObj(argv[1], model); // load model from obj
+
+    Window window{model, "RayTracing"}; 
+    window.resize(800, 600);
+    window.show();
+
+    /*
+    for (auto& obj : model.objects) {
+        std::cout << "verts: " << obj.vertices.size() << '\n';
+        std::cout << "normals: " << obj.normals.size() << '\n';
+        std::cout << "texcoords: " <<  obj.texCoords.size() << '\n';
+        std::cout << "face indices: " << obj.faces.size() << '\n';
+    }
+    */
+
+   return app.exec();
 }

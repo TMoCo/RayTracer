@@ -1,5 +1,4 @@
 #include <math/Matrix4.h>
-
 void TestMatrix() {
 
     float values[16] {};
@@ -24,13 +23,10 @@ void TestMatrix() {
     std::cout << "sub:\n" << n - m << '\n';
     std::cout << "prod:\n" << n * m << '\n';
     std::cout << "div:\n" << n / 2.0f << '\n';
-    std::cout << "fac:\n" << n * 2.0f << '\n';
+    std::cout << "fac:\n" << n * 2.0f << std::endl;
 }
 
-
-void Test(char c) {
-    switch(c) {
-        case 'm':
-            TestMatrix();
-    }
+void Test(const char* test) {
+    if (strcmp(test, "matrix") == 0)
+        TestMatrix();
 }
