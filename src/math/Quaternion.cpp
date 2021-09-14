@@ -7,57 +7,56 @@
 #include <cmath>
 #include <cstring>
 
-Quaternion::Quaternion() : _q{0.0f, 0.0f, 0.0f} {}
+Quaternion::Quaternion(const Vector3& v, float s) : _v{v}, _s{s} {}
 
-Quaternion::Quaternion(float x, float y, float z, float w) : _q{x, y, z, w} {}
+Quaternion::Quaternion(float x, float y, float z, float w) : _v{x, y, z}, _s{w} {}
 
-Quaternion::Quaternion(float scalar) : _q{0.0f, 0.0f, 0.0f, scalar} {}
+Quaternion::Quaternion(const float* values) : _v{values}, _s{values[3]} {}
 
-Quaternion::Quaternion(const Vector3& vector) : 
-    _q{vector[0], vector[1], vector[2], 0.0f} {}
-
-Quaternion::Quaternion(const Vector3& vector, float scalar) : 
-    _q{vector[0], vector[1], vector[2], scalar} {}
-
-Quaternion::Quaternion(const Vector4& vector) : _q{vector} {}
+Quaternion::Quaternion(const Vector4& vector) : _v{&vector[0]}, _s{vector[3]} {}
 
 // assignment operator
 Quaternion& Quaternion::operator = (const Quaternion &other) {
-    std::memcpy(&_q[0], &other[0], VEC4_SIZE);
+    std::memcpy(this, &other, VEC4_SIZE);
     return *this;
 }
 
 bool Quaternion::operator ==(const Quaternion& other) const {
-    return _q == other._q; 
+    return std::memcmp(this, &other, VEC4_SIZE) == 0; 
 }
 
 Quaternion& Quaternion::operator +=(const Quaternion& other) {
-    _q += other._q;
+    _v += other._v;
+    _s += other._s;
     return *this;
 }
 
 Quaternion& Quaternion::operator -=(const Quaternion& other) {
-    _q -= other._q;
+    _v -= other._v;
+    _s -= other._s;
     return *this;
 }
 
 Quaternion& Quaternion::operator /=(const Quaternion& other) {
-    _q /= other._q;
+    _v /= other._v;
+    _s /= other._s;
     return *this;
 }
 
 Quaternion& Quaternion::operator *=(const Quaternion& other) {
-    _q *= other._q;
+    *this = Quaternion{
+        _s * other._v + other._s * _v + _v.Cross(other._v), // vector
+        _s * other._s + _v.Dot(other._v)}; // scalar
     return *this;
 }
 
 Quaternion& Quaternion::operator /=(const float& factor) {
-    _q /= factor;
+    _v /= factor;
     return *this;
 }
 
 Quaternion& Quaternion::operator *=(const float& factor) {
-    _q *= factor;
+    _v *= factor;
     return *this;
 }
 
@@ -66,11 +65,11 @@ Quaternion& Quaternion::operator -() {
 }
 
 float& Quaternion::operator [](const uint32_t index) {
-    return _q[index];
+    return _v[index];
 }
 
 const float& Quaternion::operator [](const uint32_t index) const {
-    return _q[index];
+    return _v[index];
 }
 
 Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
@@ -78,15 +77,51 @@ Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
 }
     
 Vector3 Quaternion::Axis() const {
-    return {_q._v};
+    return _v;
 }
 
 float Quaternion::Angle() const {
-    return _q[3];
+    return _s;
+}
+
+Matrix4 Quaternion::Rotation() const {
+    // a quaternion (x y z w) is equivalent to the following matrix
+    // | 1 - 2(y^2+z^2)          2(xy-wz)          2(xz+wy)    0 |
+    // |       2(xy+wz)    1 - 2(x^2+z^2)          2(yz-wx)    0 |
+    // |       2(xz-wy)          2(yz+wx)    1 - 2(x^2+y^2)    0 |
+    // |              0                 0                 0    1 |
+    Matrix4 rot;
+
+    float xx = _v[0] * _v[0];
+    float xy = _v[0] * _v[1];
+    float xz = _v[0] * _v[2];
+    float xw = _v[0] * _s;
+
+    float yy = _v[1] * _v[1];
+    float yz = _v[1] * _v[2];
+    float yw = _v[1] * _s;
+    
+    float zz = _v[2] * _v[2];
+    float zw = _v[2] * _s;
+
+    rot[0][0] = 1.0f - 2.0f * ( yy + zz );
+    rot[0][1] = 2.0f * ( xy + zw );
+    rot[0][2] = 2.0f * ( xz - yw );
+
+    rot[1][0] = 2.0f * ( xy - zw );
+    rot[1][1] = 1.0f - 2.0f * ( xx + zz );
+    rot[1][2] = 2.0f * ( yz + xw );
+
+    rot[2][0] = 2.0f * ( xz + yw );
+    rot[2][1] = 2.0f * ( yz - xw );
+    rot[2][2] = 1.0f - 2.0f * ( xx + yy );
+
+    rot[3][3] = 1.0f;
+    return rot;
 }
 
 float Quaternion::Norm() const {
-    return std::sqrt(_q[0] * _q[0] + _q[1] * _q[1] + _q[2] * _q[2] + _q[3] * _q[3]);
+    return std::sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2] + _s * _s);
 }
 
 Quaternion Quaternion::Unit() const {
@@ -94,11 +129,11 @@ Quaternion Quaternion::Unit() const {
 }
 
 Quaternion Quaternion::Conjugate() const {
-    return {-_q[0], -_q[1], -_q[2], _q[3]};
+    return {-_v, _s};
 }
 
 Quaternion Quaternion::Inverse() const {
-    return Conjugate() / Norm();
+    return Conjugate() / (_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2] + _s * _s);
 }
 
 Quaternion operator /(Quaternion lhs, const float rhs) {

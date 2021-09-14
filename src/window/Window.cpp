@@ -13,10 +13,9 @@ Window::Window(const Model& model, const char* name) : QWidget(nullptr), glWidge
 
     timer = new QTimer(this);
 
-    timer->setInterval(200); // 16 ms
+    timer->setInterval(16); // 16 ms
 
-    QObject::connect(timer, SIGNAL(timeout()), glWidget, SLOT(Rotate()));
-    QObject::connect(timer, SIGNAL(timeout()), glWidget, SLOT(update()));
+    //QObject::connect(timer, SIGNAL(timeout()), glWidget, SLOT(update()));
 
     timer->start();
 

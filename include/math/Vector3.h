@@ -46,7 +46,7 @@ public:
     }
 
     // unary operators
-    Vector3& operator -();
+    Vector3 operator -() const;
 
     // access operators
     float& operator [](const uint32_t index);
@@ -59,9 +59,9 @@ public:
 };
 
 // binary operators
-Vector3 operator /(Vector3 lhs, const float rhs);
-Vector3 operator *(Vector3 lhs, const float rhs);
-Vector3 operator *(const float lhs, Vector3& rhs);
+Vector3 operator /(Vector3 lhs, const float& rhs);
+Vector3 operator *(Vector3 lhs, const float& rhs);
+Vector3 operator *(const float& lhs, Vector3 rhs);
 
 // stream operators
 std::istream & operator >> (std::istream &inStream, Vector3 &value);

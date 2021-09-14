@@ -11,14 +11,13 @@
 
 class Quaternion {
 private:
-    Vector4 _q;
+    Vector3 _v;
+    float _s;
 
 public:
-    Quaternion();
+    Quaternion(const Vector3& vector = {}, float scalar = 1.0f);
     Quaternion(float x, float y, float z, float w);
-    Quaternion(float scalar);
-    Quaternion(const Vector3& vector);
-    Quaternion(const Vector3& vector, float scalar);
+    Quaternion(const float* values);
     Quaternion(const Vector4& vector);
 
     // binary operators
@@ -56,6 +55,8 @@ public:
     Vector3 Axis() const;
     float Angle() const;
 
+    Matrix4 Rotation() const;
+
     float Norm() const;
     Quaternion Unit() const;
     Quaternion Conjugate() const;
@@ -63,12 +64,12 @@ public:
 };
 
 // binary operators
-Vector4 operator /(Vector4 lhs, const float rhs);
-Vector4 operator *(Vector4 lhs, const float rhs);
-Vector4 operator *(const float lhs, Vector4& rhs);
+Quaternion operator /(Quaternion lhs, const float rhs);
+Quaternion operator *(Quaternion lhs, const float rhs);
+Quaternion operator *(const float lhs, Quaternion& rhs);
 
 // stream operators
-std::istream & operator >> (std::istream &inStream, Vector4&value);
-std::ostream & operator << (std::ostream &outStream, const Vector4 &value);
+std::istream & operator >> (std::istream &inStream, Quaternion&value);
+std::ostream & operator << (std::ostream &outStream, const Quaternion &value);
 
 #endif // ! QUATERNION_H

@@ -5,7 +5,10 @@
 #include <window/OpenGLWidget.h>
 
 OpenGLWidget::OpenGLWidget(const Model& m, QWidget* parent) : 
-    QOpenGLWidget(parent), model{m}, arcBall{} {}
+    QOpenGLWidget(parent), model{m}, transform{}, arcBall{} {
+
+    transform.Translate({0.0f, 0.0f, -2.0f});
+}
 
 void OpenGLWidget::initializeGL() {
     glDisable(GL_LIGHTING);
@@ -19,9 +22,9 @@ void OpenGLWidget::resizeGL(int w, int h) {
     glLoadIdentity();
     float aspectRatio = (float)w / (float)h;
     if (aspectRatio > 1.0f) // aspect ratio determines landscape or portrait
-        glFrustum(-aspectRatio * 4.0f, aspectRatio * 4.0f, -4.0f, 4.0f, 0.1f, 10.0f);
+        glOrtho(-aspectRatio, aspectRatio, -1.0f, 1.0f, -1.0f, 10.0f);
     else
-        glFrustum(-4.0f, 4.0f, -4.0f / aspectRatio, 4.0f / aspectRatio, 0.1f, 10.0f);
+        glOrtho(-1.0f, 1.0f, -1.0f / aspectRatio, 1.0f / aspectRatio, 1.0f, 10.0f);
 }
 
 void OpenGLWidget::paintGL() {
@@ -41,28 +44,47 @@ void OpenGLWidget::paintGL() {
     // set model view matrix based on arcball rotation
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    // arcball rotation
-    /*
-    Matrix4 mat{}; // get rotation here
-    glMultMatrixf(mat[0]);
-    */
-    glTranslatef(0.0f, 0.0f, -0.5f);
-    glRotatef(0.0F, 0.0f, 1.0f, 0.0f);
+    glTranslatef(0.0f, 0.0f, -2.0f);
+
+    glMultMatrixf(transform.GetMatrix()[0]);
+
     model.Render();
 }
 
-void OpenGLWidget::Rotate() {
-    rotate = (rotate++) & 359; // % 360
-}
 
 void OpenGLWidget::mousePressEvent(QMouseEvent *event) {
-
+    float width = this->width(); 
+    float height = this->height();
+    float scaledX = (2.0 * event->x() - width) / width;
+    float scaledY = (height - 2.0 * event->y()) / height; //qt coord to cartesian
+    arcBall.BeginDrag(scaledX, scaledY);
+    transform.orientation = arcBall.GetOrientation();
+    update();
 }
 
 void OpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-
+    float x = event->x();
+    float y = event->y();
+    float width = this->width(); 
+    float height = this->height();
+    float scaledX = (2.0 * x - width) / width;
+    float scaledY = (height - 2.0 * y) / height;
+    arcBall.ContinueDrag(scaledX, scaledY);
+    transform.orientation = arcBall.GetOrientation();
+    std::cout << transform.orientation.Rotation() << '\n';
+    update();
 }
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event) {
-
+    float x = event->x();
+    float y = event->y();
+    float width = this->width(); 
+    float height = this->height();
+    float scaledX = (2.0 * x - width) / width;
+    // this one has to flip from Qt coordinates to Cartesian
+    float scaledY = (height - 2.0 * y) / height;
+    // set the final rotation for the drag
+    arcBall.EndDrag(scaledX, scaledY);
+    transform.orientation = arcBall.GetOrientation();
+    update();
 }

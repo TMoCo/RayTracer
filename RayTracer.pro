@@ -33,6 +33,7 @@ HEADERS +=  include/model/Model.h \
             include/math/Vector4.h \
             include/math/Quaternion.h \
             include/math/Matrix4.h \
+            include/math/Transform.h \
             include/window/ArcBall.h \
             include/window/OpenGLWidget.h \
             include/window/Window.h \
@@ -47,6 +48,7 @@ SOURCES +=  src/main.cpp \
             src/math/Vector4.cpp \
             src/math/Quaternion.cpp \
             src/math/Matrix4.cpp \
+            src/math/Transform.cpp \
             src/window/ArcBall.cpp \
             src/window/OpenGLWidget.cpp \
             src/window/Window.cpp

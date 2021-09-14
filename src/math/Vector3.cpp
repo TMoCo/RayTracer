@@ -68,12 +68,12 @@ Vector3& Vector3::operator /=(const float& factor) {
 Vector3& Vector3::operator *=(const float& factor) {
     _v[0] *= factor;
     _v[1] *= factor;
-    _v[2]  *= factor;
+    _v[2] *= factor;
     return *this;
 }
 
-Vector3& Vector3::operator -() {
-    return *this *= -1.0f;
+Vector3 Vector3::operator -() const {
+    return *this * -1.0f;
 }
 
 float& Vector3::operator [](const uint32_t index) { // index greater than 2 not defined
@@ -107,16 +107,16 @@ Vector3 Vector3::Normalize() const {
     return *this / Length();
 }
 
-Vector3 operator /(Vector3 lhs, const float rhs) {
+Vector3 operator /(Vector3 lhs, const float& rhs) {
     return lhs /= rhs;
 }
 
-Vector3 operator *(Vector3 rhs, const float lhs) {
+Vector3 operator *(const float& lhs, Vector3 rhs) {
     return rhs *= lhs;
 }
 
-Vector3 operator *(const float lhs, Vector3& rhs) {
-    return rhs * lhs;
+Vector3 operator *(Vector3 lhs, const float& rhs) {
+    return lhs *= rhs;
 }
 
 

@@ -6,20 +6,29 @@
 
 #include <cmath>
 
-ArcBall::ArcBall() : base{}, current{}, drag{0.0f, 0.0f, 1.0f, 0.0f} {}
+ArcBall::ArcBall() : base{0.0f, 0.0f, 0.0f, 1.0f}, 
+    current{0.0f, 0.0f, 0.0f, 1.0f}, drag{0.0f, 0.0f, 1.0f, 0.0f} {}
 
 Quaternion ArcBall::FindQuat(float x, float y) {
     float d2 = x*x + y*y;
     if (d2 > 1.0f) {
-        float inv = 1.0f / d2;
-        return Quaternion{Vector3{x, y, 0.0f} * inv};
+        return Quaternion{Vector3{x, y, 0.0f} / std::sqrt(d2), 1.0f};
     }
     else {
-        return Quaternion{Vector3{x, y, std::sqrt(1.0f - d2)}};
+        return Quaternion{Vector3{x, y, std::sqrt(1.0f - d2)}, 1.0f};
     }
 }
 
+Quaternion ArcBall::GetOrientation() {
+    return current * base;
+}
+
+Matrix4 ArcBall::GetOrientationMatrix() {
+    return (current * base).Rotation();
+}
+
 void ArcBall::BeginDrag(float x, float y) {
+    std::cout << base << '\n';
     drag = FindQuat(x, y);
 }
     
@@ -33,5 +42,5 @@ void ArcBall::EndDrag(float x, float y) {
     // reset quaternions for next arcball use
     drag = {0.0f, 0.0f, 1.0f, 0.0f};
     base = current * base;
-    current = {0.0f, 0.0f, 1.0f, 0.0f};
+    current = {0.0f, 0.0f, 0.0f, 1.0f};
 }

@@ -44,7 +44,12 @@ public:
     const float* operator [](const uint32_t index) const;
 
     Matrix4 Transpose();
-    void Transpose(const Matrix4& mat);
+    static void Transpose(Matrix4& mat);
+
+    Matrix4 Translate(const Vector3& v);
+    static void Translate(Matrix4& mat, const Vector3& v);
+
+    static Matrix4 Identity();
 };
 
 // binary operators

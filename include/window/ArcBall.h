@@ -17,6 +17,9 @@ public:
 
     Quaternion FindQuat(float x, float y);
 
+    Quaternion GetOrientation(); 
+    Matrix4 GetOrientationMatrix();
+
     void BeginDrag(float x, float y);
     void ContinueDrag(float x, float y);
     void EndDrag(float x, float y);

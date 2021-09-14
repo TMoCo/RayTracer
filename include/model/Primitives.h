@@ -22,7 +22,7 @@ enum class kPrimitives : uint32_t {
 // position, normal and texture vector data
 
 // pure abstract class
-struct alignas(0x40) Primitive { // alignas 64 bytes 
+struct Primitive {
     uint32_t _ver;
     uint32_t _tex;
     uint32_t _nor;
@@ -31,8 +31,6 @@ struct alignas(0x40) Primitive { // alignas 64 bytes
     Primitive() : _ver(0), _tex(0), _nor(0) {}
     Primitive(uint32_t ver, uint32_t tex, uint32_t nor) : 
         _ver(ver), _tex(tex), _nor(nor) {}
-
-    // uint32_t Normal(uint32_t);
 
     virtual Vector3 Intersect(const Vector3& v, float t) { v * t; return {}; } // keep compiler happy
 };
