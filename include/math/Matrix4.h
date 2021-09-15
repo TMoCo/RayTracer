@@ -6,6 +6,7 @@
 #define MATRIX4_H 1
 
 #include <math/Vector4.h>
+#include <math/Quaternion.h>
 
 #define MAT4_ELEMENTS 0x10 // 0x10 = 16 elements 
 #define MAT4_SIZE 0x40 // 4 * sizeof(vec4) = 0x40 = 64 bytes
@@ -43,13 +44,13 @@ public:
     float* operator [](const uint32_t index);
     const float* operator [](const uint32_t index) const;
 
-    Matrix4 Transpose();
-    static void Transpose(Matrix4& mat);
-
-    Matrix4 Translate(const Vector3& v);
-    static void Translate(Matrix4& mat, const Vector3& v);
-
+    // static matrix builders
     static Matrix4 Identity();
+    static Matrix4 Transpose(const Matrix4& mat);
+    static Matrix4 TranslationMatrix(const Vector3& v);
+    static Matrix4 RotationMatrix(const Quaternion& q);
+    static Matrix4 ScaleMatrix(const float& s);
+    static Matrix4 ScaleMatrix(const Vector3& s);
 };
 
 // binary operators

@@ -5,7 +5,6 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H 1
 
-#include <math/Matrix4.h>
 #include <math/Vector3.h>
 #include <math/Vector4.h>
 
@@ -50,17 +49,17 @@ public:
     float& operator [](const uint32_t index);
     const float& operator [](const uint32_t index) const;
 
-    static Quaternion AngleAxis(const Vector3& axis, float angle);
-    
+    // relative to a given quaternion
     Vector3 Axis() const;
     float Angle() const;
-
-    Matrix4 Rotation() const;
 
     float Norm() const;
     Quaternion Unit() const;
     Quaternion Conjugate() const;
     Quaternion Inverse() const;
+
+    // quaternion builder
+    static Quaternion AngleAxis(const Vector3& axis, float angle);
 };
 
 // binary operators

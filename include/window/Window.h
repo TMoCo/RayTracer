@@ -6,18 +6,24 @@
 #define WINDOW_H 1
 
 #include <model/Model.h>
-#include <window/OpenGLWidget.h>
+#include <window/RenderWidgets.h>
 
 #include <QtWidgets>
 
 class Window : public QWidget{
 private:
-    OpenGLWidget* glWidget;
-
+    // main layout
     QVBoxLayout* layout;
-    QTimer* timer;
+
+    // render widgets
+    RenderWidgets* renderWidgets;
+
+    // switch render widget
+    QPushButton* switchButton;    
+
 public:
     Window(const Model& model, const char* name = "Window");
+    ~Window();
 };
 
 #endif // ! WINDOW_H

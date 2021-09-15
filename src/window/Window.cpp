@@ -4,20 +4,23 @@
 
 #include <window/Window.h>
 
-Window::Window(const Model& model, const char* name) : QWidget(nullptr), glWidget(nullptr) {
+Window::Window(const Model& model, const char* name) : QWidget(nullptr), 
+    layout(nullptr), renderWidgets(nullptr), switchButton(nullptr) {
     setWindowTitle(QString(name));
-
-    glWidget = new OpenGLWidget(model, this);
 
     layout = new QVBoxLayout(this);
 
-    timer = new QTimer(this);
+    renderWidgets = new RenderWidgets(model, this);
+    switchButton = new QPushButton("Switch Render", this);
 
-    timer->setInterval(16); // 16 ms
+    layout->addWidget(renderWidgets);
+    layout->addWidget(switchButton);
 
-    //QObject::connect(timer, SIGNAL(timeout()), glWidget, SLOT(update()));
+    QObject::connect(switchButton, SIGNAL(clicked()), renderWidgets, SLOT(SwitchWidget()));
+}
 
-    timer->start();
-
-    layout->addWidget(glWidget);
+Window::~Window() {
+    delete renderWidgets;
+    delete switchButton;
+    delete layout;
 }

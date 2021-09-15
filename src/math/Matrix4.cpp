@@ -76,42 +76,6 @@ const float* Matrix4::operator [](const uint32_t index) const {
     return &_m[index * 4];
 }
 
-Matrix4 Matrix4::Transpose() {
-    Matrix4 t = *this; // copy this
-    for (uint32_t e = 0; e < 4; ++e) {
-        // fast           slower
-        t._m[e * 4]     = _m[e];
-        t._m[e * 4 + 1] = _m[e + 4];
-        t._m[e * 4 + 2] = _m[e + 8];
-        t._m[e * 4 + 3] = _m[e + 12];
-    }
-    return t; // return transposed copy
-}
-
-void Matrix4::Transpose(Matrix4& mat) {
-    Matrix4 t = mat; // copy mat
-    for (uint32_t e = 0; e < 4; ++e) {
-        mat._m[e * 4]     = t._m[e];
-        mat._m[e * 4 + 1] = t._m[e + 4];
-        mat._m[e * 4 + 2] = t._m[e + 8];
-        mat._m[e * 4 + 3] = t._m[e + 12];
-    }
-}
-
-Matrix4 Matrix4::Translate(const Vector3& vec) {
-    Matrix4 mat = *this;
-    mat._m[12] += vec[0]; // column major, super fast and cheap
-    mat._m[13] += vec[1];
-    mat._m[14] += vec[2];
-    return mat;
-}
-
-void Matrix4::Translate(Matrix4& mat, const Vector3& vec) {
-    mat._m[12] += vec[0];
-    mat._m[13] += vec[1];
-    mat._m[14] += vec[2];
-}
-
 Matrix4 Matrix4::Identity() {
     Matrix4 mat{};
     mat[0][0] = 1.0f;
@@ -119,6 +83,64 @@ Matrix4 Matrix4::Identity() {
     mat[2][2] = 1.0f;
     mat[3][3] = 1.0f;
     return mat;
+}
+
+Matrix4 Matrix4::Transpose(const Matrix4& mat) {
+    Matrix4 t;
+    for (uint32_t e = 0; e < 4; ++e) {
+        // fast           slower
+        t._m[e * 4]     = mat._m[e];
+        t._m[e * 4 + 1] = mat._m[e + 4];
+        t._m[e * 4 + 2] = mat._m[e + 8];
+        t._m[e * 4 + 3] = mat._m[e + 12];
+    }
+    return t;
+}
+
+Matrix4 Matrix4::TranslationMatrix(const Vector3& v) {
+    Matrix4 mat = Matrix4::Identity();
+    std::memcpy(&mat._m[12], &v[0], VEC3_SIZE); // bonus of column major <3
+    return mat;
+}
+
+Matrix4 Matrix4::RotationMatrix(const Quaternion& q) {
+    Matrix4 mat = Matrix4::Identity();
+
+    float xx = q[0] * q[0];
+    float xy = q[0] * q[1];
+    float xz = q[0] * q[2];
+    float xw = q[0] * q[3];
+
+    float yy = q[1] * q[1];
+    float yz = q[1] * q[2];
+    float yw = q[1] * q[3];
+    
+    float zz = q[2] * q[2];
+    float zw = q[2] * q[3];
+
+    mat[0][0] = 1.0f - 2.0f * ( yy + zz );
+    mat[0][1] = 2.0f * ( xy + zw );
+    mat[0][2] = 2.0f * ( xz - yw );
+
+    mat[1][0] = 2.0f * ( xy - zw );
+    mat[1][1] = 1.0f - 2.0f * ( xx + zz );
+    mat[1][2] = 2.0f * ( yz + xw );
+
+    mat[2][0] = 2.0f * ( xz + yw );
+    mat[2][1] = 2.0f * ( yz - xw );
+    mat[2][2] = 1.0f - 2.0f * ( xx + yy );
+
+    mat[3][3] = 1.0f;
+    
+    return mat;
+}
+
+Matrix4 Matrix4::ScaleMatrix(const float& s) {
+    Matrix4 mat{};
+    mat[0][0] = s;
+    mat[1][1] = s;
+    mat[2][2] = s;
+    mat[3][3] = 1.0f;
 }
 
 Matrix4 operator /(Matrix4 lhs, const float rhs) {

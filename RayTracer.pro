@@ -36,6 +36,7 @@ HEADERS +=  include/model/Model.h \
             include/math/Transform.h \
             include/window/ArcBall.h \
             include/window/OpenGLWidget.h \
+            include/window/RenderWidgets.h \
             include/window/Window.h \
             include/test.h
 
@@ -51,4 +52,5 @@ SOURCES +=  src/main.cpp \
             src/math/Transform.cpp \
             src/window/ArcBall.cpp \
             src/window/OpenGLWidget.cpp \
+            src/window/RenderWidgets.cpp \
             src/window/Window.cpp

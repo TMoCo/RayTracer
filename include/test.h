@@ -23,7 +23,7 @@ void TestMatrix() {
     std::cout << m[0][0] << ' ' << m[0][1] << ' ' << m[0][2] << ' ' << m[0][3] << '\n';
     std::cout << m[1][0] << ' ' << m[1][1] << ' ' << m[1][2] << ' ' << m[1][3] << '\n';
 
-    std::cout << "transpose:\n" << n.Transpose() << '\n';
+    std::cout << "transpose:\n" << Matrix4::Transpose(m) << '\n';
 
     std::cout << "add:\n" << n + m << '\n';
     std::cout << "sub:\n" << n - m << '\n';
@@ -47,7 +47,7 @@ void TestQuaternion() {
     }
 
     std::cout << "quaternion\n" << p << '\n';
-    std::cout << "matrix\n" << p.Rotation() << '\n';
+    std::cout << "matrix\n" << Matrix4::RotationMatrix(p) << '\n';
 
     std::cout << "norm:\n" << q.Norm() << '\n';
     std::cout << "inverse:\n" << q.Inverse() << '\n';

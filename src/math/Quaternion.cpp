@@ -45,7 +45,7 @@ Quaternion& Quaternion::operator /=(const Quaternion& other) {
 
 Quaternion& Quaternion::operator *=(const Quaternion& other) {
     *this = Quaternion{
-        _s * other._v + other._s * _v + _v.Cross(other._v), // vector
+        _s * other._v - other._s * _v + _v.Cross(other._v), // vector
         _s * other._s + _v.Dot(other._v)}; // scalar
     return *this;
 }
@@ -65,11 +65,11 @@ Quaternion& Quaternion::operator -() {
 }
 
 float& Quaternion::operator [](const uint32_t index) {
-    return _v[index];
+    return ((float*)this)[index]; // run some tests on this...
 }
 
 const float& Quaternion::operator [](const uint32_t index) const {
-    return _v[index];
+    return ((float*)this)[index];
 }
 
 Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
@@ -82,42 +82,6 @@ Vector3 Quaternion::Axis() const {
 
 float Quaternion::Angle() const {
     return _s;
-}
-
-Matrix4 Quaternion::Rotation() const {
-    // a quaternion (x y z w) is equivalent to the following matrix
-    // | 1 - 2(y^2+z^2)          2(xy-wz)          2(xz+wy)    0 |
-    // |       2(xy+wz)    1 - 2(x^2+z^2)          2(yz-wx)    0 |
-    // |       2(xz-wy)          2(yz+wx)    1 - 2(x^2+y^2)    0 |
-    // |              0                 0                 0    1 |
-    Matrix4 rot;
-
-    float xx = _v[0] * _v[0];
-    float xy = _v[0] * _v[1];
-    float xz = _v[0] * _v[2];
-    float xw = _v[0] * _s;
-
-    float yy = _v[1] * _v[1];
-    float yz = _v[1] * _v[2];
-    float yw = _v[1] * _s;
-    
-    float zz = _v[2] * _v[2];
-    float zw = _v[2] * _s;
-
-    rot[0][0] = 1.0f - 2.0f * ( yy + zz );
-    rot[0][1] = 2.0f * ( xy + zw );
-    rot[0][2] = 2.0f * ( xz - yw );
-
-    rot[1][0] = 2.0f * ( xy - zw );
-    rot[1][1] = 1.0f - 2.0f * ( xx + zz );
-    rot[1][2] = 2.0f * ( yz + xw );
-
-    rot[2][0] = 2.0f * ( xz + yw );
-    rot[2][1] = 2.0f * ( yz - xw );
-    rot[2][2] = 1.0f - 2.0f * ( xx + yy );
-
-    rot[3][3] = 1.0f;
-    return rot;
 }
 
 float Quaternion::Norm() const {

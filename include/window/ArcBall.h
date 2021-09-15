@@ -6,6 +6,7 @@
 #define ARCBALL_H 1
 
 #include <math/Quaternion.h>
+#include <math/Vector2.h>
 
 class ArcBall {
 public:
@@ -15,14 +16,13 @@ public:
 
     ArcBall();
 
-    Quaternion FindQuat(float x, float y);
+    Quaternion FindQuat(const Vector2& v);
 
-    Quaternion GetOrientation(); 
-    Matrix4 GetOrientationMatrix();
+    Quaternion GetOrientation();
 
-    void BeginDrag(float x, float y);
-    void ContinueDrag(float x, float y);
-    void EndDrag(float x, float y);
+    void BeginDrag(const Vector2& v);
+    void ContinueDrag(const Vector2& v);
+    void EndDrag(const Vector2& v);
 };
 
 #endif // !ARCBALL_H
