@@ -4,20 +4,24 @@
 
 #include <math/Vector4.h>
 
-#include <cstring>
 #include <cmath>
 #include <iomanip>
 
 Vector4::Vector4() : _v{} {}
 
-Vector4::Vector4(float x, float y, float z, float w) : _v{x, y, z, w} {}
+Vector4::Vector4(float x, float y, float z, float w) : _v{} {
+    _v.x = x;
+    _v.y = y;
+    _v.z = z;
+    _v.w = w;
+}
 
 Vector4::Vector4(const float* v) : _v{} {
-    std::memcpy(_v, v, VEC4_SIZE); // 4 * si_v[2]eof(float) = 16 = 0_v[0]10
+    std::memcpy(&_v, v, VEC4_SIZE); // 4 * si_v[2]eof(float) = 16 = 0_v[0]10
 }
 
 Vector4::Vector4(const Vector4& other) : _v{} {
-    std::memcpy(_v, &other[0], VEC4_SIZE);
+    std::memcpy(&_v, &other[0], VEC4_SIZE);
 }
 Vector4& Vector4::operator =(const Vector4& other) {
     std::memcpy(this, &other[0], VEC4_SIZE); 
@@ -25,55 +29,36 @@ Vector4& Vector4::operator =(const Vector4& other) {
 }
 
 bool Vector4::operator ==(const Vector4& other) const {
-    return memcmp(_v, &other[0], VEC4_SIZE) == 0;
+    return memcmp(&_v, &other[0], VEC4_SIZE) == 0;
 }
 
 Vector4& Vector4::operator +=(const Vector4& other) {
-    _v[0] += other[0];
-    _v[1] += other[1];
-    _v[2] += other[2];
-    _v[3] += other[3];
+    _v.v4 = _mm_add_ps(_v.v4, other._v.v4);
     return *this;    
 }
 
 Vector4& Vector4::operator -=(const Vector4& other) {
-    _v[0] -= other[0];
-    _v[1] -= other[1];
-    _v[2] -= other[2];
-    _v[3] -= other[3];
+    _v.v4 = _mm_sub_ps(_v.v4, other._v.v4);
     return *this;
 }
 
 Vector4& Vector4::operator /=(const Vector4& other) {
-    _v[0] /= other[0];
-    _v[1] /= other[1];
-    _v[2] /= other[2];
-    _v[3] /= other[3];
+    _v.v4 = _mm_div_ps(_v.v4, other._v.v4);
     return *this;
 }
 
 Vector4& Vector4::operator *=(const Vector4& other) {
-    _v[0] *= other[0];
-    _v[1] *= other[1];
-    _v[2] *= other[2];
-    _v[3] *= other[3];
+    _v.v4 = _mm_mul_ps(_v.v4, other._v.v4);
     return *this;
 }
 
 Vector4& Vector4::operator /=(const float& factor) {
-    float inv = 1.0f / factor;
-    _v[0] *= inv;
-    _v[1] *= inv;
-    _v[2] *= inv;
-    _v[3] *= inv;
+    _v.v4 = _mm_div_ps(_v.v4, _mm_load1_ps(&factor));
     return *this;
 }
 
 Vector4& Vector4::operator *=(const float& factor) {
-    _v[0] *= factor;
-    _v[1] *= factor;
-    _v[2] *= factor;
-    _v[3] *= factor;
+    _v = _mm_mul_ps(_v.v4, _mm_load1_ps(&factor));
     return *this;
 }
 
@@ -99,11 +84,12 @@ Vector3 Vector4::ToVector3() const {
 }
 
 float Vector4::Dot(const Vector4& other) const {
-    return _v[0] * other[0] + _v[1] * other[1] + _v[2] * other[2] + _v[3] * other[3] ;
+    vec4 dot = _mm_mul_ps(_v.v4, other._v.v4);
+    return dot[0] + dot[1] + dot[2] + dot[3];
 }
 
 float Vector4::Length() const {
-    return std::sqrt(_v[0]*_v[0] + _v[1]*_v[1] + _v[2]*_v[2] + _v[3]*_v[3]);
+    return std::sqrt(Dot(*this));
 }
 
 Vector4 Vector4::Normalize() const {

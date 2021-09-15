@@ -9,7 +9,7 @@
 Matrix4::Matrix4() : _m{} {}
 
 Matrix4::Matrix4(const Matrix4& other) : _m{} {
-    std::memcpy(_m, other._m, MAT4_SIZE);
+    std::memcpy(&_m, &other._m, MAT4_SIZE);
 }
 
 Matrix4::Matrix4(const float* values) : _m{} { // values given in row major format
@@ -18,23 +18,23 @@ Matrix4::Matrix4(const float* values) : _m{} { // values given in row major form
 }
 
 Matrix4& Matrix4::operator =(const Matrix4& other) {
-    std::memcpy(_m, other[0], MAT4_SIZE); 
+    std::memcpy(&_m, other[0], MAT4_SIZE); 
     return *this;
 }
 
 bool Matrix4::operator ==(const Matrix4& other) const {
-    return std::memcmp(_m, other[0], MAT4_SIZE) == 0; // same values == 0
+    return std::memcmp(&_m, other[0], MAT4_SIZE) == 0; // same values == 0
 }
 
 Matrix4& Matrix4::operator +=(const Matrix4& other) {
-    for (uint32_t e = 0; e < MAT4_ELEMENTS; ++e)
-        _m[e] += other._m[e];
+    for (uint32_t e = 0; e < 4; ++e)
+        _m.m16[e] = _mm_add_ps(_m.m16[e], other._m.m16[e]);
     return *this;
 }
     
 Matrix4& Matrix4::operator -=(const Matrix4& other) {
-    for (uint32_t e = 0; e < MAT4_ELEMENTS; ++e)
-        _m[e] -= other._m[e];
+    for (uint32_t e = 0; e < 4; ++e)
+        _m.m16[e] = _mm_sub_ps(_m.m16[e], other._m.m16[e]);
     return *this;
 }
 
@@ -56,15 +56,16 @@ Matrix4& Matrix4::operator *=(const Matrix4& other) {
 }
 
 Matrix4& Matrix4::operator /=(const float& factor) {
-    float inv = 1.0f / factor;
-    for (uint32_t e = 0; e < MAT4_ELEMENTS; ++e)
-        _m[e] *= inv;
+    __m128 inv = _mm_set1_ps(1.0f / factor);
+    for (uint32_t e = 0; e < 4; ++e)
+        _m.m16[e] = _mm_mul_ps(_m.m16[e], inv);
     return *this;
 }
     
 Matrix4& Matrix4::operator *=(const float& factor) {
-    for (uint32_t e = 0; e < MAT4_ELEMENTS; ++e)
-        _m[e] *= factor;
+    __m128 f = _mm_set1_ps(factor);
+    for (uint32_t e = 0; e < 4; ++e)
+        _m.m16[e] = _mm_mul_ps(_m.m16[e], f);
     return *this;
 }
 
@@ -131,7 +132,7 @@ Matrix4 Matrix4::RotationMatrix(const Quaternion& q) {
     mat[2][2] = 1.0f - 2.0f * ( xx + yy );
 
     mat[3][3] = 1.0f;
-    
+
     return mat;
 }
 
@@ -141,6 +142,7 @@ Matrix4 Matrix4::ScaleMatrix(const float& s) {
     mat[1][1] = s;
     mat[2][2] = s;
     mat[3][3] = 1.0f;
+    return mat;
 }
 
 Matrix4 operator /(Matrix4 lhs, const float rhs) {

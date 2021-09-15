@@ -7,9 +7,27 @@
 
 #include <math/Vector3.h>
 
+#include <cstring>
+#include <xmmintrin.h>
+
 #define VEC4_SIZE 0x10 // 4 * sizeof(float) = 0x10 = 16 bytes
 
-typedef float vec4[4];
+typedef union vec4 {
+    float v[4];
+    struct { float x, y, z, w; };
+    __m128 v4;
+
+    inline vec4() { std::memset(this, 0, VEC4_SIZE); }
+    inline vec4(const vec4& other)   { std::memcpy(this, &other, VEC4_SIZE); }
+    inline vec4(const __m128& other) { std::memcpy(this, &other, VEC4_SIZE); }
+
+    inline vec4& operator =(const __m128& vector) { v4 = vector; return *this; };
+    inline vec4& operator =(const float* vector) { std::memcpy(v, vector, VEC4_SIZE); return *this; };
+
+    inline float& operator [](const uint32_t index) { return v[index]; }
+    inline const float& operator [](const uint32_t index) const { return v[index]; }
+} vec4;
+
 
 class Vector4 {
 public:

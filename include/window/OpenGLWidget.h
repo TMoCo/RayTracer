@@ -20,9 +20,6 @@ private:
     Transform transform;
     
     ArcBall arcBall;
-
-    int rotate = 0;
-
 public:
     OpenGLWidget(const Model& m, QWidget* parent);
 

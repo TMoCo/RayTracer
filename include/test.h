@@ -1,5 +1,10 @@
 #include <math/Matrix4.h>
 #include <math/Quaternion.h>
+#include <image/Image.h>
+
+#include <chrono>
+#include <iomanip>
+
 
 void TestMatrix() {
 
@@ -57,9 +62,40 @@ void TestQuaternion() {
     std::cout << "prod:\n" << p * q << '\n';
 }
 
+void TestImage() {
+    rgba_f32 a = {0.0F, 10.0f, 100.0f, 200.0f };
+    Vector4 v{a.channels}; // rgba to a vector
+    std::cout << v << std::endl;
+}
+
+void TestVec() {
+    Vector4 v4_0 = {};
+    Vector4 v4_1{1.0F, 1.0F, 1.0F, 1.0F};
+
+    Vector3 v3_0 = {};
+    Vector3 v3_1 = {1.0F, 1.0F, 1.0F};
+
+    uint32_t i;
+    auto s = std::chrono::high_resolution_clock().now();
+    for (i = 0; i < 1000000000; ++i)
+        v4_0 += v4_1;
+    auto t = std::chrono::high_resolution_clock().now();
+    std::cout << v4_0  << std::setprecision(10)  << " intrinsics:    " << std::chrono::duration<float>(t - s).count() << '\n';
+
+    s = std::chrono::high_resolution_clock().now();
+    for (i = 0; i < 1000000000; ++i)
+        v3_0 += v3_1;
+    t = std::chrono::high_resolution_clock().now();
+    std::cout << v3_0  << std::setprecision(10) << " not intrinsic: " << std::chrono::duration<float>(t - s).count() << '\n';
+}
+
 void Test(const char* test) {
     if (strcmp(test, "matrix") == 0)
         TestMatrix();
     if (strcmp(test, "quat") == 0)
         TestQuaternion();
+    if (strcmp(test, "image") == 0)
+        TestImage();
+    if (strcmp(test, "vec") == 0)
+        TestVec();
 }

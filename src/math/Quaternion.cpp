@@ -7,13 +7,15 @@
 #include <cmath>
 #include <cstring>
 
-Quaternion::Quaternion(const Vector3& v, float s) : _v{v}, _s{s} {}
+Quaternion::Quaternion(const Vector3& v, float s) : _q{&v[0]} {
+    _q._v.w = s;
+}
 
-Quaternion::Quaternion(float x, float y, float z, float w) : _v{x, y, z}, _s{w} {}
+Quaternion::Quaternion(float x, float y, float z, float w) : _q{x, y, z, w} {}
 
-Quaternion::Quaternion(const float* values) : _v{values}, _s{values[3]} {}
+Quaternion::Quaternion(const float* values) : _q{values} {}
 
-Quaternion::Quaternion(const Vector4& vector) : _v{&vector[0]}, _s{vector[3]} {}
+Quaternion::Quaternion(const Vector4& vector) : _q{vector} {}
 
 // assignment operator
 Quaternion& Quaternion::operator = (const Quaternion &other) {
@@ -26,37 +28,34 @@ bool Quaternion::operator ==(const Quaternion& other) const {
 }
 
 Quaternion& Quaternion::operator +=(const Quaternion& other) {
-    _v += other._v;
-    _s += other._s;
+    _q += other._q;
     return *this;
 }
 
 Quaternion& Quaternion::operator -=(const Quaternion& other) {
-    _v -= other._v;
-    _s -= other._s;
+    _q -= other._q;
     return *this;
 }
 
 Quaternion& Quaternion::operator /=(const Quaternion& other) {
-    _v /= other._v;
-    _s /= other._s;
+    _q *= other.Inverse()._q;
     return *this;
 }
 
 Quaternion& Quaternion::operator *=(const Quaternion& other) {
-    *this = Quaternion{
-        _s * other._v - other._s * _v + _v.Cross(other._v), // vector
-        _s * other._s + _v.Dot(other._v)}; // scalar
+    Vector3 v1{&_q[0]}, v2{&other._q[0]};
+    float s1 = _q[3], s2 = other._q[3];
+    *this = Quaternion{s1 * v2 - s2 * v1 + v1.Cross(v2), s1 * s2 + v1.Dot(v2)}; // must be a better way
     return *this;
 }
 
 Quaternion& Quaternion::operator /=(const float& factor) {
-    _v /= factor;
+    _q /= factor;
     return *this;
 }
 
 Quaternion& Quaternion::operator *=(const float& factor) {
-    _v *= factor;
+    _q *= factor;
     return *this;
 }
 
@@ -77,15 +76,15 @@ Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
 }
     
 Vector3 Quaternion::Axis() const {
-    return _v;
+    return &_q[0];
 }
 
 float Quaternion::Angle() const {
-    return _s;
+    return _q[3];
 }
 
 float Quaternion::Norm() const {
-    return std::sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2] + _s * _s);
+    return std::sqrt(_q.Dot(_q));
 }
 
 Quaternion Quaternion::Unit() const {
@@ -93,11 +92,13 @@ Quaternion Quaternion::Unit() const {
 }
 
 Quaternion Quaternion::Conjugate() const {
-    return {-_v, _s};
+    Quaternion p{_q * -1.0f};
+    p[3] = _q[3];
+    return p;
 }
 
 Quaternion Quaternion::Inverse() const {
-    return Conjugate() / (_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2] + _s * _s);
+    return Conjugate() / _q.Dot(_q);
 }
 
 Quaternion operator /(Quaternion lhs, const float rhs) {

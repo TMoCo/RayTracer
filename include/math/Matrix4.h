@@ -11,7 +11,20 @@
 #define MAT4_ELEMENTS 0x10 // 0x10 = 16 elements 
 #define MAT4_SIZE 0x40 // 4 * sizeof(vec4) = 0x40 = 64 bytes
 
-typedef float mat4[16];
+typedef union mat4 {
+    float m[16];
+    __m128 m16[4];
+
+    inline mat4() { std::memset(this, 0, 0x40); } // make sure initialised to 0
+    inline mat4(const mat4& other)   { std::memcpy(this, &other, 0x40); }
+    inline mat4(const __m128* other) { std::memcpy(this, other, 0x40); }
+
+    inline float& operator [](const uint32_t index) { return m[index]; }
+    inline const float& operator [](const uint32_t index) const { return m[index]; }
+
+} mat4;
+
+// typedef float mat4[16];
 
 class Matrix4 {
 private:

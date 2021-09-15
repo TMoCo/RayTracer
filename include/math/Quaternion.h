@@ -10,8 +10,7 @@
 
 class Quaternion {
 private:
-    Vector3 _v;
-    float _s;
+    Vector4 _q;
 
 public:
     Quaternion(const Vector3& vector = {}, float scalar = 1.0f);
