@@ -5,21 +5,25 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H 1
 
+#include <math/types.h>
+
 #include <iostream>
-#include <cstdint>
 
-#define VEC3_SIZE 0xc // 3 * sizeof(float) = 0xc = 12 bytes
-
-typedef float vec3[3];
+#define VEC3_SIZE 3 * sizeof(F32) // 0xc = 12 bytes
 
 class Vector3 {
 private:
-    vec3 _v;
+    union {
+        F32 _v[3];
+        struct {
+            F32 x, y, z;
+        };
+    };
 
 public:
     Vector3();
-    Vector3(float X, float Y, float Z);
-    Vector3(const float* values);
+    Vector3(F32 X, F32 Y, F32 Z);
+    Vector3(const F32* values);
     Vector3(const Vector3& other);
 
     // binary operators
@@ -29,8 +33,8 @@ public:
     Vector3& operator -=(const Vector3& other);
     Vector3& operator /=(const Vector3& other);
     Vector3& operator *=(const Vector3& other);
-    Vector3& operator /=(const float& other);
-    Vector3& operator *=(const float& factor);
+    Vector3& operator /=(const F32& other);
+    Vector3& operator *=(const F32& factor);
 
     friend inline Vector3 operator +(Vector3 lhs, const Vector3& rhs) {
         return lhs += rhs;
@@ -49,19 +53,19 @@ public:
     Vector3 operator -() const;
 
     // access operators
-    float& operator [](const uint32_t index);
-    const float& operator [](const uint32_t index) const;
+    F32& operator [](const UI32 index);
+    const F32& operator [](const UI32 index) const;
     
-    float Dot(const Vector3& other) const;
+    F32 Dot(const Vector3& other) const;
     Vector3 Cross(const Vector3& other) const;
-    float Length() const;
+    F32 Length() const;
     Vector3 Normalize() const;
 };
 
 // binary operators
-Vector3 operator /(Vector3 lhs, const float& rhs);
-Vector3 operator *(Vector3 lhs, const float& rhs);
-Vector3 operator *(const float& lhs, Vector3 rhs);
+Vector3 operator /(Vector3 lhs, const F32& rhs);
+Vector3 operator *(Vector3 lhs, const F32& rhs);
+Vector3 operator *(const F32& lhs, Vector3 rhs);
 
 // stream operators
 std::istream & operator >> (std::istream &inStream, Vector3 &value);

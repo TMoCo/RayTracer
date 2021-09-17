@@ -5,37 +5,27 @@
 #ifndef VECTOR4_H
 #define VECTOR4_H 1
 
+#include <math/types.h>
 #include <math/Vector3.h>
 
 #include <cstring>
 #include <xmmintrin.h>
 
-#define VEC4_SIZE 0x10 // 4 * sizeof(float) = 0x10 = 16 bytes
-
-typedef union vec4 {
-    float v[4];
-    struct { float x, y, z, w; };
-    __m128 v4;
-
-    inline vec4() { std::memset(this, 0, VEC4_SIZE); }
-    inline vec4(const vec4& other)   { std::memcpy(this, &other, VEC4_SIZE); }
-    inline vec4(const __m128& other) { std::memcpy(this, &other, VEC4_SIZE); }
-
-    inline vec4& operator =(const __m128& vector) { v4 = vector; return *this; };
-    inline vec4& operator =(const float* vector) { std::memcpy(v, vector, VEC4_SIZE); return *this; };
-
-    inline float& operator [](const uint32_t index) { return v[index]; }
-    inline const float& operator [](const uint32_t index) const { return v[index]; }
-} vec4;
-
+#define VEC4_SIZE 0x10 // 4 * sizeof(F32) = 0x10 = 16 bytes
 
 class Vector4 {
 public:
-    vec4 _v;
+    union {
+        F32 _v[4];
+        struct {
+            F32 x, y, z, w;
+        };
+        __m128 _v4;
+    };
 
     Vector4();
-    Vector4(float X, float Y, float Z, float W = 1.0f);
-    Vector4(const float* values);
+    Vector4(F32 X, F32 Y, F32 Z, F32 W = 1.0f);
+    Vector4(const F32* values);
     Vector4(const Vector4& other);
 
     Vector3 Point3D() const;
@@ -48,8 +38,8 @@ public:
     Vector4& operator -=(const Vector4& other);
     Vector4& operator /=(const Vector4& other);
     Vector4& operator *=(const Vector4& other);
-    Vector4& operator /=(const float& other);
-    Vector4& operator *=(const float& factor);
+    Vector4& operator /=(const F32& other);
+    Vector4& operator *=(const F32& factor);
 
     friend inline Vector4 operator +(Vector4 lhs, const Vector4& rhs) {
         return lhs += rhs;
@@ -67,22 +57,22 @@ public:
     Vector4& operator -();
 
     // access operators
-    float& operator [](const uint32_t index);
-    const float& operator [](const uint32_t index) const;
+    F32& operator [](const UI32 index);
+    const F32& operator [](const UI32 index) const;
 
-    const float* ValuePtr() const;
-    float* ValuePtr();
+    const F32* ValuePtr() const;
+    F32* ValuePtr();
 
-    float Dot(const Vector4& other) const;
-    float Length() const;
+    F32 Dot(const Vector4& other) const;
+    F32 Length() const;
     Vector4 Normalize() const;
-    float Sum() const;
+    F32 Sum() const;
 };
 
 // binary operators
-Vector4 operator /(Vector4 lhs, const float rhs);
-Vector4 operator *(Vector4 lhs, const float rhs);
-Vector4 operator *(const float lhs, Vector4& rhs);
+Vector4 operator /(Vector4 lhs, const F32 rhs);
+Vector4 operator *(Vector4 lhs, const F32 rhs);
+Vector4 operator *(const F32 lhs, Vector4& rhs);
 
 // stream operators
 std::istream & operator >> (std::istream &inStream, Vector4&value);

@@ -41,10 +41,11 @@ void OpenGLWidget::paintGL() {
     glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
     glLightfv(GL_LIGHT0, GL_SPECULAR, color);
 
-    // set model view matrix based on arcball rotation
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    // rotate by arcball rotation
     glMultMatrixf(transform.GetMatrix()[0]);
+    // rotate by another 90 degrees for cornell box to 
     glMultMatrixf(Matrix4::RotationMatrix(Quaternion::AngleAxis({0.0f, 1.0f, 0.0f}, RADIANS(90.0f)))[0]);
 
     model.Render();

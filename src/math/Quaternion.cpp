@@ -7,11 +7,13 @@
 #include <cmath>
 #include <cstring>
 
-Quaternion::Quaternion(const Vector3& v, float s) : _q{&v[0]} {
-    _q._v.w = s;
+Quaternion::Quaternion(const Quaternion& other) : _q{other._q} {}
+
+Quaternion::Quaternion(const Vector3& v, float s) : vector{}, scalar(s) {
+    std::memcpy(vector, &v[0], VEC3_SIZE);
 }
 
-Quaternion::Quaternion(float x, float y, float z, float w) : _q{x, y, z, w} {}
+Quaternion::Quaternion(float x, float y, float z, float w) : _q{x, y, z, w} {} // avoid
 
 Quaternion::Quaternion(const float* values) : _q{values} {}
 
@@ -64,11 +66,11 @@ Quaternion& Quaternion::operator -() {
 }
 
 float& Quaternion::operator [](const uint32_t index) {
-    return ((float*)this)[index]; // run some tests on this...
+    return _q[index];
 }
 
 const float& Quaternion::operator [](const uint32_t index) const {
-    return ((float*)this)[index];
+    return _q[index];
 }
 
 Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
@@ -76,11 +78,11 @@ Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
 }
 
 Vector3 Quaternion::Axis() const {
-    return &_q[0];
+    return vector;
 }
 
 float Quaternion::Angle() const {
-    return _q[3];
+    return scalar;
 }
 
 float Quaternion::Norm() const {
@@ -92,9 +94,7 @@ Quaternion Quaternion::Unit() const {
 }
 
 Quaternion Quaternion::Conjugate() const {
-    Quaternion p{_q * -1.0f};
-    p[3] = _q[3];
-    return p;
+    return {-Vector3{vector}, scalar};
 }
 
 Quaternion Quaternion::Inverse() const {

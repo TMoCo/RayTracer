@@ -5,43 +5,32 @@
 #ifndef MATRIX4_H
 #define MATRIX4_H 1
 
+#include <math/types.h>
 #include <math/Vector4.h>
 #include <math/Quaternion.h>
 
-#define MAT4_ELEMENTS 0x10 // 0x10 = 16 elements 
-#define MAT4_SIZE 0x40 // 4 * sizeof(vec4) = 0x40 = 64 bytes
-
-typedef union mat4 {
-    float m[16];
-    __m128 m16[4];
-
-    inline mat4() { std::memset(this, 0, MAT4_SIZE); } // make sure initialised to 0
-    inline mat4(const mat4& other)   { std::memcpy(this, &other, MAT4_SIZE); }
-    inline mat4(const __m128* other) { std::memcpy(this, other, MAT4_SIZE); }
-
-    inline float& operator [](const uint32_t index) { return m[index]; }
-    inline const float& operator [](const uint32_t index) const { return m[index]; }
-
-} mat4;
-
-// typedef float mat4[16];
+#define MAT4_SIZE 16 * sizeof(F32) // 0x40 = 256 bytes
 
 class Matrix4 {
 private:
-    mat4 _m; // store matrix in column major format
+    // store matrix in column major format
+    union {
+        F32 _m[16];
+        __m128 _m16[4];
+    };
 
 public:
     Matrix4();
     Matrix4(const Matrix4& other);
-    Matrix4(const float* values);
+    Matrix4(const F32* values);
 
     Matrix4& operator =(const Matrix4& other);
     bool operator ==(const Matrix4& other) const;
     Matrix4& operator +=(const Matrix4& other);
     Matrix4& operator -=(const Matrix4& other);
     Matrix4& operator *=(const Matrix4& other);
-    Matrix4& operator /=(const float& other);
-    Matrix4& operator *=(const float& factor);
+    Matrix4& operator /=(const F32& other);
+    Matrix4& operator *=(const F32& factor);
 
     friend inline Matrix4 operator *(Matrix4 lhs, const Matrix4& rhs) {
         return lhs *= rhs;
@@ -54,22 +43,22 @@ public:
     }
 
     // access operators
-    float* operator [](const uint32_t index);
-    const float* operator [](const uint32_t index) const;
+    F32* operator [](const UI32 index);
+    const F32* operator [](const UI32 index) const;
 
     // static matrix builders
     static Matrix4 Identity();
     static Matrix4 Transpose(const Matrix4& mat);
     static Matrix4 TranslationMatrix(const Vector3& v);
     static Matrix4 RotationMatrix(const Quaternion& q);
-    static Matrix4 ScaleMatrix(const float& s);
-    static Matrix4 Perspective(float FOV, float aspectRatio, float near, float far);
+    static Matrix4 ScaleMatrix(const F32& s);
+    static Matrix4 Perspective(F32 FOV, F32 aspectRatio, F32 near, F32 far);
 };
 
 // binary operators
-Matrix4 operator *(Matrix4 lhs, const float rhs);
-Matrix4 operator *(const float lhs, Matrix4& rhs);
-Matrix4 operator /(Matrix4 lhs, const float rhs);
+Matrix4 operator *(Matrix4 lhs, const F32 rhs);
+Matrix4 operator *(const F32 lhs, Matrix4& rhs);
+Matrix4 operator /(Matrix4 lhs, const F32 rhs);
 
 // stream i/o
 std::istream & operator >> (std::istream &outStream, Matrix4 &matrix);

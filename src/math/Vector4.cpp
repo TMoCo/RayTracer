@@ -12,10 +12,10 @@ Vector4::Vector4() : _v{} {
 }
 
 Vector4::Vector4(float x, float y, float z, float w) : _v{} {
-    _v.x = x;
-    _v.y = y;
-    _v.z = z;
-    _v.w = w;
+    _v[0] = x;
+    _v[1] = y;
+    _v[2] = z;
+    _v[3] = w;
 }
 
 Vector4::Vector4(const float* v) : _v{} {
@@ -35,32 +35,32 @@ bool Vector4::operator ==(const Vector4& other) const {
 }
 
 Vector4& Vector4::operator +=(const Vector4& other) {
-    _v.v4 = _mm_add_ps(_v.v4, other._v.v4);
+    _v4 = _mm_add_ps(_v4, other._v4);
     return *this;    
 }
 
 Vector4& Vector4::operator -=(const Vector4& other) {
-    _v.v4 = _mm_sub_ps(_v.v4, other._v.v4);
+    _v4 = _mm_sub_ps(_v4, other._v4);
     return *this;
 }
 
 Vector4& Vector4::operator /=(const Vector4& other) {
-    _v.v4 = _mm_div_ps(_v.v4, other._v.v4);
+    _v4 = _mm_div_ps(_v4, other._v4);
     return *this;
 }
 
 Vector4& Vector4::operator *=(const Vector4& other) {
-    _v.v4 = _mm_mul_ps(_v.v4, other._v.v4);
+    _v4 = _mm_mul_ps(_v4, other._v4);
     return *this;
 }
 
 Vector4& Vector4::operator /=(const float& factor) {
-    _v.v4 = _mm_div_ps(_v.v4, _mm_load1_ps(&factor));
+    _v4 = _mm_div_ps(_v4, _mm_load1_ps(&factor));
     return *this;
 }
 
 Vector4& Vector4::operator *=(const float& factor) {
-    _v = _mm_mul_ps(_v.v4, _mm_load1_ps(&factor));
+    _v4 = _mm_mul_ps(_v4, _mm_load1_ps(&factor));
     return *this;
 }
 
@@ -86,7 +86,7 @@ Vector3 Vector4::ToVector3() const {
 }
 
 float Vector4::Dot(const Vector4& other) const {
-    vec4 dot = _mm_mul_ps(_v.v4, other._v.v4);
+    __m128 dot = _mm_mul_ps(_v4, other._v4);
     return dot[0] + dot[1] + dot[2] + dot[3];
 }
 

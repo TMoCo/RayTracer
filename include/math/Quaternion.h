@@ -7,6 +7,7 @@
 
 #include <math/Vector3.h>
 #include <math/Vector4.h>
+#include <math/types.h>
 
 #include <cmath>
 
@@ -15,12 +16,19 @@
 
 class Quaternion {
 private:
-    Vector4 _q;
+    union {
+        Vector4 _q;
+        struct {
+            F32 vector[3];
+            F32 scalar;
+        };
+    };
 
 public:
-    Quaternion(const Vector3& vector = {}, float scalar = 1.0f);
-    Quaternion(float x, float y, float z, float w);
-    Quaternion(const float* values);
+    Quaternion(const Quaternion& other);
+    Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f);
+    Quaternion(F32 x, F32 y, F32 z, F32 w);
+    Quaternion(const F32* values);
     Quaternion(const Vector4& vector);
 
     // binary operators
@@ -30,8 +38,8 @@ public:
     Quaternion& operator -=(const Quaternion& other);
     Quaternion& operator /=(const Quaternion& other);
     Quaternion& operator *=(const Quaternion& other);
-    Quaternion& operator /=(const float& other);
-    Quaternion& operator *=(const float& factor);
+    Quaternion& operator /=(const F32& other);
+    Quaternion& operator *=(const F32& factor);
 
     friend inline Quaternion operator +(Quaternion lhs, const Quaternion& rhs) {
         return lhs += rhs;
@@ -50,26 +58,26 @@ public:
     Quaternion& operator -();
 
     // access operators
-    float& operator [](const uint32_t index);
-    const float& operator [](const uint32_t index) const;
+    F32& operator [](const UI32 index);
+    const F32& operator [](const UI32 index) const;
 
     // relative to a given quaternion
     Vector3 Axis() const;
-    float Angle() const;
+    F32 Angle() const;
 
-    float Norm() const;
+    F32 Norm() const;
     Quaternion Unit() const;
     Quaternion Conjugate() const;
     Quaternion Inverse() const;
 
     // quaternion builder
-    static Quaternion AngleAxis(const Vector3& axis, float angle);
+    static Quaternion AngleAxis(const Vector3& axis, F32 angle);
 };
 
 // binary operators
-Quaternion operator /(Quaternion lhs, const float rhs);
-Quaternion operator *(Quaternion lhs, const float rhs);
-Quaternion operator *(const float lhs, Quaternion& rhs);
+Quaternion operator /(Quaternion lhs, const F32 rhs);
+Quaternion operator *(Quaternion lhs, const F32 rhs);
+Quaternion operator *(const F32 lhs, Quaternion& rhs);
 
 // stream operators
 std::istream & operator >> (std::istream &inStream, Quaternion&value);
