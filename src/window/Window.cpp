@@ -8,13 +8,13 @@ Window::Window(const Model& model, const char* name) : QWidget(nullptr),
     layout(nullptr), renderWidgets(nullptr), switchButton(nullptr) {
     setWindowTitle(QString(name));
 
-    layout = new QVBoxLayout(this);
+    layout = new QGridLayout(this);
 
     renderWidgets = new RenderWidgets(model, this);
     switchButton = new QPushButton("Switch Render", this);
 
-    layout->addWidget(renderWidgets);
-    layout->addWidget(switchButton);
+    layout->addWidget(renderWidgets, 0, 0);
+    layout->addWidget(switchButton, 1, 0, 1, 2);
 
     QObject::connect(switchButton, SIGNAL(clicked()), renderWidgets, SLOT(SwitchWidget()));
 }

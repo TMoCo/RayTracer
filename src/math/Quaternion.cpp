@@ -45,7 +45,7 @@ Quaternion& Quaternion::operator /=(const Quaternion& other) {
 Quaternion& Quaternion::operator *=(const Quaternion& other) {
     Vector3 v1{&_q[0]}, v2{&other._q[0]};
     float s1 = _q[3], s2 = other._q[3];
-    *this = Quaternion{s1 * v2 - s2 * v1 + v1.Cross(v2), s1 * s2 + v1.Dot(v2)}; // must be a better way
+    *this = Quaternion{s1 * v2 + s2 * v1 + v1.Cross(v2), s1 * s2 - v1.Dot(v2)}; // must be a better way
     return *this;
 }
 
@@ -72,9 +72,9 @@ const float& Quaternion::operator [](const uint32_t index) const {
 }
 
 Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
-    return Quaternion(axis.Normalize() * std::sin(angle), std::cos(angle)); 
+    return Quaternion(axis.Normalize() * std::sin(angle * 0.5f), std::cos(angle * 0.5f)); 
 }
-    
+
 Vector3 Quaternion::Axis() const {
     return &_q[0];
 }

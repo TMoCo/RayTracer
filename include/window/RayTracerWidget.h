@@ -2,25 +2,28 @@
 // Raytacer widget class declaration
 //
 
-#ifndef RAYTRACER_H
-#define RAYTRACER_H 1
+#ifndef RAYTRACER_WIDGET_H
+#define RAYTRACER_WIDGET_H 1
 
+#include <image/Image.h>
 #include <model/Model.h>
 
 #include <QOpenGLWidget>
 
 class RayTracer{}; // place holder class
 
-class RaytacerWidget : public QOpenGLWidget {
+class RayTracerWidget : public QOpenGLWidget {
 Q_OBJECT
 private:
     RayTracer raytracer;
 
     const Model& model;
 
-public:
-    RaytacerWidget(QWidget* parent);
+    Image<rgba_s> frameBuffer;
 
+public:
+    RayTracerWidget(const Model& model, QWidget* parent);
+    
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
@@ -29,4 +32,4 @@ public slots:
     void RayTrace();
 };
 
-#endif
+#endif // ! RAYTRACER_WIDGET_H

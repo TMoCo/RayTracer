@@ -26,29 +26,34 @@ struct Primitive {
     uint32_t _ver;
     uint32_t _tex;
     uint32_t _nor;
-    // uint32_t tan
 
     Primitive() : _ver(0), _tex(0), _nor(0) {}
     Primitive(uint32_t ver, uint32_t tex, uint32_t nor) : 
         _ver(ver), _tex(tex), _nor(nor) {}
 
-    virtual Vector3 Intersect(const Vector3& v, float t) { v * t; return {}; } // keep compiler happy
+    virtual void DrawPrimitive() = 0; // never called
 };
 
 // quad
 struct Quad : public Primitive {
     Quad () : Primitive() {}
-    Quad (uint32_t ver, uint32_t tex, uint32_t nor) : Primitive{ver, tex, nor} {}
+    Quad (uint32_t ver, uint32_t tex, uint32_t nor) : 
+        Primitive{ver, tex, nor} {}
 
-    Vector3 Intersect(const Vector3& v, float t) { v * t; return {}; }
+    void DrawPrimitive() override {
+
+    }
 };
 
 // triangle
 struct Tri : public Primitive {
     Tri () : Primitive() {}
-    Tri (uint32_t ver, uint32_t tex, uint32_t nor) : Primitive{ver, tex, nor} {}
+    Tri (uint32_t ver, uint32_t tex, uint32_t nor) : 
+        Primitive{ver, tex, nor} {}
+    
+    void DrawPrimitive() override {
 
-    Vector3 Intersect(const Vector3& v, float t) { v * t; return {}; }
+    }
 };
 
 #endif

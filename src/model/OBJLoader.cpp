@@ -40,7 +40,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     char* token;
 
     // model data
-    std::vector<Object>::iterator obj;
+    std::vector<Mesh>::iterator mesh;
 
     // while there are lines available
     while (fgets(buffer, MAX_LINE, pFile) != NULL) {
@@ -49,19 +49,19 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         case 'v':
             switch(buffer[1]) {
             case ' ':
-                model.vertices.push_back({
+                mesh->positions.push_back({
                     std::strtof(&buffer[2], &token), 
                     std::strtof(token, &token),
                     std::strtof(token, NULL)});
                 break;
             case 'n':
-                model.normals.push_back({
+                mesh->normals.push_back({
                     std::strtof(&buffer[3], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)});
                 break;
             case 't':
-                model.texCoords.push_back({
+                mesh->UVs.push_back({
                     std::strtof(&buffer[3], &token), 
                     std::strtof(token, NULL)});
                 break;
@@ -69,95 +69,76 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             break;
         // face data
         case 'f': {
-            // count occurences of whitespace
-            uint32_t size = 0;
-            char* faceData[4]; // max 4 accepted for quad
+            // get vertices in face
+            char* vertices[4];
+            uint32_t vertCount = 0;
 
-            token = std::strtok(&buffer[2], " ");
-            // tokenise the faces string
-            while ((token != NULL) && (size < 4)) {
-                faceData[size] = token;
-                ++size;
-                token = std::strtok(NULL, " \n");
-            }
-
-            switch ((kPrimitives)size)
+            // tokenise vertex by ' '
+            char* token = std::strtok(&buffer[2], " \n");
+            while (token != NULL)
             {
-            case kPrimitives::TRIANGLE: {
-                uint32_t offset = (uint32_t)model.faces.size(); // offset into indices vector
+                if (vertCount == 4) {
+                    std::cout << "Can't load 5+ sided polygons!\n";
+                    break;
+                }
+                vertices[vertCount++] = token;
+                token = strtok(NULL, " \n");
+            }
+            std::cout << "num verts: " <<vertCount << "\n";
 
-                obj->triangles.push_back(Tri{offset, offset + 3, offset + 6});
+            // get offset into faces
+            uint32_t offset = mesh->faces.size();
+            mesh->faces.resize(offset + (vertCount == 4 ? 18 : 9));
 
-                uint32_t primitiveData = model.faces.size();
-                model.faces.resize(primitiveData + TRI_SIZE); // resize indices for new tri
-                
-                for (uint32_t f = 0; f < size; ++f) {
-                    token = std::strtok(faceData[size], "/");
-                    while (token != NULL) {
-                        model.faces[primitiveData] = 
+            // process vertex data
+            uint32_t i;
+            for (uint32_t v = 0; v < vertCount; ++v) {
+                token = strtok(vertices[v], "/");
+                for (i = 0; token != NULL; i++) {
+                    mesh->faces[offset + (v * 3) + i] = 
                             std::strlen(token) == 0 
                                 ? 0 
-                                : (uint32_t)std::strtol(token, NULL, 10);
-                        ++primitiveData;
-                        token = std::strtok(NULL, "/");
-                    }
+                                : (uint32_t)std::strtol(token, NULL, 10) - 1;
+                    token = std::strtok(NULL, "/");
                 }
-                // append primitive
-                obj->primitives.push_back(&(*(obj->triangles.rbegin())));
-                break;
+                if (i % 3)
+                    std::cout << "Error processing face\n";
             }
-            case kPrimitives::QUAD: {
-                uint32_t offset, j;
-                offset = j = (uint32_t)model.faces.size(); // offset into indices vector
 
-                obj->quads.push_back( Quad{offset, offset + 4, offset + 8});
-
-                model.faces.resize(offset + QUAD_SIZE); // accomodate new primitive
-
-                // tokenise the face strings into int
-                std::cout << "\ntokenise face\n";
-                for (uint32_t k = 0; k < 4; ++k) {
-                    std::cout << "\nnew face vertex:\n\n";
-                    token = std::strtok(faceData[offset & 3], "/"); // modulus offset by 4 for quad
-                    for (uint32_t i = 0; token != NULL; i+=4) {
-                        std::cout << "token: " << token << '\n';
-                        model.faces[offset+i] = std::strlen(token) == 0 
-                            ? 0 
-                            : (uint32_t)std::strtol(token, NULL, 10) - 1; // obj are 1 indexed
-                        std::cout << "offset: " << offset + i << '\n';
-                        std::cout << "face index: " << model.faces[offset+i] << '\n';
-                        token = strtok(NULL, "/");
-                    }
-                    ++offset;
-                }
-                std::cout << "face indices\n\n";
-                for (uint32_t i = 0; i < QUAD_SIZE; i++) {
-                    std::cout << model.faces[j+i] << ' ';
-                }
-                std::cout << "\nfrom quad:\n";
-                for (uint32_t i = 0; i < 4; i++) {
-                    std::cout << model.faces[(obj->quads.end() - 1)->_ver + i] + 1 << '/';
-                    std::cout << model.faces[(obj->quads.end() - 1)->_tex + i] + 1 << '/';
-                    std::cout << model.faces[(obj->quads.end() - 1)->_nor + i] + 1 << ' ';
-                }
-                std::cout << std::endl;
-                // pad zeros if indices missing?
-
-                // append primitive pointer
-                obj->primitives.push_back( &(*(obj->quads.rbegin())) );
-                break;
+            auto it = mesh->faces.begin() + offset;
+            while (it != mesh->faces.end()) {
+                std::cout << *it << ' ';
+                it++;
             }
-            default: // unrecognised face
-                break;
+            std::cout << std::endl;
+
+            // append 2 more vertex indices to complete the quad
+            if (vertCount == 4) {
+                // v0
+                mesh->faces[offset + 12] = mesh->faces[offset];
+                mesh->faces[offset + 13] = mesh->faces[offset + 1];
+                mesh->faces[offset + 14] = mesh->faces[offset + 2];
+                // v2
+                mesh->faces[offset + 15] = mesh->faces[offset + 6];
+                mesh->faces[offset + 16] = mesh->faces[offset + 7];
+                mesh->faces[offset + 17] = mesh->faces[offset + 8];
             }
-        }
+
+            it = mesh->faces.begin() + offset;
+            while (it != mesh->faces.end()) {
+                std::cout << *it << ' ';
+                it++;
+            }
+            std::cout << std::endl;
+
             break;
+        }
         // object
         case 'o':
             // create a new object in the model
-            model.objects.push_back({});
-            obj = model.objects.end() - 1;
-            std::strcpy(obj->name, &buffer[2]);
+            model.meshes.push_back({});
+            mesh = model.meshes.end() - 1;
+            std::strcpy(mesh->meshName, &buffer[2]);
             break;
         // comments
         case '#':
@@ -171,7 +152,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             if (std::strcmp(token, "usemtl") == 0) {
                 token = std::strtok(NULL, " \n");
                 // set the object's material
-                std::strncpy(obj->material, token, MAX_NAME_LENGTH);
+                std::strncpy(mesh->material, token, MAX_NAME_LENGTH);
                 break;
             }
 
@@ -188,43 +169,24 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         }
     }
 
-    std::cout << "print face indices\n" << model.objects.size() << '\n';
-    for (auto& f :  model.faces) {
-        std::cout << f << ' ';
-    }
-
-    auto q = model.objects[0].quads.begin();
-    std::cout << "\n\nprint obj\n";
-    do {
-        for (uint32_t i = 0; i < 4; i++) {
-            std::cout << model.faces[q->_ver + i] + 1 << '/';
-            std::cout << model.faces[q->_tex + i] + 1 << '/';
-            std::cout << model.faces[q->_nor + i] + 1 << ' ';
-        }
-    }
-    while (++q != model.objects[0].quads.end());
-
-    for (uint32_t v = 0; v < model.vertices.size(); ++v) 
-        std::cout << model.vertices[v] << '\n';
-    for (uint32_t f = 0; f < model.faces.size(); ++f) 
-        std::cout << model.faces[f] << '\n';
-
-    // using quads
-    for (Object& object : model.objects) {
-        q = object.quads.begin();
-        std::cout << "\n\nprint object " << object.name << " quads\n";
-        std::cout << model.vertices.size() << "\n\n";
-
-        do {
-            for (uint32_t i = 0; i < 4; i++) {
-                std::cout << model.vertices[model.faces[q->_ver + i]] << ' ';
-                std::cout << model.texCoords[model.faces[q->_tex + i]].x << ' ';
-                std::cout << model.texCoords[model.faces[q->_tex + i]].y << ' ';
-                std::cout << model.normals[model.faces[q->_nor + i]] << '\n';
+    // update face indices for separate objects
+    if (model.meshes.size() > 1) {
+        mesh = model.meshes.begin();
+        uint32_t pOffset = mesh->positions.size();
+        uint32_t tOffset = mesh->UVs.size();
+        uint32_t nOffset = mesh->normals.size();
+        do
+        {
+            mesh++;
+            for (uint32_t f = 0; f < mesh->faces.size(); f+= 3) {
+                mesh->faces[f    ] -= pOffset;
+                mesh->faces[f + 1] -= tOffset;
+                mesh->faces[f + 2] -= nOffset;
             }
-            std::cout << "\n\n";
-        }
-        while (++q != object.quads.end());
+            pOffset += mesh->positions.size();
+            tOffset += mesh->UVs.size();
+            nOffset += mesh->normals.size();
+        } while (mesh != model.meshes.end());
     }
 
     std::fclose(pFile);
@@ -306,6 +268,7 @@ bool OBJLoader::LoadMtl(const char* path, Model& model) {
             break;
         }
     }
+
     std::fclose(pFile);
     return true;
 }

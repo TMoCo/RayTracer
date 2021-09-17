@@ -42,14 +42,5 @@ int main(int argc, char *argv[])
     window.resize(800, 600);
     window.show();
 
-    /*
-    for (auto& obj : model.objects) {
-        std::cout << "verts: " << obj.vertices.size() << '\n';
-        std::cout << "normals: " << obj.normals.size() << '\n';
-        std::cout << "texcoords: " <<  obj.texCoords.size() << '\n';
-        std::cout << "face indices: " << obj.faces.size() << '\n';
-    }
-    */
-
    return app.exec();
 }

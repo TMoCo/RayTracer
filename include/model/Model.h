@@ -19,42 +19,36 @@
 
 #define MAX_NAME_LENGTH 128
 
-struct Object {
+class Mesh {
 public:
-    // primitives
-    std::vector<Tri> triangles;
-    std::vector<Quad> quads;
-    std::vector<Primitive*> primitives;
+    // vertex data (non interleaved)
+    std::vector<Vector3> positions;
+    std::vector<Vector3> normals;
+    std::vector<Vector2> UVs;
 
-    // material name
+    // indices
+    std::vector<uint32_t> faces;
+
+    // mesh data
+    char meshName[MAX_NAME_LENGTH];
     char material[MAX_NAME_LENGTH];
 
-    // object name
-    char name[MAX_NAME_LENGTH];
+    Mesh();
 
-    Object();
+    void DrawMesh() const;
 };
 
 class Model {
 public:
-    // vertex data
-    std::vector<Vector3> vertices;
-    std::vector<Vector3> normals;
-    std::vector<Vector2> texCoords;
+    // Meshes
+    std::vector<Mesh> meshes;
 
-    // face indices into vertex data
-    std::vector<uint32_t> faces;
-
-    // objects
-    std::vector<Object> objects;
+    // materials
     MaterialMap materials;
     
     Model();
 
-    void Render() const;
-
-    void DrawQuads(const Object& object) const;
-    void DrawTris(const Object& object) const;
+    void Render() const; // loop over meshes and draw
     void UseMaterial(const char* material) const;
 };
 

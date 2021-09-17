@@ -5,6 +5,7 @@
 #include <math/Matrix4.h>
 
 #include <cstring>
+#include <cmath>
 
 Matrix4::Matrix4() : _m{} {}
 
@@ -27,14 +28,18 @@ bool Matrix4::operator ==(const Matrix4& other) const {
 }
 
 Matrix4& Matrix4::operator +=(const Matrix4& other) {
-    for (uint32_t e = 0; e < 4; ++e)
-        _m.m16[e] = _mm_add_ps(_m.m16[e], other._m.m16[e]);
+    _m.m16[0] = _mm_add_ps(_m.m16[0], other._m.m16[0]);
+    _m.m16[1] = _mm_add_ps(_m.m16[1], other._m.m16[1]);
+    _m.m16[2] = _mm_add_ps(_m.m16[2], other._m.m16[2]);
+    _m.m16[3] = _mm_add_ps(_m.m16[3], other._m.m16[3]);
     return *this;
 }
     
 Matrix4& Matrix4::operator -=(const Matrix4& other) {
-    for (uint32_t e = 0; e < 4; ++e)
-        _m.m16[e] = _mm_sub_ps(_m.m16[e], other._m.m16[e]);
+    _m.m16[0] = _mm_sub_ps(_m.m16[0], other._m.m16[0]);
+    _m.m16[1] = _mm_sub_ps(_m.m16[1], other._m.m16[1]);
+    _m.m16[2] = _mm_sub_ps(_m.m16[2], other._m.m16[2]);
+    _m.m16[3] = _mm_sub_ps(_m.m16[3], other._m.m16[3]);
     return *this;
 }
 
@@ -57,15 +62,19 @@ Matrix4& Matrix4::operator *=(const Matrix4& other) {
 
 Matrix4& Matrix4::operator /=(const float& factor) {
     __m128 inv = _mm_set1_ps(1.0f / factor);
-    for (uint32_t e = 0; e < 4; ++e)
-        _m.m16[e] = _mm_mul_ps(_m.m16[e], inv);
+    _m.m16[0] = _mm_mul_ps(_m.m16[0], inv);
+    _m.m16[1] = _mm_mul_ps(_m.m16[1], inv);
+    _m.m16[2] = _mm_mul_ps(_m.m16[2], inv);
+    _m.m16[3] = _mm_mul_ps(_m.m16[3], inv);
     return *this;
 }
     
 Matrix4& Matrix4::operator *=(const float& factor) {
     __m128 f = _mm_set1_ps(factor);
-    for (uint32_t e = 0; e < 4; ++e)
-        _m.m16[e] = _mm_mul_ps(_m.m16[e], f);
+    _m.m16[0] = _mm_mul_ps(_m.m16[0], f);
+    _m.m16[1] = _mm_mul_ps(_m.m16[1], f);
+    _m.m16[2] = _mm_mul_ps(_m.m16[2], f);
+    _m.m16[3] = _mm_mul_ps(_m.m16[3], f);
     return *this;
 }
 
@@ -87,14 +96,34 @@ Matrix4 Matrix4::Identity() {
 }
 
 Matrix4 Matrix4::Transpose(const Matrix4& mat) {
+    // matrix:
+    // c0: a   b   c   d
+    // c1: e   f   g   h   
+    // c2: i   j   k   l
+    // c3: m   n   o   p
+
+    // intermediate shuffle
+    __m128 c0c1 = _mm_shuffle_ps(mat._m.m16[0], mat._m.m16[1], _MM_SHUFFLE(1, 0, 1, 0));
+    __m128 c2c3 = _mm_shuffle_ps(mat._m.m16[2], mat._m.m16[3], _MM_SHUFFLE(1, 0, 1, 0));
+    __m128 c1c0 = _mm_shuffle_ps(mat._m.m16[1], mat._m.m16[0], _MM_SHUFFLE(2, 3, 2, 3));
+    __m128 c3c2 = _mm_shuffle_ps(mat._m.m16[3], mat._m.m16[2], _MM_SHUFFLE(2, 3, 2, 3));
+    // matrix:
+    // c0c1: a   b   e   f
+    // c2c3: i   j   m   n   
+    // c1c0: c   d   g   h
+    // c3c2: k   l   o   p
+
     Matrix4 t;
-    for (uint32_t e = 0; e < 4; ++e) {
-        // fast           slower
-        t._m[e * 4]     = mat._m[e];
-        t._m[e * 4 + 1] = mat._m[e + 4];
-        t._m[e * 4 + 2] = mat._m[e + 8];
-        t._m[e * 4 + 3] = mat._m[e + 12];
-    }
+    // final shuffle
+    t._m.m16[0] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(2, 0, 2, 0));
+    t._m.m16[1] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(3, 1, 3, 1));
+    t._m.m16[2] = _mm_shuffle_ps(c1c0, c3c2, _MM_SHUFFLE(2, 0, 2, 0));
+    t._m.m16[3] = _mm_shuffle_ps(c1c0, c3c2, _MM_SHUFFLE(3, 1, 3, 1));
+    // matrix:
+    // t0: a   e   i   m
+    // t1: b   f   j   n   
+    // t2: c   g   k   o
+    // t3: d   h   l   p
     return t;
 }
 
@@ -105,7 +134,7 @@ Matrix4 Matrix4::TranslationMatrix(const Vector3& v) {
 }
 
 Matrix4 Matrix4::RotationMatrix(const Quaternion& q) {
-    Matrix4 mat = Matrix4::Identity();
+    Matrix4 mat{};
 
     float xx = q[0] * q[0];
     float xy = q[0] * q[1];
@@ -132,7 +161,6 @@ Matrix4 Matrix4::RotationMatrix(const Quaternion& q) {
     mat[2][2] = 1.0f - 2.0f * ( xx + yy );
 
     mat[3][3] = 1.0f;
-
     return mat;
 }
 
@@ -142,6 +170,17 @@ Matrix4 Matrix4::ScaleMatrix(const float& s) {
     mat[1][1] = s;
     mat[2][2] = s;
     mat[3][3] = 1.0f;
+    return mat;
+}
+
+Matrix4 Matrix4::Perspective(float fov, float aspectRatio, float near, float far) {
+    float tanHalfFov = std::tan(fov * 0.5f);
+    Matrix4 mat{};
+    mat[0][0] = 1.0f / (aspectRatio * tanHalfFov);
+    mat[1][1] = 1.0f / tanHalfFov;
+    mat[2][2] = -far / (far - near);
+    mat[2][3] = -1.0f;
+    mat[3][2] = -(far * near) /  (far - near);
     return mat;
 }
 
@@ -158,7 +197,7 @@ Matrix4 operator *(const float lhs, Matrix4& rhs) {
 }
 
 std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
-    // converts to Vector4 (slow)
+    // converts to Vector4 (s²low)
     return inStream >> *((Vector4*)matrix[0]) >> *((Vector4*)matrix[1]) >> 
     *((Vector4*)matrix[2]) >> *((Vector4*)matrix[3]);
 }

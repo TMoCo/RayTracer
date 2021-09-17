@@ -7,7 +7,9 @@
 #include <cmath>
 #include <iomanip>
 
-Vector4::Vector4() : _v{} {}
+Vector4::Vector4() : _v{} {
+    std::memset(&_v, 0, VEC4_SIZE);
+}
 
 Vector4::Vector4(float x, float y, float z, float w) : _v{} {
     _v.x = x;

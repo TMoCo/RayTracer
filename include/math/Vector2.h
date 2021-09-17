@@ -7,13 +7,20 @@
 
 #include <cstdint>
 
+#define VEC2_SIZE 0x8
+
 class Vector2 {
 public:
-    float x, y;
+    union { 
+        float _v[2]; 
+        struct {
+            float x, y;
+        };
+     };
 
     Vector2() {}
-    Vector2(float X, float Y) : x(X), y(Y) {}
-    Vector2(const Vector2& other) : x(other.x), y(other.y) {}
+    Vector2(float X, float Y);
+    Vector2(const Vector2& other);
 
     Vector2& operator =(const Vector2& other);
 

@@ -25,7 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS +=  include/model/Model.h \
+HEADERS +=  include/image/Image.h \
+            include/model/Model.h \
             include/model/OBJLoader.h \
             include/model/Primitives.h \
             include/math/Vector2.h \
@@ -37,7 +38,9 @@ HEADERS +=  include/model/Model.h \
             include/window/ArcBall.h \
             include/window/OpenGLWidget.h \
             include/window/RenderWidgets.h \
+            include/window/RayTracerWidget.h \
             include/window/Window.h \
+            include/raytracer/RayTracer.h \
             include/test.h
 
 SOURCES +=  src/main.cpp \
@@ -53,4 +56,6 @@ SOURCES +=  src/main.cpp \
             src/window/ArcBall.cpp \
             src/window/OpenGLWidget.cpp \
             src/window/RenderWidgets.cpp \
+            src/window/RayTracerWidget.cpp \
+            # src/raytracer/RayTracer.cpp \
             src/window/Window.cpp

@@ -12,7 +12,7 @@ Matrix4 Transform::GetMatrix() const {
 }
 
 void Transform::Rotate(const Quaternion& r) {
-    orientation = orientation * r; // bad
+    orientation *= r;
 }
 
 void Transform::Translate(const Vector3& v) {

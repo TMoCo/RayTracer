@@ -17,7 +17,6 @@ void TestMatrix() {
     Matrix4 m {values};
     Matrix4 n = m;
 
-
     if (n == m) {
         std::cout << "equal\n";
     }
@@ -63,25 +62,22 @@ void TestQuaternion() {
 }
 
 void TestImage() {
-    rgba_f32 a = {0.0F, 10.0f, 100.0f, 200.0f };
+    rgba_s a = {0.0F, 10.0f, 100.0f, 200.0f };
     Vector4 v{a.channels}; // rgba to a vector
-    std::cout << v << std::endl;
+    std::cout << v << '\n' << sizeof(a) << std::endl;
 }
 
 void TestVec() {
     Vector4 v4_0 = {};
     Vector4 v4_1{1.0F, 1.0F, 1.0F, 1.0F};
-
     Vector3 v3_0 = {};
     Vector3 v3_1 = {1.0F, 1.0F, 1.0F};
-
     uint32_t i;
     auto s = std::chrono::high_resolution_clock().now();
     for (i = 0; i < 1000000000; ++i)
         v4_0 += v4_1;
     auto t = std::chrono::high_resolution_clock().now();
     std::cout << v4_0  << std::setprecision(10)  << " intrinsics:    " << std::chrono::duration<float>(t - s).count() << '\n';
-
     s = std::chrono::high_resolution_clock().now();
     for (i = 0; i < 1000000000; ++i)
         v3_0 += v3_1;

@@ -15,9 +15,9 @@ typedef union mat4 {
     float m[16];
     __m128 m16[4];
 
-    inline mat4() { std::memset(this, 0, 0x40); } // make sure initialised to 0
-    inline mat4(const mat4& other)   { std::memcpy(this, &other, 0x40); }
-    inline mat4(const __m128* other) { std::memcpy(this, other, 0x40); }
+    inline mat4() { std::memset(this, 0, MAT4_SIZE); } // make sure initialised to 0
+    inline mat4(const mat4& other)   { std::memcpy(this, &other, MAT4_SIZE); }
+    inline mat4(const __m128* other) { std::memcpy(this, other, MAT4_SIZE); }
 
     inline float& operator [](const uint32_t index) { return m[index]; }
     inline const float& operator [](const uint32_t index) const { return m[index]; }
@@ -63,7 +63,7 @@ public:
     static Matrix4 TranslationMatrix(const Vector3& v);
     static Matrix4 RotationMatrix(const Quaternion& q);
     static Matrix4 ScaleMatrix(const float& s);
-    static Matrix4 ScaleMatrix(const Vector3& s);
+    static Matrix4 Perspective(float FOV, float aspectRatio, float near, float far);
 };
 
 // binary operators

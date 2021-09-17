@@ -7,6 +7,7 @@
 
 #include <model/Model.h>
 #include <window/OpenGLWidget.h>
+#include <window/RayTracerWidget.h>
 
 #include <QtWidgets>
 
@@ -15,7 +16,7 @@ Q_OBJECT
 private:
     QStackedLayout* layout;
     OpenGLWidget* openGLWidget;
-    QWidget* raytracerWidget; // to implement
+    RayTracerWidget* raytracerWidget; // to implement
 
     const Model& model;
 public:

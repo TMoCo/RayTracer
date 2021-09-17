@@ -13,7 +13,7 @@
 class Window : public QWidget{
 private:
     // main layout
-    QVBoxLayout* layout;
+    QGridLayout* layout;
 
     // render widgets
     RenderWidgets* renderWidgets;

@@ -8,7 +8,9 @@
 #include <cstring>
 #include <iomanip>
 
-Vector3::Vector3() : _v{} {}
+Vector3::Vector3() : _v{} {
+    std::memset(&_v, 0, VEC3_SIZE);
+}
 
 Vector3::Vector3(float x, float y, float z) : _v{x, y, z} {}
 

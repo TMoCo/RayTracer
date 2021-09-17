@@ -2,8 +2,8 @@
 // RenderWidget class declaration
 //
 
-#ifndef OPENGLWIDGET_H
-#define OPENGLWIDGET_H 1
+#ifndef OPENGL_WIDGET_H
+#define OPENGL_WIDGET_H 1
 
 #include <math/Transform.h>
 #include <model/Model.h>
@@ -37,4 +37,4 @@ public:
     Vector2 scaleMousePos(float x, float y);
 };
 
-#endif // !OPENGLWIDGET_H
+#endif // !OPENGL_WIDGET_H

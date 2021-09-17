@@ -7,7 +7,7 @@
 OpenGLWidget::OpenGLWidget(const Model& m, QWidget* parent) : 
     QOpenGLWidget(parent), model{m}, transform{}, arcBall{} {
 
-    transform.Translate({0.0f, 0.0f, -2.0f});
+    transform.Translate({0.0f, 0.0f, -5.0f});
 }
 
 void OpenGLWidget::initializeGL() {
@@ -24,10 +24,7 @@ void OpenGLWidget::resizeGL(int w, int h) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     float aspectRatio = (float)w / (float)h;
-    if (aspectRatio > 1.0f) // aspect ratio determines landscape or portrait
-        glOrtho(-aspectRatio, aspectRatio, -1.0f, 1.0f, -1.0f, 10.0f);
-    else
-        glOrtho(-1.0f, 1.0f, -1.0f / aspectRatio, 1.0f / aspectRatio, 1.0f, 10.0f);
+    glMultMatrixf(Matrix4::Perspective(45.0f, aspectRatio, 0.1f, 10.0f)[0]);
 }
 
 void OpenGLWidget::paintGL() {
@@ -35,7 +32,7 @@ void OpenGLWidget::paintGL() {
 
     glPushMatrix();
     glLoadIdentity();
-    float pos[] = {1.0f, 1.0f, 0.0f};
+    float pos[] = {2.0f, 0.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
     glPopMatrix();
     
@@ -44,13 +41,11 @@ void OpenGLWidget::paintGL() {
     glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
     glLightfv(GL_LIGHT0, GL_SPECULAR, color);
 
-    glDisable(GL_LIGHTING);
-
     // set model view matrix based on arcball rotation
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glMultMatrixf(transform.GetMatrix()[0]);
-    glScalef(0.5f, 0.5f, 0.5f);
+    glMultMatrixf(Matrix4::RotationMatrix(Quaternion::AngleAxis({0.0f, 1.0f, 0.0f}, RADIANS(90.0f)))[0]);
 
     model.Render();
 }

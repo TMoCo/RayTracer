@@ -8,6 +8,11 @@
 #include <math/Vector3.h>
 #include <math/Vector4.h>
 
+#include <cmath>
+
+#define RADIANS(x) \
+    x * M_PI / 180
+
 class Quaternion {
 private:
     Vector4 _q;

@@ -9,7 +9,7 @@ RenderWidgets::RenderWidgets(const Model& m, QWidget* parent) : QWidget(parent),
     layout = new QStackedLayout(this);
     
     openGLWidget = new OpenGLWidget(model, this);
-    raytracerWidget = new QWidget(this);
+    raytracerWidget = new RayTracerWidget(model, this);
 
     // add widgets in right order
     layout->addWidget(openGLWidget);
