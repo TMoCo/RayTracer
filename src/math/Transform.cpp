@@ -18,3 +18,15 @@ void Transform::Rotate(const Quaternion& r) {
 void Transform::Translate(const Vector3& v) {
     position += v;
 }
+
+Vector3 Transform::TransformPoint(const Vector3& vec3) const {
+    return &(GetMatrix() * Vector4{vec3})[0];
+}
+
+Vector3 Transform::RotatePoint(const Vector3& vec3) const {
+    return &(Matrix4::RotationMatrix(orientation) * Vector4{vec3})[0];
+}
+
+Vector3 Transform::TranslatePoint(const Vector3& vec3) const {
+    return &(Matrix4::TranslationMatrix(position) * Vector4{vec3})[0];
+}

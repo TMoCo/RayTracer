@@ -4,8 +4,8 @@
 
 #include <window/OpenGLWidget.h>
 
-OpenGLWidget::OpenGLWidget(const Model& m, QWidget* parent) : 
-    QOpenGLWidget(parent), model{m}, transform{}, arcBall{} {
+OpenGLWidget::OpenGLWidget(const Model& m, Transform& t, QWidget* parent) : 
+    QOpenGLWidget(parent), model{m}, transform{t}, arcBall{} {
 
     transform.Translate({0.0f, 0.0f, -5.0f});
 }

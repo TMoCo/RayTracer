@@ -16,9 +16,12 @@ Q_OBJECT
 private:
     QStackedLayout* layout;
     OpenGLWidget* openGLWidget;
-    RayTracerWidget* raytracerWidget; // to implement
+    RayTracerWidget* raytracerWidget;
 
     const Model& model;
+
+    Transform transform;
+    
 public:
     RenderWidgets(const Model& m, QWidget* parent);
     ~RenderWidgets();

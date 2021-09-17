@@ -17,11 +17,11 @@ Q_OBJECT
 private:
     const Model& model;
 
-    Transform transform;
+    Transform& transform;
     
     ArcBall arcBall;
 public:
-    OpenGLWidget(const Model& m, QWidget* parent);
+    OpenGLWidget(const Model& m, Transform& t, QWidget* parent);
 
     // qglwidget methods
     void initializeGL();

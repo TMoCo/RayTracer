@@ -5,6 +5,7 @@
 #include <math/Vector4.h>
 
 #include <cmath>
+#include <cstring>
 #include <iomanip>
 
 Vector4::Vector4() : _v{} {
@@ -19,19 +20,24 @@ Vector4::Vector4(float x, float y, float z, float w) : _v{} {
 }
 
 Vector4::Vector4(const float* v) : _v{} {
-    std::memcpy(&_v, v, VEC4_SIZE); // 4 * si_v[2]eof(float) = 16 = 0_v[0]10
+    std::memcpy(_v, v, VEC4_SIZE); // 4 * sizeof(float) = 16 = 0_v[0]10
+}
+
+Vector4::Vector4(const Vector3& other) : _v{} {
+    std::memcpy(_v, &other[0], VEC3_SIZE);
+    w = 1.0f;
 }
 
 Vector4::Vector4(const Vector4& other) : _v{} {
-    std::memcpy(&_v, &other[0], VEC4_SIZE);
+    std::memcpy(_v, &other[0], VEC4_SIZE);
 }
 Vector4& Vector4::operator =(const Vector4& other) {
-    std::memcpy(this, &other[0], VEC4_SIZE); 
+    std::memcpy(_v, &other[0], VEC4_SIZE); 
     return *this;
 }
 
 bool Vector4::operator ==(const Vector4& other) const {
-    return memcmp(&_v, &other[0], VEC4_SIZE) == 0;
+    return memcmp(_v, &other[0], VEC4_SIZE) == 0;
 }
 
 Vector4& Vector4::operator +=(const Vector4& other) {

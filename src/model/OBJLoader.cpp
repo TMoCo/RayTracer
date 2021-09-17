@@ -43,7 +43,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     std::vector<Mesh>::iterator mesh;
 
     // while there are lines available
-    while (fgets(buffer, MAX_LINE, pFile) != NULL) {
+    while (std::fgets(buffer, MAX_LINE, pFile) != NULL) {
         switch (buffer[0]) {
         // vertex data*
         case 'v':
@@ -78,13 +78,14 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             while (token != NULL)
             {
                 if (vertCount == 4) {
-                    std::cout << "Can't load 5+ sided polygons!\n";
+                    std::cerr << "Can't load 5+ sided polygons!" << std::endl; 
                     break;
+                    // handle error here (skip line for now)
                 }
                 vertices[vertCount++] = token;
                 token = strtok(NULL, " \n");
             }
-            std::cout << "num verts: " <<vertCount << "\n";
+            //std::cout << "num verts: " <<vertCount << "\n";
 
             // get offset into faces
             uint32_t offset = mesh->faces.size();
@@ -101,19 +102,27 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
                                 : (uint32_t)std::strtol(token, NULL, 10) - 1;
                     token = std::strtok(NULL, "/");
                 }
-                if (i % 3)
-                    std::cout << "Error processing face\n";
+                if (i % 3) {
+                    std::cerr << "Error processing face" << std::endl; 
+                    mesh->faces.resize(offset);
+                    // handle error (resize to original face size and skip)
+                    break;
+                }
             }
 
+            if (i % 3) 
+                break;
+
+            /*
             auto it = mesh->faces.begin() + offset;
             while (it != mesh->faces.end()) {
                 std::cout << *it << ' ';
                 it++;
             }
             std::cout << std::endl;
+            */
 
-            // append 2 more vertex indices to complete the quad
-            if (vertCount == 4) {
+            if (vertCount == 4) { // append 2 more vertex indices to complete the quad
                 // v0
                 mesh->faces[offset + 12] = mesh->faces[offset];
                 mesh->faces[offset + 13] = mesh->faces[offset + 1];
@@ -124,13 +133,13 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
                 mesh->faces[offset + 17] = mesh->faces[offset + 8];
             }
 
+            /*
             it = mesh->faces.begin() + offset;
             while (it != mesh->faces.end()) {
                 std::cout << *it << ' ';
                 it++;
             }
-            std::cout << std::endl;
-
+            */
             break;
         }
         // object
@@ -169,9 +178,16 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
         }
     }
 
+    /*
+    std::cout << "loaded\n";
+    std::cout << model.meshes.size() << "\n";
+    std::cout << model.meshes.begin()->faces.size() << "\n";
+    */
+
     // update face indices for separate objects
     if (model.meshes.size() > 1) {
         mesh = model.meshes.begin();
+        //std::cout << mesh->faces.size() << "\n";
         uint32_t pOffset = mesh->positions.size();
         uint32_t tOffset = mesh->UVs.size();
         uint32_t nOffset = mesh->normals.size();
@@ -188,6 +204,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             nOffset += mesh->normals.size();
         } while (mesh != model.meshes.end());
     }
+    // std::cout << "loaded\n";
 
     std::fclose(pFile);
     return true;

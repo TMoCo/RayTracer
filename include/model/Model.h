@@ -6,6 +6,7 @@
 #define MODEL_H 1
 
 #include <math/Vectors.h>
+#include <math/Transform.h>
 #include <model/Material.h>
 #include <model/Primitives.h>
 

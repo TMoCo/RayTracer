@@ -18,8 +18,13 @@ public:
 
     Matrix4 GetMatrix() const;
 
+    // modify the transform
     void Rotate(const Quaternion& r);
     void Translate(const Vector3& v);
+
+    Vector3 TransformPoint(const Vector3& vec3) const;
+    Vector3 RotatePoint(const Vector3& vec3) const;
+    Vector3 TranslatePoint(const Vector3& vec3) const;
 };
 
 #endif // !TRANSFORM_H

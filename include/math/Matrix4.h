@@ -12,14 +12,13 @@
 #define MAT4_SIZE 16 * sizeof(F32) // 0x40 = 256 bytes
 
 class Matrix4 {
-private:
+public:
     // store matrix in column major format
     union {
         F32 _m[16];
         __m128 _m16[4];
     };
 
-public:
     Matrix4();
     Matrix4(const Matrix4& other);
     Matrix4(const F32* values);
@@ -29,8 +28,8 @@ public:
     Matrix4& operator +=(const Matrix4& other);
     Matrix4& operator -=(const Matrix4& other);
     Matrix4& operator *=(const Matrix4& other);
-    Matrix4& operator /=(const F32& other);
     Matrix4& operator *=(const F32& factor);
+    Matrix4& operator /=(const F32& other);
 
     friend inline Matrix4 operator *(Matrix4 lhs, const Matrix4& rhs) {
         return lhs *= rhs;
@@ -59,6 +58,7 @@ public:
 Matrix4 operator *(Matrix4 lhs, const F32 rhs);
 Matrix4 operator *(const F32 lhs, Matrix4& rhs);
 Matrix4 operator /(Matrix4 lhs, const F32 rhs);
+Vector4 operator *(Matrix4 mat, const Vector4& vec);
 
 // stream i/o
 std::istream & operator >> (std::istream &outStream, Matrix4 &matrix);

@@ -57,5 +57,5 @@ SOURCES +=  src/main.cpp \
             src/window/OpenGLWidget.cpp \
             src/window/RenderWidgets.cpp \
             src/window/RayTracerWidget.cpp \
-            # src/raytracer/RayTracer.cpp \
+            src/raytracer/RayTracer.cpp \
             src/window/Window.cpp

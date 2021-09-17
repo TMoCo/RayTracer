@@ -1,5 +1,6 @@
 #include <math/Matrix4.h>
 #include <math/Quaternion.h>
+#include <math/Transform.h>
 #include <image/Image.h>
 
 #include <chrono>
@@ -8,13 +9,13 @@
 
 void TestMatrix() {
 
-    float values[16] {};
+    float values0[16] {};
 
     for (uint32_t v = 0; v < 16; ++v) {
-        values[v] = v;
+        values0[v] = v;
     }
 
-    Matrix4 m {values};
+    Matrix4 m {values0};
     Matrix4 n = m;
 
     if (n == m) {
@@ -36,6 +37,27 @@ void TestMatrix() {
     std::cout << "n:\n"<< n << '\n';
     std::cout << "div:\n" << n / 2.0f << '\n';
     std::cout << "fac:\n" << n * 2.0f << std::endl;
+
+    Transform t{{0.0f, 0.0f, 5.0f}, {}};
+
+    Vector3 p{0, 0, 0};
+    Vector3 newP = t.TransformPoint(p);
+
+    std::cout << newP << "\n";
+
+    /*
+    float values1[16] = {2, 3, -4, 0, 11, 8, 7, 0, 2, 5, 3, 0, 0, 0, 0, 1};
+    Matrix4 o{values1};
+    o = Matrix4::Identity();
+
+
+    UI32 i;
+    auto s = std::chrono::high_resolution_clock().now();
+    for (i = 0; i < 1000000000; ++i)
+        o * vec0;
+    auto t = std::chrono::high_resolution_clock().now();
+    std::cout << "vec: " << o * vec0 << "  " << std::chrono::duration<float>(t - s).count() << std::endl;
+    */
 }
 
 void TestQuaternion() {

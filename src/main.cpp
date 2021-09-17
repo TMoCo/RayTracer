@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     Model model;
     OBJLoader::LoadObj(argv[1], model); // load model from obj
 
+    std::cout << "loaded\n";
     Window window{model, "RayTracing"}; 
     window.resize(800, 600);
     window.show();

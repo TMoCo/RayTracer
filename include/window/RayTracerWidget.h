@@ -7,10 +7,9 @@
 
 #include <image/Image.h>
 #include <model/Model.h>
+#include <raytracer/RayTracer.h>
 
 #include <QOpenGLWidget>
-
-class RayTracer{}; // place holder class
 
 class RayTracerWidget : public QOpenGLWidget {
 Q_OBJECT
@@ -19,10 +18,12 @@ private:
 
     const Model& model;
 
+    Transform& transform;
+
     Image<rgba_s> frameBuffer;
 
 public:
-    RayTracerWidget(const Model& model, QWidget* parent);
+    RayTracerWidget(const Model& m, Transform& t, QWidget* parent);
     
     void initializeGL();
     void resizeGL(int w, int h);

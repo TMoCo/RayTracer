@@ -198,6 +198,17 @@ Matrix4 operator *(const F32 lhs, Matrix4& rhs) {
     return rhs * lhs;
 }
 
+Vector4 operator *(Matrix4 mat, const Vector4& vec) {
+    __m128 res = _mm_add_ps( // 7 instructions instead of 24
+        _mm_add_ps(
+            _mm_mul_ps(_mm_set_ps1(vec.x), mat._m16[0]),
+            _mm_mul_ps(_mm_set_ps1(vec.y), mat._m16[1])), 
+        _mm_add_ps(
+            _mm_mul_ps(_mm_set_ps1(vec.z), mat._m16[2]),
+            _mm_mul_ps(_mm_set_ps1(vec.w), mat._m16[3])));
+    return {(float*)&res};
+}
+
 std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
     // converts to Vector4 (s²low)
     return inStream >> *((Vector4*)matrix[0]) >> *((Vector4*)matrix[1]) >> 
