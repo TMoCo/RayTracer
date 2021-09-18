@@ -18,12 +18,12 @@ private:
     OpenGLWidget* openGLWidget;
     RayTracerWidget* raytracerWidget;
 
-    const Model& model;
+    Model* model;
 
     Transform transform;
     
 public:
-    RenderWidgets(const Model& m, QWidget* parent);
+    RenderWidgets(Model* m, QWidget* parent);
     ~RenderWidgets();
 
 public slots:

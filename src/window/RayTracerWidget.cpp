@@ -5,9 +5,9 @@
 #include <window/RayTracerWidget.h>
 
 
-RayTracerWidget::RayTracerWidget(const Model& m, Transform& t, QWidget* parent) : 
-    QOpenGLWidget(parent), raytracer(), model{model}, transform{t}, frameBuffer() {
-    
+RayTracerWidget::RayTracerWidget(Model* m, Transform& t, QWidget* parent) : 
+    QOpenGLWidget(parent), model(m), transform{t}, raytracer(), frameBuffer() {
+
     raytracer.RayTrace(frameBuffer, model, transform);
 }
 

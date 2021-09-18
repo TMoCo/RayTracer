@@ -12,7 +12,7 @@ public:
     Vector3 origin;
     Vector3 direction;
 
-    inline Vector3 At(float t) {
+    inline Vector3 At(F32 t) {
         return origin + t * direction;
     }
 };

@@ -12,7 +12,7 @@
 #include <cmath>
 
 #define RADIANS(x) \
-    x * M_PI / 180
+    x * M_PI / 180.0f
 
 class Quaternion {
 private:

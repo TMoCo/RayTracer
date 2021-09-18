@@ -12,15 +12,15 @@ Vector4::Vector4() : _v{} {
     std::memset(&_v, 0, VEC4_SIZE);
 }
 
-Vector4::Vector4(float x, float y, float z, float w) : _v{} {
+Vector4::Vector4(F32 x, F32 y, F32 z, F32 w) : _v{} {
     _v[0] = x;
     _v[1] = y;
     _v[2] = z;
     _v[3] = w;
 }
 
-Vector4::Vector4(const float* v) : _v{} {
-    std::memcpy(_v, v, VEC4_SIZE); // 4 * sizeof(float) = 16 = 0_v[0]10
+Vector4::Vector4(const F32* v) : _v{} {
+    std::memcpy(_v, v, VEC4_SIZE); // 4 * sizeof(F32) = 16 = 0_v[0]10
 }
 
 Vector4::Vector4(const Vector3& other) : _v{} {
@@ -60,12 +60,12 @@ Vector4& Vector4::operator *=(const Vector4& other) {
     return *this;
 }
 
-Vector4& Vector4::operator /=(const float& factor) {
+Vector4& Vector4::operator /=(const F32& factor) {
     _v4 = _mm_div_ps(_v4, _mm_load1_ps(&factor));
     return *this;
 }
 
-Vector4& Vector4::operator *=(const float& factor) {
+Vector4& Vector4::operator *=(const F32& factor) {
     _v4 = _mm_mul_ps(_v4, _mm_load1_ps(&factor));
     return *this;
 }
@@ -74,16 +74,16 @@ Vector4& Vector4::operator -() {
     return *this *= -1.0f;
 }
 
-float& Vector4::operator [](const uint32_t index) {
+F32& Vector4::operator [](const uint32_t index) {
     return _v[index];
 }
 
-const float& Vector4::operator [](const uint32_t index) const {
+const F32& Vector4::operator [](const uint32_t index) const {
     return _v[index];
 }
 
 Vector3 Vector4::Point3D() const {
-    float w = 1.0f / _v[3];
+    F32 w = 1.0f / _v[3];
     return {_v[0] * w , _v[1] * w, _v[2] * w};
 }
 
@@ -91,12 +91,12 @@ Vector3 Vector4::ToVector3() const {
     return {_v[0], _v[1], _v[2]};
 }
 
-float Vector4::Dot(const Vector4& other) const {
+F32 Vector4::Dot(const Vector4& other) const {
     __m128 dot = _mm_mul_ps(_v4, other._v4);
     return dot[0] + dot[1] + dot[2] + dot[3];
 }
 
-float Vector4::Length() const {
+F32 Vector4::Length() const {
     return std::sqrt(Dot(*this));
 }
 
@@ -104,19 +104,19 @@ Vector4 Vector4::Normalize() const {
     return *this / Length();
 }
 
-float Vector4::Sum() const {
+F32 Vector4::Sum() const {
     return _v[0] + _v[1] + _v[2] + _v[3];
 }
 
-Vector4 operator /(Vector4 lhs, const float rhs) {
+Vector4 operator /(Vector4 lhs, const F32 rhs) {
     return lhs /= rhs;
 }
 
-Vector4 operator *(Vector4 rhs, const float lhs) {
+Vector4 operator *(Vector4 rhs, const F32 lhs) {
     return rhs *= lhs;
 }
 
-Vector4 operator *(const float lhs, Vector4& rhs) {
+Vector4 operator *(const F32 lhs, Vector4& rhs) {
     return rhs * lhs;
 }
 

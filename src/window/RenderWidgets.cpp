@@ -4,11 +4,11 @@
 
 #include <window/RenderWidgets.h>
 
-RenderWidgets::RenderWidgets(const Model& m, QWidget* parent) : QWidget(parent),
+RenderWidgets::RenderWidgets(Model* m, QWidget* parent) : QWidget(parent),
     layout(nullptr), openGLWidget(nullptr), raytracerWidget(nullptr), model(m), 
     transform{} {
     layout = new QStackedLayout(this);
-    
+
     openGLWidget = new OpenGLWidget(model, transform, this);
     raytracerWidget = new RayTracerWidget(model, transform, this);
 

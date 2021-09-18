@@ -4,7 +4,7 @@
 
 #include <window/Window.h>
 
-Window::Window(const Model& model, const char* name) : QWidget(nullptr), 
+Window::Window(Model* model, const char* name) : QWidget(nullptr), 
     layout(nullptr), renderWidgets(nullptr), switchButton(nullptr) {
     setWindowTitle(QString(name));
 

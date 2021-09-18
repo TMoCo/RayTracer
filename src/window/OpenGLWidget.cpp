@@ -4,7 +4,7 @@
 
 #include <window/OpenGLWidget.h>
 
-OpenGLWidget::OpenGLWidget(const Model& m, Transform& t, QWidget* parent) : 
+OpenGLWidget::OpenGLWidget(Model* m, Transform& t, QWidget* parent) : 
     QOpenGLWidget(parent), model{m}, transform{t}, arcBall{} {
 
     transform.Translate({0.0f, 0.0f, -5.0f});
@@ -48,7 +48,7 @@ void OpenGLWidget::paintGL() {
     // rotate by another 90 degrees for cornell box to 
     glMultMatrixf(Matrix4::RotationMatrix(Quaternion::AngleAxis({0.0f, 1.0f, 0.0f}, RADIANS(90.0f)))[0]);
 
-    model.Render();
+    model->Render();
 }
 
 

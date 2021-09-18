@@ -5,8 +5,11 @@
 #ifndef MODEL_H
 #define MODEL_H 1
 
+#include <core/core.h>
+
 #include <math/Vectors.h>
 #include <math/Transform.h>
+
 #include <model/Material.h>
 #include <model/Primitives.h>
 
@@ -21,6 +24,7 @@
 #define MAX_NAME_LENGTH 128
 
 class Mesh {
+    // NO_COPY(Mesh)
 public:
     // vertex data (non interleaved)
     std::vector<Vector3> positions;
@@ -36,10 +40,13 @@ public:
 
     Mesh();
 
+    static void DeepCopy(const Mesh& original, Mesh& copy);
+
     void DrawMesh() const;
 };
 
 class Model {
+    //NO_COPY(Model)
 public:
     // Meshes
     std::vector<Mesh> meshes;
@@ -48,6 +55,8 @@ public:
     MaterialMap materials;
     
     Model();
+
+    static void DeepCopy(const Model& original, Model& copy);
 
     void Render() const; // loop over meshes and draw
     void UseMaterial(const char* material) const;

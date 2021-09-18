@@ -25,7 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS +=  include/image/Image.h \
+HEADERS +=  include/core/core.h \
+            include/image/Image.h \
             include/model/Model.h \
             include/model/OBJLoader.h \
             include/model/Primitives.h \

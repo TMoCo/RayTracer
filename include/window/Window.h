@@ -22,7 +22,7 @@ private:
     QPushButton* switchButton;    
 
 public:
-    Window(const Model& model, const char* name = "Window");
+    Window(Model* model, const char* name = "Window");
     ~Window();
 };
 

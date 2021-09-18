@@ -27,13 +27,12 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     std::strcpy(dir, path); // get a modifiable copy of given .obj path
 
     char* slash = std::strchr(dir,'/');
-    uint32_t pos = 0;
+    UI32 pos = 0;
     while (slash!=NULL) { // find last occurence of '/' 
         pos = slash-dir+1;
         slash = std::strchr(slash+1, '/');
     }
-
-    dir[pos] = '\0'; // terminate string 
+    dir[pos] = '\0'; // terminate string at '/'
 
     // input
     char buffer[MAX_LINE];
@@ -67,13 +66,12 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
                 break;
             }
             break;
-        // face data
-        case 'f': {
-            // get vertices in face
+        case 'f': { // face data
+            // get vertices in face (max 4 for quad)
             char* vertices[4];
-            uint32_t vertCount = 0;
+            UI32 vertCount = 0;
 
-            // tokenise vertex by ' '
+            // tokenise vertices by ' '
             char* token = std::strtok(&buffer[2], " \n");
             while (token != NULL)
             {
@@ -85,27 +83,29 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
                 vertices[vertCount++] = token;
                 token = strtok(NULL, " \n");
             }
-            //std::cout << "num verts: " <<vertCount << "\n";
+
+            if (vertCount > 4)
+                break;
 
             // get offset into faces
-            uint32_t offset = mesh->faces.size();
+            UI32 offset = mesh->faces.size();
             mesh->faces.resize(offset + (vertCount == 4 ? 18 : 9));
 
             // process vertex data
-            uint32_t i;
-            for (uint32_t v = 0; v < vertCount; ++v) {
+            UI32 i;
+            for (UI32 v = 0; v < vertCount; ++v) {
                 token = strtok(vertices[v], "/");
                 for (i = 0; token != NULL; i++) {
                     mesh->faces[offset + (v * 3) + i] = 
                             std::strlen(token) == 0 
                                 ? 0 
-                                : (uint32_t)std::strtol(token, NULL, 10) - 1;
+                                : (UI32)std::strtol(token, NULL, 10) - 1;
                     token = std::strtok(NULL, "/");
                 }
                 if (i % 3) {
                     std::cerr << "Error processing face" << std::endl; 
                     mesh->faces.resize(offset);
-                    // handle error (resize to original face size and skip)
+                    // handle error (resize to original faces size and skip face)
                     break;
                 }
             }
@@ -123,11 +123,11 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             */
 
             if (vertCount == 4) { // append 2 more vertex indices to complete the quad
-                // v0
+                // v4 = v0
                 mesh->faces[offset + 12] = mesh->faces[offset];
                 mesh->faces[offset + 13] = mesh->faces[offset + 1];
                 mesh->faces[offset + 14] = mesh->faces[offset + 2];
-                // v2
+                // v5 = v2
                 mesh->faces[offset + 15] = mesh->faces[offset + 6];
                 mesh->faces[offset + 16] = mesh->faces[offset + 7];
                 mesh->faces[offset + 17] = mesh->faces[offset + 8];
@@ -142,19 +142,16 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             */
             break;
         }
-        // object
-        case 'o':
-            // create a new object in the model
+        case 'o': // object
+            // create a new mesh object in the model
             model.meshes.push_back({});
             mesh = model.meshes.end() - 1;
             std::strcpy(mesh->meshName, &buffer[2]);
             break;
-        // comments
-        case '#':
+        case '#': // comments
             break;
         case '\n':
-            break;
-        // other string type
+            break; // other string type
         default:
             token = std::strtok(buffer, " ");
 
@@ -187,14 +184,12 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     // update face indices for separate objects
     if (model.meshes.size() > 1) {
         mesh = model.meshes.begin();
-        //std::cout << mesh->faces.size() << "\n";
-        uint32_t pOffset = mesh->positions.size();
-        uint32_t tOffset = mesh->UVs.size();
-        uint32_t nOffset = mesh->normals.size();
-        do
-        {
+        UI32 pOffset = mesh->positions.size();
+        UI32 tOffset = mesh->UVs.size();
+        UI32 nOffset = mesh->normals.size();
+        do {
             mesh++;
-            for (uint32_t f = 0; f < mesh->faces.size(); f+= 3) {
+            for (UI32 f = 0; f < mesh->faces.size(); f+= 3) {
                 mesh->faces[f    ] -= pOffset;
                 mesh->faces[f + 1] -= tOffset;
                 mesh->faces[f + 2] -= nOffset;
@@ -202,9 +197,10 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             pOffset += mesh->positions.size();
             tOffset += mesh->UVs.size();
             nOffset += mesh->normals.size();
-        } while (mesh != model.meshes.end());
+            // PRINT("offsets: %i %i %i\n", pOffset, tOffset, nOffset);
+        }
+        while ((mesh + 1) != model.meshes.end());
     }
-    // std::cout << "loaded\n";
 
     std::fclose(pFile);
     return true;

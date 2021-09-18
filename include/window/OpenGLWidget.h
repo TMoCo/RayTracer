@@ -15,13 +15,13 @@
 class OpenGLWidget : public QOpenGLWidget {
 Q_OBJECT
 private:
-    const Model& model;
+    Model* model;
 
     Transform& transform;
     
     ArcBall arcBall;
 public:
-    OpenGLWidget(const Model& m, Transform& t, QWidget* parent);
+    OpenGLWidget(Model* m, Transform& t, QWidget* parent);
 
     // qglwidget methods
     void initializeGL();
