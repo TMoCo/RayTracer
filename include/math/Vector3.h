@@ -5,7 +5,7 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H 1
 
-#include <math/types.h>
+#include <core/types.h>
 
 #include <iostream>
 

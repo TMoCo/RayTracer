@@ -12,7 +12,9 @@ public:
     Vector3 origin;
     Vector3 direction;
 
-    inline Vector3 At(F32 t) {
+    Ray(const Vector3& o = {}, const Vector3& d = {}) : origin{o}, direction{d} {}
+
+    inline Vector3 At(F32 t) const {
         return origin + t * direction;
     }
 };

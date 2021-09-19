@@ -5,15 +5,14 @@
 #include <window/RayTracerWidget.h>
 
 
-RayTracerWidget::RayTracerWidget(Model* m, Transform& t, QWidget* parent) : 
+RayTracerWidget::RayTracerWidget(QWidget* parent, Model* m, Transform& t) : 
     QOpenGLWidget(parent), model(m), transform{t}, raytracer(), frameBuffer() {
 
-    raytracer.RayTrace(frameBuffer, model, transform);
-}
-
-void RayTracerWidget::initializeGL() {
+    // 
 
 }
+
+void RayTracerWidget::initializeGL() {}
 
 void RayTracerWidget::resizeGL(int w, int h) {
     frameBuffer.Resize(w, h);
@@ -22,10 +21,11 @@ void RayTracerWidget::resizeGL(int w, int h) {
 void RayTracerWidget::paintGL() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-    // and display the image
+    // display the image
     glDrawPixels(width(), height(), GL_RGBA, GL_FLOAT, frameBuffer[0]); 
 }
 
 void RayTracerWidget::RayTrace() {
-    update(); // calls update on finish
+    raytracer.RayTraceImage(frameBuffer, model, transform);
+    update(); // call update to display result
 }

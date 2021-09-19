@@ -84,7 +84,7 @@ void TestQuaternion() {
 }
 
 void TestImage() {
-    rgba_s a = {0.0F, 10.0f, 100.0f, 200.0f };
+    rgba_f a = {0.0F, 10.0f, 100.0f, 200.0f };
     Vector4 v{a.channels}; // rgba to a vector
     std::cout << v << '\n' << sizeof(a) << std::endl;
 }

@@ -5,12 +5,16 @@
 #ifndef OPENGL_WIDGET_H
 #define OPENGL_WIDGET_H 1
 
+#include <render/Camera.h>
+
 #include <math/Transform.h>
+
 #include <model/Model.h>
+
 #include <window/ArcBall.h>
 
-#include <QOpenGLWidget>
-#include <QtGui/QtEvents>
+#include <qt5/QtWidgets/QOpenGLWidget>
+#include <qt5/QtGui/QtEvents>
 
 class OpenGLWidget : public QOpenGLWidget {
 Q_OBJECT
@@ -18,10 +22,11 @@ private:
     Model* model;
 
     Transform& transform;
+    Camera& camera;
     
     ArcBall arcBall;
 public:
-    OpenGLWidget(Model* m, Transform& t, QWidget* parent);
+    OpenGLWidget(QWidget* parent, Model* m, Transform& t, Camera& c);
 
     // qglwidget methods
     void initializeGL();

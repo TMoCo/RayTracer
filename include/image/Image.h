@@ -5,9 +5,12 @@
 #ifndef IMAGE_H
 #define IMAGE_H 1
 
+#include <core/types.h>
+
 #include <sys/types.h>
-#include <cstdint>
 #include <iostream>
+
+#include <cstdint>
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
@@ -31,38 +34,43 @@ union rgba {
     inline const T& operator[](uint32_t index) const { return channels[index]; }
 };
 
-typedef rgba<float> rgba_s; // single
-typedef rgba<uint32_t> rgba_ui; // unsigned int
-typedef rgba<u_char> rgba_b; // byte
+typedef rgba<F32> rgba_f; // single
+typedef rgba<UI32> rgba_ui; // unsigned int
+typedef rgba<byte> rgba_b; // byte
 
 template<typename T>
 class Image {
 private:
     T* pixels;
+
     uint64_t width, height;
 
     void AllocatePixels();
     void FreePixels();
 
 public:
-    Image(uint64_t w = 0, uint64_t h = 0);
+
+    Image(UI64 w = 0, UI64 h = 0);
 
     ~Image();
 
-    T* operator[](uint32_t index);
-    const T* operator[](uint32_t index) const;
+    inline UI64 Width() { return width; }
+    inline UI64 Height() { return height; }
+
+    T* operator[](UI32 index);
+    const T* operator[](UI32 index) const;
 
     void Clear();
-    bool Resize(uint64_t w, uint64_t h);
+    bool Resize(UI64 w, UI64 h);
 };
 
 
 template<typename T>
 void Image<T>::AllocatePixels() {
+    std::cout << width << " " << height << " " << sizeof(T) << "\n";
     pixels = (T*)calloc(width * height, sizeof(T));
-
     if (pixels == nullptr) {
-        std::fprintf(stderr, "Could not allocate image!");
+        std::fprintf(stderr, "Could not allocate image!\n");
         std::exit(1);
     }
 }
@@ -76,7 +84,7 @@ void Image<T>::FreePixels() {
 }
 
 template<typename T>
-Image<T>::Image(uint64_t w, uint64_t h) : pixels(nullptr), width(w), height(h) {
+Image<T>::Image(UI64 w, UI64 h) : pixels(nullptr), width(w), height(h) {
     Resize(width, height);
 }
 
@@ -86,12 +94,12 @@ Image<T>::~Image() {
 }
 
 template<typename T>
-T* Image<T>::operator[](uint32_t index) { 
+T* Image<T>::operator[](UI32 index) { 
     return pixels + (index * width);
 }
 
 template<typename T>
-const T* Image<T>::operator[](uint32_t index) const {
+const T* Image<T>::operator[](UI32 index) const {
     return pixels + (index * width);
 }
 
@@ -101,7 +109,7 @@ void Image<T>::Clear() {
 }
 
 template<typename T>
-bool Image<T>::Resize(uint64_t w, uint64_t h) {
+bool Image<T>::Resize(UI64 w, UI64 h) {
     width = w < MAX_IMAGE_DIMENSION ? w : MAX_IMAGE_DIMENSION;
     height = h < MAX_IMAGE_DIMENSION ? h : MAX_IMAGE_DIMENSION;
 
@@ -110,7 +118,7 @@ bool Image<T>::Resize(uint64_t w, uint64_t h) {
 
     FreePixels(); // guarantees that pixels == nullptr
 
-    AllocatePixels(); 
+    AllocatePixels();
 
     return true;
 }

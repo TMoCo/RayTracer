@@ -5,7 +5,7 @@
 #ifndef VECTOR4_H
 #define VECTOR4_H 1
 
-#include <math/types.h>
+#include <core/types.h>
 #include <math/Vector3.h>
 
 #include <cstring>

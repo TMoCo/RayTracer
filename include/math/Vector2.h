@@ -5,7 +5,7 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H 1
 
-#include <math/types.h>
+#include <core/types.h>
 
 #define VEC2_SIZE 0x8
 

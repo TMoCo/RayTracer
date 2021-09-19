@@ -7,6 +7,7 @@
 
 #include <model/Model.h>
 #include <window/RenderWidgets.h>
+#include <window/RenderOptionsWidget.h>
 
 #include <QtWidgets>
 
@@ -17,9 +18,13 @@ private:
 
     // render widgets
     RenderWidgets* renderWidgets;
+    RenderOptionsWidget* renderOptionsWidget;
 
     // switch render widget
     QPushButton* switchButton;    
+
+    Transform transform;
+    Camera camera;
 
 public:
     Window(Model* model, const char* name = "Window");

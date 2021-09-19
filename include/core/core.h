@@ -9,6 +9,8 @@
     Type(const Type& T) = delete; \
     Type& operator=(const Type& T) = delete;
 
+#define EPSILON 0.0001f
+
 #include <iostream>
 
 #if (__cplusplus >= 202002L)

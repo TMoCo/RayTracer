@@ -63,11 +63,13 @@ void Model::Render() const {
 }
 
 void Model::UseMaterial(const char* name) const {
-    const Material& material = materials.at(name);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, &material.ambient[0]);
-    glMaterialfv(GL_FRONT, GL_EMISSION, &material.emissive[0]);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, &material.diffuse[0]);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, &material.specular[0]);
-    float shininess[4] = {material.specularExp, material.specularExp, material.specularExp, material.specularExp};
-    glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+    if (std::strlen(name)) {
+        const Material& material = materials.at(name);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, &material.ambient[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, &material.emissive[0]);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, &material.diffuse[0]);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, &material.specular[0]);
+        float shininess[4] = {material.specularExp, material.specularExp, material.specularExp, material.specularExp};
+        glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+    }
 }

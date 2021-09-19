@@ -13,7 +13,8 @@
 
 #include <raytracer/RayTracer.h>
 
-#include <QOpenGLWidget>
+#include <qt5/QtWidgets/QOpenGLWidget>
+#include <qt5/QtWidgets/QtWidgets>
 
 class RayTracerWidget : public QOpenGLWidget {
 Q_OBJECT
@@ -24,16 +25,15 @@ private:
 
     RayTracer raytracer;
 
-    Image<rgba_s> frameBuffer;
+    Image<rgba_f> frameBuffer;
 
 public:
-    RayTracerWidget(Model* m, Transform& t, QWidget* parent);
+    RayTracerWidget(QWidget* parent, Model* m, Transform& t);
     
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
 
-public slots:
     void RayTrace();
 };
 

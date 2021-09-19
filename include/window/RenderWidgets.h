@@ -5,29 +5,37 @@
 #ifndef RENDERWIDGETS_H
 #define RENDERWIDGETS_H 1
 
+#include <render/Camera.h>
+
 #include <model/Model.h>
+
 #include <window/OpenGLWidget.h>
 #include <window/RayTracerWidget.h>
 
-#include <QtWidgets>
+#include <qt5/QtWidgets/QtWidgets>
 
 class RenderWidgets : public QWidget {
 Q_OBJECT
 private:
     QStackedLayout* layout;
+    
     OpenGLWidget* openGLWidget;
     RayTracerWidget* raytracerWidget;
 
     Model* model;
-
     Transform transform;
+    Camera camera;
     
 public:
-    RenderWidgets(Model* m, QWidget* parent);
+    RenderWidgets(QWidget* parent, Model* m);
     ~RenderWidgets();
 
 public slots:
-    void SwitchWidget();
+    void SwitchRender();
+    void RayTrace();
+
+signals:
+    void SwitchedRender(int index);
 };
 
 #endif

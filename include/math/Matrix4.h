@@ -5,7 +5,7 @@
 #ifndef MATRIX4_H
 #define MATRIX4_H 1
 
-#include <math/types.h>
+#include <core/types.h>
 #include <math/Vector4.h>
 #include <math/Quaternion.h>
 
