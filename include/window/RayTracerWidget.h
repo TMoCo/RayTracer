@@ -35,6 +35,7 @@ public:
     void paintGL();
 
     void RayTrace();
+    void SaveImage(const char* name);
 };
 
 #endif // ! RAYTRACER_WIDGET_H

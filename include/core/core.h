@@ -9,7 +9,8 @@
     Type(const Type& T) = delete; \
     Type& operator=(const Type& T) = delete;
 
-#define EPSILON 0.0001f
+#define EPSILON 0.00001f
+#define MAX_NAME_LENGTH 128
 
 #include <iostream>
 

@@ -4,6 +4,7 @@
 
 #include <window/RayTracerWidget.h>
 
+#include <fstream>
 
 RayTracerWidget::RayTracerWidget(QWidget* parent, Model* m, Transform& t) : 
     QOpenGLWidget(parent), model(m), transform{t}, raytracer(), frameBuffer() {
@@ -28,4 +29,15 @@ void RayTracerWidget::paintGL() {
 void RayTracerWidget::RayTrace() {
     raytracer.RayTraceImage(frameBuffer, model, transform);
     update(); // call update to display result
+}
+
+void RayTracerWidget::SaveImage(const char* name) {
+    // create name
+    char path[MAX_NAME_LENGTH] = "../screenshots/";
+    std::strcat(path, name);
+    std::strcat(path, ".ppm");
+    
+    std::ofstream out(path);
+    
+    frameBuffer.ToPPM(out);
 }

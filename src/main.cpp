@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     OBJLoader::LoadObj(argv[1], model); // load model from obj
 
     Window window{&model, "RayTracing"}; 
-    window.resize(800, 600);
+    window.resize(900, 700);
     window.show();
 
    return app.exec();

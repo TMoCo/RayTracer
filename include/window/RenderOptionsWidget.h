@@ -27,6 +27,7 @@ private:
     // ...
 
     QPushButton* rayTraceButton; // show / disable on render type
+    QPushButton* saveImageButton;
 
     // ref to objects modified by UI
     Transform& transform;
@@ -40,9 +41,11 @@ public slots:
     void SwitchRender(int renderIndex);
     void UpdateCamera();
     void PressedRayTrace();
+    void PressedSaveImage();
 
 signals:
     void ShouldRayTrace();
+    void ShouldSaveImage(QString name);
 };
 
 #endif

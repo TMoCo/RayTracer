@@ -21,8 +21,6 @@
 
 #include <vector>
 
-#define MAX_NAME_LENGTH 128
-
 class Mesh {
     // NO_COPY(Mesh)
 public:

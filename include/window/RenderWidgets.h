@@ -33,6 +33,7 @@ public:
 public slots:
     void SwitchRender();
     void RayTrace();
+    void SaveImage(QString name);
 
 signals:
     void SwitchedRender(int index);

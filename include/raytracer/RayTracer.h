@@ -12,20 +12,26 @@
 #include <model/Model.h>
 
 #include <raytracer/Ray.h>
+#include <raytracer/Surfel.h>
+
+#define MAX_DEPTH 4
 
 class RayTracer {
+private:
+    UI32 numSamples;
+
 public:
-    void RayTraceImage(Image<rgba_f>& buffer, Model* original, const Transform& t);
+    RayTracer();
+
+    void RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform t);
  
 private:
     // cast a ray 
-    rgba_f CastRay(const Ray& ray, Model& model);
+    rgba_f CastRay(const Ray& ray, Model& model, UI32 depth);
 
     // raytracing methods for triangle intersection 
-    bool Intersect(const Ray& ray, Model& model, Mesh** meshPtr, UI32& index, 
-        Vector2& uv, float& tNear);
-    bool MollerTrumbore(const Ray& ray, Model& model, Mesh** meshPtr, UI32& index, 
-        Vector2& uv, float& tNear);
+    bool Intersect(const Ray& ray, Model& model, Surfel& surfel, F32& tNear);
+    bool MollerTrumbore(const Ray& ray, Model& model, Surfel& surfel, F32& tNear);
 
     // compute lighting
 

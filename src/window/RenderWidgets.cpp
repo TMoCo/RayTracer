@@ -34,3 +34,7 @@ void RenderWidgets::SwitchRender() {
 void RenderWidgets::RayTrace() {
     raytracerWidget->RayTrace(); // calls update method
 }
+
+void RenderWidgets::SaveImage(QString name) {
+    raytracerWidget->SaveImage(name.toStdString().data());
+}

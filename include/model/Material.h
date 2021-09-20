@@ -30,6 +30,6 @@ struct StrCompare {
     }
 };
 
-typedef std::map<const char*, Material, StrCompare> MaterialMap;
+typedef std::map<std::string, Material> MaterialMap;
 
 #endif // ! MATERIAL_H

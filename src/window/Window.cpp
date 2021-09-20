@@ -23,7 +23,7 @@ Window::Window(Model* model, const char* name) : QWidget(nullptr),
     QObject::connect(switchButton, SIGNAL(clicked()), renderWidgets, SLOT(SwitchRender()));
     QObject::connect(renderWidgets, SIGNAL(SwitchedRender(int)), renderOptionsWidget, SLOT(SwitchRender(int)));
     QObject::connect(renderOptionsWidget, SIGNAL(ShouldRayTrace()), renderWidgets, SLOT(RayTrace()));
-
+    QObject::connect(renderOptionsWidget, SIGNAL(ShouldSaveImage(QString)), renderWidgets, SLOT(SaveImage(QString)));
 }
 
 Window::~Window() {

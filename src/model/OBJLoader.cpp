@@ -271,7 +271,7 @@ bool OBJLoader::LoadMtl(const char* path, Model& model) {
             if (std::strcmp(token, "newmtl") == 0) {
                 token = std::strtok(NULL, " \n");
                 // insert a new material into the map
-                material = &model.materials[token];             
+                material = &(model.materials[token]);
             }
 
             if (std::strcmp(token, "illum") == 0) {

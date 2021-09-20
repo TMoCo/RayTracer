@@ -7,6 +7,8 @@
 
 #include <core/types.h>
 
+#include <math/Vector4.h>
+
 #include <sys/types.h>
 #include <iostream>
 
@@ -57,6 +59,10 @@ public:
     inline UI64 Width() { return width; }
     inline UI64 Height() { return height; }
 
+    void ToPPM(std::ostream& out);
+    
+    rgba_b ToByte(T pixel);
+
     T* operator[](UI32 index);
     const T* operator[](UI32 index) const;
 
@@ -67,7 +73,6 @@ public:
 
 template<typename T>
 void Image<T>::AllocatePixels() {
-    std::cout << width << " " << height << " " << sizeof(T) << "\n";
     pixels = (T*)calloc(width * height, sizeof(T));
     if (pixels == nullptr) {
         std::fprintf(stderr, "Could not allocate image!\n");
@@ -121,6 +126,39 @@ bool Image<T>::Resize(UI64 w, UI64 h) {
     AllocatePixels();
 
     return true;
+}
+
+template<typename T>
+rgba_b Image<T>::ToByte(T pixel) {
+    rgba_b bytes;
+    if (typeid(T) == typeid(UI32)) {
+        bytes = {(byte)(pixel.r * 255) , (byte)(pixel.g * 255), (byte)(pixel.b * 255), (byte)(pixel.a * 255)};
+    }
+    if (typeid(T) == typeid(F32)) {
+        bytes = {(byte)(pixel.r * 255.0f) , (byte)(pixel.g * 255.0f), (byte)(pixel.b * 255.0f), (byte)(pixel.a * 255.0f)};
+    }
+    return bytes;
+}
+
+template<typename T>
+void Image<T>::ToPPM(std::ostream& out) {
+    out << "P3" << std::endl;
+    out << "# PPM File" << std::endl;
+    out << width << " " << height << std::endl;
+    out << 255 << std::endl;
+    
+    Vector3 colour;
+    // loop through pixels, reading them:
+    for (UI64 row = height; row > 0; --row) { 
+        for (UI64 col = 0; col < width; ++col) {
+            if (col != 0) // put a space before each one except the first
+                out << " ";
+            colour = &pixels[(row - 1) * width + col][0];
+            colour *= 255.0f;
+            out << (UI32) colour[0] << " " << (UI32) colour[1] << " " << (UI32) colour[2] << std::endl;
+        } 
+        out << std::endl;
+    }
 }
 
 #endif

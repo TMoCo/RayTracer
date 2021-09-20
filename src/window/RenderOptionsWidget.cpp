@@ -49,6 +49,11 @@ RenderOptionsWidget::RenderOptionsWidget(QWidget* parent, Transform& t, Camera& 
     QObject::connect(rayTraceButton, SIGNAL(pressed()), this, SLOT(PressedRayTrace()));
     rayTraceButton->setVisible(false);
     layout->addWidget(rayTraceButton);
+
+    saveImageButton = new QPushButton("Save Image", this);
+    QObject::connect(saveImageButton, SIGNAL(pressed()), this, SLOT(PressedSaveImage()));
+    saveImageButton->setVisible(false);
+    layout->addWidget(saveImageButton);
 }
 
 RenderOptionsWidget::~RenderOptionsWidget() {
@@ -65,10 +70,14 @@ RenderOptionsWidget::~RenderOptionsWidget() {
 }
 
 void RenderOptionsWidget::SwitchRender(int renderIndex) {
-    if (renderIndex == 1)
+    if (renderIndex == 1) {
         rayTraceButton->setVisible(true);
-    else
+        saveImageButton->setVisible(true);
+    }
+    else {
         rayTraceButton->setVisible(false);
+        saveImageButton->setVisible(false);
+    }
 }
 
 void RenderOptionsWidget::UpdateCamera() {
@@ -77,4 +86,12 @@ void RenderOptionsWidget::UpdateCamera() {
 
 void RenderOptionsWidget::PressedRayTrace() {
     emit ShouldRayTrace(); // emit signal
+}
+
+void RenderOptionsWidget::PressedSaveImage() {
+    bool ok;
+    QString text = QInputDialog::getText(this, "Save Image", "Enter file name:", QLineEdit::Normal, "", &ok);
+
+    if (ok && !text.isEmpty())
+        emit ShouldSaveImage(text);
 }
