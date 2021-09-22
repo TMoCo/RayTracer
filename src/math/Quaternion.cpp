@@ -74,14 +74,25 @@ const float& Quaternion::operator [](const uint32_t index) const {
 }
 
 Quaternion Quaternion::AngleAxis(const Vector3& axis, float angle) {
-    return Quaternion(axis.Normalize() * std::sin(angle * 0.5f), std::cos(angle * 0.5f)); 
+    return Quaternion(axis.Normalize() * std::sin(angle * 0.5f), 
+        std::cos(angle * 0.5f)); 
 }
 
-Vector3 Quaternion::Axis() const {
+Quaternion Quaternion::Rotation(const Vector3& from, const Vector3& to) {
+    return {from.Cross(to), std::sqrt(from.Dot(from) * to.Dot(to) + from.Dot(to))};
+}
+
+Vector3 Quaternion::RotateVector(const Vector3& vector, const Quaternion& quaternion) {
+    Vector3 qVec = quaternion.vector;
+    Vector3 t = (2.0f * qVec).Cross(vector);
+    return vector + quaternion.scalar * t + qVec.Cross(t);
+}
+
+Vector3 Quaternion::Vector() const {
     return vector;
 }
 
-float Quaternion::Angle() const {
+float Quaternion::Scalar() const {
     return scalar;
 }
 

@@ -24,6 +24,18 @@ public:
 
     Vector2& operator =(const Vector2& other);
 
+    Vector2& operator -=(const Vector2& other);
+    Vector2& operator +=(const Vector2& other);
+    Vector2& operator *=(const Vector2& other);
+    Vector2& operator /=(const F32& factor);
+
+    friend inline Vector2 operator -(Vector2 lhs, const Vector2& rhs) {
+        return lhs -= rhs;
+    }
+    friend inline Vector2 operator +(Vector2 lhs, const Vector2& rhs) {
+        return lhs += rhs;
+    }
+
     // access operators
     F32& operator [](const UI32 index);
     const F32& operator [](const UI32 index) const;
@@ -31,6 +43,11 @@ public:
     const F32* ValuePtr() const; 
     F32* ValuePtr();
 };
+
+Vector2 operator *(Vector2 lhs, const F32& rhs);
+Vector2 operator /(Vector2 lhs, const F32& rhs);
+Vector2 operator *(const F32& lhs, Vector2 rhs);
+
 
 
 #endif // ! VECTOR2_H

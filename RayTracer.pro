@@ -44,6 +44,8 @@ HEADERS +=  include/core/core.h \
             include/window/RayTracerWidget.h \
             include/window/Window.h \
             include/raytracer/RayTracer.h \
+            include/raytracer/Ray.h \
+            include/raytracer/Surfel.h \
             include/test.h
 
 SOURCES +=  src/main.cpp \

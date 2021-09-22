@@ -1,5 +1,4 @@
 # Blender MTL File: 'CornellBox.blend'
-# Material Count: 1
 
 newmtl Room
 Ns 323.999994
@@ -31,7 +30,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 
-newmtl Light
+newmtl MainLight
 Ns 0
 Ka 0.000000 0.000000 0.000000
 Kd 0.000000 0.000000 0.000000

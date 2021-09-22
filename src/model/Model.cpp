@@ -48,8 +48,23 @@ Model::Model() : meshes{}, materials{} {}
 void Model::DeepCopy(const Model& original, Model& copy) {
     // copy mesh data
     copy.meshes.resize(original.meshes.size());
-    for (UI32 m = 0; m < copy.meshes.size(); ++m)
-        Mesh::DeepCopy(original.meshes[m], copy.meshes[m]);
+
+    std::vector<Mesh>::iterator mesh = copy.meshes.begin();
+
+    // copy the objects in the scene
+    for (UI32 o = 0; o < original.objects.size(); ++o) {
+        Mesh::DeepCopy(*original.objects[o], *mesh);
+        copy.objects.push_back(&(*mesh));
+        ++mesh;
+    }
+
+    // copy the lights
+    for (UI32 l = 0; l < original.lights.size(); ++l) {
+        Mesh::DeepCopy(*original.lights[l], *mesh);
+        copy.lights.push_back(&(*mesh));
+        ++mesh;
+    }
+    
     // copy materials
     copy.materials = original.materials;
 }

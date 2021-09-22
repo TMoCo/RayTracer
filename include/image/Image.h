@@ -73,7 +73,7 @@ public:
 
 template<typename T>
 void Image<T>::AllocatePixels() {
-    pixels = (T*)calloc(width * height, sizeof(T));
+    pixels = (T*)std::calloc(width * height, sizeof(T));
     if (pixels == nullptr) {
         std::fprintf(stderr, "Could not allocate image!\n");
         std::exit(1);
@@ -83,7 +83,7 @@ void Image<T>::AllocatePixels() {
 template<typename T>
 void Image<T>::FreePixels() {
     if (pixels) {
-        free(pixels);
+        std::free(pixels);
         pixels = nullptr;
     }
 }

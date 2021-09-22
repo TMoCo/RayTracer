@@ -83,12 +83,12 @@ const F32& Vector4::operator [](const uint32_t index) const {
 }
 
 Vector3 Vector4::Point3D() const {
-    F32 w = 1.0f / _v[3];
-    return {_v[0] * w , _v[1] * w, _v[2] * w};
+    __m128 vec = _mm_div_ps(_v4, _mm_load1_ps(_v + 3));
+    return { (float*)&vec };
 }
 
 Vector3 Vector4::ToVector3() const {
-    return {_v[0], _v[1], _v[2]};
+    return {_v};
 }
 
 F32 Vector4::Dot(const Vector4& other) const {

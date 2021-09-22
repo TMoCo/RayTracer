@@ -9,7 +9,6 @@
 #include <iomanip>
 
 Vector3::Vector3() : _v{} {
-    std::memset(&_v, 0, VEC3_SIZE);
 }
 
 Vector3::Vector3(F32 x, F32 y, F32 z) : _v{x, y, z} {}
@@ -32,45 +31,32 @@ bool Vector3::operator ==(const Vector3& other) const {
 }
 
 Vector3& Vector3::operator +=(const Vector3& other) {
-    _v[0] += other[0];
-    _v[1] += other[1];
-    _v[2] += other[2];
+    _v4 = _mm_add_ps(_v4, other._v4);
     return *this;
 }
 
 Vector3& Vector3::operator -=(const Vector3& other) {
-    _v[0] -= other[0];
-    _v[1] -= other[1];
-    _v[2] -= other[2];
+    _v4 = _mm_sub_ps(_v4, other._v4);
     return *this;
 }
 
 Vector3& Vector3::operator /=(const Vector3& other) {
-    _v[0] /= other[0];
-    _v[1] /= other[1];
-    _v[2] /= other[2];
+    _v4 = _mm_div_ps(_v4, other._v4);
     return *this;
 }
 
 Vector3& Vector3::operator *=(const Vector3& other) {
-    _v[0] *= other[0];
-    _v[1] *= other[1];
-    _v[2] *= other[2];
+    _v4 = _mm_mul_ps(_v4, other._v4);
     return *this;
 }
 
 Vector3& Vector3::operator /=(const F32& factor) {
-    F32 inv = 1.0f / factor;
-    _v[0] *= inv;
-    _v[1] *= inv;
-    _v[2] *= inv;
+    _v4 = _mm_div_ps(_v4, _mm_load1_ps(&factor));
     return *this;
 }
 
 Vector3& Vector3::operator *=(const F32& factor) {
-    _v[0] *= factor;
-    _v[1] *= factor;
-    _v[2] *= factor;
+    _v4 = _mm_mul_ps(_v4, _mm_load1_ps(&factor));
     return *this;
 }
 
@@ -87,15 +73,31 @@ const F32& Vector3::operator [](const uint32_t index) const {
 }
 
 F32 Vector3::Dot(const Vector3& other) const {
-    return _v[0] * other[0] + _v[1] * other[1] + _v[2] * other[2];
+    __m128 dot = _mm_mul_ps(_v4, other._v4);
+    return dot[0] + dot[1] + dot[2] + dot[3];
 }
 
+/*
 Vector3 Vector3::Cross(const Vector3& other) const {
     return {
         _v[1] * other[2] - _v[2] * other[1],
         _v[2] * other[0] - _v[0] * other[2], 
         _v[0] * other[1] - _v[1] * other[0]};
 }
+*/
+
+Vector3 Vector3::Cross(const Vector3& other) const {
+   __m128 res = _mm_sub_ps(
+        _mm_mul_ps(
+            _mm_shuffle_ps(_v4, _v4, _MM_SHUFFLE(3, 0, 2, 1)),
+            _mm_shuffle_ps(other._v4, other._v4, _MM_SHUFFLE(3, 1, 0, 2))), 
+        _mm_mul_ps(
+            _mm_shuffle_ps(_v4, _v4, _MM_SHUFFLE(3, 1, 0, 2)),
+            _mm_shuffle_ps(other._v4, other._v4, _MM_SHUFFLE(3, 0, 2, 1))));
+    return Vector3{(float*)&res};
+}
+
+
 
 F32 Vector3::Length() const { 
 #if (__cplusplus >= 201703L)
@@ -120,7 +122,6 @@ Vector3 operator *(const F32& lhs, Vector3 rhs) {
 Vector3 operator *(Vector3 lhs, const F32& rhs) {
     return lhs *= rhs;
 }
-
 
 std::istream& operator >> (std::istream &inStream, Vector3 &vector) {
     return inStream >> vector[0] >> vector[1] >> vector[2];

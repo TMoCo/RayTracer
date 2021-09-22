@@ -91,7 +91,6 @@ void RenderOptionsWidget::PressedRayTrace() {
 void RenderOptionsWidget::PressedSaveImage() {
     bool ok;
     QString text = QInputDialog::getText(this, "Save Image", "Enter file name:", QLineEdit::Normal, "", &ok);
-
-    if (ok && !text.isEmpty())
+    if (ok && !text.isEmpty()) 
         emit ShouldSaveImage(text);
 }

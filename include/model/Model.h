@@ -22,7 +22,6 @@
 #include <vector>
 
 class Mesh {
-    // NO_COPY(Mesh)
 public:
     // vertex data (non interleaved)
     std::vector<Vector3> positions;
@@ -44,10 +43,11 @@ public:
 };
 
 class Model {
-    //NO_COPY(Model)
 public:
     // Meshes
     std::vector<Mesh> meshes;
+    std::vector<Mesh*> lights;  // ptr to meshes that emit light
+    std::vector<Mesh*> objects; // ptr to meshes that receive light 
 
     // materials
     MaterialMap materials;

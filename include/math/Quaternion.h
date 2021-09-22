@@ -23,8 +23,8 @@ private:
             F32 scalar;
         };
     };
-
 public:
+
     Quaternion(const Quaternion& other);
     Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f);
     Quaternion(F32 x, F32 y, F32 z, F32 w);
@@ -62,8 +62,8 @@ public:
     const F32& operator [](const UI32 index) const;
 
     // relative to a given quaternion
-    Vector3 Axis() const;
-    F32 Angle() const;
+    Vector3 Vector() const;
+    F32 Scalar() const;
 
     F32 Norm() const;
     Quaternion Unit() const;
@@ -72,6 +72,10 @@ public:
 
     // quaternion builder
     static Quaternion AngleAxis(const Vector3& axis, F32 angle);
+    static Quaternion Rotation(const Vector3& from, const Vector3& to);
+
+    // apply rotation to a right quaternion
+    static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 };
 
 // binary operators

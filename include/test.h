@@ -81,6 +81,17 @@ void TestQuaternion() {
     std::cout << "unit:\n" << q.Unit() << '\n';
 
     std::cout << "prod:\n" << p * q << '\n';
+
+
+    Vector3 normal{0.0f, 1.0f, 0.0f};
+    Vector3 other{1.0f, 0.0f, 0.0f};
+
+    Quaternion quat = Quaternion::Rotation(normal, other);
+
+    std::cout << quat << "\n";
+    std::cout << quat.Unit() << "\n";
+    // should output (1, 0, 0)
+    std::cout << Quaternion::RotateVector(normal, quat.Unit()) << std::endl;
 }
 
 void TestImage() {
@@ -95,16 +106,25 @@ void TestVec() {
     Vector3 v3_0 = {};
     Vector3 v3_1 = {1.0F, 1.0F, 1.0F};
     uint32_t i;
+
+
+    Vector3 m {1.0f, 2.0f, 3.0f};
+    Vector3 n {4.0f, 5.0f, 6.0f};
+
+    std::cout << m.Cross(n) << "\n";
+
+    /*
     auto s = std::chrono::high_resolution_clock().now();
     for (i = 0; i < 1000000000; ++i)
-        v4_0 += v4_1;
+        m.CrossIntrinsic(n);
     auto t = std::chrono::high_resolution_clock().now();
-    std::cout << v4_0  << std::setprecision(10)  << " intrinsics:    " << std::chrono::duration<float>(t - s).count() << '\n';
+    std::cout << std::setprecision(10)  << " intrinsics:    " << std::chrono::duration<float>(t - s).count() << '\n';
     s = std::chrono::high_resolution_clock().now();
     for (i = 0; i < 1000000000; ++i)
-        v3_0 += v3_1;
+        m.Cross(n);
     t = std::chrono::high_resolution_clock().now();
-    std::cout << v3_0  << std::setprecision(10) << " not intrinsic: " << std::chrono::duration<float>(t - s).count() << '\n';
+    std::cout << std::setprecision(10) << " not intrinsic: " << std::chrono::duration<float>(t - s).count() << '\n';
+    */
 }
 
 void Test(const char* test) {

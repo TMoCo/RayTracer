@@ -197,11 +197,19 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             pOffset += mesh->positions.size();
             tOffset += mesh->UVs.size();
             nOffset += mesh->normals.size();
-            // PRINT("offsets: %i %i %i\n", pOffset, tOffset, nOffset);
         }
         while ((mesh + 1) != model.meshes.end());
     }
 
+    // set pointers to emissive objects
+    for (mesh = model.meshes.begin(); mesh < model.meshes.end(); ++mesh) {
+        // sum of terms greater than 1 means a channel other than alpha is emitting light
+        if (model.materials.at(mesh->material).emissive.Sum() > 1.0f) 
+            model.lights.push_back(&(*mesh)); 
+        else
+            model.objects.push_back(&(*mesh)); 
+    }
+    
     std::fclose(pFile);
     return true;
 }
