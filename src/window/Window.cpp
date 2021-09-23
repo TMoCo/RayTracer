@@ -11,8 +11,8 @@ Window::Window(Model* model, const char* name) : QWidget(nullptr),
 
     layout = new QGridLayout(this);
 
-    renderWidgets = new RenderWidgets(this, model);
-    renderOptionsWidget = new RenderOptionsWidget(this, transform, camera);
+    renderWidgets = new RenderWidgets(this, model, &transform, &camera);
+    renderOptionsWidget = new RenderOptionsWidget(this, &transform, &camera);
     
     switchButton = new QPushButton("Switch Render", this);
 
@@ -20,10 +20,21 @@ Window::Window(Model* model, const char* name) : QWidget(nullptr),
     layout->addWidget(renderOptionsWidget, 0, 1);
     layout->addWidget(switchButton, 1, 0, 1, 2);
 
-    QObject::connect(switchButton, SIGNAL(clicked()), renderWidgets, SLOT(SwitchRender()));
-    QObject::connect(renderWidgets, SIGNAL(SwitchedRender(int)), renderOptionsWidget, SLOT(SwitchRender(int)));
-    QObject::connect(renderOptionsWidget, SIGNAL(ShouldRayTrace()), renderWidgets, SLOT(RayTrace()));
-    QObject::connect(renderOptionsWidget, SIGNAL(ShouldSaveImage(QString)), renderWidgets, SLOT(SaveImage(QString)));
+    QObject::connect(
+        switchButton, SIGNAL(clicked()), 
+        renderWidgets, SLOT(SwitchRender()));
+    QObject::connect(
+        renderWidgets, SIGNAL(SwitchedRender(int)), 
+        renderOptionsWidget, SLOT(SwitchRender(int)));
+    QObject::connect(
+        renderOptionsWidget, SIGNAL(ShouldRayTrace()), 
+        renderWidgets->raytracerWidget, SLOT(RayTrace()));
+    QObject::connect(
+        renderOptionsWidget, SIGNAL(ShouldSaveImage(QString)), 
+        renderWidgets->raytracerWidget, SLOT(SaveImage(QString)));
+    QObject::connect(
+        renderOptionsWidget, SIGNAL(ShouldUpdateGl()), 
+        renderWidgets->openGLWidget, SLOT(update()));
 }
 
 Window::~Window() {

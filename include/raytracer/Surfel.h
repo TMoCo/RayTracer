@@ -7,7 +7,7 @@
 
 #include <core/core.h>
 
-#include <math/Vector2.h>
+#include <math/Vectors.h>
 
 #include <model/Model.h>
 

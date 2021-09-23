@@ -38,25 +38,25 @@ void TestMatrix() {
     std::cout << "div:\n" << n / 2.0f << '\n';
     std::cout << "fac:\n" << n * 2.0f << std::endl;
 
-    Transform t{{0.0f, 0.0f, 5.0f}, {}};
+    Transform transform{{0.0f, 0.0f, 5.0f}, {}};
 
     Vector3 p{0, 0, 0};
-    Vector3 newP = t.TransformPoint(p);
+    Vector3 newP = transform.TransformPoint(p);
 
     std::cout << newP << "\n";
 
-    /*
     float values1[16] = {2, 3, -4, 0, 11, 8, 7, 0, 2, 5, 3, 0, 0, 0, 0, 1};
     Matrix4 o{values1};
-    o = Matrix4::Identity();
 
+    o = Matrix4::Identity();
 
     UI32 i;
     auto s = std::chrono::high_resolution_clock().now();
-    for (i = 0; i < 1000000000; ++i)
-        o * vec0;
+    for (i = 0; i < 10000; ++i)
+        o * p;
     auto t = std::chrono::high_resolution_clock().now();
-    std::cout << "vec: " << o * vec0 << "  " << std::chrono::duration<float>(t - s).count() << std::endl;
+    std::cout << "vec: " << o * p << "  " << std::chrono::duration<float>(t - s).count() << std::endl;
+    /*
     */
 }
 
@@ -101,10 +101,12 @@ void TestImage() {
 }
 
 void TestVec() {
+    /*
     Vector4 v4_0 = {};
     Vector4 v4_1{1.0F, 1.0F, 1.0F, 1.0F};
     Vector3 v3_0 = {};
     Vector3 v3_1 = {1.0F, 1.0F, 1.0F};
+    */
     uint32_t i;
 
 
@@ -113,18 +115,17 @@ void TestVec() {
 
     std::cout << m.Cross(n) << "\n";
 
-    /*
     auto s = std::chrono::high_resolution_clock().now();
-    for (i = 0; i < 1000000000; ++i)
-        m.CrossIntrinsic(n);
+    for (i = 0; i < 100000; ++i) {
+        // test
+    }    
     auto t = std::chrono::high_resolution_clock().now();
     std::cout << std::setprecision(10)  << " intrinsics:    " << std::chrono::duration<float>(t - s).count() << '\n';
     s = std::chrono::high_resolution_clock().now();
-    for (i = 0; i < 1000000000; ++i)
+    for (i = 0; i < 100000; ++i)
         m.Cross(n);
     t = std::chrono::high_resolution_clock().now();
     std::cout << std::setprecision(10) << " not intrinsic: " << std::chrono::duration<float>(t - s).count() << '\n';
-    */
 }
 
 void Test(const char* test) {

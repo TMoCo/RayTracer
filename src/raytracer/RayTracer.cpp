@@ -17,31 +17,21 @@ void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform 
     for (Mesh& mesh : model.meshes) {
         for (Vector3& position : mesh.positions)
             position = t.TransformPoint(position);
-
         for (Vector3& normal : mesh.normals)
             normal = t.RotatePoint(normal);
     }
 
     // scale for aspect ratio
-    F32 wScale, hScale, width, height;
-
-    width = buffer.Width();
-    height = buffer.Height();
+    F32 wScale, hScale, width = buffer.Width(), height = buffer.Height();
     F32 aspectRatio = width / height;
+    F32 tanhfov = std::tan(RADIANS(45.0f)); // fixed for testing
+    // portrait
+    wScale = 1.0f / width * aspectRatio * tanhfov;
+    hScale = 1.0f / height * tanhfov;
 
-    if (aspectRatio > 1.0f) { 
-        // portrait
-        wScale = 1.0f / width * aspectRatio;
-        hScale = 1.0f / height;
-    }
-    else { 
-        // landscape
-        wScale = 1.0f / width;
-        hScale = 1.0f / height / aspectRatio;
-    }
+    Vector3 eye{}; // eye at origin
 
     // primary ray 
-    Vector3 eye{}; // eye at origin
     Ray primaryRay;
     primaryRay.origin = eye;
 
@@ -50,15 +40,19 @@ void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform 
     // loop over each pixel in the buffer
     for(UI32 row = 0; row < buffer.Height(); ++row) {
         for (UI32 col = 0; col < buffer.Width(); ++col) {
+            //** Fit into a thread
                 Vector4 colour{};
                 // ray direction
-                primaryRay.direction = Vector3{(2.0f * col - width)  * wScale, 
-                    (2.0f * row - height) * hScale, -2.0f}.Normalize();
+                primaryRay.direction = Vector3{
+                    (2.0f * col - width) / width * aspectRatio * tanhfov,
+                    (2.0f * row - height) / height * tanhfov,
+                    -1.0f}.Normalize();
+                // std::cout << primaryRay.direction << "\n";
                     // (2.0f * row - height) * hScale, -1.0f}.Normalize();
 
                 F32 tNear = INFINITY;
                 Surfel surfel;
-                // paint lights
+                // check if ray intersects a light
                 if (Intersect(primaryRay, model.lights, surfel, tNear))
                     colour = model.materials.at(surfel.mesh->material).emissive._v;
                 
@@ -66,12 +60,14 @@ void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform 
                 else {
                     for (UI32 samples = 0; samples < numSamples; ++samples)
                         colour += CastRay(primaryRay, model, 0);
+
                     // tone mapping 
                     colour /= Vector4{1.0f, 1.0f, 1.0f, 1.0f} + colour;
                     // gamma correction
-                    colour = { pow(colour.x, gamma), pow(colour.y, gamma), pow(colour.z, gamma) };
+                    colour = { std::pow(colour.x, gamma), std::pow(colour.y, gamma), std::pow(colour.z, gamma) };
                 }
                 buffer[row][col] = colour._v;
+            //**
         }
     }
 }
@@ -85,14 +81,18 @@ Vector4 RayTracer::CastRay(const Ray& ray, Model& model, UI32 depth) {
     // init variables
     Surfel surfel;
     F32 tNear = INFINITY;
+
     // intersection of ray with the model
     if(Intersect(ray, model.objects, surfel, tNear)) {
+        // compute surfel position, normal and texture coordinates
         surfel.Interpolate();
-        // lighting
+
+        // direct lighting
         Surfel shadow;
         Ray lightRay;
         for (UI32 l = 0; l < model.lights.size(); ++l) {
             tNear = INFINITY;
+
             // from light to surfel
             lightRay.origin =  RandomAreaLightPoint(model.lights[l]); // ray originate at light
             lightRay.direction = (surfel.position - lightRay.origin).Normalize(); 
@@ -109,11 +109,12 @@ Vector4 RayTracer::CastRay(const Ray& ray, Model& model, UI32 depth) {
                     // surfel brdf
                     * surfel.BRDF(-lightRay.direction, -ray.direction, 
                     model.materials.at(surfel.mesh->material))
-                    // light attenuation
+                    // light distance attenuation
                     / (tNear * tNear);
             }
         }
 
+        // indirect lighting
         /*
         // from unit to surfel normal
         Quaternion toSurfelNormal = Quaternion::Rotation(UP, normal);
@@ -187,7 +188,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
             }
         }
     }
-    return (surfel.mesh != nullptr); // 
+    return (surfel.mesh != nullptr); // no mesh == no intersection
 }
 
 Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
@@ -197,27 +198,28 @@ Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
     // Vector3 barycentric = UniformSampleTriangle(random.UniformVec2_0_1());
     Vector3 barycentric = UniformSampleTriangle(random.UniformVec2_0_1());
     // random point in the triangle
-    return light->positions[index + 3] * barycentric.x +
-        light->positions[index + 6] * barycentric.y +
-        light->positions[index] * barycentric.z;
+    return 
+        light->positions[index+3] * barycentric.x +
+        light->positions[index+6] * barycentric.y +
+        light->positions[index  ] * barycentric.z;
 }
 
 Vector2 RayTracer::UniformSampleDisk(const Vector2& uv) {
+    // https://www.pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations
     // to range [-1,1]
     Vector2 p = uv * 2.0f - Vector2{1.0f, 1.0f};
+    if (p.x + p.y == 0) // degenerate case
+        return Vector2{};
     // generate a random point on a unit disk
-    if (uv.x + uv.y == 0)
-        return Vector2{0.0f, 0.0f};
     F32 r, theta;
-    // https://www.pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations
-    if (std::abs(uv.x) > std::abs(uv.y)) {
-        r = uv.x;
+    if (std::abs(p.x) > std::abs(p.y)) {
+        r = p.x;
         // distorts grid to avoid collecting at origin
-        theta = M_PI_4 * (uv.y / uv.x);
+        theta = M_PI_4 * (p.y / p.x);
     }
     else {
-        r = uv.y;
-        theta = M_PI_2 - M_PI_4 * (uv.x / uv.y);
+        r = p.y;
+        theta = M_PI_2 - M_PI_4 * (p.x / p.y);
     }
     return r * Vector2{std::cos(theta), std::sin(theta)};
 }
@@ -278,7 +280,7 @@ Vector3 RayTracer::UniformSampleTriangleBasuOwen(const F32& u) {
 
 Vector3 RayTracer::UniformSampleTriangle(const Vector2& uv) {
     F32 su0 = std::sqrt(uv.x);
-    F32 b0 = 1.0F - su0;
+    F32 b0 = 1.0f - su0;
     F32 b1 = uv.y - su0;
     return {b0, b1, 1.0f - b0 - b1};
 }

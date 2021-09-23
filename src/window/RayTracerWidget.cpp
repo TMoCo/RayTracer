@@ -7,11 +7,7 @@
 #include <fstream>
 
 RayTracerWidget::RayTracerWidget(QWidget* parent, Model* m, Transform& t) : 
-    QOpenGLWidget(parent), model(m), transform{t}, raytracer(), frameBuffer() {
-
-    // 
-
-}
+    QOpenGLWidget(parent), model(m), transform{t}, raytracer(), frameBuffer() {}
 
 void RayTracerWidget::initializeGL() {}
 
@@ -31,10 +27,10 @@ void RayTracerWidget::RayTrace() {
     update(); // call update to display result
 }
 
-void RayTracerWidget::SaveImage(const char* name) {
+void RayTracerWidget::SaveImage(QString name) {
     // create name
     char path[MAX_NAME_LENGTH] = "../screenshots/";
-    std::strcat(path, name);
+    std::strcat(path, name.toStdString().data());
     std::strcat(path, ".ppm");
     
     std::ofstream out(path);

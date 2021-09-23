@@ -2,6 +2,8 @@
 // Quaternion class definition
 //
 
+#include <core/core.h>
+
 #include <math/Quaternion.h>
 
 #include <cmath>
@@ -10,7 +12,8 @@
 Quaternion::Quaternion(const Quaternion& other) : _q{other._q} {}
 
 Quaternion::Quaternion(const Vector3& v, float s) : vector{}, scalar(s) {
-    std::memcpy(vector, &v[0], VEC3_SIZE);
+    std::memcpy(vector, v._v, SIZEOF_VEC3);
+    scalar = s;
 }
 
 Quaternion::Quaternion(float x, float y, float z, float w) : _q{x, y, z, w} {} // avoid
@@ -21,12 +24,12 @@ Quaternion::Quaternion(const Vector4& vector) : _q{vector} {}
 
 // assignment operator
 Quaternion& Quaternion::operator = (const Quaternion &other) {
-    std::memcpy(this, &other, VEC4_SIZE);
+    std::memcpy(this, &other, SIZEOF_VEC4);
     return *this;
 }
 
 bool Quaternion::operator ==(const Quaternion& other) const {
-    return std::memcmp(this, &other, VEC4_SIZE) == 0; 
+    return std::memcmp(this, &other, SIZEOF_VEC4) == 0; 
 }
 
 Quaternion& Quaternion::operator +=(const Quaternion& other) {
@@ -125,9 +128,9 @@ Quaternion operator *(Quaternion lhs, const float rhs) {
 }
 
 std::istream& operator >> (std::istream &inStream, Quaternion &quaternion) {
-    return inStream >> *((Vector4*)&quaternion); // POD convert to Vector4
+    return inStream >> quaternion._q; // Vector4
 }
 
 std::ostream & operator << (std::ostream &outStream, const Quaternion &quaternion) {
-    return outStream << *((Vector4*)&quaternion); 
+    return outStream << quaternion._q; 
 }

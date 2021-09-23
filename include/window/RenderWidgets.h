@@ -18,22 +18,16 @@ class RenderWidgets : public QWidget {
 Q_OBJECT
 private:
     QStackedLayout* layout;
-    
+public:
     OpenGLWidget* openGLWidget;
     RayTracerWidget* raytracerWidget;
-
-    Model* model;
-    Transform transform;
-    Camera camera;
     
-public:
-    RenderWidgets(QWidget* parent, Model* m);
+    RenderWidgets(QWidget* parent, Model* model, Transform* transform, 
+        Camera* camera);
     ~RenderWidgets();
 
 public slots:
     void SwitchRender();
-    void RayTrace();
-    void SaveImage(QString name);
 
 signals:
     void SwitchedRender(int index);

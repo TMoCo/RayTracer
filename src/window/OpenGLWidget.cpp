@@ -4,10 +4,10 @@
 
 #include <window/OpenGLWidget.h>
 
-OpenGLWidget::OpenGLWidget(QWidget* parent, Model* m, Transform& t, Camera& c) : 
+OpenGLWidget::OpenGLWidget(QWidget* parent, Model* m, Transform* t, Camera* c) : 
     QOpenGLWidget(parent), model{m}, transform{t}, camera{c}, arcBall{} {
 
-    transform.Translate({0.0f, 0.0f, -3.0f});
+    transform->Translate({0.0f, 0.0f, -3.0f});
 }
 
 void OpenGLWidget::initializeGL() {
@@ -24,7 +24,7 @@ void OpenGLWidget::resizeGL(int w, int h) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     float aspectRatio = (float)w / (float)h;
-    glMultMatrixf(Matrix4::Perspective(45.0f, aspectRatio, 0.1f, 10.0f)[0]);
+    glMultMatrixf(Matrix4::Perspective(45.0f, aspectRatio, 0.1f, 10.0f)._m);
 }
 
 void OpenGLWidget::paintGL() {
@@ -43,8 +43,8 @@ void OpenGLWidget::paintGL() {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    // rotate by arcball rotation
-    glMultMatrixf(transform.GetMatrix()[0]);
+    // rotated by arcball rotation
+    glMultMatrixf(transform->GetMatrix()._m);
     // rotate by another 90 degrees for cornell box to 
     glMultMatrixf(Matrix4::RotationMatrix(Quaternion::AngleAxis({0.0f, 1.0f, 0.0f}, RADIANS(-90.0f)))[0]);
 
@@ -54,19 +54,19 @@ void OpenGLWidget::paintGL() {
 
 void OpenGLWidget::mousePressEvent(QMouseEvent *event) {
     arcBall.BeginDrag(scaleMousePos(event->x(), event->y()));
-    transform.orientation = arcBall.GetOrientation();
+    transform->orientation = arcBall.GetOrientation();
     update();
 }
 
 void OpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
     arcBall.ContinueDrag(scaleMousePos(event->x(), event->y()));
-    transform.orientation = arcBall.GetOrientation();
+    transform->orientation = arcBall.GetOrientation();
     update();
 }
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event) {
     arcBall.EndDrag(scaleMousePos(event->x(), event->y()));
-    transform.orientation = arcBall.GetOrientation();
+    transform->orientation = arcBall.GetOrientation();
     update();
 }
 

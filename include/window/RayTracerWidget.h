@@ -34,8 +34,9 @@ public:
     void resizeGL(int w, int h);
     void paintGL();
 
+public slots:
     void RayTrace();
-    void SaveImage(const char* name);
+    void SaveImage(QString name);
 };
 
 #endif // ! RAYTRACER_WIDGET_H

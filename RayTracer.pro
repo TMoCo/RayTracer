@@ -27,41 +27,54 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # Input
 HEADERS +=  include/core/core.h \
             include/core/types.h \
+            \
             include/image/Image.h \
+            \
             include/math/Vector2.h \
             include/math/Vector3.h \
             include/math/Vector4.h \
+            include/math/Vectors.h \
             include/math/Quaternion.h \
             include/math/Matrix4.h \
             include/math/Transform.h \
+            \
             include/model/Model.h \
             include/model/OBJLoader.h \
             include/model/Primitives.h \
+            \
+            include/raytracer/RayTracer.h \
+            include/raytracer/Ray.h \
+            include/raytracer/Surfel.h \
+            \
             include/window/ArcBall.h \
+            include/window/VectorWidget.h \
             include/window/RenderWidgets.h \
             include/window/RenderOptionsWidget.h \
             include/window/OpenGLWidget.h \
             include/window/RayTracerWidget.h \
             include/window/Window.h \
-            include/raytracer/RayTracer.h \
-            include/raytracer/Ray.h \
-            include/raytracer/Surfel.h \
+            \
             include/test.h
 
 SOURCES +=  src/main.cpp \
+            \
             src/math/Vector2.cpp \
             src/math/Vector3.cpp \
             src/math/Vector4.cpp \
             src/math/Quaternion.cpp \
             src/math/Matrix4.cpp \
             src/math/Transform.cpp \
+            \
             src/model/Model.cpp \
             src/model/OBJLoader.cpp \
             src/model/Primitives.cpp \
+            \
+            src/raytracer/RayTracer.cpp \
+            \
             src/window/ArcBall.cpp \
+            src/window/VectorWidget.cpp \
+            src/window/RayTracerWidget.cpp \
+            src/window/OpenGLWidget.cpp \
             src/window/RenderWidgets.cpp \
             src/window/RenderOptionsWidget.cpp \
-            src/window/OpenGLWidget.cpp \
-            src/window/RayTracerWidget.cpp \
-            src/raytracer/RayTracer.cpp \
             src/window/Window.cpp

@@ -9,6 +9,8 @@
 
 #include <math/Transform.h>
 
+#include <window/VectorWidget.h>
+
 #include <qt5/QtWidgets/QtWidgets>
 
 class RenderOptionsWidget : public QWidget {
@@ -24,26 +26,25 @@ private:
     QDoubleSpinBox* aspectRatioHeightSpinBox;
 
     // model options
+    VectorWidget* positionWidget;
+    // VectorWidget* rotationWidget;
     // ...
 
     QPushButton* rayTraceButton; // show / disable on render type
     QPushButton* saveImageButton;
 
-    // ref to objects modified by UI
-    Transform& transform;
-    Camera& camera;
-
 public:
-    RenderOptionsWidget(QWidget* parent, Transform& t, Camera& c);
+    RenderOptionsWidget(QWidget* parent, Transform* transform, Camera* camera);
     ~RenderOptionsWidget();
 
 public slots:
-    void SwitchRender(int renderIndex);
-    void UpdateCamera();
+    void SwitchRender(int renderIndex);   
+    void UpdateParameters(); 
     void PressedRayTrace();
     void PressedSaveImage();
 
 signals:
+    void ShouldUpdateGl();
     void ShouldRayTrace();
     void ShouldSaveImage(QString name);
 };

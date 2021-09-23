@@ -36,9 +36,9 @@ void Mesh::DrawMesh() const {
     // PRINT("mesh faces %zi\n", faces.size());
     // PRINT("positions %zi\n normals %zi \nuvs %zi", positions.size(), normals.size(), UVs.size());
     for (uint32_t f = 0; f < faces.size(); f+=3) {
-        glNormal3fv(&(normals[faces[f + 2]][0]));
-        glTexCoord2fv(&(UVs[faces[f + 1]][0]));
-        glVertex3fv(&(positions[faces[f]][0]));
+        glNormal3fv(normals[faces[f + 2]]._v);
+        glTexCoord2fv(UVs[faces[f + 1]]._v);
+        glVertex3fv(positions[faces[f]]._v);
     }
     glEnd();
 }

@@ -6,31 +6,30 @@
 #define VECTOR4_H 1
 
 #include <core/types.h>
-#include <math/Vector3.h>
+
+#include <math/Vector3.h> // for Homogeneous vectors (could move to Vectors.h in separate class...)
 
 #include <cstring>
 #include <xmmintrin.h>
-
-#define VEC4_SIZE 0x10 // 4 * sizeof(F32) = 0x10 = 16 bytes
 
 class Vector4 {
 public:
     union {
         F32 _v[4];
+        __m128 _v4;
         struct {
             F32 x, y, z, w;
         };
-        __m128 _v4;
     };
 
     Vector4();
     Vector4(F32 X, F32 Y, F32 Z, F32 W = 1.0f);
     Vector4(const F32* values);
-    Vector4(const Vector3& other); // homogeneous vector
+    Vector4(const Vector3& other); // create homogeneous vector
     Vector4(const Vector4& other);
 
-    Vector3 Point3D() const;
-    Vector3 ToVector3() const;
+    Vector3 Point3D() const; // perspective divide
+    Vector3 ToVector3() const; // drop w
 
     // binary operators
     Vector4& operator =(const Vector4& other);

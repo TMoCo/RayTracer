@@ -7,21 +7,16 @@
 
 #include <core/types.h>
 
-#include <xmmintrin.h>
-
 #include <iostream>
-
-#define UP Vector3{0.0f, 1.0f, 0.0f}
-
-#define VEC3_SIZE 3 * sizeof(F32) // 0xc = 12 bytes
+#include <xmmintrin.h>
 
 class Vector3 {
 public:
     union {
-        F32 _v[4];
+        F32 _v[4]; // still in fact 4 for simd operations (4th element is always ignored)
         __m128 _v4;
         struct {
-            F32 x, y, z;
+            F32 x, y, z; 
         };
     };
 
@@ -62,7 +57,6 @@ public:
     
     F32 Dot(const Vector3& other) const;
     Vector3 Cross(const Vector3& other) const;
-    //Vector3 CrossIntrinsic(const Vector3& other) const;
     F32 Length() const;
     Vector3 Normalize() const;
 };

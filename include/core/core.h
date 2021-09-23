@@ -1,19 +1,31 @@
 //
-// Some core preprocessor directives
+// Some core preprocessor directives and constants
 //
 
 #ifndef CORE_H
 #define CORE_H 1
 
+#include <cmath>
+
+// math utils
+#define RADIANS(x) \
+    x * M_PI / 180.0f
+
 #define NO_COPY(Type) \
     Type(const Type& T) = delete; \
     Type& operator=(const Type& T) = delete;
 
+// application constants
+#define SIZEOF_MAT4 0x40
+#define SIZEOF_VEC4 0x10
+#define SIZEOF_VEC3 0xc
+#define SIZEOF_VEC2 0x8
 #define EPSILON 0.00001f
-#define MAX_NAME_LENGTH 128
+#define MAX_NAME_LENGTH 0x80
 
 #include <iostream>
 
+// debug print
 #if (__cplusplus >= 202002L)
 #define PRINT(format, ...) \
     if (format) \
@@ -25,6 +37,7 @@
 #endif
 
 
+// assert
 #ifndef NDEBUG
 	#define m_assert(exp, msg) \
 		__m_assert(#exp, exp, __FILE__, __LINE__, msg)

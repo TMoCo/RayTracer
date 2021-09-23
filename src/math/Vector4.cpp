@@ -2,6 +2,8 @@
 // Vector4 class definition
 //
 
+#include <core/core.h>
+
 #include <math/Vector4.h>
 
 #include <cmath>
@@ -9,7 +11,7 @@
 #include <iomanip>
 
 Vector4::Vector4() : _v{} {
-    std::memset(&_v, 0, VEC4_SIZE);
+    std::memset(&_v, 0, SIZEOF_VEC4);
 }
 
 Vector4::Vector4(F32 x, F32 y, F32 z, F32 w) : _v{} {
@@ -20,24 +22,24 @@ Vector4::Vector4(F32 x, F32 y, F32 z, F32 w) : _v{} {
 }
 
 Vector4::Vector4(const F32* v) : _v{} {
-    std::memcpy(_v, v, VEC4_SIZE); // 4 * sizeof(F32) = 16 = 0_v[0]10
+    std::memcpy(_v, v, SIZEOF_VEC4); // 4 * sizeof(F32) = 16 = 0_v[0]10
 }
 
 Vector4::Vector4(const Vector3& other) : _v{} {
-    std::memcpy(_v, &other[0], VEC3_SIZE);
+    std::memcpy(_v, &other[0], SIZEOF_VEC4);
     w = 1.0f;
 }
 
 Vector4::Vector4(const Vector4& other) : _v{} {
-    std::memcpy(_v, &other[0], VEC4_SIZE);
+    std::memcpy(_v, &other[0], SIZEOF_VEC4);
 }
 Vector4& Vector4::operator =(const Vector4& other) {
-    std::memcpy(_v, &other[0], VEC4_SIZE); 
+    std::memcpy(_v, &other[0], SIZEOF_VEC4); 
     return *this;
 }
 
 bool Vector4::operator ==(const Vector4& other) const {
-    return memcmp(_v, &other[0], VEC4_SIZE) == 0;
+    return memcmp(_v, &other[0], SIZEOF_VEC4) == 0;
 }
 
 Vector4& Vector4::operator +=(const Vector4& other) {

@@ -6,10 +6,9 @@
 #define MATRIX4_H 1
 
 #include <core/types.h>
+
 #include <math/Vector4.h>
 #include <math/Quaternion.h>
-
-#define MAT4_SIZE 16 * sizeof(F32) // 0x40 = 256 bytes
 
 class Matrix4 {
 public:

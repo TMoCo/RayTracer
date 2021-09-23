@@ -2,6 +2,8 @@
 // Vector3 class definition
 //
 
+#include <core/core.h>
+
 #include <math/Vector3.h>
 
 #include <cmath>
@@ -14,20 +16,20 @@ Vector3::Vector3() : _v{} {
 Vector3::Vector3(F32 x, F32 y, F32 z) : _v{x, y, z} {}
 
 Vector3::Vector3(const Vector3& other) : _v{} {
-    std::memcpy(_v, other._v, VEC3_SIZE); // 3 * sizeof(F32) = 12 = 0xc
+    std::memcpy(_v, other._v, SIZEOF_VEC3); // 3 * sizeof(F32) = 12 = 0xc
 }
 
 Vector3::Vector3(const F32* values) : _v{} {
-    std::memcpy(_v, values, VEC3_SIZE);
+    std::memcpy(_v, values, SIZEOF_VEC3);
 }
 
 Vector3& Vector3::operator =(const Vector3& other) {
-    std::memcpy(_v, &other[0], VEC3_SIZE);
+    std::memcpy(_v, &other[0], SIZEOF_VEC3);
     return *this;
 }
 
 bool Vector3::operator ==(const Vector3& other) const {
-    return std::memcmp(_v, &other[0], VEC3_SIZE);
+    return std::memcmp(_v, &other[0], SIZEOF_VEC3);
 }
 
 Vector3& Vector3::operator +=(const Vector3& other) {

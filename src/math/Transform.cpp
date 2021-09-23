@@ -20,13 +20,13 @@ void Transform::Translate(const Vector3& v) {
 }
 
 Vector3 Transform::TransformPoint(const Vector3& vec3) const {
-    return &(GetMatrix() * Vector4{vec3})[0];
+    return (GetMatrix() * Vector4{vec3})._v;
 }
 
 Vector3 Transform::RotatePoint(const Vector3& vec3) const {
-    return &(Matrix4::RotationMatrix(orientation) * Vector4{vec3})[0];
+    return (Matrix4::RotationMatrix(orientation) * Vector4{vec3})._v;
 }
 
 Vector3 Transform::TranslatePoint(const Vector3& vec3) const {
-    return &(Matrix4::TranslationMatrix(position) * Vector4{vec3})[0];
+    return (Matrix4::TranslationMatrix(position) * Vector4{vec3})._v;
 }

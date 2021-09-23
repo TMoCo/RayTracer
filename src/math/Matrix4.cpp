@@ -2,6 +2,8 @@
 // Matrix4 class definition
 //
 
+#include <core/core.h>
+
 #include <math/Matrix4.h>
 
 #include <cstring>
@@ -12,7 +14,7 @@ Matrix4::Matrix4() : _m{} {
 }
 
 Matrix4::Matrix4(const Matrix4& other) : _m{} {
-    std::memcpy(&_m, &other._m, MAT4_SIZE);
+    std::memcpy(&_m, &other._m, SIZEOF_MAT4);
 }
 
 Matrix4::Matrix4(const F32* values) : _m{} { // values given in row major format
@@ -21,12 +23,12 @@ Matrix4::Matrix4(const F32* values) : _m{} { // values given in row major format
 }
 
 Matrix4& Matrix4::operator =(const Matrix4& other) {
-    std::memcpy(&_m, other[0], MAT4_SIZE); 
+    std::memcpy(&_m, other[0], SIZEOF_MAT4); 
     return *this;
 }
 
 bool Matrix4::operator ==(const Matrix4& other) const {
-    return std::memcmp(&_m, other[0], MAT4_SIZE) == 0; // same values == 0
+    return std::memcmp(&_m, other[0], SIZEOF_MAT4) == 0; // same values == 0
 }
 
 Matrix4& Matrix4::operator +=(const Matrix4& other) {
@@ -131,7 +133,7 @@ Matrix4 Matrix4::Transpose(const Matrix4& mat) {
 
 Matrix4 Matrix4::TranslationMatrix(const Vector3& v) {
     Matrix4 mat = Matrix4::Identity();
-    std::memcpy(&mat._m[12], &v[0], VEC3_SIZE); // bonus of column major <3
+    std::memcpy(&mat._m[12], &v[0], SIZEOF_VEC3); // bonus of column major <3
     return mat;
 }
 
@@ -176,7 +178,7 @@ Matrix4 Matrix4::ScaleMatrix(const F32& s) {
 }
 
 Matrix4 Matrix4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) {
-    F32 tanHalfFov = std::tan(fov * 0.5f);
+    F32 tanHalfFov = std::tan(RADIANS(fov * 0.5f));
     Matrix4 mat{};
     mat[0][0] = 1.0f / (aspectRatio * tanHalfFov);
     mat[1][1] = 1.0f / tanHalfFov;
@@ -210,13 +212,13 @@ Vector4 operator *(Matrix4 mat, const Vector4& vec) {
 }
 
 std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
-    // converts to Vector4 (s²low)
+    // converts to Vector4 (slow)
     return inStream >> *((Vector4*)matrix[0]) >> *((Vector4*)matrix[1]) >> 
     *((Vector4*)matrix[2]) >> *((Vector4*)matrix[3]);
 }
 
 std::ostream & operator << (std::ostream &outStream, const Matrix4 &matrix) {
-    return outStream 
+    return outStream // constructs Vector4s (slooooow)
         << Vector4{matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0]} << '\n' 
         << Vector4{matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1]} << '\n' 
         << Vector4{matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2]} << '\n' 

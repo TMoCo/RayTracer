@@ -5,17 +5,13 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H 1
 
-#include <math/Vector3.h>
-#include <math/Vector4.h>
 #include <core/types.h>
 
-#include <cmath>
-
-#define RADIANS(x) \
-    x * M_PI / 180.0f
+#include <math/Vector3.h>
+#include <math/Vector4.h>
 
 class Quaternion {
-private:
+public:
     union {
         Vector4 _q;
         struct {
@@ -23,7 +19,6 @@ private:
             F32 scalar;
         };
     };
-public:
 
     Quaternion(const Quaternion& other);
     Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f);

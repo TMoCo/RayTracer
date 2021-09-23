@@ -4,11 +4,8 @@
 
 #include <window/RenderOptionsWidget.h>
 
-RenderOptionsWidget::RenderOptionsWidget(QWidget* parent, Transform& t, Camera& c) : 
-    QWidget(parent), layout(nullptr), cameraGroupBox(nullptr), fovSpinBox(nullptr),
-    windowAspectRatio(nullptr), aspectRatioWidthSpinBox(nullptr),
-    aspectRatioHeightSpinBox(nullptr), rayTraceButton(nullptr), 
-    transform(t), camera(c) {
+RenderOptionsWidget::RenderOptionsWidget(QWidget* parent, Transform* transform, 
+    Camera* camera) : QWidget(parent) {
 
     setMinimumWidth(200);
 
@@ -16,6 +13,7 @@ RenderOptionsWidget::RenderOptionsWidget(QWidget* parent, Transform& t, Camera& 
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
+    // camera editing
     QLabel* cameraOptionsLabel = new QLabel("Camera options", this);
     cameraOptionsLabel->setStyleSheet( "QLabel { font-weight: bold; }" );
     layout->addWidget(cameraOptionsLabel);
@@ -42,18 +40,30 @@ RenderOptionsWidget::RenderOptionsWidget(QWidget* parent, Transform& t, Camera& 
     groupBoxLayout->addWidget(aspectRatioWidthSpinBox);
     aspectRatioHeightSpinBox = new QDoubleSpinBox(this);
     groupBoxLayout->addWidget(aspectRatioHeightSpinBox);
-    
+
     layout->addWidget(cameraGroupBox);
 
+    // transform editing
+    positionWidget = new VectorWidget(&transform->position, -10.0f, 10.0f, this);
+    layout->addWidget(positionWidget);    
+    QObject::connect(
+        positionWidget, SIGNAL(ValueChanged()), 
+        this, SLOT(UpdateParameters()));
+
+    // raytracing
     rayTraceButton = new QPushButton("RayTrace Image", this);
-    QObject::connect(rayTraceButton, SIGNAL(pressed()), this, SLOT(PressedRayTrace()));
     rayTraceButton->setVisible(false);
     layout->addWidget(rayTraceButton);
+    QObject::connect(
+        rayTraceButton, SIGNAL(pressed()), 
+        this, SLOT(PressedRayTrace()));
 
     saveImageButton = new QPushButton("Save Image", this);
-    QObject::connect(saveImageButton, SIGNAL(pressed()), this, SLOT(PressedSaveImage()));
     saveImageButton->setVisible(false);
     layout->addWidget(saveImageButton);
+    QObject::connect(
+        saveImageButton, SIGNAL(pressed()), 
+        this, SLOT(PressedSaveImage()));
 }
 
 RenderOptionsWidget::~RenderOptionsWidget() {
@@ -80,8 +90,9 @@ void RenderOptionsWidget::SwitchRender(int renderIndex) {
     }
 }
 
-void RenderOptionsWidget::UpdateCamera() {
-    std::cout << "Update Camera\n";
+void RenderOptionsWidget::UpdateParameters() {
+    // called whenever an option in UI has been changed
+    emit ShouldUpdateGl();
 }
 
 void RenderOptionsWidget::PressedRayTrace() {

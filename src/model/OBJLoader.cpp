@@ -179,8 +179,17 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     std::cout << "loaded\n";
     std::cout << model.meshes.size() << "\n";
     std::cout << model.meshes.begin()->faces.size() << "\n";
-    */
 
+    for (auto& pos : model.meshes[0].positions) {
+        std::cout << pos << "\n";
+    }
+
+    for (auto& face : model.meshes[0].faces) {
+        std::cout << face << " ";
+    }
+    std::cout << std::endl;
+    */
+    
     // update face indices for separate objects
     if (model.meshes.size() > 1) {
         mesh = model.meshes.begin();

@@ -21,12 +21,12 @@ Q_OBJECT
 private:
     Model* model;
 
-    Transform& transform;
-    Camera& camera;
+    Transform* transform;
+    Camera* camera;
     
     ArcBall arcBall;
 public:
-    OpenGLWidget(QWidget* parent, Model* m, Transform& t, Camera& c);
+    OpenGLWidget(QWidget* parent, Model* m, Transform* t, Camera* c);
 
     // qglwidget methods
     void initializeGL();

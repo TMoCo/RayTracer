@@ -7,8 +7,6 @@
 
 #include <core/types.h>
 
-#define VEC2_SIZE 0x8
-
 class Vector2 {
 public:
     union { 
@@ -18,7 +16,7 @@ public:
         };
      };
 
-    Vector2() {}
+    Vector2();
     Vector2(F32 X, F32 Y);
     Vector2(const Vector2& other);
 
