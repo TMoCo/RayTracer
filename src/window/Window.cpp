@@ -27,14 +27,20 @@ Window::Window(Model* model, const char* name) : QWidget(nullptr),
         renderWidgets, SIGNAL(SwitchedRender(int)), 
         renderOptionsWidget, SLOT(SwitchRender(int)));
     QObject::connect(
-        renderOptionsWidget, SIGNAL(ShouldRayTrace()), 
-        renderWidgets->raytracerWidget, SLOT(RayTrace()));
+        renderOptionsWidget, SIGNAL(ShouldRayTrace(int)), 
+        renderWidgets->raytracerWidget, SLOT(RayTrace(int)));
     QObject::connect(
         renderOptionsWidget, SIGNAL(ShouldSaveImage(QString)), 
         renderWidgets->raytracerWidget, SLOT(SaveImage(QString)));
     QObject::connect(
         renderOptionsWidget, SIGNAL(ShouldUpdateGl()), 
         renderWidgets->openGLWidget, SLOT(update()));
+    QObject::connect(
+        renderWidgets->openGLWidget, SIGNAL(resized()),
+        renderOptionsWidget, SLOT(UpdateProperties()));
+    QObject::connect(
+        renderOptionsWidget, SIGNAL(ShouldResetAspectRatio()),
+        renderWidgets, SLOT(ResetAspectRatio()));
 }
 
 Window::~Window() {

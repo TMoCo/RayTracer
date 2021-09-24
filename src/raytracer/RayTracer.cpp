@@ -4,16 +4,18 @@
 
 #include <raytracer/RayTracer.h>
 
-RayTracer::RayTracer() : numSamples(1), random{} {}
+#include <core/Random.h>
 
-void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform t) {
-    // create a local copy of the model
+RayTracer::RayTracer() {}
+
+void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original, 
+    Transform t, Camera* camera, UI32 samples) {
+    
+    // create50; a local copy of the model
     Model model;
     Model::DeepCopy(*original, model);
 
-    t.Rotate(Quaternion::AngleAxis({0.0f, 1.0f, 0.0f}, RADIANS(-90.0f)));
-
-    // transform model copy data
+    // transform copied model
     for (Mesh& mesh : model.meshes) {
         for (Vector3& position : mesh.positions)
             position = t.TransformPoint(position);
@@ -22,92 +24,89 @@ void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform 
     }
 
     // scale for aspect ratio
-    F32 wScale, hScale, width = buffer.Width(), height = buffer.Height();
-    F32 aspectRatio = width / height;
-    F32 tanhfov = std::tan(RADIANS(45.0f)); // fixed for testing
-    // portrait
-    wScale = 1.0f / width * aspectRatio * tanhfov;
-    hScale = 1.0f / height * tanhfov;
+    F32 rWidth = 1.0f / (F32)buffer.Width(), rHeight = 1.0f / (F32)buffer.Height();
 
-    Vector3 eye{}; // eye at origin
+    Vector3 eye{0.0f, 0.0f, 0.0f}; // eye at origin
 
     // primary ray 
     Ray primaryRay;
     primaryRay.origin = eye;
 
+    // gamma correction
     F32 gamma = 1.0f / 2.2f;
 
     // loop over each pixel in the buffer
     for(UI32 row = 0; row < buffer.Height(); ++row) {
         for (UI32 col = 0; col < buffer.Width(); ++col) {
             //** Fit into a thread
-                Vector4 colour{};
-                // ray direction
-                primaryRay.direction = Vector3{
-                    (2.0f * col - width) / width * aspectRatio * tanhfov,
-                    (2.0f * row - height) / height * tanhfov,
-                    -1.0f}.Normalize();
-                // std::cout << primaryRay.direction << "\n";
-                    // (2.0f * row - height) * hScale, -1.0f}.Normalize();
-
-                F32 tNear = INFINITY;
-                Surfel surfel;
-                // check if ray intersects a light
-                if (Intersect(primaryRay, model.lights, surfel, tNear))
-                    colour = model.materials.at(surfel.mesh->material).emissive._v;
+            Vector4 colour{};
+            // ray direction
+            primaryRay.direction = camera->GenerateRay(
+                { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight }).Normalize();
                 
-                // compute scene
-                else {
-                    for (UI32 samples = 0; samples < numSamples; ++samples)
-                        colour += CastRay(primaryRay, model, 0);
+            // compute scene
+            for (UI32 s = 0; s < samples; ++s)
+                colour += CastRay(primaryRay, model, 0);
 
-                    // tone mapping 
-                    colour /= Vector4{1.0f, 1.0f, 1.0f, 1.0f} + colour;
-                    // gamma correction
-                    colour = { std::pow(colour.x, gamma), std::pow(colour.y, gamma), std::pow(colour.z, gamma) };
-                }
-                buffer[row][col] = colour._v;
+            // tone mapping 
+            colour /= samples;
+            colour /= Vector4{1.0f, 1.0f, 1.0f, 1.0f} + colour;
+            // gamma correction
+            colour = { std::pow(colour.x, gamma), std::pow(colour.y, gamma), std::pow(colour.z, gamma) };
+            buffer[row][col] = colour._v;
+            // PRINT("row %i, col %i", row, col);
             //**
         }
     }
 }
 
-Vector4 RayTracer::CastRay(const Ray& ray, Model& model, UI32 depth) {
-    Vector4 colour = {0.0f, 0.0f, 0.0f, 1.0f};
+Vector4 RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
+    Vector4 colour{};
 
-    if (depth > MAX_DEPTH) // stop recursion
+    if (depth > MAX_DEPTH) // stop recursion 
+    {
+        //PRINT("reached max depth");
         return colour;
+    }
 
     // init variables
     Surfel surfel;
     F32 tNear = INFINITY;
 
     // intersection of ray with the model
-    if(Intersect(ray, model.objects, surfel, tNear)) {
+    if(Intersect(inRay, model.objects, surfel, tNear)) {
+        //PRINT("intersection");
         // compute surfel position, normal and texture coordinates
         surfel.Interpolate();
 
+        // colour with uvs
+        Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
+
+        // colour = surfel.UV()._v;
+        // colour = barycentric._v;
+
+        Ray ray; // ray used for lighting
+
         // direct lighting
         Surfel shadow;
-        Ray lightRay;
         for (UI32 l = 0; l < model.lights.size(); ++l) {
             tNear = INFINITY;
 
             // from light to surfel
-            lightRay.origin =  RandomAreaLightPoint(model.lights[l]); // ray originate at light
-            lightRay.direction = (surfel.position - lightRay.origin).Normalize(); 
+            ray.origin =  RandomAreaLightPoint(model.lights[l]); // ray originate at light
+            ray.direction = (surfel.position - ray.origin).Normalize(); // to surfel
             
             // get intersection of light to surfel
-            Intersect(lightRay, model.objects, shadow, tNear);
+            Intersect(ray, model.objects, shadow, tNear);
 
             // > same mesh and same triangle = not in shadow
-            if (shadow.mesh == surfel.mesh && shadow.tri == surfel.tri) {
+            if ((shadow.mesh == surfel.mesh) && (shadow.tri == surfel.tri)) {
                 // compute lighting
                 colour += 
                     // light colour
                     model.materials.at(model.lights[l]->material).emissive 
                     // surfel brdf
-                    * surfel.BRDF(-lightRay.direction, -ray.direction, 
+                    * surfel.BRDF(-ray.direction, -inRay.direction, 
                     model.materials.at(surfel.mesh->material))
                     // light distance attenuation
                     / (tNear * tNear);
@@ -115,19 +114,19 @@ Vector4 RayTracer::CastRay(const Ray& ray, Model& model, UI32 depth) {
         }
 
         // indirect lighting
+        ray.direction = Quaternion::RotateVector(
+            // random point on hemisphere unit hemisphere
+            UniformSampleHemisphere(Random::UniformUV()), 
+            // rotation to align with surfel normal
+            Quaternion::Rotation(UP, surfel.normal)); 
+        
+        colour += CastRay(ray, model, depth + 1) 
+            * surfel.BRDF(ray.direction, -inRay.direction, model.materials.at(surfel.mesh->material));
         /*
-        // from unit to surfel normal
-        Quaternion toSurfelNormal = Quaternion::Rotation(UP, normal);
-
-        // indirect lighting
-        for (UI32 sample = 0; sample < numSamples; ++sample) {
-            ray.direction = Quaternion::RotateVector(
-                UniformSampleHemisphere(random.UniformVec2_0_1()), // random point on hemisphere
-                toSurfelNormal); // align with surface
-            // CastRay(ray, model, depth + 1);
-        }
         */
     }
+    else if(Intersect(inRay, model.lights, surfel, tNear)) 
+        colour = model.materials.at(surfel.mesh->material).emissive;
 
     return colour;
 }
@@ -193,15 +192,14 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
 
 Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
     // get a random triangle in the light mesh
-    UI32 index = 9 * (random.UniformF32_0_1() * (light->faces.size() / 9));
+    UI32 index = Random::UniformI32(0, (light->faces.size() / 9) - 1);
     // barycentric coordinates
-    // Vector3 barycentric = UniformSampleTriangle(random.UniformVec2_0_1());
-    Vector3 barycentric = UniformSampleTriangle(random.UniformVec2_0_1());
+    Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
     // random point in the triangle
     return 
-        light->positions[index+3] * barycentric.x +
-        light->positions[index+6] * barycentric.y +
-        light->positions[index  ] * barycentric.z;
+        light->positions[index  ] * barycentric.x +
+        light->positions[index+3] * barycentric.y +
+        light->positions[index+3] * barycentric.z;
 }
 
 Vector2 RayTracer::UniformSampleDisk(const Vector2& uv) {

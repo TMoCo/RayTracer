@@ -59,6 +59,7 @@ public:
     Vector3 Cross(const Vector3& other) const;
     F32 Length() const;
     Vector3 Normalize() const;
+    static Vector3 Reflect(const Vector3& v, const Vector3& normal);
 };
 
 // binary operators

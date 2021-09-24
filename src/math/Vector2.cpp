@@ -8,7 +8,9 @@
 
 #include <cstring>
 
-Vector2::Vector2() : _v{} {}
+Vector2::Vector2() : _v{} {
+    std::memset(_v, 0, SIZEOF_VEC2);
+}
 
 Vector2::Vector2(F32 X, F32 Y) : x(X), y(Y) {}
 
@@ -25,7 +27,7 @@ const F32& Vector2::operator [](const UI32 index) const {
 }
 
 Vector2& Vector2::operator =(const Vector2& other) {
-    std::memcpy(this, &other, SIZEOF_VEC2); // 2 * sizeof(F32) = 8
+    std::memcpy(_v, other._v, SIZEOF_VEC2); // 2 * sizeof(F32) = 8
     return *this;
 }
 

@@ -11,6 +11,7 @@
 #include <iomanip>
 
 Vector3::Vector3() : _v{} {
+    std::memset(_v, 0, SIZEOF_VEC4);
 }
 
 Vector3::Vector3(F32 x, F32 y, F32 z) : _v{x, y, z} {}
@@ -24,12 +25,12 @@ Vector3::Vector3(const F32* values) : _v{} {
 }
 
 Vector3& Vector3::operator =(const Vector3& other) {
-    std::memcpy(_v, &other[0], SIZEOF_VEC3);
+    std::memcpy(_v, other._v, SIZEOF_VEC3);
     return *this;
 }
 
 bool Vector3::operator ==(const Vector3& other) const {
-    return std::memcmp(_v, &other[0], SIZEOF_VEC3);
+    return std::memcmp(_v, other._v, SIZEOF_VEC3);
 }
 
 Vector3& Vector3::operator +=(const Vector3& other) {
@@ -111,6 +112,10 @@ F32 Vector3::Length() const {
 
 Vector3 Vector3::Normalize() const {
     return *this / Length();
+}
+
+Vector3 Vector3::Reflect(const Vector3& v, const Vector3& normal) {
+    return v - 2.0f * v.Dot(normal) * normal; // assumes unit normal
 }
 
 Vector3 operator /(Vector3 lhs, const F32& rhs) {

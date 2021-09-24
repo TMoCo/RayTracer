@@ -21,22 +21,24 @@ void OpenGLWidget::initializeGL() {
 
 void OpenGLWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    float aspectRatio = (float)w / (float)h;
-    glMultMatrixf(Matrix4::Perspective(45.0f, aspectRatio, 0.1f, 10.0f)._m);
+    camera->aspectRatio = (F32)w / (F32)h;
 }
 
 void OpenGLWidget::paintGL() {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMultMatrixf(Matrix4::Perspective(
+        camera->FOV, camera->aspectRatio, camera->zNear, camera->zFar)._m);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
     glLoadIdentity();
-    float pos[] = {2.0f, 0.0f, 0.0f};
+    F32 pos[] = {2.0f, 0.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
     glPopMatrix();
     
-    float color[] = {0.1f, 0.1f, 0.1f, 1.0f};
+    F32 color[] = {0.1f, 0.1f, 0.1f, 1.0f};
     glLightfv(GL_LIGHT0, GL_AMBIENT, color);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
     glLightfv(GL_LIGHT0, GL_SPECULAR, color);
@@ -45,8 +47,6 @@ void OpenGLWidget::paintGL() {
     glLoadIdentity();
     // rotated by arcball rotation
     glMultMatrixf(transform->GetMatrix()._m);
-    // rotate by another 90 degrees for cornell box to 
-    glMultMatrixf(Matrix4::RotationMatrix(Quaternion::AngleAxis({0.0f, 1.0f, 0.0f}, RADIANS(-90.0f)))[0]);
 
     model->Render();
 }
@@ -70,9 +70,9 @@ void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event) {
     update();
 }
 
-Vector2 OpenGLWidget::scaleMousePos(float x, float y) {
-    float width = this->width(); 
-    float height = this->height();
+Vector2 OpenGLWidget::scaleMousePos(F32 x, F32 y) {
+    F32 width = this->width(); 
+    F32 height = this->height();
     // return x and y in [-1, -1] range
     return { (2.0f * x - width) / width, (height - 2.0f * y) / height };
 }

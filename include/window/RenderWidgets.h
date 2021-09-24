@@ -18,6 +18,8 @@ class RenderWidgets : public QWidget {
 Q_OBJECT
 private:
     QStackedLayout* layout;
+    
+    Camera* camera;
 public:
     OpenGLWidget* openGLWidget;
     RayTracerWidget* raytracerWidget;
@@ -27,6 +29,7 @@ public:
     ~RenderWidgets();
 
 public slots:
+    void ResetAspectRatio();
     void SwitchRender();
 
 signals:

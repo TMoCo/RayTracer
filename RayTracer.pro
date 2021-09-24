@@ -27,6 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # Input
 HEADERS +=  include/core/core.h \
             include/core/types.h \
+            include/core/Random.h \
             \
             include/image/Image.h \
             \

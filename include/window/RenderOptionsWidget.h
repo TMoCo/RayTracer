@@ -18,18 +18,30 @@ Q_OBJECT
 private:
     QVBoxLayout* layout;
 
+    Camera* camera;
+
     // camera options
+    QLabel* cameraOptionsLabel;
     QGroupBox* cameraGroupBox;
+    QVBoxLayout* cameraBoxLayout;
+    QLabel* fovLabel;
     QDoubleSpinBox* fovSpinBox;
+    QLabel* aspectRatioLabel;
     QCheckBox* windowAspectRatio;
-    QDoubleSpinBox* aspectRatioWidthSpinBox;
-    QDoubleSpinBox* aspectRatioHeightSpinBox;
+    QDoubleSpinBox* aspectRatioSpinBox;
 
     // model options
+    QLabel* translationLabel;
+    QGroupBox* translationGroupBox;
+    QVBoxLayout* translationBoxLayout;
     VectorWidget* positionWidget;
-    // VectorWidget* rotationWidget;
-    // ...
 
+    // raytracing options
+    QLabel* rayTracingOptionsLabel;
+    QGroupBox* rayTracingGroupBox;
+    QVBoxLayout* rayTracingBoxLayout;
+    QLabel* samplesLabel;
+    QSpinBox* samplesSpinBox;
     QPushButton* rayTraceButton; // show / disable on render type
     QPushButton* saveImageButton;
 
@@ -38,14 +50,16 @@ public:
     ~RenderOptionsWidget();
 
 public slots:
-    void SwitchRender(int renderIndex);   
-    void UpdateParameters(); 
+    void SwitchRender(int renderIndex);  
+    void ShowAspectRatio(int state); 
+    void UpdateProperties(); 
     void PressedRayTrace();
     void PressedSaveImage();
 
 signals:
+    void ShouldResetAspectRatio();
     void ShouldUpdateGl();
-    void ShouldRayTrace();
+    void ShouldRayTrace(int samples);
     void ShouldSaveImage(QString name);
 };
 

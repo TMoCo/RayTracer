@@ -39,7 +39,7 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
     // scale mouse pos
-    Vector2 scaleMousePos(float x, float y);
+    Vector2 scaleMousePos(F32 x, F32 y);
 };
 
 #endif // !OPENGL_WIDGET_H

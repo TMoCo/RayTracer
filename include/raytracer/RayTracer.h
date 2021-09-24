@@ -11,53 +11,19 @@
 
 #include <model/Model.h>
 
+#include <render/Camera.h>
+
 #include <raytracer/Ray.h>
 #include <raytracer/Surfel.h>
 
-#include <random>
-#include <chrono>
-
 #define MAX_DEPTH 4
 
-typedef std::uniform_real_distribution<F32> uniform;
-typedef  std::chrono::system_clock sysClock;
-
-// random number generation
-class Random {
-private:
-    UI32 seed;
-
-    uniform uniform_0_1;
-
-    std::mt19937 generator;
-
-public:
-
-    inline Random() : seed(sysClock::now().time_since_epoch().count()) {
-        uniform_0_1 = uniform(0.0f, 1.0f);
-        generator = std::mt19937(seed);
-    }
-
-    inline Vector2 UniformVec2_0_1() {
-        return Vector2{ uniform_0_1(generator), uniform_0_1(generator) };
-    }
-
-    inline F32 UniformF32_0_1() {
-        return uniform_0_1(generator);
-    }
-
-};
-
 class RayTracer {
-private:
-    UI32 numSamples;
-
-    Random random;
-
 public:
     RayTracer();
 
-    void RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform t);
+    void RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform t, 
+        Camera* camera, UI32 samples);
  
 private:
     // cast a ray 

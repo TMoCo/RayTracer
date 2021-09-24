@@ -5,6 +5,10 @@
 #ifndef CORE_H
 #define CORE_H 1
 
+
+#include <chrono>
+typedef  std::chrono::system_clock sys_clock;
+
 #include <cmath>
 
 // math utils

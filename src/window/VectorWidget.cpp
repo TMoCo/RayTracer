@@ -11,14 +11,20 @@ VectorWidget::VectorWidget(Vector3* v, F32 min, F32 max, QWidget* parent) :
     
     xSpinBox = new QDoubleSpinBox(this);
     xSpinBox->setRange(min, max);
+    xSpinBox->setValue(vector->x);
+    xSpinBox->setPrefix("x: ");
     layout->addWidget(xSpinBox);
     
     ySpinBox = new QDoubleSpinBox(this); 
     ySpinBox->setRange(min, max);
+    ySpinBox->setValue(vector->y);
+    ySpinBox->setPrefix("y: ");
     layout->addWidget(ySpinBox);
 
     zSpinBox = new QDoubleSpinBox(this);
     zSpinBox->setRange(min, max);
+    zSpinBox->setValue(vector->z);
+    zSpinBox->setPrefix("z: ");
     layout->addWidget(zSpinBox);
 
     QObject::connect(xSpinBox, SIGNAL(valueChanged(double)), this, SLOT(UpdateX(double)));

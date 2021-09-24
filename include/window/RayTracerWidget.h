@@ -11,6 +11,8 @@
 
 #include <math/Transform.h>
 
+#include <render/Camera.h>
+
 #include <raytracer/RayTracer.h>
 
 #include <qt5/QtWidgets/QOpenGLWidget>
@@ -20,22 +22,22 @@ class RayTracerWidget : public QOpenGLWidget {
 Q_OBJECT
 private:
     Model* model;
-
-    Transform& transform;
+    Transform* transform;
+    Camera* camera;
 
     RayTracer raytracer;
 
     Image<rgba_f> frameBuffer;
 
 public:
-    RayTracerWidget(QWidget* parent, Model* m, Transform& t);
+    RayTracerWidget(QWidget* parent, Model* m, Transform* t, Camera* c);
     
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
 
 public slots:
-    void RayTrace();
+    void RayTrace(int samples);
     void SaveImage(QString name);
 };
 

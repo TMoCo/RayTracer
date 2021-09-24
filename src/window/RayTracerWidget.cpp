@@ -6,8 +6,10 @@
 
 #include <fstream>
 
-RayTracerWidget::RayTracerWidget(QWidget* parent, Model* m, Transform& t) : 
-    QOpenGLWidget(parent), model(m), transform{t}, raytracer(), frameBuffer() {}
+RayTracerWidget::RayTracerWidget(QWidget* parent, Model* m, Transform* t, 
+    Camera* c) : 
+    QOpenGLWidget(parent), model(m), transform{t}, camera{c}, 
+    raytracer(), frameBuffer() {}
 
 void RayTracerWidget::initializeGL() {}
 
@@ -22,8 +24,8 @@ void RayTracerWidget::paintGL() {
     glDrawPixels(width(), height(), GL_RGBA, GL_FLOAT, frameBuffer[0]); 
 }
 
-void RayTracerWidget::RayTrace() {
-    raytracer.RayTraceImage(frameBuffer, model, transform);
+void RayTracerWidget::RayTrace(int samples) {
+    raytracer.RayTraceImage(frameBuffer, model, *transform, camera, samples);
     update(); // call update to display result
 }
 
