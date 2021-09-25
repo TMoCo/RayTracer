@@ -27,7 +27,7 @@ private:
 
     RayTracer raytracer;
 
-    Image<rgba_f> frameBuffer;
+    Image frameBuffer;
 
 public:
     RayTracerWidget(QWidget* parent, Model* m, Transform* t, Camera* c);

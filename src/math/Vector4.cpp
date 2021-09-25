@@ -10,24 +10,17 @@
 #include <cstring>
 #include <iomanip>
 
-Vector4::Vector4() : _v{} {
-    std::memset(_v, 0, SIZEOF_VEC4);
-}
+Vector4::Vector4() : _v{} {}
 
-Vector4::Vector4(F32 x, F32 y, F32 z, F32 w) : _v{} {
-    _v[0] = x;
-    _v[1] = y;
-    _v[2] = z;
-    _v[3] = w;
-}
+Vector4::Vector4(F32 x, F32 y, F32 z, F32 w) : _v{x, y, z, w} {}
 
 Vector4::Vector4(const F32* v) : _v{} {
-    std::memcpy(_v, v, SIZEOF_VEC4); // 4 * sizeof(F32) = 16 = 0_v[0]10
+    std::memcpy(_v, v, SIZEOF_VEC4);
 }
 
-Vector4::Vector4(const Vector3& other) : _v{} {
-    std::memcpy(_v, other._v, SIZEOF_VEC4);
-    w = 1.0f;
+Vector4::Vector4(const Vector3& other, F32 W) : _v{} {
+    std::memcpy(_v, other._v, SIZEOF_VEC3);
+    w = W;
 }
 
 Vector4::Vector4(const Vector4& other) : _v{} {

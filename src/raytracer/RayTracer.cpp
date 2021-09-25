@@ -8,10 +8,10 @@
 
 RayTracer::RayTracer() {}
 
-void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original, 
+void RayTracer::RayTraceImage(Image& buffer, Model* original, 
     Transform t, Camera* camera, UI32 samples) {
     
-    // create50; a local copy of the model
+    // local copy of model
     Model model;
     Model::DeepCopy(*original, model);
 
@@ -39,34 +39,28 @@ void RayTracer::RayTraceImage(Image<rgba_f>& buffer, Model* original,
     for(UI32 row = 0; row < buffer.Height(); ++row) {
         for (UI32 col = 0; col < buffer.Width(); ++col) {
             //** Fit into a thread
-            Vector4 colour{};
+            colour c{};
             // ray direction
             primaryRay.direction = camera->GenerateRay(
                 { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight }).Normalize();
                 
             // compute scene
             for (UI32 s = 0; s < samples; ++s)
-                colour += CastRay(primaryRay, model, 0);
+                c += CastRay(primaryRay, model, 0);
 
-            // tone mapping 
-            colour /= samples;
-            colour /= Vector4{1.0f, 1.0f, 1.0f, 1.0f} + colour;
-            // gamma correction
-            colour = { std::pow(colour.x, gamma), std::pow(colour.y, gamma), std::pow(colour.z, gamma) };
-            buffer[row][col] = colour._v;
-            // PRINT("row %i, col %i", row, col);
+            buffer[row][col] = Colour::GammaCorrection(Colour::ReinhardExtendedTMO(c, 10.0f), gamma);
             //**
         }
     }
 }
 
-Vector4 RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
-    Vector4 colour{};
+colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
+    colour c{};
 
     if (depth > MAX_DEPTH) // stop recursion 
     {
         //PRINT("reached max depth");
-        return colour;
+        return c;
     }
 
     // init variables
@@ -80,7 +74,7 @@ Vector4 RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
         surfel.Interpolate();
 
         // colour with uvs
-        Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
+        // Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
 
         // colour = surfel.UV()._v;
         // colour = barycentric._v;
@@ -102,9 +96,9 @@ Vector4 RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
             // > same mesh and same triangle = not in shadow
             if ((shadow.mesh == surfel.mesh) && (shadow.tri == surfel.tri)) {
                 // compute lighting
-                colour += 
+                c += 
                     // light colour
-                    model.materials.at(model.lights[l]->material).emissive 
+                    model.materials.at(model.lights[l]->material).emissive.ToVector3()
                     // surfel brdf
                     * surfel.BRDF(-ray.direction, -inRay.direction, 
                     model.materials.at(surfel.mesh->material))
@@ -120,15 +114,15 @@ Vector4 RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
             // rotation to align with surfel normal
             Quaternion::Rotation(UP, surfel.normal)); 
         
-        colour += CastRay(ray, model, depth + 1) 
+        c += CastRay(ray, model, depth + 1) 
             * surfel.BRDF(ray.direction, -inRay.direction, model.materials.at(surfel.mesh->material));
         /*
         */
     }
     else if(Intersect(inRay, model.lights, surfel, tNear)) 
-        colour = model.materials.at(surfel.mesh->material).emissive;
+        c = &model.materials.at(surfel.mesh->material).emissive[0];
 
-    return colour;
+    return c;
 }
 
 bool RayTracer::Intersect(const Ray& ray, const std::vector<Mesh*>& meshes, 

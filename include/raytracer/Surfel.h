@@ -7,6 +7,8 @@
 
 #include <core/core.h>
 
+#include <image/Colour.h>
+
 #include <math/Vectors.h>
 
 #include <model/Model.h>
@@ -42,14 +44,14 @@ struct Surfel {
             + barycentric.z * mesh->UVs[mesh->faces[tri+1]];
     }
 
-    inline Vector4 BRDF(const Vector3& light, const Vector3& view, const Material& material) {
+    inline colour BRDF(const Vector3& light, const Vector3& view, const Material& material) {
         // lambertian
         F32 lambertian = std::max(normal.Dot(light), 0.0f);
         // glossy 
         F32 glossy = std::max((light + view).Normalize().Dot(normal), 0.0f);
         // compute surface color
-        return material.diffuse  * lambertian 
-            + material.specular * std::pow(glossy, material.specularExp);
+        return material.diffuse.ToVector3()  * lambertian 
+            + material.specular.ToVector3() * std::pow(glossy, material.specularExp);
     }
 };
 

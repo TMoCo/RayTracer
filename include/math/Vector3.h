@@ -21,6 +21,7 @@ public:
     };
 
     Vector3();
+    Vector3(F32 value);
     Vector3(F32 X, F32 Y, F32 Z);
     Vector3(const F32* values);
     Vector3(const Vector3& other);

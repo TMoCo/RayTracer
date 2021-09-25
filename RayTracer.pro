@@ -30,6 +30,7 @@ HEADERS +=  include/core/core.h \
             include/core/Random.h \
             \
             include/image/Image.h \
+            include/image/Colour.h \
             \
             include/math/Vector2.h \
             include/math/Vector3.h \
@@ -58,6 +59,8 @@ HEADERS +=  include/core/core.h \
             include/test.h
 
 SOURCES +=  src/main.cpp \
+            \   
+            src/image/Image.cpp \
             \
             src/math/Vector2.cpp \
             src/math/Vector3.cpp \

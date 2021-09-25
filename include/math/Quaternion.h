@@ -14,9 +14,10 @@ class Quaternion {
 public:
     union {
         Vector4 _q;
+        Vector3 _vector;
         struct {
-            F32 vector[3];
-            F32 scalar;
+            F32 _v[3];
+            F32 _scalar;
         };
     };
 

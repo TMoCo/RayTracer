@@ -25,7 +25,7 @@ public:
     Vector4();
     Vector4(F32 X, F32 Y, F32 Z, F32 W = 1.0f);
     Vector4(const F32* values);
-    Vector4(const Vector3& other); // create homogeneous vector
+    Vector4(const Vector3& other, F32 W = 1.0f); // create homogeneous vector
     Vector4(const Vector4& other);
 
     Vector3 Point3D() const; // perspective divide

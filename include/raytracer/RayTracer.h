@@ -22,12 +22,12 @@ class RayTracer {
 public:
     RayTracer();
 
-    void RayTraceImage(Image<rgba_f>& buffer, Model* original, Transform t, 
+    void RayTraceImage(Image& buffer, Model* original, Transform t, 
         Camera* camera, UI32 samples);
  
 private:
     // cast a ray 
-    Vector4 CastRay(const Ray& ray, Model& model, UI32 depth);
+    colour CastRay(const Ray& ray, Model& model, UI32 depth);
 
     // raytracing methods for triangle intersection 
     bool Intersect(const Ray& ray, const std::vector<Mesh*>& meshes, 

@@ -11,9 +11,8 @@
 
 Quaternion::Quaternion(const Quaternion& other) : _q{other._q} {}
 
-Quaternion::Quaternion(const Vector3& v, float s) : vector{}, scalar(s) {
-    std::memcpy(vector, v._v, SIZEOF_VEC3);
-    scalar = s;
+Quaternion::Quaternion(const Vector3& v, float s) : _vector{v} {
+    _scalar = s;
 }
 
 Quaternion::Quaternion(float x, float y, float z, float w) : _q{x, y, z, w} {} // avoid
@@ -48,9 +47,32 @@ Quaternion& Quaternion::operator /=(const Quaternion& other) {
 }
 
 Quaternion& Quaternion::operator *=(const Quaternion& other) {
+    /*
     Vector3 v1{&_q[0]}, v2{&other._q[0]};
     float s1 = _q[3], s2 = other._q[3];
-    *this = Quaternion{s1 * v2 + s2 * v1 + v1.Cross(v2), s1 * s2 - v1.Dot(v2)}; // must be a better way
+    std::cout << "\nnew rotation\n";
+    std::cout << "scalars: " << s1 << " " << s2 << "\n" << _scalar << " " << other._scalar << "\n";
+    std::cout << "vectors: " << v1 << " " << v2 << "\n" << _vector << " " << other._vector << "\n";
+    std::cout << _scalar * other._scalar << " " <<  _vector.Dot(other._vector) << "\n";
+
+    Quaternion q = Quaternion{s1 * v2 + s2 * v1 + v1.Cross(v2), s1 * s2 - v1.Dot(v2)}; 
+    Quaternion p = Quaternion{
+         _scalar * other._vector 
+        + other._scalar * _vector 
+        + _vector.Cross(other._vector), 
+        _scalar * other._scalar - _vector.Dot(other._vector)
+    };
+
+    std::cout << q << "\n" << p << "\n\n";
+
+    *this = p;
+    */
+    *this = Quaternion{
+         _scalar * other._vector 
+        + other._scalar * _vector 
+        + _vector.Cross(other._vector), 
+        _scalar * other._scalar - _vector.Dot(other._vector)
+    };
     return *this;
 }
 
@@ -86,17 +108,16 @@ Quaternion Quaternion::Rotation(const Vector3& from, const Vector3& to) {
 }
 
 Vector3 Quaternion::RotateVector(const Vector3& vector, const Quaternion& quaternion) {
-    Vector3 qVec = quaternion.vector;
-    Vector3 t = (2.0f * qVec).Cross(vector);
-    return vector + quaternion.scalar * t + qVec.Cross(t);
+    Vector3 t = (2.0f * quaternion._vector).Cross(vector);
+    return vector + quaternion._scalar * t + quaternion._vector.Cross(t);
 }
 
 Vector3 Quaternion::Vector() const {
-    return vector;
+    return _vector;
 }
 
 float Quaternion::Scalar() const {
-    return scalar;
+    return _scalar;
 }
 
 float Quaternion::Norm() const {
@@ -108,7 +129,7 @@ Quaternion Quaternion::Unit() const {
 }
 
 Quaternion Quaternion::Conjugate() const {
-    return {-Vector3{vector}, scalar};
+    return {-_vector, _scalar};
 }
 
 Quaternion Quaternion::Inverse() const {

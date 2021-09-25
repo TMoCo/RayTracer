@@ -24,7 +24,6 @@ Vector3 Transform::TransformPoint(const Vector3& vec3) const {
 }
 
 Vector3 Transform::RotatePoint(const Vector3& vec3) const {
-    //
     return Quaternion::RotateVector(vec3, orientation);
     // return (Matrix4::RotationMatrix(orientation) * Vector4{vec3})._v;
 }

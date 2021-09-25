@@ -10,9 +10,9 @@
 #include <cstring>
 #include <iomanip>
 
-Vector3::Vector3() : _v{} {
-    std::memset(_v, 0, SIZEOF_VEC4);
-}
+Vector3::Vector3() : _v{} {}
+
+Vector3::Vector3(F32 value) : _v{value, value, value} {}
 
 Vector3::Vector3(F32 x, F32 y, F32 z) : _v{x, y, z} {}
 
@@ -77,7 +77,7 @@ const F32& Vector3::operator [](const uint32_t index) const {
 
 F32 Vector3::Dot(const Vector3& other) const {
     __m128 dot = _mm_mul_ps(_v4, other._v4);
-    return dot[0] + dot[1] + dot[2] + dot[3];
+    return dot[0] + dot[1] + dot[2];
 }
 
 /*

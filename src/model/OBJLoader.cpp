@@ -256,25 +256,25 @@ bool OBJLoader::LoadMtl(const char* path, Model& model) {
         case 'K':
             switch (buffer[1]) {
             case 'a':
-                material->ambient = {
+                material->ambient = Vector4{
                     std::strtof(&buffer[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};
                 break;
             case 'd':
-                material->diffuse = {
+                material->diffuse = Vector4{
                     std::strtof(&buffer[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};
                 break;
             case 's':
-                material->specular = {
+                material->specular = Vector4{
                     std::strtof(&buffer[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};
                 break;
             case 'e':
-                material->emissive = {
+                material->emissive = Vector4{
                     std::strtof(&buffer[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};

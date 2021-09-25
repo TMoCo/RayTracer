@@ -94,10 +94,7 @@ void TestQuaternion() {
     std::cout << Quaternion::RotateVector(normal, quat.Unit()) << std::endl;
 }
 
-void TestImage() {
-    rgba_f a = {0.0F, 10.0f, 100.0f, 200.0f };
-    Vector4 v{a.channels}; // rgba to a vector
-    std::cout << v << '\n' << sizeof(a) << std::endl;
+void TestImage() { // rgba to a vector
 }
 
 void TestVec() {
