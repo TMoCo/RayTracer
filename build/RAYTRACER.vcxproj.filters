@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\image\Image.cpp">
+      <Filter>SRC\image</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\main.cpp">
+      <Filter>SRC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\math\Matrix4.cpp">
+      <Filter>SRC\math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\math\Quaternion.cpp">
+      <Filter>SRC\math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\math\Transform.cpp">
+      <Filter>SRC\math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\math\Vector2.cpp">
+      <Filter>SRC\math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\math\Vector3.cpp">
+      <Filter>SRC\math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\math\Vector4.cpp">
+      <Filter>SRC\math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\model\Model.cpp">
+      <Filter>SRC\model</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\model\OBJLoader.cpp">
+      <Filter>SRC\model</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\model\Primitives.cpp">
+      <Filter>SRC\model</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\raytracer\RayTracer.cpp">
+      <Filter>SRC\raytracer</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\widgets\ArcBall.cpp">
+      <Filter>SRC\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\widgets\OpenGLWidget.cpp">
+      <Filter>SRC\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\widgets\RayTracerWidget.cpp">
+      <Filter>SRC\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\widgets\RenderOptionsWidget.cpp">
+      <Filter>SRC\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\widgets\RenderWidget.cpp">
+      <Filter>SRC\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\widgets\VectorWidget.cpp">
+      <Filter>SRC\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Tommy\Documents\Graphics\RayTracer\src\widgets\Window.cpp">
+      <Filter>SRC\widgets</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\core\Random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\core\core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\core\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\image\Colour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\image\Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\math\Matrix4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\math\Quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\math\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\math\Vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\math\Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\math\Vector4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\math\Vectors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\model\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\model\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\model\OBJLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\model\Primitives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\raytracer\Ray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\raytracer\RayTracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\raytracer\Surfel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\render\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\widgets\ArcBall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\widgets\OpenGLWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\widgets\RayTracerWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\widgets\RenderOptionsWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\widgets\RenderWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\widgets\VectorWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Tommy\Documents\Graphics\RayTracer\include\widgets\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Tommy\Documents\Graphics\RayTracer\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{30794C7D-2A04-3A36-80CA-2A76F2957974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SRC">
+      <UniqueIdentifier>{0166B03B-E795-3045-AC44-61BEEAB2A979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SRC\image">
+      <UniqueIdentifier>{5CC6D47C-02E5-3A83-8A8C-71CB01032D21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SRC\math">
+      <UniqueIdentifier>{5A2723BA-50BE-36EA-AECE-D68771B09576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SRC\model">
+      <UniqueIdentifier>{4D3836DB-0A21-36FE-AD8B-DD5FC47BA2D7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SRC\raytracer">
+      <UniqueIdentifier>{23C12805-0063-3DE5-8EB1-330D36CC13B2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SRC\widgets">
+      <UniqueIdentifier>{F2E51E1E-38B5-3A3C-AC2B-2678D2958CD4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
