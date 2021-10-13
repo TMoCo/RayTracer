@@ -8,7 +8,8 @@ set(GLFW3_LIB_SEARCH_DIR
 find_path(GLFW3_INCLUDE_DIR "GLFW/glfw3.h" PATHS ${GLFW3_HEADER_SEARCH_DIR})
 
 # search lib
-find_library(GLFW3_LIBRARY NAMES GLFW3 GLFW PATHS ${GLFW3_LIB_SEARCH_DIR})
+find_library(GLFW3_LIB NAMES GLFW3 PATHS ${GLFW3_LIB_SEARCH_DIR})
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(GLFW3 DEFAULT_MSG GLFW3_LIBRARY GLFW3_INCLUDE_DIR)
+if (GLFW3_LIBRARY-NOTFOUND)
+  message(FATAL_ERROR "Could not find ${GLFW3_LIBRARY} in ${GLFW3_LIB_SEARCH_DIR}")
+endif()

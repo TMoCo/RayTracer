@@ -23,13 +23,13 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     if (pFile == NULL)
         std::perror("Error opening file!");
 
-    char dir[std::strlen(path)];
+    char* dir = new char[std::strlen(path)];
     std::strcpy(dir, path); // get a modifiable copy of given .obj path
 
     char* slash = std::strchr(dir,'/');
     UI32 pos = 0;
     while (slash!=NULL) { // find last occurence of '/' 
-        pos = slash-dir+1;
+        pos = static_cast<UI32>(slash-dir+1);
         slash = std::strchr(slash+1, '/');
     }
     dir[pos] = '\0'; // terminate string at '/'
@@ -165,15 +165,18 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
             if (std::strcmp(token, "mtllib") == 0) {
                 token = std::strtok(NULL, " \n");
                 // concatenate mtl path to current dir
-                char mtlPath[std::strlen(token) + std::strlen(dir)];
+                char *mtlPath = new char[std::strlen(token) + std::strlen(dir)];
                 std::strcpy(mtlPath, dir);
                 std::strcat(mtlPath, token);
                 LoadMtl(mtlPath, model);
+                delete[] mtlPath;
                 break;
             }
             break;
         }
     }
+
+    delete[] dir;
 
     /*
     std::cout << "loaded\n";

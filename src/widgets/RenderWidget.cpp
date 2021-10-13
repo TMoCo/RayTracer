@@ -2,6 +2,7 @@
 // RendeWidgets class definition
 //
 
+/*
 #include <window/RenderWidgets.h>
 
 RenderWidgets::RenderWidgets(QWidget* parent, Model* m, Transform* t, Camera* c) 
@@ -35,3 +36,4 @@ void RenderWidgets::SwitchRender() {
     layout->setCurrentIndex((layout->currentIndex() + 1) & 1);
     emit SwitchedRender(layout->currentIndex());
 }
+*/

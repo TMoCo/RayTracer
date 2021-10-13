@@ -2,6 +2,7 @@
 // RenderWidget class declaration
 //
 
+/*
 #ifndef OPENGL_WIDGET_H
 #define OPENGL_WIDGET_H 1
 
@@ -43,3 +44,4 @@ public:
 };
 
 #endif // !OPENGL_WIDGET_H
+*/

@@ -2,6 +2,7 @@
 // RenderWidgets class declaration
 // 
 
+/*
 #ifndef RENDERWIDGETS_H
 #define RENDERWIDGETS_H 1
 
@@ -37,3 +38,4 @@ signals:
 };
 
 #endif
+*/

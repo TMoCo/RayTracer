@@ -1,7 +1,7 @@
 //
 // Render options widget class definition
 //
-
+/*
 #include <window/RenderOptionsWidget.h>
 
 RenderOptionsWidget::RenderOptionsWidget(QWidget* parent, Transform* t, Camera* c) 
@@ -179,3 +179,4 @@ void RenderOptionsWidget::PressedSaveImage() {
     if (ok && !text.isEmpty()) 
         emit ShouldSaveImage(text);
 }
+*/

@@ -2,6 +2,7 @@
 // Render options widget class declaration
 //
 
+/*
 #ifndef RENDER_OPTIONS_WIDGETS_H
 #define RENDER_OPTIONS_WIDGETS_H 1
 
@@ -64,3 +65,4 @@ signals:
 };
 
 #endif
+*/

@@ -2,6 +2,7 @@
 // Vector widget class definition
 //
 
+/*
 #include <window/VectorWidget.h>
 
 VectorWidget::VectorWidget(Vector3* v, F32 min, F32 max, QWidget* parent) : 
@@ -54,3 +55,4 @@ void VectorWidget::UpdateZ(double Z) {
     vector->z = Z;
     emit ValueChanged();
 }
+*/

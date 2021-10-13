@@ -1,4 +1,0 @@
-C:/Users/Tommy/Documents/Graphics/RayTracer/build/CMakeFiles/RAYTRACER.dir
-C:/Users/Tommy/Documents/Graphics/RayTracer/build/CMakeFiles/GLAD.dir
-C:/Users/Tommy/Documents/Graphics/RayTracer/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/Tommy/Documents/Graphics/RayTracer/build/CMakeFiles/ZERO_CHECK.dir

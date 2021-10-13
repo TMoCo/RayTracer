@@ -18,9 +18,15 @@ file(GLOB_RECURSE HEADER_FILES
   ${CMAKE_SOURCE_DIR}/include/*.h
   ${CMAKE_SOURCE_DIR}/include/*.hpp)
 
-# config
-configure_file(include/root_dir.h.in include/root_dir.h)
-include_directories(${CMAKE_BINARY_DIR}/include)
+# config to get root directory
+if(MSVC_IDE)
+  string(REPLACE "/" "\\\\" SOURCE_DIRECTORY "${CMAKE_SOURCE_DIR}\\\\")
+else()
+  set(SOURCE_DIRECTORY "${CMAKE_SOURCE_DIR}/")
+endif()
+
+configure_file(${CMAKE_SOURCE_DIR}/build/config/root_dir.h.in ${CMAKE_SOURCE_DIR}/include/root_dir.h)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # create executable
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
@@ -32,9 +38,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(OpenGL REQUIRED)
 
 # glfw 
-find_package(GLFW3 REQUIRED)
+# find_package(GLFW3 REQUIRED) ... can't get it to work, easier to manually add lib
+include(FindGLFW3)
 
-# header only GLAD library
+# GLAD library
 set(GLAD_SRC_SEARCH_DIR
   "C:/Libraries/glad/src")
 
@@ -53,21 +60,41 @@ set(GLAD_HEADER_FILES
   "glad/glad.h"
   "KHR/khrplatform.h")
 
-find_path(GLAD_INCLUDE_DIR NAMES ${GLAD_HEADER_FILES} PATHS ${GLAD_INCLUDE_SEARCH_DIR})
+find_path(GLAD_INCLUDE_DIR 
+  NAMES ${GLAD_HEADER_FILES} 
+  PATHS ${GLAD_INCLUDE_SEARCH_DIR})
+
 if(GLAD_INCLUDE_DIR-NOTFOUND)
   message(FATAL_ERROR "Could not find ${GLAD_HEADER_FILES} in ${GLAD_INCLUDE_SEARCH_DIR}")
 endif()
 
 add_library(GLAD "${GLAD_SRC_DIR}/${GLAD_SRC_FILES}")
 
-# libraris
-set(LIBS GLFW3 OPENGL32 GLAD)
+# stb_image library
+set(STB_IMAGE_INCLUDE_SEARCH_DIR
+  "C:/Libraries/stb")
+
+set(STB_IMAGE_HEADER_FILES
+  "stb_image.h")
+
+find_path(STB_IMAGE_INCLUDE_DIR 
+  NAMES ${STB_IMAGE_HEADER_FILES} 
+  PATHS ${STB_IMAGE_INCLUDE_SEARCH_DIR})
+
+if(STB_IMAGE_INCLUDE_DIR-NOTFOUND)
+  message(FATAL_ERROR "Could not find ${STB_IMAGE_HEADER_FILES} in ${STB_IMAGE_INCLUDE_SEARCH_DIR}")
+endif()
+
+# libraries
+set(LIBS ${GLFW3_LIB} opengl32 GLAD)
 
 # include directories
 include_directories(
   "${CMAKE_SOURCE_DIR}/src"
   "${CMAKE_SOURCE_DIR}/include"
   "${GLAD_INCLUDE_DIR}"
+  "${GLFW3_INCLUDE_DIR}"
+  "${STB_IMAGE_INCLUDE_DIR}"
 )
 
 # link libraries
@@ -75,18 +102,26 @@ target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 # visual studio project filters
 if(MSVC_IDE)
-  macro(GROUP_SOURCES CUR_DIR)
+  macro(GROUP_SOURCES CUR_DIR FILE_EXT)
     file(GLOB CHILDREN RELATIVE ${PROJECT_SOURCE_DIR}/${CUR_DIR} ${PROJECT_SOURCE_DIR}/${CUR_DIR}/*)
       foreach(CHILD ${CHILDREN})
         if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${CUR_DIR}/${CHILD})
-          GROUP_SOURCES(${CUR_DIR}/${CHILD})
+          GROUP_SOURCES(${CUR_DIR}/${CHILD} FILE_EXT)
         else()
           string(REPLACE "/" "\\" GROUP_NAME ${CUR_DIR})
-          string(REPLACE "src" "Sources" GROUP_NAME ${GROUP_NAME})
-          source_group(${GROUP_NAME} FILES ${PROJECT_SOURCE_DIR}/${CUR_DIR}/${CHILD})
+          source_group(${GROUP_NAME} FILES ${PROJECT_SOURCE_DIR}/${CUR_DIR}/${CHILD} REGULAR_EXPRESSION ".${FILE_EXT}$")
         endif()
       endforeach()
   endmacro()
-  # run macro
-  GROUP_SOURCES(SRC)
+
+  # run macro for src
+  GROUP_SOURCES("src" "cpp")
+
+  # run macro for headers
+  GROUP_SOURCES("include" "h")
+
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.8.0")
+    set(VS_STARTUP_PROJECT ${PROJECT_NAME})
+  endif()
+
 endif()

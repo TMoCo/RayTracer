@@ -2,7 +2,7 @@
 // ArcBall class definition
 //
 
-#include <window/ArcBall.h>
+#include <widgets/ArcBall.h>
 
 #include <cmath>
 

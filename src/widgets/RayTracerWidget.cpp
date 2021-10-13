@@ -1,7 +1,7 @@
 //
 // RaytTracer widget class definition
 //
-
+/*
 #include <window/RayTracerWidget.h>
 
 #include <fstream>
@@ -39,3 +39,4 @@ void RayTracerWidget::SaveImage(QString name) {
     
     frameBuffer.ToPPM(out);
 }
+*/

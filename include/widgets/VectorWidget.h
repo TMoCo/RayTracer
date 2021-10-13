@@ -6,7 +6,7 @@
 #define VECTOR_WIDGET_H 1
 
 #include <math/Vectors.h>
-
+/*
 #include <qt5/QtWidgets/QtWidgets>
 
 class VectorWidget : public QWidget {
@@ -33,5 +33,6 @@ public slots:
 signals:
     void ValueChanged();
 };
+*/
 
 #endif // ! VECTOR_WIDGET_H

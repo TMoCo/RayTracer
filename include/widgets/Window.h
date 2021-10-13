@@ -1,34 +1,40 @@
 //
-// Window class definition
+// window class definition (assumes glfw has been initialised as part of an application init)
+// intended as an interface for managing gltf windows
 //
 
 #ifndef WINDOW_H
 #define WINDOW_H 1
 
-#include <model/Model.h>
-#include <window/RenderWidgets.h>
-#include <window/RenderOptionsWidget.h>
+#include <core/types.h>
 
-#include <QtWidgets>
+#ifdef VULKAN
+#define GLFW_INCLUDE_VULKAN
+#endif
+#include <GLFW/glfw3.h>
 
-class Window : public QWidget{
+typedef struct
+{
+  I32 x, y;
+  UI32 width, height;
+} ViewPort;
+
+class Window
+{
 private:
-    // main layout
-    QGridLayout* layout;
+  UI32 w, h; // window dimensions
+  ViewPort viewPort;
 
-    // render widgets
-    RenderWidgets* renderWidgets;
-    RenderOptionsWidget* renderOptionsWidget;
-
-    // switch render widget
-    QPushButton* switchButton;    
-
-    Transform transform;
-    Camera camera;
+  void resize(UI32 width, UI32 height);
 
 public:
-    Window(Model* model, const char* name = "Window");
-    ~Window();
+  GLFWwindow* ptr; // left public for convenience
+
+  int createWindow(UI32 width, UI32 height, const char* name = "Window");
+
+  void setViewPort(ViewPort vp);
+    
+  static void resizeCallBack(GLFWwindow* w, int h, int y);
 };
 
 #endif // ! WINDOW_H

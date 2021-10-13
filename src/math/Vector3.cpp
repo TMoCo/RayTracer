@@ -30,7 +30,7 @@ Vector3& Vector3::operator =(const Vector3& other) {
 }
 
 bool Vector3::operator ==(const Vector3& other) const {
-    return std::memcmp(_v, other._v, SIZEOF_VEC3);
+  return (_v[0] == other._v[0]) && (_v[1] == other._v[1]) && (_v[2] == other._v[2]);
 }
 
 Vector3& Vector3::operator +=(const Vector3& other) {
@@ -75,9 +75,13 @@ const F32& Vector3::operator [](const uint32_t index) const {
     return _v[index];
 }
 
-F32 Vector3::Dot(const Vector3& other) const {
-    __m128 dot = _mm_mul_ps(_v4, other._v4);
-    return dot[0] + dot[1] + dot[2];
+F32 Vector3::Dot(const Vector3& other) const 
+{
+  __m128 shuf = _mm_shuffle_ps(_v4, other._v4, _MM_SHUFFLE(2, 3, 0, 1)); // [ C D | A B ]
+  __m128 sums = _mm_add_ps(_v4, shuf); // sums = [ D+C C+D | B+A A+B ]
+  shuf = _mm_movehl_ps(shuf, sums); // [ C D | D+C C+D ]
+  sums = _mm_add_ss(sums, shuf);
+  return _mm_cvtss_f32(sums); // "free" instruction for getting lowest fp value in quadword
 }
 
 /*

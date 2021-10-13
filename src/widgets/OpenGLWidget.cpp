@@ -2,6 +2,7 @@
 // OpenGLWidget class declaration
 //
 
+/*
 #include <window/OpenGLWidget.h>
 
 OpenGLWidget::OpenGLWidget(QWidget* parent, Model* m, Transform* t, Camera* c) : 
@@ -52,6 +53,7 @@ void OpenGLWidget::paintGL() {
 }
 
 
+
 void OpenGLWidget::mousePressEvent(QMouseEvent *event) {
     arcBall.BeginDrag(scaleMousePos(event->x(), event->y()));
     transform->orientation = arcBall.GetOrientation();
@@ -76,3 +78,4 @@ Vector2 OpenGLWidget::scaleMousePos(F32 x, F32 y) {
     // return x and y in [-1, -1] range
     return { (2.0f * x - width) / width, (height - 2.0f * y) / height };
 }
+*/

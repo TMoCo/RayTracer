@@ -186,7 +186,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
 
 Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
     // get a random triangle in the light mesh
-    UI32 index = Random::UniformI32(0, (light->faces.size() / 9) - 1);
+    UI32 index = Random::UniformI32(0, (static_cast<UI32>(light->faces.size()) / 9) - 1);
     // barycentric coordinates
     Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
     // random point in the triangle
@@ -207,11 +207,11 @@ Vector2 RayTracer::UniformSampleDisk(const Vector2& uv) {
     if (std::abs(p.x) > std::abs(p.y)) {
         r = p.x;
         // distorts grid to avoid collecting at origin
-        theta = M_PI_4 * (p.y / p.x);
+        theta = PI_4 * (p.y / p.x);
     }
     else {
         r = p.y;
-        theta = M_PI_2 - M_PI_4 * (p.x / p.y);
+        theta = PI_2 - PI_4 * (p.x / p.y);
     }
     return r * Vector2{std::cos(theta), std::sin(theta)};
 }
@@ -219,7 +219,7 @@ Vector2 RayTracer::UniformSampleDisk(const Vector2& uv) {
 Vector3 RayTracer::UniformSampleHemisphere(const Vector2& uv) {
     // generate a random vector on the unit hemisphere
     F32 r = std::sqrt(std::max(0.0f, 1.0f - uv.x * uv.x));
-    F32 phi = 2.0f * M_PI * uv.y;
+    F32 phi = 2.0f * PI * uv.y;
     return {r * std::cos(phi), r * std::sin(phi), uv.x};
 }
 
@@ -231,7 +231,7 @@ Vector3 RayTracer::CosineSampleHemisphere(const Vector2& uv) {
 
 Vector3 RayTracer::UniformSampleTriangleBasuOwen(const F32& u) {
     // u in range [0,1], 1 << 32 = 2^32 (so must be UI64)
-    UI32 uFixedPoint = u * (1ULL << 32);
+    UI32 uFixedPoint = static_cast<UI32>(u * (1ULL << 32));
 
     Vector2 A{1.0f, 0.0f}, B{0.0f, 1.0f}, C{0.0f, 0.0f};
     Vector2 An, Bn, Cn; // used in iteration

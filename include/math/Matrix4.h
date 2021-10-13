@@ -14,8 +14,8 @@ class Matrix4 {
 public:
     // store matrix in column major format
     union {
-        F32 _m[16];
-        __m128 _m16[4];
+        F32     _m[16];
+        __m128 __m[4];
     };
 
     Matrix4();

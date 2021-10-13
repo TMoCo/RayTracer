@@ -2,6 +2,7 @@
 // Raytacer widget class declaration
 //
 
+/*
 #ifndef RAYTRACER_WIDGET_H
 #define RAYTRACER_WIDGET_H 1
 
@@ -42,3 +43,4 @@ public slots:
 };
 
 #endif // ! RAYTRACER_WIDGET_H
+*/

@@ -12,7 +12,7 @@ void TestMatrix() {
     float values0[16] {};
 
     for (uint32_t v = 0; v < 16; ++v) {
-        values0[v] = v;
+        // values0[v] = v;
     }
 
     Matrix4 m {values0};
