@@ -5,7 +5,7 @@
 #ifndef COLOUR_H
 #define COLOUR_H
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
 #include <cmath>
 

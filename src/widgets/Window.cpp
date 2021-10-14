@@ -2,15 +2,9 @@
 
 #include <core/debug.h>
 
-void Window::resize(UI32 width, UI32 height)
+int Window::createWindow(UI32 w, UI32 h, const char* name)
 {
-  w = width;
-  h = height;
-}
-
-int Window::createWindow(UI32 width, UI32 height, const char* name)
-{
-  ptr = glfwCreateWindow(width, height, name, NULL, NULL);
+  ptr = glfwCreateWindow(w, h, name, NULL, NULL);
   if (ptr == NULL)
   {
     DEBUG_PRINT("Could not create window");
@@ -19,27 +13,35 @@ int Window::createWindow(UI32 width, UI32 height, const char* name)
   }
 
   glfwSetFramebufferSizeCallback(ptr, resizeCallBack);
+  glfwGetWindowSize(ptr, &width, &height);
 
-  w = width; 
-  h = height;
-
-  setViewPort({ 0, 0, width, height });
+  setViewPort();
 
   return 0;
 }
 
-void Window::setViewPort(ViewPort vp)
+void Window::setViewPort()
 {
-  viewPort = vp;
   glViewport(viewPort.x, viewPort.y, viewPort.width, viewPort.height);
 }
 
-void Window::resizeCallBack(GLFWwindow* window, int width, int height)
+F32 Window::getAspectRatio()
+{
+  return static_cast<F32>(width) / static_cast<F32>(height);
+}
+
+void Window::resize(UI32 w, UI32 h)
+{
+  width = w;
+  height = h;
+}
+
+void Window::resizeCallBack(GLFWwindow* p_win, int w, int h)
 {
   // get window 
-  Window* user = static_cast<Window*>(glfwGetWindowUserPointer(window));
-  if (user)
+  Window* window = static_cast<Window*>(glfwGetWindowUserPointer(p_win));
+  if (window)
   {
-    user->resize(static_cast<UI32>(width), static_cast<UI32>(height));
+    window->resize(static_cast<UI32>(w), static_cast<UI32>(h));
   }
 }

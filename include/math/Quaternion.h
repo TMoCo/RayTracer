@@ -24,9 +24,9 @@ public:
     };
   };
 
-  Quaternion(const Quaternion& other) : _q{ other._q } {}
-
   Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : _vector{ vector }, _scalar{ scalar } {}
+
+  Quaternion(const Quaternion& other) : _q{ other._q } {}
 
   Quaternion(F32 x, F32 y, F32 z, F32 w) : _q{ x, y, z, w } {}
 

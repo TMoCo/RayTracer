@@ -2,7 +2,7 @@
 // Vector3 class definition
 //
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
 #include <core/core.h>
 
@@ -74,11 +74,14 @@ const F32& Vector3::operator [](const UI32 index) const
 
 F32 Vector3::dot(const Vector3& other) const 
 {
-  __m128 shuf = _mm_shuffle_ps(__v, other.__v, _MM_SHUFFLE(2, 3, 0, 1)); // [ C D | A B ]
-  __m128 sums = _mm_add_ps(__v, shuf); // sums = [ D+C C+D | B+A A+B ]
-  shuf = _mm_movehl_ps(shuf, sums); // [ C D | D+C C+D ]
-  sums = _mm_add_ss(sums, shuf);
-  return _mm_cvtss_f32(sums); // "free" instruction for getting lowest fp value in quadword
+  std::cout << "this " << *this << "\n";
+  std::cout << "other " <<other << "\n";
+  __m128 dot = _mm_mul_ps(__v, other.__v);
+  __m128 shuf = _mm_shuffle_ps(dot, dot, _MM_SHUFFLE(2, 3, 0, 1)); // [ C D | A B ]
+  dot = _mm_add_ps(dot, shuf); // sums = [ D+C C+D | B+A A+B ]
+  shuf = _mm_movehl_ps(shuf, dot); // [ C D | D+C C+D ]
+  dot = _mm_add_ss(dot, shuf);
+  return _mm_cvtss_f32(dot); // "free" instruction for getting lowest fp value in quadword
 }
 
 /*
@@ -107,7 +110,8 @@ F32 Vector3::length() const
 #if (__cplusplus >= 201703L)
   return std::hypot(_v[0], _v[1], _v[2]);
 #else
-  return std::sqrt(this->dot(*this));
+  std::cout << "length " << dot(*this) << "\n";
+  return std::sqrt(dot(*this));
 #endif
 }
 

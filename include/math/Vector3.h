@@ -15,7 +15,9 @@ constexpr UI32 SIZEOF_VEC3 = 0xc;
 typedef struct Vector3 {
   union {
     F32 _v[4]; // still in fact 4 for simd operations (4th element is zeroe ignored)
+
     __m128 __v;
+
     struct {
       F32 x, y, z; 
     };

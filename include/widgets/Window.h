@@ -8,6 +8,8 @@
 
 #include <core/types.h>
 
+#include <render/Camera.h>
+
 #ifdef VULKAN
 #define GLFW_INCLUDE_VULKAN
 #endif
@@ -19,20 +21,22 @@ typedef struct
   UI32 width, height;
 } ViewPort;
 
-class Window
+struct Window
 {
-private:
-  UI32 w, h; // window dimensions
+  I32 width, height;
   ViewPort viewPort;
 
-  void resize(UI32 width, UI32 height);
+  Camera* camera;
 
-public:
   GLFWwindow* ptr; // left public for convenience
 
   int createWindow(UI32 width, UI32 height, const char* name = "Window");
 
-  void setViewPort(ViewPort vp);
+  void setViewPort();
+
+  F32 getAspectRatio();
+    
+  void resize(UI32 width, UI32 height);
     
   static void resizeCallBack(GLFWwindow* w, int h, int y);
 };

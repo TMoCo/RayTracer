@@ -9,26 +9,26 @@
 #include <math/Quaternion.h>
 #include <math/Vector3.h>
 
-class Transform {
-public:
+struct Transform {
     Vector3 translation;
 
     Quaternion orientation;
 
-    Transform(const Vector3& p = {}, const Quaternion& o = {});
+    Transform(const Vector3& p = {}, const Quaternion& o = {}) : translation{ p }, orientation{ o } {
+      std::cout << "construction\n" << p << "\n";
+      std::cout << o << "\n";
+    }
 
-    Matrix4 toMatrix() const;
-
-    // modify the transform
-    void rotate(const Quaternion& r);
-
-    void translate(const Vector3& v);
+    Matrix4 toWorldMatrix() const;
 
     Vector3 transformPoint(const Vector3& vec3) const;
 
-    Vector3 rotatePoint(const Vector3& vec3) const;
+    Vector3 rotate(const Vector3& vec3) const;
 
-    Vector3 translatePoint(const Vector3& vec3) const;
+    Vector3 translate(const Vector3& vec3) const;
+
+    // modify the transform
+    static Transform transformChild(const Transform& parent, const Transform& child);
 };
 
 #endif // !TRANSFORM_H

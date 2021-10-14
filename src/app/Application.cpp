@@ -98,6 +98,21 @@ void Application::renderLoopGl()
   glBindVertexArray(vao);
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+
+  Quaternion q = Quaternion::angleAxis(LEFT, 45.0f);
+  std::cout << q << "\n";
+  Transform t{ Vector3{0.0f, 0.0f, 0.5f}, Quaternion::angleAxis(FRONT, 45.0f) };
+  Matrix4 model = t.toWorldMatrix();
+
+  Matrix4 MVP = Matrix4::Perspective(45.0f, window.getAspectRatio(), 0.1f, 100.0f);
+
+  std::cout << t.orientation << "\n";
+  std::cout << t.translation << "\n";
+  std::cout << model << "\n";
+
+  shader.setMat4("transform", model);
+
   while (!glfwWindowShouldClose(window.ptr))
   {
     glClear(GL_COLOR_BUFFER_BIT);

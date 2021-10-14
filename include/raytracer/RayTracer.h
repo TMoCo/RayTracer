@@ -9,7 +9,7 @@
 
 #include <image/Image.h>
 
-#include <model/Model.h>
+#include <scene/Model.h>
 
 #include <render/Camera.h>
 

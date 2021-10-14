@@ -5,7 +5,7 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
 #include <render/Camera.h>
 
@@ -30,7 +30,7 @@ public:
       (2.0f * PNDC.y - 1.0f) * tanHalfFOV,
       -1.0f };
     // rotate direction and set origin
-    return { camera.transform.translation, camera.transform.rotatePoint(direction.normalize()) };
+    return { camera.transform.translation, camera.transform.rotate(direction.normalize()) };
   }
 
   inline Vector3 At(F32 t) const 

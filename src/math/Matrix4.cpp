@@ -2,7 +2,7 @@
 // Matrix4 class definition
 //
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
 Mat4& Mat4::operator =(const Mat4& other) 
 {

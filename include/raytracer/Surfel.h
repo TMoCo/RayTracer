@@ -9,9 +9,9 @@
 
 #include <image/Colour.h>
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
-#include <model/Model.h>
+#include <scene/Model.h>
 
 struct Surfel {
     Vector3 barycentric; // barycentric coordinates

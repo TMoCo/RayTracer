@@ -2,7 +2,7 @@
 // Model class definition
 //
 
-#include <model/Model.h>
+#include <scene/Model.h>
 
 Mesh::Mesh() : positions{}, normals{}, UVs{}, faces{}, meshName{}, material{} {}
 

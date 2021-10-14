@@ -20,7 +20,7 @@ void RayTracer::RayTraceImage(Image& buffer, Model* original,
         for (Vector3& position : mesh.positions)
             position = t.transformPoint(position);
         for (Vector3& normal : mesh.normals)
-            normal = t.rotatePoint(normal);
+            normal = t.rotate(normal);
     }
 
     // scale for aspect ratio

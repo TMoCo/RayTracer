@@ -7,10 +7,10 @@
 
 #include <core/core.h>
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
-#include <model/Material.h>
-#include <model/Primitives.h>
+#include <render/Material.h>
+#include <render/Primitives.h>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>

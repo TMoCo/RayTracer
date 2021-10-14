@@ -4,7 +4,7 @@
 
 #include <core/types.h>
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
 #include <random>
 

@@ -2,7 +2,7 @@
 // Quaternion class definition
 //
 
-#include <math/Thomath.h>
+#include <math/thomath.h>
 
 // assignment operator
 Quaternion& Quaternion::operator = (const Quaternion &other) 
@@ -63,13 +63,13 @@ Quaternion& Quaternion::operator *=(const Quaternion& other)
   return *this;
 }
 
-Quaternion& Quaternion::operator /=(const float& factor) 
+Quaternion& Quaternion::operator /=(const F32& factor) 
 {
   this->_q /= factor;
   return *this;
 }
 
-Quaternion& Quaternion::operator *=(const float& factor) 
+Quaternion& Quaternion::operator *=(const F32& factor)
 {
   this->_q *= factor;
   return *this;

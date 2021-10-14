@@ -2,8 +2,8 @@
 // OBJLoader class definition
 //
 
-#include <model/Material.h>
-#include <model/OBJLoader.h>
+#include <render/Material.h>
+#include <resource/OBJLoader.h>
 
 #include <cstdio>
 #include <cstring>

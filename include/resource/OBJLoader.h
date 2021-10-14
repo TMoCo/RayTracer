@@ -5,7 +5,7 @@
 #ifndef OBJ_LOADER_H
 #define OBJ_LOADER_H 1
 
-#include <model/Model.h>
+#include <scene/Model.h>
 
 #include <string>
 
