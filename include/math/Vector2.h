@@ -7,6 +7,10 @@
 
 #include <core/types.h>
 
+#include <string.h>
+
+constexpr UI32 SIZEOF_VEC2 = 0x8;
+
 typedef struct Vector2 {
   union { 
     F32 _v[2]; 
@@ -20,7 +24,7 @@ typedef struct Vector2 {
   
   Vector2(F32 X, F32 Y) : x(X), y(Y) {}
   
-  Vector2(const Vector2& other) : _v{} { std::memcpy(_v, other._v, SIZEOF_VEC2); }
+  Vector2(const Vector2& other) : _v{} { memcpy(_v, other._v, SIZEOF_VEC2); }
 
   Vector2& operator =(const Vector2& other);
 
