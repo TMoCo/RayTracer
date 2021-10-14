@@ -2,12 +2,11 @@
 // Matrix4 class definition
 //
 
-#include <core/core.h>
-
 #include <math/Matrix4.h>
 
-#include <cstring>
-#include <cmath>
+#include <core/core.h>
+
+#include <string.h>
 
 Matrix4::Matrix4() 
   : _m{} 
@@ -18,25 +17,26 @@ Matrix4::Matrix4()
 Matrix4::Matrix4(const Matrix4& other) 
   : _m{} 
 {
-  std::memcpy(&_m, &other._m, SIZEOF_MAT4);
+  memcpy(&_m, &other._m, SIZEOF_MAT4);
 }
 
-Matrix4::Matrix4(const F32* values) 
+Matrix4::Matrix4(const F32* values) // assumes values given in row major format
   : _m{} 
-{ // values given in row major format
+{ 
   for (UI32 e = 0; e < 16; ++e) 
-    _m[e] = values[(e & 3)*4 + (e >> 2)]; // store in column major
+    _m[e] = values[(e & 3) << 2 + (e >> 2)]; // store in column major
 }
 
 Matrix4& Matrix4::operator =(const Matrix4& other) 
 {
-  std::memcpy(&_m, other[0], SIZEOF_MAT4); 
+  memcpy(_m, other._m, SIZEOF_MAT4); 
   return *this;
 }
 
 bool Matrix4::operator ==(const Matrix4& other) const 
 {
-  return std::memcmp(&_m, other[0], SIZEOF_MAT4) == 0; // same values == 0
+  // bad, change to vector 4 comparison!
+  return memcmp(&_m, other[0], SIZEOF_MAT4) == 0; // same values == 0
 }
 
 Matrix4& Matrix4::operator +=(const Matrix4& other) 
@@ -190,7 +190,7 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
 
 Matrix4& Matrix4::operator /=(const F32& factor) 
 {
-  __m128 inv = _mm_set1_ps(1.0f / factor);
+  __m128 inv = _mm_set_ps1(1.0f / factor);
   __m[0] = _mm_mul_ps(__m[0], inv);
   __m[1] = _mm_mul_ps(__m[1], inv);
   __m[2] = _mm_mul_ps(__m[2], inv);
@@ -200,7 +200,7 @@ Matrix4& Matrix4::operator /=(const F32& factor)
     
 Matrix4& Matrix4::operator *=(const F32& factor) 
 {
-  __m128 f = _mm_set1_ps(factor);
+  __m128 f = _mm_set_ps1(factor);
   __m[0] = _mm_mul_ps(__m[0], f);
   __m[1] = _mm_mul_ps(__m[1], f);
   __m[2] = _mm_mul_ps(__m[2], f);
@@ -210,12 +210,12 @@ Matrix4& Matrix4::operator *=(const F32& factor)
 
 F32* Matrix4::operator [](const UI32 index) 
 {
-  return &_m[index * 4];
+  return _m + (index << 2);
 }
 
 const F32* Matrix4::operator [](const UI32 index) const 
 {
-  return &_m[index * 4];
+  return _m + (index << 2);
 }
 
 Matrix4 Matrix4::Identity() 
@@ -264,7 +264,7 @@ Matrix4 Matrix4::Transpose(const Matrix4& mat)
 Matrix4 Matrix4::TranslationMatrix(const Vector3& v) 
 {
   Matrix4 mat = Matrix4::Identity();
-  std::memcpy(mat._m + 12, v._v, SIZEOF_VEC3); // bonus of column major <3
+  memcpy(mat._m + 12, v._v, SIZEOF_VEC3); // bonus of column major <3
   return mat;
 }
 
@@ -344,19 +344,23 @@ Vector4 operator *(Matrix4 mat, const Vector4& vec)
     _mm_add_ps(
       _mm_mul_ps(_mm_set_ps1(vec.z), mat.__m[2]),
       _mm_mul_ps(_mm_set_ps1(vec.w), mat.__m[3])));
-  return {(float*)&res};
+
+  return {reinterpret_cast<F32*>(&res)};
 }
 
 std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
-    // converts to Vector4 (slow)
-    return inStream >> *((Vector4*)matrix[0]) >> *((Vector4*)matrix[1]) >> 
-    *((Vector4*)matrix[2]) >> *((Vector4*)matrix[3]);
+  // converts to Vector4 (slow)
+  return inStream 
+    >> *reinterpret_cast<Vector4*>(matrix[0]) 
+    >> *reinterpret_cast<Vector4*>(matrix[1])
+    >> *reinterpret_cast<Vector4*>(matrix[2])
+    >> *reinterpret_cast<Vector4*>(matrix[3]);
 }
 
 std::ostream & operator << (std::ostream &outStream, const Matrix4 &matrix) {
-    return outStream // constructs Vector4s (slow)
-        << Vector4{matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0]} << '\n' 
-        << Vector4{matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1]} << '\n' 
-        << Vector4{matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2]} << '\n' 
-        << Vector4{matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3]};
+  return outStream // constructs Vector4s (slow)
+    << Vector4{matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0]} << '\n' 
+    << Vector4{matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1]} << '\n' 
+    << Vector4{matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2]} << '\n' 
+    << Vector4{matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3]};
 }

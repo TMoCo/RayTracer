@@ -23,6 +23,7 @@ private:
 
   // render loops (belong to their respective renderers?)
   void renderLoopGl();
+
   void renderLoopVk(); // todo: for vulkan applications
 
 public:

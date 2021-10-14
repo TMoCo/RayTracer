@@ -10,13 +10,13 @@ typedef  std::chrono::system_clock sys_clock;
 
 #include <cmath>
 
-constexpr float PI = 3.14159265358979323846f;
+constexpr float PI   = 3.14159265358979323846f;
 constexpr float PI_2 = 1.57079632679489661923f;
 constexpr float PI_4 = 0.785398163397448309616f;
 
 // math utils
 #define RADIANS(x) \
-    x * PI / 180.0f
+    x * PI * 0.00555555556f // / 180.0f
 
 #define NO_COPY(Type) \
     Type(const Type& T) = delete; \

@@ -2,6 +2,7 @@
 
 #include <core/debug.h>
 
+#include <string>
 #include <render/Shader.h>
 
 // app setup

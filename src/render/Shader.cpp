@@ -23,7 +23,6 @@ const char* Shader::getShaderCode(const char* path)
   char* shader = new char[len];
   memset(shader, '\0', len);
 
-
   shaderStream.read(shader, len);
   shaderStream.close();
 
