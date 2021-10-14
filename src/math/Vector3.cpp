@@ -141,6 +141,12 @@ F32 Vector3::length() const
 #endif
 }
 
+F32 Vector3::lengthSquared() const
+{
+  F32 length = this->length();
+  return length * length;
+}
+
 Vector3 Vector3::normalize() const 
 {
   return *this / length();
@@ -151,9 +157,12 @@ Vector3 Vector3::reflect(const Vector3& v, const Vector3& normal)
   return v - 2.0f * v.dot(normal) * normal; // assumes unit normal
 }
 
-Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const float& ior)
+Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const float& iorRatio)
 {
-
+  F32 cosTheta = fmin(v.dot(normal), 1.0f); // assumes unit length
+  Vector3 perpendicular = iorRatio * (v + cosTheta * normal);
+  Vector3 parallel = -sqrtf(fabs(1.0f - perpendicular.lengthSquared())) * normal;
+  return perpendicular * parallel;
 }
 
 Vector3 operator /(Vector3 lhs, const F32& rhs) 

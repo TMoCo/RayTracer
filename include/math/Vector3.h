@@ -75,11 +75,13 @@ public:
 
   F32 length() const;
 
+  F32 lengthSquared() const;
+
   Vector3 normalize() const;
 
   static Vector3 reflect(const Vector3& v, const Vector3& normal);
 
-  static Vector3 refract(const Vector3& v, const Vector3& normal, const float& ior);
+  static Vector3 refract(const Vector3& v, const Vector3& normal, const float& iorRatio);
 };
 
 // binary operators

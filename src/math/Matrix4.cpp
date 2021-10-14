@@ -161,10 +161,10 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
     r = e & 3;   // modulus 4
     c = e >> 2;  // divide 4
     _m[e] =
-      p._m[c * 4] * other._m[r] + // column major product
-      p._m[c * 4 + 1] * other._m[4 + r] +
-      p._m[c * 4 + 2] * other._m[8 + r] +
-      p._m[c * 4 + 3] * other._m[12 + r];
+      p._m[(c << 2)] * other._m[r] + // column major product
+      p._m[(c << 2) + 1] * other._m[4 + r] +
+      p._m[(c << 2) + 2] * other._m[8 + r] +
+      p._m[(c << 2) + 3] * other._m[12 + r];
   }
   return *this;
 
@@ -210,12 +210,12 @@ Matrix4& Matrix4::operator *=(const F32& factor)
 
 F32* Matrix4::operator [](const UI32 index) 
 {
-  return _m + (index << 2);
+  return &_m[index << 2];
 }
 
 const F32* Matrix4::operator [](const UI32 index) const 
 {
-  return _m + (index << 2);
+  return &_m[index << 2];
 }
 
 Matrix4 Matrix4::Identity() 
