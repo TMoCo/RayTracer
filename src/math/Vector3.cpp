@@ -74,8 +74,6 @@ const F32& Vector3::operator [](const UI32 index) const
 
 F32 Vector3::dot(const Vector3& other) const 
 {
-  std::cout << "this " << *this << "\n";
-  std::cout << "other " <<other << "\n";
   __m128 dot = _mm_mul_ps(__v, other.__v);
   __m128 shuf = _mm_shuffle_ps(dot, dot, _MM_SHUFFLE(2, 3, 0, 1)); // [ C D | A B ]
   dot = _mm_add_ps(dot, shuf); // sums = [ D+C C+D | B+A A+B ]
@@ -110,7 +108,6 @@ F32 Vector3::length() const
 #if (__cplusplus >= 201703L)
   return std::hypot(_v[0], _v[1], _v[2]);
 #else
-  std::cout << "length " << dot(*this) << "\n";
   return std::sqrt(dot(*this));
 #endif
 }

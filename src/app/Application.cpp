@@ -99,19 +99,37 @@ void Application::renderLoopGl()
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
+  Transform t{ Vector3{0.0f, 0.0f, 0.0f}, Quaternion::angleAxis(BACK, RADIANS(45.0f)) };
 
-  Quaternion q = Quaternion::angleAxis(LEFT, 45.0f);
-  std::cout << q << "\n";
-  Transform t{ Vector3{0.0f, 0.0f, 0.5f}, Quaternion::angleAxis(FRONT, 45.0f) };
   Matrix4 model = t.toWorldMatrix();
+  std::cout << model << "\n\n";
+  std::cout << "rotation\n" << Vector4{ model[0] } << "\n";
+  std::cout << "rotation\n" << Vector4{ model[1] } << "\n";
+  std::cout << "rotation\n" << Vector4{ model[2] } << "\n\n";
 
-  Matrix4 MVP = Matrix4::Perspective(45.0f, window.getAspectRatio(), 0.1f, 100.0f);
+  Matrix4 proj = Matrix4::Perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
 
-  std::cout << t.orientation << "\n";
-  std::cout << t.translation << "\n";
-  std::cout << model << "\n";
+  std::cout << "\nmodel\n\n" << model << "\n\n";
+  std::cout << "prod\n" << proj << "\n\n";
 
-  shader.setMat4("transform", model);
+  std::cout << "\nrotation:\n";
+
+  Matrix4 mvp = proj * model;
+  //proj = Matrix4::Identity();
+  std::cout << mvp << "\n";
+
+  std::cout << "translation " << Vector4{ model[3] } << "\n";
+
+
+  std::cout << "\n\n\nmatrix:\n";
+  Matrix4 m{};
+  for (UI32 i = 0; i < 16; ++i)
+    m[i >> 2][i & 3] = i;
+  std::cout << m << "\n";
+
+  std::cout << "\n" << m * m << "\n\n\n";
+
+  shader.setMat4("transform", mvp);
 
   while (!glfwWindowShouldClose(window.ptr))
   {

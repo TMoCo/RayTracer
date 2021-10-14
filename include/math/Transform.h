@@ -14,10 +14,7 @@ struct Transform {
 
     Quaternion orientation;
 
-    Transform(const Vector3& p = {}, const Quaternion& o = {}) : translation{ p }, orientation{ o } {
-      std::cout << "construction\n" << p << "\n";
-      std::cout << o << "\n";
-    }
+    Transform(const Vector3& p = {}, const Quaternion& o = {}) : translation{ p }, orientation{ o } {}
 
     Matrix4 toWorldMatrix() const;
 

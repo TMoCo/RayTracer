@@ -65,68 +65,74 @@ Mat4& Mat4::operator *=(const Mat4& other)
   //           X   = 1 * J + 2 * M + 3 * P
   // where J is a column of only j, M of m and P of p
 
-  Mat4 copy = *this; // keep a reference copy of current
+  //Mat4 copy = *this; // keep a reference copy of current
   __m128 c0, c1, c2, c3;
 
   {
-    c0 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[0] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[0], c0), 
-        _mm_mul_ps(copy.__m[1], c1)),
+        _mm_mul_ps(other.__m[0], c0), 
+        _mm_mul_ps(other.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[2], c2), 
-        _mm_mul_ps(copy.__m[3], c3)));
+        _mm_mul_ps(other.__m[2], c2),
+        _mm_mul_ps(other.__m[3], c3)));
   }
 
+  std::cout << *this << "\n\n";
+
   {
-    c0 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[1] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[0], c0),
-        _mm_mul_ps(copy.__m[1], c1)),
+        _mm_mul_ps(other.__m[0], c0),
+        _mm_mul_ps(other.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[2], c2),
-        _mm_mul_ps(copy.__m[3], c3)));
+        _mm_mul_ps(other.__m[2], c2),
+        _mm_mul_ps(other.__m[3], c3)));
   }
 
+  std::cout << *this << "\n\n";
   {
-    c0 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[2] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[0], c0),
-        _mm_mul_ps(copy.__m[1], c1)),
+        _mm_mul_ps(other.__m[0], c0),
+        _mm_mul_ps(other.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[2], c2),
-        _mm_mul_ps(copy.__m[3], c3)));
+        _mm_mul_ps(other.__m[2], c2),
+        _mm_mul_ps(other.__m[3], c3)));
   }
 
+  std::cout << *this << "\n\n";
   {
-    c0 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[3] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[0], c0),
-        _mm_mul_ps(copy.__m[1], c1)),
+        _mm_mul_ps(other.__m[0], c0),
+        _mm_mul_ps(other.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(copy.__m[2], c2),
-        _mm_mul_ps(copy.__m[3], c3)));
+        _mm_mul_ps(other.__m[2], c2),
+        _mm_mul_ps(other.__m[3], c3)));
   }
+  std::cout << *this << "\n";
+
   return *this;
 
   /*
@@ -262,15 +268,15 @@ Mat4 Mat4::RotationMatrix(const Quaternion& q)
   F32 zw = q[2] * q[3];
 
   mat[0][0] = 1.0f - 2.0f * ( yy + zz );
-  mat[0][1] = 2.0f * ( xy + zw );
-  mat[0][2] = 2.0f * ( xz - yw );
-
   mat[1][0] = 2.0f * ( xy - zw );
-  mat[1][1] = 1.0f - 2.0f * ( xx + zz );
-  mat[1][2] = 2.0f * ( yz + xw );
-
   mat[2][0] = 2.0f * ( xz + yw );
+
+  mat[0][1] = 2.0f * ( xy + zw );
+  mat[1][1] = 1.0f - 2.0f * ( xx + zz );
   mat[2][1] = 2.0f * ( yz - xw );
+
+  mat[0][2] = 2.0f * ( xz - yw );
+  mat[1][2] = 2.0f * ( yz + xw );
   mat[2][2] = 1.0f - 2.0f * ( xx + yy );
 
   mat[3][3] = 1.0f;
@@ -289,13 +295,13 @@ Mat4 Mat4::ScaleMatrix(const F32& s)
 
 Mat4 Mat4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) 
 {
-  F32 tanHalfFov = std::tan(RADIANS(fov * 0.5f));
+  F32 tanHalfFov = tan(RADIANS(fov * 0.5f));
   Mat4 mat{};
   mat[0][0] = 1.0f / (aspectRatio * tanHalfFov);
   mat[1][1] = 1.0f / tanHalfFov;
-  mat[2][2] = -far / (far - near);
-  mat[2][3] = -1.0f;
-  mat[3][2] = -(far * near) /  (far - near);
+  mat[2][2] = -far / (near - far);
+  mat[3][2] = -1.0f;
+  mat[2][3] = -(2.0f * far * near) / (far - near);
   return mat;
 }
 
