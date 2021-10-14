@@ -28,7 +28,7 @@ void ArcBall::BeginDrag(const Vector2& v) {
 }
     
 void ArcBall::ContinueDrag(const Vector2& v) {
-    current = FindQuat(v) * drag.Inverse();
+    current = FindQuat(v) * drag.inverse();
 }
 
 void ArcBall::EndDrag(const Vector2& v) {

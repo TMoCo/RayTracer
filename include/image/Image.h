@@ -31,8 +31,7 @@ public:
     inline UI64 Width() { return width; }
     inline UI64 Height() { return height; }
 
-    void ToPPM(std::ostream& out);
-    
+    void ToPPM(std::ostream& out);    
 
     colour* operator[](UI32 index);
     const colour* operator[](UI32 index) const;

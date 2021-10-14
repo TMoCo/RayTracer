@@ -2,7 +2,7 @@
 // Matrix4 class definition
 //
 
-#include <math/Matrix4.h>
+#include <math/Thomath.h>
 
 #include <core/core.h>
 
@@ -24,7 +24,7 @@ Matrix4::Matrix4(const F32* values) // assumes values given in row major format
   : _m{} 
 { 
   for (UI32 e = 0; e < 16; ++e) 
-    _m[e] = values[(e & 3) << 2 + (e >> 2)]; // store in column major
+    _m[e] = values[((e & 3) << 2) + (e >> 2)]; // store in column major
 }
 
 Matrix4& Matrix4::operator =(const Matrix4& other) 

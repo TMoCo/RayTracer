@@ -9,7 +9,7 @@
 
 #include <image/Colour.h>
 
-#include <math/Vectors.h>
+#include <math/Thomath.h>
 
 #include <model/Model.h>
 
@@ -46,12 +46,12 @@ struct Surfel {
 
     inline colour BRDF(const Vector3& light, const Vector3& view, const Material& material) {
         // lambertian
-        F32 lambertian = std::max(normal.Dot(light), 0.0f);
+        F32 lambertian = std::max(normal.dot(light), 0.0f);
         // glossy 
-        F32 glossy = std::max((light + view).Normalize().Dot(normal), 0.0f);
+        F32 glossy = std::max((light + view).normalize().dot(normal), 0.0f);
         // compute surface color
-        return material.diffuse.ToVector3()  * lambertian 
-            + material.specular.ToVector3() * std::pow(glossy, material.specularExp);
+        return material.diffuse.toVector3()  * lambertian 
+            + material.specular.toVector3() * std::pow(glossy, material.specularExp);
     }
 };
 

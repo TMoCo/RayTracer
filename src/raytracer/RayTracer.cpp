@@ -18,9 +18,9 @@ void RayTracer::RayTraceImage(Image& buffer, Model* original,
     // transform copied model
     for (Mesh& mesh : model.meshes) {
         for (Vector3& position : mesh.positions)
-            position = t.TransformPoint(position);
+            position = t.transformPoint(position);
         for (Vector3& normal : mesh.normals)
-            normal = t.RotatePoint(normal);
+            normal = t.rotatePoint(normal);
     }
 
     // scale for aspect ratio
@@ -30,28 +30,39 @@ void RayTracer::RayTraceImage(Image& buffer, Model* original,
 
     // primary ray 
     Ray primaryRay;
-    primaryRay.origin = eye;
+    primaryRay._origin = eye;
 
     // gamma correction
     F32 gamma = 1.0f / 2.2f;
 
-    // loop over each pixel in the buffer
-    for(UI32 row = 0; row < buffer.Height(); ++row) {
-        for (UI32 col = 0; col < buffer.Width(); ++col) {
-            //** Fit into a thread
-            colour c{};
-            // ray direction
-            primaryRay.direction = camera->GenerateRay(
-                { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight }).Normalize();
-                
-            // compute scene
-            for (UI32 s = 0; s < samples; ++s)
-                c += CastRay(primaryRay, model, 0);
+  // push pixels onto a stack
 
-            buffer[row][col] = Colour::GammaCorrection(Colour::ReinhardExtendedTMO(c, 10.0f), gamma);
-            //**
-        }
+
+  for(UI32 row = 0; row < buffer.Height(); ++row) {
+    for (UI32 col = 0; col < buffer.Width(); ++col) {
+      //** Fit into a thread
+         
+      // thread code:
+      // while(!stack.empty())
+      //   get pixel from stack (can't be accessed by other threads)
+      //   compute pixel colour
+      //   pop pixel 
+
+      colour c{};
+      // ray direction
+      primaryRay._direction = camera->GenerateRay(
+          { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight }).normalize();
+                
+      // compute scene
+      for (UI32 s = 0; s < samples; ++s)
+          c += CastRay(primaryRay, model, 0);
+
+      buffer[row][col] = Colour::gammaCorrection (Colour::reinhardExtendedTMO(c, 10.0f), gamma);
+
+
+      //**
     }
+  }
 }
 
 colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
@@ -87,8 +98,8 @@ colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
             tNear = INFINITY;
 
             // from light to surfel
-            ray.origin =  RandomAreaLightPoint(model.lights[l]); // ray originate at light
-            ray.direction = (surfel.position - ray.origin).Normalize(); // to surfel
+            ray._origin =  RandomAreaLightPoint(model.lights[l]); // ray originate at light
+            ray._direction = (surfel.position - ray._origin).normalize(); // to surfel
             
             // get intersection of light to surfel
             Intersect(ray, model.objects, shadow, tNear);
@@ -98,9 +109,9 @@ colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
                 // compute lighting
                 c += 
                     // light colour
-                    model.materials.at(model.lights[l]->material).emissive.ToVector3()
+                    model.materials.at(model.lights[l]->material).emissive.toVector3()
                     // surfel brdf
-                    * surfel.BRDF(-ray.direction, -inRay.direction, 
+                    * surfel.BRDF(-ray._direction, -inRay._direction, 
                     model.materials.at(surfel.mesh->material))
                     // light distance attenuation
                     / (tNear * tNear);
@@ -108,14 +119,14 @@ colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
         }
 
         // indirect lighting
-        ray.direction = Quaternion::RotateVector(
+        ray._direction = Quaternion::rotateVector(
             // random point on hemisphere unit hemisphere
             UniformSampleHemisphere(Random::UniformUV()), 
             // rotation to align with surfel normal
-            Quaternion::Rotation(UP, surfel.normal)); 
+            Quaternion::rotation(UP, surfel.normal)); 
         
         c += CastRay(ray, model, depth + 1) 
-            * surfel.BRDF(ray.direction, -inRay.direction, model.materials.at(surfel.mesh->material));
+            * surfel.BRDF(ray._direction, -inRay._direction, model.materials.at(surfel.mesh->material));
         /*
         */
     }
@@ -148,8 +159,8 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
             edge2 = meshes[m]->positions[meshes[m]->faces[f+6]] 
                 - meshes[m]->positions[meshes[m]->faces[f]]; // V2 - v0
 
-            h = ray.direction.Cross(edge2);
-            k = edge1.Dot(h);
+            h = ray._direction.cross(edge2);
+            k = edge1.dot(h);
 
             // if cross prod of ray and edge2 is perpendicular to egde1, then 
             // ray is parallel to triangle
@@ -159,19 +170,19 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
             k = 1.0f / k; // reuse k
 
             // s = v0->origin
-            s = ray.origin - meshes[m]->positions[meshes[m]->faces[f]]; 
-            u = k * s.Dot(h);
+            s = ray._origin - meshes[m]->positions[meshes[m]->faces[f]]; 
+            u = k * s.dot(h);
             if (u < 0.0f || u > 1.0f)
                 continue;
 
-            q = s.Cross(edge1);
-            v = k * ray.direction.Dot(q);
+            q = s.cross(edge1);
+            v = k * ray._direction.dot(q);
             if (v < 0.0f || u + v > 1.0f)
                 continue;
 
-            k = k * edge2.Dot(q);
+            k = k * edge2.dot(q);
             if (k > EPSILON) { // valid intersection
-                t = (ray.At(k) - ray.origin).Length(); // test depth
+                t = (ray.At(k) - ray._origin).length(); // test depth
                 if (t < tNear) {
                     tNear = t;
                     surfel.tri = f;     // save index of current face

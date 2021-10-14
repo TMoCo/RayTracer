@@ -11,20 +11,24 @@
 
 class Transform {
 public:
-    Vector3 position;
+    Vector3 translation;
+
     Quaternion orientation;
 
     Transform(const Vector3& p = {}, const Quaternion& o = {});
 
-    Matrix4 GetMatrix() const;
+    Matrix4 toMatrix() const;
 
     // modify the transform
-    void Rotate(const Quaternion& r);
-    void Translate(const Vector3& v);
+    void rotate(const Quaternion& r);
 
-    Vector3 TransformPoint(const Vector3& vec3) const;
-    Vector3 RotatePoint(const Vector3& vec3) const;
-    Vector3 TranslatePoint(const Vector3& vec3) const;
+    void translate(const Vector3& v);
+
+    Vector3 transformPoint(const Vector3& vec3) const;
+
+    Vector3 rotatePoint(const Vector3& vec3) const;
+
+    Vector3 translatePoint(const Vector3& vec3) const;
 };
 
 #endif // !TRANSFORM_H

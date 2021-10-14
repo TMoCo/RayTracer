@@ -4,30 +4,40 @@
 
 #include <math/Transform.h>
 
-Transform::Transform(const Vector3& p, const Quaternion& o) : position{p}, 
-    orientation{o} {}
+Transform::Transform(const Vector3& p, const Quaternion& o) 
+  : translation{p},
+    orientation{o} 
+{
 
-Matrix4 Transform::GetMatrix() const {
-    return Matrix4::RotationMatrix(orientation) * Matrix4::TranslationMatrix(position);
 }
 
-void Transform::Rotate(const Quaternion& r) {
-    orientation *= r;
+Matrix4 Transform::toMatrix() const 
+{
+  return Matrix4::RotationMatrix(orientation) * Matrix4::TranslationMatrix(translation);
 }
 
-void Transform::Translate(const Vector3& v) {
-    position += v;
+void Transform::rotate(const Quaternion& r) 
+{
+  orientation *= r;
 }
 
-Vector3 Transform::TransformPoint(const Vector3& vec3) const {
-    return (GetMatrix() * Vector4{vec3})._v;
+void Transform::translate(const Vector3& v) 
+{
+  translation += v;
 }
 
-Vector3 Transform::RotatePoint(const Vector3& vec3) const {
-    return Quaternion::RotateVector(vec3, orientation);
+Vector3 Transform::transformPoint(const Vector3& vec3) const 
+{
+    return (toMatrix() * Vector4::toHomogeneous(vec3))._v;
+}
+
+Vector3 Transform::rotatePoint(const Vector3& vec3) const 
+{
+  return Quaternion::rotateVector(vec3, orientation);
     // return (Matrix4::RotationMatrix(orientation) * Vector4{vec3})._v;
 }
 
-Vector3 Transform::TranslatePoint(const Vector3& vec3) const {
-    return (Matrix4::TranslationMatrix(position) * Vector4{vec3})._v;
+Vector3 Transform::translatePoint(const Vector3& vec3) const 
+{
+  return translation + vec3;
 }

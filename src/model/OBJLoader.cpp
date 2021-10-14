@@ -88,7 +88,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
                 break;
 
             // get offset into faces
-            UI32 offset = mesh->faces.size();
+            UI32 offset = static_cast<UI32>(mesh->faces.size());
             mesh->faces.resize(offset + (vertCount == 4 ? 18 : 9));
 
             // process vertex data
@@ -216,7 +216,7 @@ bool OBJLoader::LoadObj(const char* path, Model& model) {
     // set pointers to emissive objects
     for (mesh = model.meshes.begin(); mesh < model.meshes.end(); ++mesh) {
         // sum of terms greater than 1 means a channel other than alpha is emitting light
-        if (model.materials.at(mesh->material).emissive.Sum() > 1.0f) 
+        if (model.materials.at(mesh->material).emissive.sum() > 1.0f) 
             model.lights.push_back(&(*mesh)); 
         else
             model.objects.push_back(&(*mesh)); 

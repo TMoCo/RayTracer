@@ -8,8 +8,7 @@
 #include <core/types.h>
 #include <core/core.h>
 
-#include <math/Transform.h>
-#include <math/Vectors.h>
+#include <math/Thomath.h>
 
 #include <cmath>
 
@@ -20,7 +19,8 @@ public:
     F32 FOV;
     F32 zNear;
     F32 zFar;
-    // transform to camera space
+
+    // camera transform (rotation + translation)
     Transform transform;
 
     Camera(F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 

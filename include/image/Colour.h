@@ -5,7 +5,7 @@
 #ifndef COLOUR_H
 #define COLOUR_H
 
-#include <math/Vectors.h>
+#include <math/Thomath.h>
 
 #include <cmath>
 
@@ -21,21 +21,21 @@ namespace Colour {
     static colour Green{0.0f, 1.0f, 0.0f};
     static colour Blue {0.0f, 0.0f, 1.0f};
 
-    inline F32 Luminance(colour c) {
-        return c.Dot(LUMINANCE);
+    inline F32 luminance(colour c) {
+        return c.dot(LUMINANCE);
     }
 
-    inline colour GammaCorrection(colour c, F32 gamma) {
+    inline colour gammaCorrection(colour c, F32 gamma) {
         F32 invGamma = 1.0f / gamma;
         return colour{std::pow(c.x, invGamma), std::pow(c.y, invGamma), std::pow(c.z, invGamma)};
     }
 
     // https://64.github.io/tonemapping/
-    inline colour ReinhardTMO(colour c) {
+    inline colour reinhardTMO(colour c) {
         return c / (White + c);
     }
 
-    inline colour ReinhardExtendedTMO(colour c, F32 maxWhite) {
+    inline colour reinhardExtendedTMO(colour c, F32 maxWhite) {
         return (c * (White + (c / colour{maxWhite * maxWhite}))) / (White + c);
     }
 

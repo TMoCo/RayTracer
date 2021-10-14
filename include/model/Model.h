@@ -7,8 +7,7 @@
 
 #include <core/core.h>
 
-#include <math/Vectors.h>
-#include <math/Transform.h>
+#include <math/Thomath.h>
 
 #include <model/Material.h>
 #include <model/Primitives.h>
