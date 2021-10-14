@@ -1,8 +1,8 @@
 //
-// Vec3 class definition
+// Vector3 class definition
 //
 
-#include <math/Vector3.h>
+#include <math/Thomath.h>
 
 #include <core/core.h>
 
@@ -10,69 +10,69 @@
 #include <math.h>
 #include <iomanip>
 
-Vec3& Vec3::operator =(const Vec3& other) 
+Vector3& Vector3::operator =(const Vector3& other) 
 {
   memcpy(_v, other._v, SIZEOF_VEC3);
   return *this;
 }
 
-bool Vec3::operator ==(const Vec3& other) const 
+bool Vector3::operator ==(const Vector3& other) const 
 {
   return (x == other.x) && (y == other.y) && (z == other.z);
 }
 
-Vec3& Vec3::operator +=(const Vec3& other) 
+Vector3& Vector3::operator +=(const Vector3& other) 
 {
   __v = _mm_add_ps(__v, other.__v);
   return *this;
 }
 
-Vec3& Vec3::operator -=(const Vec3& other) 
+Vector3& Vector3::operator -=(const Vector3& other) 
 {
   __v = _mm_sub_ps(__v, other.__v);
   return *this;
 }
 
-Vec3& Vec3::operator /=(const Vec3& other) 
+Vector3& Vector3::operator /=(const Vector3& other) 
 {
   __v = _mm_div_ps(__v, other.__v);
   return *this;
 }
 
-Vec3& Vec3::operator *=(const Vec3& other) 
+Vector3& Vector3::operator *=(const Vector3& other) 
 {
   __v = _mm_mul_ps(__v, other.__v);
   return *this;
 }
 
-Vec3& Vec3::operator /=(const F32& factor) 
+Vector3& Vector3::operator /=(const F32& factor) 
 {
   __v = _mm_div_ps(__v, _mm_set_ps1(factor));
   return *this;
 }
 
-Vec3& Vec3::operator *=(const F32& factor) 
+Vector3& Vector3::operator *=(const F32& factor) 
 {
   __v = _mm_mul_ps(__v, _mm_set_ps1(factor));
   return *this;
 }
 
-Vec3 Vec3::operator -() const 
+Vector3 Vector3::operator -() const 
 {
   return *this * -1.0f;
 }
 
-F32& Vec3::operator [](const UI32 index) 
+F32& Vector3::operator [](const UI32 index) 
 { 
   return _v[index];
 }
 
-const F32& Vec3::operator [](const UI32 index) const 
+const F32& Vector3::operator [](const UI32 index) const 
 {
   return _v[index];
 }
 
-F32 Vec3::dot(const Vec3& other) const 
+F32 Vector3::dot(const Vector3& other) const 
 {
   __m128 shuf = _mm_shuffle_ps(__v, other.__v, _MM_SHUFFLE(2, 3, 0, 1)); // [ C D | A B ]
   __m128 sums = _mm_add_ps(__v, shuf); // sums = [ D+C C+D | B+A A+B ]
@@ -82,7 +82,7 @@ F32 Vec3::dot(const Vec3& other) const
 }
 
 /*
-Vec3 Vec3::Cross(const Vec3& other) const {
+Vector3 Vector3::Cross(const Vector3& other) const {
     return {
         _v[1] * other[2] - _v[2] * other[1],
         _v[2] * other[0] - _v[0] * other[2], 
@@ -90,7 +90,7 @@ Vec3 Vec3::Cross(const Vec3& other) const {
 }
 */
 
-Vec3 Vec3::cross(const Vec3& other) const 
+Vector3 Vector3::cross(const Vector3& other) const 
 {
   __m128 res = _mm_sub_ps(
     _mm_mul_ps(
@@ -99,10 +99,10 @@ Vec3 Vec3::cross(const Vec3& other) const
     _mm_mul_ps(
       _mm_shuffle_ps(__v, __v, _MM_SHUFFLE(3, 1, 0, 2)),
       _mm_shuffle_ps(other.__v, other.__v, _MM_SHUFFLE(3, 0, 2, 1))));
-  return Vec3{reinterpret_cast<F32*>(&res)};
+  return Vector3{reinterpret_cast<F32*>(&res)};
 }
 
-F32 Vec3::length() const 
+F32 Vector3::length() const 
 { 
 #if (__cplusplus >= 201703L)
   return std::hypot(_v[0], _v[1], _v[2]);
@@ -111,27 +111,27 @@ F32 Vec3::length() const
 #endif
 }
 
-F32 Vec3::lengthSquared() const
+F32 Vector3::lengthSquared() const
 {
   F32 length = this->length();
   return length * length;
 }
 
-Vec3 Vec3::normalize() const 
+Vector3 Vector3::normalize() const 
 {
   return *this / length();
 }
 
-Vec3 Vec3::reflect(const Vec3& v, const Vec3& normal) 
+Vector3 Vector3::reflect(const Vector3& v, const Vector3& normal) 
 {
   return v - 2.0f * v.dot(normal) * normal; // assumes unit normal
 }
 
-Vec3 Vec3::refract(const Vec3& v, const Vec3& normal, const float& iorRatio)
+Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const float& iorRatio)
 {
   F32 cosTheta = fmin(v.dot(normal), 1.0f); // assumes unit length
-  Vec3 perpendicular = iorRatio * (v + cosTheta * normal);
-  Vec3 parallel = -sqrtf(fabs(1.0f - perpendicular.lengthSquared())) * normal;
+  Vector3 perpendicular = iorRatio * (v + cosTheta * normal);
+  Vector3 parallel = -sqrtf(fabs(1.0f - perpendicular.lengthSquared())) * normal;
   return perpendicular * parallel;
 }
 

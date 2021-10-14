@@ -12,7 +12,7 @@
 
 constexpr UI32 SIZEOF_VEC3 = 0xc;
 
-typedef struct Vec3 {
+typedef struct Vector3 {
   union {
     F32 _v[4]; // still in fact 4 for simd operations (4th element is zeroe ignored)
     __m128 __v;
@@ -21,68 +21,68 @@ typedef struct Vec3 {
     };
   };
 
-  constexpr Vec3() : _v{} {}
+  constexpr Vector3() : _v{} {}
 
-  constexpr Vec3(F32 value) : _v{ value, value, value } {}
+  constexpr Vector3(F32 value) : _v{ value, value, value } {}
 
-  constexpr Vec3(F32 X, F32 Y, F32 Z) : _v{ X, Y, Z } {}
+  constexpr Vector3(F32 X, F32 Y, F32 Z) : _v{ X, Y, Z } {}
 
-  Vec3(const F32* values) : _v{} { memcpy(_v, values, SIZEOF_VEC3); }
+  Vector3(const F32* values) : _v{} { memcpy(_v, values, SIZEOF_VEC3); }
 
-  Vec3(const Vec3& other) : _v{} { memcpy(_v, other._v, SIZEOF_VEC3); }
+  Vector3(const Vector3& other) : _v{} { memcpy(_v, other._v, SIZEOF_VEC3); }
 
   // binary operators
-  Vec3& operator =(const Vec3& other);
+  Vector3& operator =(const Vector3& other);
 
-  bool operator ==(const Vec3& other) const;
+  bool operator ==(const Vector3& other) const;
 
-  Vec3& operator +=(const Vec3& other);
+  Vector3& operator +=(const Vector3& other);
 
-  Vec3& operator -=(const Vec3& other);
+  Vector3& operator -=(const Vector3& other);
 
-  Vec3& operator /=(const Vec3& other);
+  Vector3& operator /=(const Vector3& other);
 
-  Vec3& operator *=(const Vec3& other);
+  Vector3& operator *=(const Vector3& other);
 
-  Vec3& operator /=(const F32& other);
+  Vector3& operator /=(const F32& other);
 
-  Vec3& operator *=(const F32& factor);
+  Vector3& operator *=(const F32& factor);
 
-  friend inline Vec3 operator +(Vec3 lhs, const Vec3& rhs) {
+  friend inline Vector3 operator +(Vector3 lhs, const Vector3& rhs) {
       return lhs += rhs;
   }
 
-  friend inline Vec3 operator -(Vec3 lhs, const Vec3& rhs) {
+  friend inline Vector3 operator -(Vector3 lhs, const Vector3& rhs) {
       return lhs -= rhs;
   }
 
-  friend inline Vec3 operator /(Vec3 lhs, const Vec3& rhs) {
+  friend inline Vector3 operator /(Vector3 lhs, const Vector3& rhs) {
       return lhs /= rhs;
   }
 
-  friend inline Vec3 operator *(Vec3 lhs, const Vec3& rhs) {
+  friend inline Vector3 operator *(Vector3 lhs, const Vector3& rhs) {
       return lhs *= rhs;
   }
 
-  Vec3 operator -() const;
+  Vector3 operator -() const;
 
   F32& operator [](const UI32 index);
 
   const F32& operator [](const UI32 index) const;
     
-  F32 dot(const Vec3& other) const;
+  F32 dot(const Vector3& other) const;
 
-  Vec3 cross(const Vec3& other) const;
+  Vector3 cross(const Vector3& other) const;
 
   F32 length() const;
 
   F32 lengthSquared() const;
 
-  Vec3 normalize() const;
+  Vector3 normalize() const;
 
-  static Vec3 reflect(const Vec3& v, const Vec3& normal);
+  static Vector3 reflect(const Vector3& v, const Vector3& normal);
 
-  static Vec3 refract(const Vec3& v, const Vec3& normal, const float& iorRatio);
+  static Vector3 refract(const Vector3& v, const Vector3& normal, const float& iorRatio);
 } Vector3;
 
 // binary operators

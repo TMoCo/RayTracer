@@ -13,7 +13,6 @@ typedef  std::chrono::system_clock sys_clock;
     Type& operator=(const Type& T) = delete;
 
 // application constants
-#define SIZEOF_MAT4 0x40
 #define SIZEOF_VEC2 0x8
 
 #define MAX_LINE 1024

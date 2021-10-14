@@ -7,43 +7,52 @@
 
 #include <core/types.h>
 
-class Vector2 {
-public:
-    union { 
-        F32 _v[2]; 
-        struct {
-            F32 x, y;
-        };
-     };
+typedef struct Vector2 {
+  union { 
+    F32 _v[2]; 
 
-    Vector2();
-    Vector2(F32 X, F32 Y);
-    Vector2(const Vector2& other);
+    struct {
+      F32 x, y;
+    };
+  };
 
-    Vector2& operator =(const Vector2& other);
+  Vector2() : _v{} {}
+  
+  Vector2(F32 X, F32 Y) : x(X), y(Y) {}
+  
+  Vector2(const Vector2& other) : _v{} { std::memcpy(_v, other._v, SIZEOF_VEC2); }
 
-    Vector2& operator -=(const Vector2& other);
-    Vector2& operator +=(const Vector2& other);
-    Vector2& operator *=(const Vector2& other);
-    Vector2& operator /=(const F32& factor);
+  Vector2& operator =(const Vector2& other);
 
-    friend inline Vector2 operator -(Vector2 lhs, const Vector2& rhs) {
-        return lhs -= rhs;
-    }
-    friend inline Vector2 operator +(Vector2 lhs, const Vector2& rhs) {
-        return lhs += rhs;
-    }
+  Vector2& operator -=(const Vector2& other);
 
-    // access operators
-    F32& operator [](const UI32 index);
-    const F32& operator [](const UI32 index) const;
+  Vector2& operator +=(const Vector2& other);
 
-    const F32* ValuePtr() const; 
-    F32* ValuePtr();
-};
+  Vector2& operator *=(const Vector2& other);
+  
+  Vector2& operator /=(const F32& factor);
+
+  friend inline Vector2 operator -(Vector2 lhs, const Vector2& rhs) 
+  {
+    return lhs -= rhs;
+  }
+
+  friend inline Vector2 operator +(Vector2 lhs, const Vector2& rhs) 
+  {
+    return lhs += rhs;
+  }
+
+  // access operators
+  F32& operator [](const UI32 index);
+
+  const F32& operator [](const UI32 index) const;
+
+} Vector2;
 
 Vector2 operator *(Vector2 lhs, const F32& rhs);
+
 Vector2 operator /(Vector2 lhs, const F32& rhs);
+
 Vector2 operator *(const F32& lhs, Vector2 rhs);
 
 

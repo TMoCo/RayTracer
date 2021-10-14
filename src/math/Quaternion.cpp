@@ -2,43 +2,7 @@
 // Quaternion class definition
 //
 
-#include <core/core.h>
-
-#include <math/Quaternion.h>
-
-#include <cmath>
-#include <cstring>
-
-Quaternion::Quaternion(const Quaternion& other) 
-  : _q{other._q} 
-{
-
-}
-
-Quaternion::Quaternion(const Vector3& v, F32 s) 
-  : _vector{v}, 
-    _scalar(s)
-{
-
-}
-
-Quaternion::Quaternion(F32 x, F32 y, F32 z, F32 w) 
-  : _q{x, y, z, w}
-{
-  // avoid
-} 
-
-Quaternion::Quaternion(const F32* values) 
-  : _q{values}
-{
-
-}
-
-Quaternion::Quaternion(const Vector4& vector) 
-  : _q{vector} 
-{
-
-}
+#include <math/Thomath.h>
 
 // assignment operator
 Quaternion& Quaternion::operator = (const Quaternion &other) 

@@ -1,5 +1,5 @@
 //
-// Quaternion class declaration
+// Quaternionernion class declaration
 //
 
 #ifndef QUATERNION_H
@@ -10,7 +10,7 @@
 #include <math/Vector3.h>
 #include <math/Vector4.h>
 
-class Quaternion {
+typedef struct Quaternion {
 public:
   union {
     Vector4 _q;
@@ -24,18 +24,18 @@ public:
     };
   };
 
-  Quaternion(const Quaternion& other);
+  Quaternion(const Quaternion& other) : _q{ other._q } {}
 
-  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f);
+  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : _vector{ vector }, _scalar{ scalar } {}
 
-  Quaternion(F32 x, F32 y, F32 z, F32 w);
+  Quaternion(F32 x, F32 y, F32 z, F32 w) : _q{ x, y, z, w } {}
 
-  Quaternion(const F32* values);
+  Quaternion(const F32* values) : _q{ values } {}
 
-  Quaternion(const Vector4& vector);
+  Quaternion(const Vector4& vector) : _q{ vector } {}
 
   // binary operators
-  Quaternion &operator = (const Quaternion &other);
+  Quaternion&operator = (const Quaternion &other);
 
   bool operator ==(const Quaternion& other) const;
 
@@ -99,7 +99,7 @@ public:
 
   // apply rotation to a right quaternion
   static Vector3 rotateVector(const Vector3& vector, const Quaternion& quaternion);
-};
+} Quaternion;
 
 // binary operators
 Quaternion operator /(Quaternion lhs, const F32 rhs);
@@ -109,8 +109,8 @@ Quaternion operator *(Quaternion lhs, const F32 rhs);
 Quaternion operator *(const F32 lhs, Quaternion& rhs);
 
 // stream operators
-std::istream & operator >> (std::istream &inStream, Quaternion&value);
+std::istream & operator >> (std::istream &inStream, Quaternion& value);
 
-std::ostream & operator << (std::ostream &outStream, const Quaternion &value);
+std::ostream & operator << (std::ostream &outStream, const Quaternion& value);
 
 #endif // ! QUATERNION_H

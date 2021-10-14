@@ -4,42 +4,19 @@
 
 #include <math/Thomath.h>
 
-#include <core/core.h>
-
-#include <string.h>
-
-Matrix4::Matrix4() 
-  : _m{} 
-{
-
-}
-
-Matrix4::Matrix4(const Matrix4& other) 
-  : _m{} 
-{
-  memcpy(&_m, &other._m, SIZEOF_MAT4);
-}
-
-Matrix4::Matrix4(const F32* values) // assumes values given in row major format
-  : _m{} 
-{ 
-  for (UI32 e = 0; e < 16; ++e) 
-    _m[e] = values[((e & 3) << 2) + (e >> 2)]; // store in column major
-}
-
-Matrix4& Matrix4::operator =(const Matrix4& other) 
+Mat4& Mat4::operator =(const Mat4& other) 
 {
   memcpy(_m, other._m, SIZEOF_MAT4); 
   return *this;
 }
 
-bool Matrix4::operator ==(const Matrix4& other) const 
+bool Mat4::operator ==(const Mat4& other) const 
 {
   // bad, change to vector 4 comparison!
   return memcmp(&_m, other[0], SIZEOF_MAT4) == 0; // same values == 0
 }
 
-Matrix4& Matrix4::operator +=(const Matrix4& other) 
+Mat4& Mat4::operator +=(const Mat4& other) 
 {
   __m[0] = _mm_add_ps(__m[0], other.__m[0]);
   __m[1] = _mm_add_ps(__m[1], other.__m[1]);
@@ -48,7 +25,7 @@ Matrix4& Matrix4::operator +=(const Matrix4& other)
   return *this;
 }
     
-Matrix4& Matrix4::operator -=(const Matrix4& other) 
+Mat4& Mat4::operator -=(const Mat4& other) 
 {
   __m[0] = _mm_sub_ps(__m[0], other.__m[0]);
   __m[1] = _mm_sub_ps(__m[1], other.__m[1]);
@@ -57,7 +34,7 @@ Matrix4& Matrix4::operator -=(const Matrix4& other)
   return *this;
 }
 
-Matrix4& Matrix4::operator *=(const Matrix4& other) 
+Mat4& Mat4::operator *=(const Mat4& other) 
 {
   // illustration on mat3 (same principle):
 
@@ -88,7 +65,7 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
   //           X   = 1 * J + 2 * M + 3 * P
   // where J is a column of only j, M of m and P of p
 
-  Matrix4 copy = *this; // keep a reference copy of current
+  Mat4 copy = *this; // keep a reference copy of current
   __m128 c0, c1, c2, c3;
 
   {
@@ -155,7 +132,7 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
   /*
   
   // loop based
-  Matrix4 p = *this;
+  Mat4 p = *this;
   UI32 r, c = 0; // row col
   for (UI32 e = 0; e < 16; ++e) {
     r = e & 3;   // modulus 4
@@ -170,7 +147,7 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
 
 
   // old simd solution
-  Matrix4 p = Matrix4::Transpose(*this);
+  Mat4 p = Mat4::Transpose(*this);
   __m128 entry, shufl;
   // loop over elements and horizontal add product
   for (UI32 e = 0; e < 16; ++e)
@@ -188,7 +165,7 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
   */
 }
 
-Matrix4& Matrix4::operator /=(const F32& factor) 
+Mat4& Mat4::operator /=(const F32& factor) 
 {
   __m128 inv = _mm_set_ps1(1.0f / factor);
   __m[0] = _mm_mul_ps(__m[0], inv);
@@ -198,7 +175,7 @@ Matrix4& Matrix4::operator /=(const F32& factor)
   return *this;
 }
     
-Matrix4& Matrix4::operator *=(const F32& factor) 
+Mat4& Mat4::operator *=(const F32& factor) 
 {
   __m128 f = _mm_set_ps1(factor);
   __m[0] = _mm_mul_ps(__m[0], f);
@@ -208,19 +185,19 @@ Matrix4& Matrix4::operator *=(const F32& factor)
   return *this;
 }
 
-F32* Matrix4::operator [](const UI32 index) 
+F32* Mat4::operator [](const UI32 index) 
 {
   return &_m[index << 2];
 }
 
-const F32* Matrix4::operator [](const UI32 index) const 
+const F32* Mat4::operator [](const UI32 index) const 
 {
   return &_m[index << 2];
 }
 
-Matrix4 Matrix4::Identity() 
+Mat4 Mat4::Identity() 
 {
-  Matrix4 mat{};
+  Mat4 mat{};
   mat[0][0] = 1.0f;
   mat[1][1] = 1.0f;
   mat[2][2] = 1.0f;
@@ -228,7 +205,7 @@ Matrix4 Matrix4::Identity()
   return mat;
 }
 
-Matrix4 Matrix4::Transpose(const Matrix4& mat) 
+Mat4 Mat4::Transpose(const Mat4& mat) 
 {
   // matrix:
   // c0: a   b   c   d
@@ -247,7 +224,7 @@ Matrix4 Matrix4::Transpose(const Matrix4& mat)
   // c1c0: c   d   g   h
   // c3c2: k   l   o   p
 
-  Matrix4 t;
+  Mat4 t;
   // final shuffle
   t.__m[0] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(2, 0, 2, 0));
   t.__m[1] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(3, 1, 3, 1));
@@ -261,16 +238,16 @@ Matrix4 Matrix4::Transpose(const Matrix4& mat)
   return t;
 }
 
-Matrix4 Matrix4::TranslationMatrix(const Vector3& v) 
+Mat4 Mat4::TranslationMatrix(const Vector3& v) 
 {
-  Matrix4 mat = Matrix4::Identity();
+  Mat4 mat = Mat4::Identity();
   memcpy(mat._m + 12, v._v, SIZEOF_VEC3); // bonus of column major <3
   return mat;
 }
 
-Matrix4 Matrix4::RotationMatrix(const Quaternion& q) 
+Mat4 Mat4::RotationMatrix(const Quaternion& q) 
 {
-  Matrix4 mat{};
+  Mat4 mat{};
 
   F32 xx = q[0] * q[0];
   F32 xy = q[0] * q[1];
@@ -300,9 +277,9 @@ Matrix4 Matrix4::RotationMatrix(const Quaternion& q)
   return mat;
 }
 
-Matrix4 Matrix4::ScaleMatrix(const F32& s) 
+Mat4 Mat4::ScaleMatrix(const F32& s) 
 {
-  Matrix4 mat{};
+  Mat4 mat{};
   mat[0][0] = s;
   mat[1][1] = s;
   mat[2][2] = s;
@@ -310,10 +287,10 @@ Matrix4 Matrix4::ScaleMatrix(const F32& s)
   return mat;
 }
 
-Matrix4 Matrix4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) 
+Mat4 Mat4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) 
 {
   F32 tanHalfFov = std::tan(RADIANS(fov * 0.5f));
-  Matrix4 mat{};
+  Mat4 mat{};
   mat[0][0] = 1.0f / (aspectRatio * tanHalfFov);
   mat[1][1] = 1.0f / tanHalfFov;
   mat[2][2] = -far / (far - near);

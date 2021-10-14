@@ -14,7 +14,7 @@
 
 constexpr UI32 SIZEOF_VEC4 = 0x10;
 
-typedef struct Vec4 {
+typedef struct Vector4 {
 public:
   union {
     F32     _v[4];
@@ -24,52 +24,52 @@ public:
     };
   };
 
-  constexpr Vec4() :_v{} {}
+  constexpr Vector4() :_v{} {}
 
-  constexpr Vec4(F32 X, F32 Y, F32 Z, F32 W = 1.0f) : _v{ X, Y, Z, W } {}
+  constexpr Vector4(F32 X, F32 Y, F32 Z, F32 W = 1.0f) : _v{ X, Y, Z, W } {}
 
-  Vec4(const F32* values) : _v{} { memcpy(_v, values, SIZEOF_VEC4); }
+  Vector4(const F32* values) : _v{} { memcpy(_v, values, SIZEOF_VEC4); }
 
-  Vec4(const Vec4& other) : _v{} {memcpy(_v, other._v, SIZEOF_VEC4); }
+  Vector4(const Vector4& other) : _v{} {memcpy(_v, other._v, SIZEOF_VEC4); }
 
   // binary operators
-  Vec4& operator =(const Vec4& other);
+  Vector4& operator =(const Vector4& other);
 
-  bool operator ==(const Vec4& other) const;
+  bool operator ==(const Vector4& other) const;
 
-  Vec4& operator +=(const Vec4& other);
+  Vector4& operator +=(const Vector4& other);
 
-  Vec4& operator -=(const Vec4& other);
+  Vector4& operator -=(const Vector4& other);
 
-  Vec4& operator /=(const Vec4& other);
+  Vector4& operator /=(const Vector4& other);
 
-  Vec4& operator *=(const Vec4& other);
+  Vector4& operator *=(const Vector4& other);
 
-  Vec4& operator /=(const F32& other);
+  Vector4& operator /=(const F32& other);
 
-  Vec4& operator *=(const F32& factor);
+  Vector4& operator *=(const F32& factor);
 
-  friend inline Vec4 operator +(Vec4 lhs, const Vec4& rhs) 
+  friend inline Vector4 operator +(Vector4 lhs, const Vector4& rhs) 
   {
     return lhs += rhs;
   }
 
-  friend inline Vec4 operator -(Vec4 lhs, const Vec4& rhs) 
+  friend inline Vector4 operator -(Vector4 lhs, const Vector4& rhs) 
   {
     return lhs -= rhs;
   }
 
-  friend inline Vec4 operator /(Vec4 lhs, const Vec4& rhs) 
+  friend inline Vector4 operator /(Vector4 lhs, const Vector4& rhs) 
   {
     return lhs /= rhs;
   }
 
-  friend inline Vec4 operator *(Vec4 lhs, const Vec4& rhs) 
+  friend inline Vector4 operator *(Vector4 lhs, const Vector4& rhs) 
   {
     return lhs *= rhs;
   }
 
-  Vec4& operator -();
+  Vector4& operator -();
 
   // access operators
   F32& operator [](const UI32 index);
@@ -80,13 +80,13 @@ public:
 
   Vector3 toVector3() const; // drop w
 
-  static Vec4 toHomogeneous(const Vector3& point, F32 w = 1.0f);
+  static Vector4 toHomogeneous(const Vector3& point, F32 w = 1.0f);
 
-  F32 dot(const Vec4& other) const;
+  F32 dot(const Vector4& other) const;
 
   F32 length() const;
 
-  Vec4 normalize() const;
+  Vector4 normalize() const;
 
   F32 sum() const;
 } Vector4;
