@@ -17,7 +17,7 @@
 
 #include <math/Transform.h>
 
-// OpenGL directions
+// OpenGL directions (right handed coordinate system)
 constexpr Vector3 UP    {  0.0f,  1.0f,  0.0f };
 constexpr Vector3 DOWN  {  0.0f, -1.0f,  0.0f };
 constexpr Vector3 LEFT  { -1.0f,  0.0f,  0.0f };

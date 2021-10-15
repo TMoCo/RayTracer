@@ -32,7 +32,7 @@ struct Shader
 
   void setVec4(const char* name, const Vector4& value) const;
 
-  void setMat4(const char* name, const Matrix4& value) const;
+  void setMatrix4(const char* name, const Matrix4& value) const;
 };
 
 #endif // !SHADER_H

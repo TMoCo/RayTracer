@@ -4,19 +4,19 @@
 
 #include <math/thomath.h>
 
-Mat4& Mat4::operator =(const Mat4& other) 
+Matrix4& Matrix4::operator =(const Matrix4& other) 
 {
   memcpy(_m, other._m, SIZEOF_MAT4); 
   return *this;
 }
 
-bool Mat4::operator ==(const Mat4& other) const 
+bool Matrix4::operator ==(const Matrix4& other) const 
 {
   // bad, change to vector 4 comparison!
   return memcmp(&_m, other[0], SIZEOF_MAT4) == 0; // same values == 0
 }
 
-Mat4& Mat4::operator +=(const Mat4& other) 
+Matrix4& Matrix4::operator +=(const Matrix4& other) 
 {
   __m[0] = _mm_add_ps(__m[0], other.__m[0]);
   __m[1] = _mm_add_ps(__m[1], other.__m[1]);
@@ -25,7 +25,7 @@ Mat4& Mat4::operator +=(const Mat4& other)
   return *this;
 }
     
-Mat4& Mat4::operator -=(const Mat4& other) 
+Matrix4& Matrix4::operator -=(const Matrix4& other) 
 {
   __m[0] = _mm_sub_ps(__m[0], other.__m[0]);
   __m[1] = _mm_sub_ps(__m[1], other.__m[1]);
@@ -34,7 +34,7 @@ Mat4& Mat4::operator -=(const Mat4& other)
   return *this;
 }
 
-Mat4& Mat4::operator *=(const Mat4& other) 
+Matrix4& Matrix4::operator *=(const Matrix4& other) 
 {
   // illustration on mat3 (same principle):
 
@@ -65,80 +65,74 @@ Mat4& Mat4::operator *=(const Mat4& other)
   //           X   = 1 * J + 2 * M + 3 * P
   // where J is a column of only j, M of m and P of p
 
-  //Mat4 copy = *this; // keep a reference copy of current
+  Matrix4 copy = *this;
   __m128 c0, c1, c2, c3;
 
   {
-    c0 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(__m[0], __m[0], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(other.__m[0], other.__m[0], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[0] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(other.__m[0], c0), 
-        _mm_mul_ps(other.__m[1], c1)),
+        _mm_mul_ps(copy.__m[0], c0), 
+        _mm_mul_ps(copy.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(other.__m[2], c2),
-        _mm_mul_ps(other.__m[3], c3)));
+        _mm_mul_ps(copy.__m[2], c2),
+        _mm_mul_ps(copy.__m[3], c3)));
   }
 
-  std::cout << *this << "\n\n";
-
   {
-    c0 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(__m[1], __m[1], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(other.__m[1], other.__m[1], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[1] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(other.__m[0], c0),
-        _mm_mul_ps(other.__m[1], c1)),
+        _mm_mul_ps(copy.__m[0], c0),
+        _mm_mul_ps(copy.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(other.__m[2], c2),
-        _mm_mul_ps(other.__m[3], c3)));
+        _mm_mul_ps(copy.__m[2], c2),
+        _mm_mul_ps(copy.__m[3], c3)));
   }
 
-  std::cout << *this << "\n\n";
   {
-    c0 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(__m[2], __m[2], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(other.__m[2], other.__m[2], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[2] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(other.__m[0], c0),
-        _mm_mul_ps(other.__m[1], c1)),
+        _mm_mul_ps(copy.__m[0], c0),
+        _mm_mul_ps(copy.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(other.__m[2], c2),
-        _mm_mul_ps(other.__m[3], c3)));
+        _mm_mul_ps(copy.__m[2], c2),
+        _mm_mul_ps(copy.__m[3], c3)));
   }
-
-  std::cout << *this << "\n\n";
+  
   {
-    c0 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(0, 0, 0, 0));
-    c1 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(1, 1, 1, 1));
-    c2 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(2, 2, 2, 2));
-    c3 = _mm_shuffle_ps(__m[3], __m[3], _MM_SHUFFLE(3, 3, 3, 3));
+    c0 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(0, 0, 0, 0));
+    c1 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(1, 1, 1, 1));
+    c2 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(2, 2, 2, 2));
+    c3 = _mm_shuffle_ps(other.__m[3], other.__m[3], _MM_SHUFFLE(3, 3, 3, 3));
 
     __m[3] = _mm_add_ps(
       _mm_add_ps(
-        _mm_mul_ps(other.__m[0], c0),
-        _mm_mul_ps(other.__m[1], c1)),
+        _mm_mul_ps(copy.__m[0], c0),
+        _mm_mul_ps(copy.__m[1], c1)),
       _mm_add_ps(
-        _mm_mul_ps(other.__m[2], c2),
-        _mm_mul_ps(other.__m[3], c3)));
+        _mm_mul_ps(copy.__m[2], c2),
+        _mm_mul_ps(copy.__m[3], c3)));
   }
-  std::cout << *this << "\n";
-
   return *this;
 
   /*
   
   // loop based
-  Mat4 p = *this;
+  Matrix4 p = *this;
   UI32 r, c = 0; // row col
   for (UI32 e = 0; e < 16; ++e) {
     r = e & 3;   // modulus 4
@@ -153,7 +147,7 @@ Mat4& Mat4::operator *=(const Mat4& other)
 
 
   // old simd solution
-  Mat4 p = Mat4::Transpose(*this);
+  Matrix4 p = Matrix4::Transpose(*this);
   __m128 entry, shufl;
   // loop over elements and horizontal add product
   for (UI32 e = 0; e < 16; ++e)
@@ -171,7 +165,7 @@ Mat4& Mat4::operator *=(const Mat4& other)
   */
 }
 
-Mat4& Mat4::operator /=(const F32& factor) 
+Matrix4& Matrix4::operator /=(const F32& factor) 
 {
   __m128 inv = _mm_set_ps1(1.0f / factor);
   __m[0] = _mm_mul_ps(__m[0], inv);
@@ -181,7 +175,7 @@ Mat4& Mat4::operator /=(const F32& factor)
   return *this;
 }
     
-Mat4& Mat4::operator *=(const F32& factor) 
+Matrix4& Matrix4::operator *=(const F32& factor) 
 {
   __m128 f = _mm_set_ps1(factor);
   __m[0] = _mm_mul_ps(__m[0], f);
@@ -191,19 +185,19 @@ Mat4& Mat4::operator *=(const F32& factor)
   return *this;
 }
 
-F32* Mat4::operator [](const UI32 index) 
+F32* Matrix4::operator [](const UI32 index) 
 {
   return &_m[index << 2];
 }
 
-const F32* Mat4::operator [](const UI32 index) const 
+const F32* Matrix4::operator [](const UI32 index) const 
 {
   return &_m[index << 2];
 }
 
-Mat4 Mat4::Identity() 
+Matrix4 Matrix4::Identity() 
 {
-  Mat4 mat{};
+  Matrix4 mat{};
   mat[0][0] = 1.0f;
   mat[1][1] = 1.0f;
   mat[2][2] = 1.0f;
@@ -211,7 +205,7 @@ Mat4 Mat4::Identity()
   return mat;
 }
 
-Mat4 Mat4::Transpose(const Mat4& mat) 
+Matrix4 Matrix4::Transpose(const Matrix4& mat) 
 {
   // matrix:
   // c0: a   b   c   d
@@ -230,7 +224,7 @@ Mat4 Mat4::Transpose(const Mat4& mat)
   // c1c0: c   d   g   h
   // c3c2: k   l   o   p
 
-  Mat4 t;
+  Matrix4 t;
   // final shuffle
   t.__m[0] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(2, 0, 2, 0));
   t.__m[1] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(3, 1, 3, 1));
@@ -244,16 +238,16 @@ Mat4 Mat4::Transpose(const Mat4& mat)
   return t;
 }
 
-Mat4 Mat4::TranslationMatrix(const Vector3& v) 
+Matrix4 Matrix4::TranslationMatrix(const Vector3& v) 
 {
-  Mat4 mat = Mat4::Identity();
+  Matrix4 mat = Matrix4::Identity();
   memcpy(mat._m + 12, v._v, SIZEOF_VEC3); // bonus of column major <3
   return mat;
 }
 
-Mat4 Mat4::RotationMatrix(const Quaternion& q) 
+Matrix4 Matrix4::RotationMatrix(const Quaternion& q) 
 {
-  Mat4 mat{};
+  Matrix4 mat{};
 
   F32 xx = q[0] * q[0];
   F32 xy = q[0] * q[1];
@@ -283,9 +277,9 @@ Mat4 Mat4::RotationMatrix(const Quaternion& q)
   return mat;
 }
 
-Mat4 Mat4::ScaleMatrix(const F32& s) 
+Matrix4 Matrix4::ScaleMatrix(const F32& s) 
 {
-  Mat4 mat{};
+  Matrix4 mat{};
   mat[0][0] = s;
   mat[1][1] = s;
   mat[2][2] = s;
@@ -293,15 +287,15 @@ Mat4 Mat4::ScaleMatrix(const F32& s)
   return mat;
 }
 
-Mat4 Mat4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) 
+Matrix4 Matrix4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) 
 {
-  F32 tanHalfFov = tan(RADIANS(fov * 0.5f));
-  Mat4 mat{};
+  F32 tanHalfFov = tan(fov * 0.5f);
+  Matrix4 mat{};
   mat[0][0] = 1.0f / (aspectRatio * tanHalfFov);
   mat[1][1] = 1.0f / tanHalfFov;
-  mat[2][2] = -far / (near - far);
-  mat[3][2] = -1.0f;
-  mat[2][3] = -(2.0f * far * near) / (far - near);
+  mat[2][2] = -(far + near) / (far - near);
+  mat[2][3] = -1.0f;
+  mat[3][2] = -(2.0f * far * near) / (far - near);
   return mat;
 }
 

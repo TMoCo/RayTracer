@@ -122,13 +122,11 @@ colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
         ray._direction = Quaternion::rotateVector(
             // random point on hemisphere unit hemisphere
             UniformSampleHemisphere(Random::UniformUV()), 
-            // rotation to align with surfel normal
-            Quaternion::rotation(UP, surfel.normal)); 
+            // rotation to align unit normal with surfel normal
+            Quaternion::getRotationFrom(UP, surfel.normal)); 
         
         c += CastRay(ray, model, depth + 1) 
             * surfel.BRDF(ray._direction, -inRay._direction, model.materials.at(surfel.mesh->material));
-        /*
-        */
     }
     else if(Intersect(inRay, model.lights, surfel, tNear)) 
         c = &model.materials.at(surfel.mesh->material).emissive[0];

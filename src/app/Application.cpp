@@ -56,10 +56,11 @@ void Application::renderLoopGl()
 {
   // startup render data
   F32 vertices[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
+    // positions          // colors           // texture coords
+     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
   };
 
   UI32 indices[] = {  // note that we start from 0!
@@ -84,8 +85,12 @@ void Application::renderLoopGl()
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(F32), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(F32), (void*)0);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(F32), (void*)(3 * sizeof(F32)));
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(F32), (void*)(6 * sizeof(F32)));
+  glEnableVertexAttribArray(2);
 
   Shader shader{};
 
@@ -99,37 +104,15 @@ void Application::renderLoopGl()
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-  Transform t{ Vector3{0.0f, 0.0f, 0.0f}, Quaternion::angleAxis(BACK, RADIANS(45.0f)) };
+  Transform t{ Vector3{0.0f, 0.0f, 0.0f}, Quaternion::angleAxis(RADIANS(-55.0f), RIGHT) };
 
   Matrix4 model = t.toWorldMatrix();
-  std::cout << model << "\n\n";
-  std::cout << "rotation\n" << Vector4{ model[0] } << "\n";
-  std::cout << "rotation\n" << Vector4{ model[1] } << "\n";
-  std::cout << "rotation\n" << Vector4{ model[2] } << "\n\n";
+  Matrix4 view  = Matrix4::TranslationMatrix(Vector3{ 0.0f, 0.0f, -3.0f });
+  Matrix4 proj  = Matrix4::Perspective(RADIANS(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-  Matrix4 proj = Matrix4::Perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+  Matrix4 mvp = proj * view * model;
 
-  std::cout << "\nmodel\n\n" << model << "\n\n";
-  std::cout << "prod\n" << proj << "\n\n";
-
-  std::cout << "\nrotation:\n";
-
-  Matrix4 mvp = proj * model;
-  //proj = Matrix4::Identity();
-  std::cout << mvp << "\n";
-
-  std::cout << "translation " << Vector4{ model[3] } << "\n";
-
-
-  std::cout << "\n\n\nmatrix:\n";
-  Matrix4 m{};
-  for (UI32 i = 0; i < 16; ++i)
-    m[i >> 2][i & 3] = i;
-  std::cout << m << "\n";
-
-  std::cout << "\n" << m * m << "\n\n\n";
-
-  shader.setMat4("transform", mvp);
+  shader.setMatrix4("transform", mvp);
 
   while (!glfwWindowShouldClose(window.ptr))
   {

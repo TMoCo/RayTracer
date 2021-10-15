@@ -93,12 +93,11 @@ public:
   Quaternion inverse() const;
 
   // quaternion builder
-  static Quaternion angleAxis(const Vector3& axis, F32 angle);
+  static Quaternion angleAxis(F32 angle, const Vector3& axis);
 
-  static Quaternion rotation(const Vector3& from, const Vector3& to);
+  static Quaternion getRotationFrom(const Vector3& from, const Vector3& to); // rotation from one point to another
 
-  // apply rotation to a right quaternion
-  static Vector3 rotateVector(const Vector3& vector, const Quaternion& quaternion);
+  static Vector3 rotateVector(const Vector3& vector, const Quaternion& quaternion); // apply rotation to a right quaternion
 } Quaternion;
 
 // binary operators

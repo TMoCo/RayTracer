@@ -109,7 +109,6 @@ void Shader::setInt(const char* name, I32 value) const
   glUniform1i(glGetUniformLocation(id, name), value);
 }
 
-
 void Shader::setFloat(const char* name, F32 value) const
 {
   glUniform1f(glGetUniformLocation(id, name), value);
@@ -130,7 +129,7 @@ void Shader::setVec4(const char* name, const Vector4& value) const
   glUniform4fv(glGetUniformLocation(id, name), 1, value._v);
 }
 
-void Shader::setMat4(const char* name, const Matrix4& value) const
+void Shader::setMatrix4(const char* name, const Matrix4& value) const
 {
   glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, value[0]);
 }
