@@ -2,8 +2,8 @@
 // OBJLoader class declaration
 //
 
-#ifndef OBJ_LOADER_H
-#define OBJ_LOADER_H 1
+#ifndef OBJ_LOADER_H_
+#define OBJ_LOADER_H_ 1
 
 #include <scene/Model.h>
 
@@ -21,4 +21,4 @@ public:
     static bool IsMtl(const char* path);
 };
 
-#endif // ! OBJ_LOADER_H
+#endif // ! OBJ_LOADER_H_

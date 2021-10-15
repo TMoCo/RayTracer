@@ -2,8 +2,8 @@
 // Surfel struct declaration
 //
 
-#ifndef SURFEL_H
-#define SURFEL_H
+#ifndef SURFEL_H_
+#define SURFEL_H_
 
 #include <core/core.h>
 
@@ -55,4 +55,4 @@ struct Surfel {
     }
 };
 
-#endif // !SURFEL_H
+#endif // !SURFEL_H_

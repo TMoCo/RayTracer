@@ -74,7 +74,7 @@ Vector3 Vector4::point3D() const
 
 Vector3 Vector4::toVector3() const 
 {
-  return {_v};
+  return { _v };
 }
 
 Vector4 Vector4::toHomogeneous(const Vector3& other, F32 W)

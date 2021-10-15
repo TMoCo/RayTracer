@@ -1,5 +1,5 @@
-#ifndef APP_H
-#define APP_H 1
+#ifndef APP_H_
+#define APP_H_ 1
 
 // define application type here (better way to do this?)
 
@@ -31,4 +31,4 @@ public:
 
 };
 
-#endif // !APP_H
+#endif // !APP_H_

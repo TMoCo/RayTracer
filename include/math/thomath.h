@@ -2,8 +2,8 @@
 // Utility include for all math types and struct, plus some constants and utility stuff
 //
 
-#ifndef THOMATH_H
-#define THOMATH_H 1
+#ifndef THOMATH_H_
+#define THOMATH_H_ 1
 
 #include <core/types.h>
 
@@ -36,4 +36,4 @@ constexpr F32 RADIANS(F32 x) {
   return x * PI * 0.00555555556f;
 }
 
-#endif // !THOMATH_H
+#endif // !THOMATH_H_

@@ -3,8 +3,8 @@
 //
 
 /*
-#ifndef RENDER_OPTIONS_WIDGETS_H
-#define RENDER_OPTIONS_WIDGETS_H 1
+#ifndef RENDER_OPTIONS_WIDGETS_H_
+#define RENDER_OPTIONS_WIDGETS_H_ 1
 
 #include <render/Camera.h>
 

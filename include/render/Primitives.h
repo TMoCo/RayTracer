@@ -2,8 +2,8 @@
 // Face primitives structs
 //
 
-#ifndef PRIMITIVES_H
-#define PRIMITIVES_H 1
+#ifndef PRIMITIVES_H_
+#define PRIMITIVES_H_ 1
 
 #include <math/Vector3.h>
 

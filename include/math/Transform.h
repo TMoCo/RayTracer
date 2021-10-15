@@ -2,8 +2,8 @@
 // Transform class declaration
 //
 
-#ifndef TRANSFORM_H
-#define TRANSFORM_H 1
+#ifndef TRANSFORM_H_
+#define TRANSFORM_H_ 1
 
 #include <math/Matrix4.h>
 #include <math/Quaternion.h>
@@ -28,4 +28,4 @@ struct Transform {
     static Transform transformChild(const Transform& parent, const Transform& child);
 };
 
-#endif // !TRANSFORM_H
+#endif // !TRANSFORM_H_

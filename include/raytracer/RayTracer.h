@@ -2,8 +2,8 @@
 // Raytracer class 
 //
 
-#ifndef RAYTRACER_H
-#define RAYTRACER_H
+#ifndef RAYTRACER_H_
+#define RAYTRACER_H_
 
 #include <core/core.h>
 

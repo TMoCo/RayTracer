@@ -1,5 +1,5 @@
-#ifndef DEBUG_H
-#define DEBUG_H 1
+#ifndef DEBUG_H_
+#define DEBUG_H_ 1
 
 #include <iostream>
 
@@ -37,4 +37,4 @@ inline void __m_assert(const char* exp_str, bool exp, const char* file, int line
 
 #endif
 
-#endif // !DEBUG_H
+#endif // !DEBUG_H_

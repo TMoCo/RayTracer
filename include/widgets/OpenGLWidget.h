@@ -3,8 +3,8 @@
 //
 
 /*
-#ifndef OPENGL_WIDGET_H
-#define OPENGL_WIDGET_H 1
+#ifndef OPENGL_WIDGET_H_
+#define OPENGL_WIDGET_H_ 1
 
 #include <render/Camera.h>
 
@@ -43,5 +43,5 @@ public:
     Vector2 scaleMousePos(F32 x, F32 y);
 };
 
-#endif // !OPENGL_WIDGET_H
+#endif // !OPENGL_WIDGET_H_
 */

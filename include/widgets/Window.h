@@ -3,8 +3,8 @@
 // intended as an interface for managing gltf windows
 //
 
-#ifndef WINDOW_H
-#define WINDOW_H 1
+#ifndef WINDOW_H_
+#define WINDOW_H_ 1
 
 #include <core/types.h>
 
@@ -41,4 +41,4 @@ struct Window
   static void resizeCallBack(GLFWwindow* w, int h, int y);
 };
 
-#endif // ! WINDOW_H
+#endif // ! WINDOW_H_

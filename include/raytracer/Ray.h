@@ -2,8 +2,8 @@
 // Ray struct declaration
 //
 
-#ifndef RAY_H
-#define RAY_H
+#ifndef RAY_H_
+#define RAY_H_
 
 #include <math/thomath.h>
 
@@ -39,4 +39,4 @@ public:
   }
 };
 
-#endif // !RAY_H
+#endif // !RAY_H_

@@ -2,8 +2,8 @@
 // Widget for editing a vector's fields
 //
 
-#ifndef VECTOR_WIDGET_H
-#define VECTOR_WIDGET_H 1
+#ifndef VECTOR_WIDGET_H_
+#define VECTOR_WIDGET_H_ 1
 
 #include <math/Vectors.h>
 /*
@@ -35,4 +35,4 @@ signals:
 };
 */
 
-#endif // ! VECTOR_WIDGET_H
+#endif // ! VECTOR_WIDGET_H_

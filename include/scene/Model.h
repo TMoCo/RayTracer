@@ -2,8 +2,8 @@
 // Model class declaration
 //
 
-#ifndef MODEL_H
-#define MODEL_H 1
+#ifndef MODEL_H_
+#define MODEL_H_ 1
 
 #include <core/core.h>
 
@@ -60,4 +60,4 @@ public:
 };
 
 
-#endif // ! MODEL_H
+#endif // ! MODEL_H_

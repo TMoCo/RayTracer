@@ -2,8 +2,8 @@
 // Vector4 class declaration
 //
 
-#ifndef VECTOR4_H
-#define VECTOR4_H 1
+#ifndef VECTOR4_H_
+#define VECTOR4_H_ 1
 
 #include <core/types.h>
 
@@ -103,4 +103,4 @@ std::istream& operator >> (std::istream& inStream, Vector4& vector);
 
 std::ostream& operator << (std::ostream& outStream, const Vector4& vector);
 
-#endif // ! VECTOR4_H
+#endif // ! VECTOR4_H_

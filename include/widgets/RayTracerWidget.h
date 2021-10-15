@@ -3,8 +3,8 @@
 //
 
 /*
-#ifndef RAYTRACER_WIDGET_H
-#define RAYTRACER_WIDGET_H 1
+#ifndef RAYTRACER_WIDGET_H_
+#define RAYTRACER_WIDGET_H_ 1
 
 #include <image/Image.h>
 
@@ -42,5 +42,5 @@ public slots:
     void SaveImage(QString name);
 };
 
-#endif // ! RAYTRACER_WIDGET_H
+#endif // ! RAYTRACER_WIDGET_H_
 */

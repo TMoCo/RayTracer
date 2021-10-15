@@ -2,8 +2,8 @@
 // types used in aplication 
 // 
 
-#ifndef TYPES_H
-#define TYPES_H 1
+#ifndef TYPES_H_
+#define TYPES_H_ 1
 
 #include <cstdint>
 
