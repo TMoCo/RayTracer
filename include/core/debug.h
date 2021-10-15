@@ -1,9 +1,8 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_ 1
 
-#include <iostream>
-
 #ifndef NDEBUG
+#include <iostream>
 // debug print
 #if (__cplusplus >= 202002L)
 #define DEBUG_PRINT(format, ...) \
@@ -31,9 +30,10 @@ inline void __m_assert(const char* exp_str, bool exp, const char* file, int line
 }
 
 #else
+#include <assert.h>
 // catch debug statement and do nothing with them
 #define DEBUG_PRINT(...)
-#define DEBUG_ASSERT(...)
+#define DEBUG_ASSERT(exp, ...) assert(exp);
 
 #endif
 
