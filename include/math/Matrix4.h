@@ -65,17 +65,23 @@ public:
   const F32* operator [](const UI32 index) const;
 
   // static matrix builders
-  static Matrix4 Identity();
+  static Matrix4 identity();
 
-  static Matrix4 Transpose(const Matrix4& mat);
+  static Matrix4 transpose(const Matrix4& m);
 
-  static Matrix4 TranslationMatrix(const Vector3& v);
+  static Matrix4 translationMatrix(const Vector3& v);
 
-  static Matrix4 RotationMatrix(const Quaternion& q);
+  static Matrix4 translate(Matrix4 m, const Vector3& v);
 
-  static Matrix4 ScaleMatrix(const F32& s);
+  static Matrix4 rotationMatrix(const Quaternion& q);
 
-  static Matrix4 Perspective(F32 FOV, F32 aspectRatio, F32 near, F32 far);
+  static Matrix4 rotate(Matrix4 m, const Quaternion& q);
+
+  static Matrix4 scaleMatrix(const F32& s);
+
+  static Matrix4 perspective(F32 FOV, F32 aspectRatio, F32 near, F32 far);
+
+  static Matrix4 lookAt(const Vector3& eye, const Vector3& target, const Vector3& up);
 } Matrix4;
 
 // binary operators

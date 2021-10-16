@@ -6,7 +6,7 @@
 
 Matrix4 Transform::toWorldMatrix() const 
 {
-  return Matrix4::RotationMatrix(orientation) * Matrix4::TranslationMatrix(translation);
+  return Matrix4::rotationMatrix(orientation) * Matrix4::translationMatrix(translation);
 }
 
 Vector3 Transform::transformPoint(const Vector3& vec3) const 

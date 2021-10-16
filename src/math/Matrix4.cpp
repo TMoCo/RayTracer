@@ -195,7 +195,7 @@ const F32* Matrix4::operator [](const UI32 index) const
   return &_m[index << 2];
 }
 
-Matrix4 Matrix4::Identity() 
+Matrix4 Matrix4::identity() 
 {
   Matrix4 mat{};
   mat[0][0] = 1.0f;
@@ -205,7 +205,7 @@ Matrix4 Matrix4::Identity()
   return mat;
 }
 
-Matrix4 Matrix4::Transpose(const Matrix4& mat) 
+Matrix4 Matrix4::transpose(const Matrix4& mat) 
 {
   // matrix:
   // c0: a   b   c   d
@@ -238,14 +238,14 @@ Matrix4 Matrix4::Transpose(const Matrix4& mat)
   return t;
 }
 
-Matrix4 Matrix4::TranslationMatrix(const Vector3& v) 
+Matrix4 Matrix4::translationMatrix(const Vector3& v)
 {
-  Matrix4 mat = Matrix4::Identity();
+  Matrix4 mat = Matrix4::identity();
   memcpy(mat._m + 12, v._v, SIZEOF_VEC3); // bonus of column major <3
   return mat;
 }
 
-Matrix4 Matrix4::RotationMatrix(const Quaternion& q) 
+Matrix4 Matrix4::rotationMatrix(const Quaternion& q)
 {
   Matrix4 mat{};
 
@@ -277,7 +277,7 @@ Matrix4 Matrix4::RotationMatrix(const Quaternion& q)
   return mat;
 }
 
-Matrix4 Matrix4::ScaleMatrix(const F32& s) 
+Matrix4 Matrix4::scaleMatrix(const F32& s)
 {
   Matrix4 mat{};
   mat[0][0] = s;
@@ -287,7 +287,7 @@ Matrix4 Matrix4::ScaleMatrix(const F32& s)
   return mat;
 }
 
-Matrix4 Matrix4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) 
+Matrix4 Matrix4::perspective(F32 fov, F32 aspectRatio, F32 near, F32 far) 
 {
   F32 tanHalfFov = tan(fov * 0.5f);
   Matrix4 mat{};
@@ -297,6 +297,35 @@ Matrix4 Matrix4::Perspective(F32 fov, F32 aspectRatio, F32 near, F32 far)
   mat[2][3] = -1.0f;
   mat[3][2] = -(2.0f * far * near) / (far - near);
   return mat;
+}
+
+Matrix4 Matrix4::lookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
+{
+  // compute camera axes
+  Vector3 camZ = (target - eye).normalize();
+  Vector3 camX = camZ.cross(up); // assumes unit up vector
+  Vector3 camY = camX.cross(camZ);
+  
+  // build matrix
+  Matrix4 m{};
+  m[0][0] = camX[0];
+  m[1][0] = camX[1];
+  m[2][0] = camX[2];
+
+  m[0][1] = camY[0];
+  m[1][1] = camY[1];
+  m[2][1] = camY[2];
+
+  m[0][2] = -camZ[0];
+  m[1][2] = -camZ[1];
+  m[2][2] = -camZ[2];
+
+  m[3][0] = -camX.dot(eye);
+  m[3][1] = -camY.dot(eye);
+  m[3][2] =  camZ.dot(eye);
+
+  m[3][3] = 1.0f;
+  return m;
 }
 
 Matrix4 operator /(Matrix4 lhs, const F32 rhs) {

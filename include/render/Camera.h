@@ -28,16 +28,20 @@ struct Camera {
       zNear(near), 
       zFar(far) {}
 
-  // given pixel normalised device coordinates
-  inline Vector3 GenerateRay(const Vector2& PNDC, F32 z = -1.0f) {
+  inline Vector3 getCameraVector(const Vector2& PNDC) const {
     // fov
     F32 tanHalfFOV = std::tan(RADIANS(FOV * 0.5f));
-    // return camera ray
+    // given pixel normalised device coordinates, return a vector in camera's direction
     return {
         (2.0f * PNDC.x - 1.0f) * aspectRatio * tanHalfFOV,
         (2.0f * PNDC.y - 1.0f) * tanHalfFOV,
-        z
+        -1.0f
     };
+  }
+
+  inline Matrix4 getViewMatrix() const
+  {
+    // build view matrix
   }
 };
 

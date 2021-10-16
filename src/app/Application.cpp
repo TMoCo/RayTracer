@@ -67,7 +67,7 @@ void Application::renderLoopGl()
     -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
   };
 
-  UI32 indices[] = {  // note that we start from 0!
+  UI32 indices[] = { 
       0, 1, 3,   // first triangle
       1, 2, 3    // second triangle
   };
@@ -97,37 +97,42 @@ void Application::renderLoopGl()
   glEnableVertexAttribArray(2);
 
   // texture
-  Texture containerTexture{};
-
   std::string path = "C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg";
+  Texture containerTexture{};
   TextureLoader::loadTexture(path, containerTexture, GL_RGB);
   
-  Shader shader{};
 
   // shaders
+  Shader shader{};
   shader.create("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
     "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
-
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
   Transform t{ Vector3{0.0f, 0.0f, 0.0f}, Quaternion::angleAxis(RADIANS(-55.0f), RIGHT) };
 
   Matrix4 model = t.toWorldMatrix();
-  Matrix4 view  = Matrix4::TranslationMatrix(Vector3{ 0.0f, 0.0f, -3.0f });
-  Matrix4 proj  = Matrix4::Perspective(RADIANS(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
-  Matrix4 mvp = proj * view * model;
-
+  Matrix4 view{};// = Matrix4::translation(Vector3{ 0.0f, 0.0f, -3.0f });
+  Matrix4 proj  = Matrix4::perspective(RADIANS(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+  
+  view = Matrix4::lookAt(Vector3{ 0.0f, 0.0f, 3.0f}, Vector3{ 0.0f, 0.0f, 0.0f }, UP);
+  
   shader.use();
-  shader.setMatrix4("transform", mvp);
   containerTexture.bind();
   glBindVertexArray(vao);
 
+  const F32 radius = 10.0f;
+  F32 camX, camZ;
   while (!glfwWindowShouldClose(window.ptr))
   {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    camX = sin(glfwGetTime()) * radius;
+    camZ = cos(glfwGetTime()) * radius;
+
+    view = Matrix4::lookAt(Vector3{ camX, 0.0f, camZ }, Vector3{ 0.0f, 0.0f, 0.0f }, UP);
+    Matrix4 mvp = proj * view * model;
+    shader.setMatrix4("transform", proj * view * model);
     // ... render
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

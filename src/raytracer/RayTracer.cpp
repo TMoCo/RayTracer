@@ -30,6 +30,7 @@ void RayTracer::RayTraceImage(Image& buffer, Model* original,
 
     // primary ray 
     Ray primaryRay;
+    colour c;
     primaryRay._origin = eye;
 
     // gamma correction
@@ -48,17 +49,15 @@ void RayTracer::RayTraceImage(Image& buffer, Model* original,
       //   compute pixel colour
       //   pop pixel 
 
-      colour c{};
+      c = {};
+
       // ray direction
-      primaryRay._direction = camera->GenerateRay(
-          { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight }).normalize();
-                
+      primaryRay = Ray::generateCameraRay(*camera, { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight });
       // compute scene
       for (UI32 s = 0; s < samples; ++s)
           c += CastRay(primaryRay, model, 0);
 
       buffer[row][col] = Colour::gammaCorrection (Colour::reinhardExtendedTMO(c, 10.0f), gamma);
-
 
       //**
     }

@@ -21,7 +21,7 @@ bool TextureLoader::loadTexture(const std::string& path, Texture& texture, GLenu
     else if (channels == 4)
       format = GL_RGBA;
 
-    DEBUG_ASSERT(format != GL_NONE, "channels %i not supported");
+    DEBUG_ASSERT(format != GL_NONE, "channels %i not supported.");
 
     texture.generate(width, height, internalFormat, GL_RGB, true, data);
 

@@ -29,7 +29,7 @@ public:
       (2.0f * PNDC.x - 1.0f) * camera.aspectRatio * tanHalfFOV,
       (2.0f * PNDC.y - 1.0f) * tanHalfFOV,
       -1.0f };
-    // rotate direction and set origin
+    // rotate direction and set origin as camera's position
     return { camera.transform.translation, camera.transform.rotate(direction.normalize()) };
   }
 
