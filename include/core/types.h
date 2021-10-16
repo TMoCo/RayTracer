@@ -7,7 +7,6 @@
 
 #include <cstdint>
 
-typedef short  F16;
 typedef float  F32;
 typedef double F64;
 

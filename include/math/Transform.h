@@ -10,11 +10,11 @@
 #include <math/Vector3.h>
 
 struct Transform {
-    Vector3 translation;
+    Vector3 position;
 
     Quaternion orientation;
 
-    Transform(const Vector3& p = {}, const Quaternion& o = {}) : translation{ p }, orientation{ o } {}
+    Transform(const Vector3& p = {}, const Quaternion& o = {}) : position{ p }, orientation{ o } {}
 
     Matrix4 toWorldMatrix() const;
 

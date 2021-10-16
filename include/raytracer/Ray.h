@@ -30,7 +30,7 @@ public:
       (2.0f * PNDC.y - 1.0f) * tanHalfFOV,
       -1.0f };
     // rotate direction and set origin as camera's position
-    return { camera.transform.translation, camera.transform.rotate(direction.normalize()) };
+    return { camera.transform.position, camera.transform.rotate(direction.normalize()) };
   }
 
   inline Vector3 At(F32 t) const 

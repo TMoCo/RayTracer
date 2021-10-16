@@ -6,7 +6,7 @@
 
 Matrix4 Transform::toWorldMatrix() const 
 {
-  return Matrix4::rotationMatrix(orientation) * Matrix4::translationMatrix(translation);
+  return Matrix4::rotationMatrix(orientation) * Matrix4::translationMatrix(position);
 }
 
 Vector3 Transform::transformPoint(const Vector3& vec3) const 
@@ -22,7 +22,7 @@ Vector3 Transform::rotate(const Vector3& vec3) const
 
 Vector3 Transform::translate(const Vector3& vec3) const 
 {
-  return translation + vec3;
+  return position + vec3;
 }
 
 Transform Transform::transformChild(const Transform& parent, const Transform& child)
@@ -31,6 +31,6 @@ Transform Transform::transformChild(const Transform& parent, const Transform& ch
   // multiply parent by child
   composite.orientation = parent.orientation * child.orientation;
   // rotate the child translation by the parent orientation and translate parent
-  composite.translation = parent.translation + parent.rotate(child.translation);
+  composite.position = parent.position + parent.rotate(child.position);
   return composite;
 }
