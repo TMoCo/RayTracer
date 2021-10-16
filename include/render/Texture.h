@@ -7,11 +7,17 @@
 
 #include <core/types.h>
 
+#include <glad/glad.h>
+
 struct Texture
 {
   UI32 id;
 
-  void loadTexture(); // onto the GPU
+  I32 width, height;
+
+  void generate(I32 w, I32 h, GLenum internalFormat, GLenum format, bool mip,  const void* data);
+
+  void bind(I32 unit = -1);
 
 };
 

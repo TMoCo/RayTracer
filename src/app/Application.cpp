@@ -2,8 +2,12 @@
 
 #include <core/debug.h>
 
-#include <string>
 #include <render/Shader.h>
+#include <render/Texture.h>
+
+#include <resource/TextureLoader.h>
+
+#include <string>
 
 // app setup
 int Application::init()
@@ -92,15 +96,18 @@ void Application::renderLoopGl()
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(F32), (void*)(6 * sizeof(F32)));
   glEnableVertexAttribArray(2);
 
+  // texture
+  Texture containerTexture{};
+
+  std::string path = "C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg";
+  TextureLoader::loadTexture(path, containerTexture, GL_RGB);
+  
   Shader shader{};
 
   // shaders
   shader.create("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
     "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
 
-  shader.use();
-
-  glBindVertexArray(vao);
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -112,7 +119,10 @@ void Application::renderLoopGl()
 
   Matrix4 mvp = proj * view * model;
 
+  shader.use();
   shader.setMatrix4("transform", mvp);
+  containerTexture.bind();
+  glBindVertexArray(vao);
 
   while (!glfwWindowShouldClose(window.ptr))
   {
