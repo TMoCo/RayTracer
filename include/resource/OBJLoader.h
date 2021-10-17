@@ -5,22 +5,37 @@
 #ifndef OBJ_LOADER_H_
 #define OBJ_LOADER_H_ 1
 
-#include <scene/Model.h>
+#include <render/Mesh.h>
 
 #include <string>
+#include <unordered_map>
 
-struct OBJLoader {
-  static bool LoadObj(const std::string& path, Model& model);
+// TODO: remove warning sources (strcpy, strtok, size_t to UI32)
 
-  static bool LoadObj(const char* path, Model& model);
+struct OBJLoader 
+{
+  static bool loadObj(const std::string& path, std::vector<Mesh*>& meshes);
 
-  static bool LoadMtl(const char* path, Model& model);
+  static bool loadMtl(const std::string& path);
 
-  static bool IsFileType(const char* path, const char* extension);
+private:
+  // used by the obj loader to construct meshes
+  struct MeshBuilder
+  {
+    Mesh* mesh;
 
-  static bool IsObj(const char* path);
+    std::unordered_map<std::string, UI32> uniqueIndices;
+    
+    MeshBuilder() : mesh{ nullptr } {}
 
-  static bool IsMtl(const char* path);
+    inline void reset(Mesh* m = nullptr)
+    {
+      uniqueIndices.clear();
+      mesh = m; // if provided
+    }
+  };
 };
 
+
 #endif // ! OBJ_LOADER_H_
+ 

@@ -3,220 +3,157 @@
 //
 
 #include <render/Material.h>
+
 #include <resource/OBJLoader.h>
+#include <resource/file.h>
 
-#include <cstdio>
-#include <cstring>
-#include <algorithm>
+#include <fstream>
+#include <regex>
 
-bool OBJLoader::LoadObj(const std::string& path, Model& model) {
-    return LoadObj(path.c_str(), model);
+bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes) {
+  if (!file::isOfType(fileName, ".obj"))
+  {
+    DEBUG_PRINT("File provided is not .obj");
+    return false;
+  }
+
+  std::ifstream objStream(fileName);
+
+  if (!objStream.is_open())
+  {
+    DEBUG_PRINT("Could not open file stream for file %s", fileName.c_str());
+    return false;
+  }
+
+  // extract directory (if provided)
+  std::string directory = file::getPath(fileName);
+
+  // input processing
+  std::string line;
+  std::string::iterator lineIter;
+  std::regex whitespace{ R"([\s]+)" };
+  std::regex backslash { R"([/]+)" };
+
+  // mesh data
+  meshes.clear(); // make sure meshes vector is empty
+  MeshBuilder meshBuilder;
+
+  // file data
+  std::vector<Vector3> fPositions;
+  std::vector<Vector3> fNormals;
+  std::vector<Vector2> fUvs;
+
+  // while there are lines available
+  while (!objStream.eof())
+  {
+    std::getline(objStream, line);
+
+    if (line.empty())
+      continue;
+
+    // evaluate first character
+    lineIter = line.begin();
+    switch (*lineIter++)
+    {
+    case 'v':
+    {
+      // process a vertex
+      char* next = nullptr;
+      switch (*lineIter++)
+      {
+      case ' ':
+        // vertex position
+        fPositions.push_back({
+          std::strtof(line.c_str() + 1, &next),
+          std::strtof(next, &next),
+          std::strtof(next, NULL) });
+        break;
+      case 'n':
+        // vertex normal
+        fNormals.push_back({
+          std::strtof(line.c_str() + 2, &next),
+          std::strtof(next, &next),
+          std::strtof(next, NULL) });
+        break;
+      case 't':
+        // vertex uv
+        fUvs.push_back({
+          std::strtof(line.c_str() + 2, &next),
+          std::strtof(next, NULL) });
+        break;
+      default:
+        break;
+      }
+      break;
+    }
+    case 'f':
+    {
+      // tokenise face data by whitespace
+      std::vector<std::string> faceData{
+      std::sregex_token_iterator{ line.begin() + 2, line.end(), whitespace, -1 }, {} };
+      DEBUG_ASSERT(faceData.size() < 5, "faces with more than 4 vertices are not currently supported");
+            
+      // face is be tokenised into an intermediary set of strings containing vertex data v/t/n 
+      for (auto& vertex : faceData)
+      {
+        // check if the vertex exists already
+        if (!meshBuilder.uniqueIndices.count(vertex))
+        {
+          // if not, parse the string and create a new vertex in the mesh
+          std::vector<std::string> vertexData{ 
+            std::sregex_token_iterator{ vertex.begin(), vertex.end(), backslash, -1 }, {} };
+          DEBUG_ASSERT(vertexData.size() == 3, "invalid face vertex format (expected v/t/n)");
+
+          meshBuilder.uniqueIndices[vertex] = static_cast<UI32>(meshBuilder.uniqueIndices.size());
+
+          meshBuilder.mesh->positions.push_back(fPositions[std::stoi(vertexData[0]) > 0 ? std::stoi(vertexData[0]) - 1 : 0]);
+          meshBuilder.mesh->textureCoords.push_back(fUvs[std::stoi(vertexData[1]) > 0 ? std::stoi(vertexData[1]) - 1 : 0]);
+          meshBuilder.mesh->normals.push_back(fNormals[std::stoi(vertexData[2]) > 0 ? std::stoi(vertexData[2]) - 1 : 0]);
+        }
+        meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(vertex)); // get vertex index
+      }
+      if (faceData.size() == 4)
+      {
+        // insert two more vertices to complete quad
+        meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(faceData[0]));
+        meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(faceData[2]));
+      }
+    }
+    break;
+    case 'o':
+      // create new mesh and associate it to the mesh builder
+      meshes.push_back(new Mesh);
+      meshBuilder.reset(meshes.back());
+      break;
+    case '#':
+      // skip comment
+      break;
+    case '\n':
+      // empty line
+      break;
+    default:
+      // process a string 
+      if (line.find("usemtl") != std::string::npos)
+        break;
+      if (line.find("mtllib") != std::string::npos)
+        break;
+      break;
+    }
+  }
+  // loop over 
+
+  objStream.close();
+  return true;
+}  
+
+bool OBJLoader::loadMtl(const std::string& path) {
+  if (!file::isOfType(path, ".mtl")) {
+    DEBUG_PRINT("file provided is not .mtl");
+    return false;
+  }
+  return true;
 }
-
-bool OBJLoader::LoadObj(const char* path, Model& model) {
-    if (IsObj(path) != 0) {
-        std::cerr << "Not a .obj file!\n";
-        return false;
-    }
-
-    std::FILE* pFile = std::fopen(path, "r");
-    if (pFile == NULL)
-        std::perror("Error opening file!");
-
-    char* dir = new char[std::strlen(path)];
-    std::strcpy(dir, path); // get a modifiable copy of given .obj path
-
-    char* slash = std::strchr(dir,'/');
-    UI32 pos = 0;
-    while (slash!=NULL) { // find last occurence of '/' 
-        pos = static_cast<UI32>(slash-dir+1);
-        slash = std::strchr(slash+1, '/');
-    }
-    dir[pos] = '\0'; // terminate string at '/'
-
-    // input
-    char buffer[MAX_LINE];
-    char* token;
-
-    // model data
-    std::vector<Mesh>::iterator mesh;
-
-    // while there are lines available
-    while (std::fgets(buffer, MAX_LINE, pFile) != NULL) {
-        switch (buffer[0]) {
-        // vertex data*
-        case 'v':
-            switch(buffer[1]) {
-            case ' ':
-                mesh->positions.push_back({
-                    std::strtof(&buffer[2], &token), 
-                    std::strtof(token, &token),
-                    std::strtof(token, NULL)});
-                break;
-            case 'n':
-                mesh->normals.push_back({
-                    std::strtof(&buffer[3], &token), 
-                    std::strtof(token, &token), 
-                    std::strtof(token, NULL)});
-                break;
-            case 't':
-                mesh->UVs.push_back({
-                    std::strtof(&buffer[3], &token), 
-                    std::strtof(token, NULL)});
-                break;
-            }
-            break;
-        case 'f': { // face data
-            // get vertices in face (max 4 for quad)
-            char* vertices[4];
-            UI32 vertCount = 0;
-
-            // tokenise vertices by ' '
-            char* token = std::strtok(&buffer[2], " \n");
-            while (token != NULL)
-            {
-                if (vertCount == 4) {
-                    std::cerr << "Can't load 5+ sided polygons!" << std::endl; 
-                    break;
-                    // handle error here (skip line for now)
-                }
-                vertices[vertCount++] = token;
-                token = strtok(NULL, " \n");
-            }
-
-            if (vertCount > 4)
-                break;
-
-            // get offset into faces
-            UI32 offset = static_cast<UI32>(mesh->faces.size());
-            mesh->faces.resize(offset + (vertCount == 4 ? 18 : 9));
-
-            // process vertex data
-            UI32 i;
-            for (UI32 v = 0; v < vertCount; ++v) {
-                token = strtok(vertices[v], "/");
-                for (i = 0; token != NULL; i++) {
-                    mesh->faces[offset + (v * 3) + i] = 
-                            std::strlen(token) == 0 
-                                ? 0 
-                                : (UI32)std::strtol(token, NULL, 10) - 1;
-                    token = std::strtok(NULL, "/");
-                }
-                if (i % 3) {
-                    std::cerr << "Error processing face" << std::endl; 
-                    mesh->faces.resize(offset);
-                    // handle error (resize to original faces size and skip face)
-                    break;
-                }
-            }
-
-            if (i % 3) 
-                break;
-
-            /*
-            auto it = mesh->faces.begin() + offset;
-            while (it != mesh->faces.end()) {
-                std::cout << *it << ' ';
-                it++;
-            }
-            std::cout << std::endl;
-            */
-
-            if (vertCount == 4) { // append 2 more vertex indices to complete the quad
-                // v4 = v0
-                mesh->faces[offset + 12] = mesh->faces[offset];
-                mesh->faces[offset + 13] = mesh->faces[offset + 1];
-                mesh->faces[offset + 14] = mesh->faces[offset + 2];
-                // v5 = v2
-                mesh->faces[offset + 15] = mesh->faces[offset + 6];
-                mesh->faces[offset + 16] = mesh->faces[offset + 7];
-                mesh->faces[offset + 17] = mesh->faces[offset + 8];
-            }
-
-            /*
-            it = mesh->faces.begin() + offset;
-            while (it != mesh->faces.end()) {
-                std::cout << *it << ' ';
-                it++;
-            }
-            */
-            break;
-        }
-        case 'o': // object
-            // create a new mesh object in the model
-            model.meshes.push_back({});
-            mesh = model.meshes.end() - 1;
-            std::strcpy(mesh->meshName, &buffer[2]);
-            break;
-        case '#': // comments
-            break;
-        case '\n':
-            break; // other string type
-        default:
-            token = std::strtok(buffer, " ");
-
-            if (std::strcmp(token, "usemtl") == 0) {
-                token = std::strtok(NULL, " \n");
-                // set the object's material
-                std::strncpy(mesh->material, token, MAX_NAME_LENGTH);
-                break;
-            }
-
-            if (std::strcmp(token, "mtllib") == 0) {
-                token = std::strtok(NULL, " \n");
-                // concatenate mtl path to current dir
-                char *mtlPath = new char[std::strlen(token) + std::strlen(dir)];
-                std::strcpy(mtlPath, dir);
-                std::strcat(mtlPath, token);
-                LoadMtl(mtlPath, model);
-                delete[] mtlPath;
-                break;
-            }
-            break;
-        }
-    }
-
-    delete[] dir;
-
-    // update face indices for separate objects
-    if (model.meshes.size() > 1) {
-        mesh = model.meshes.begin();
-        UI32 pOffset = mesh->positions.size();
-        UI32 tOffset = mesh->UVs.size();
-        UI32 nOffset = mesh->normals.size();
-        do {
-            mesh++;
-            for (UI32 f = 0; f < mesh->faces.size(); f+= 3) {
-                mesh->faces[f    ] -= pOffset;
-                mesh->faces[f + 1] -= tOffset;
-                mesh->faces[f + 2] -= nOffset;
-            }
-            pOffset += mesh->positions.size();
-            tOffset += mesh->UVs.size();
-            nOffset += mesh->normals.size();
-        }
-        while ((mesh + 1) != model.meshes.end());
-    }
-
-    // set pointers to emissive objects
-    for (mesh = model.meshes.begin(); mesh < model.meshes.end(); ++mesh) {
-        // sum of terms greater than 1 means a channel other than alpha is emitting light
-        if (model.materials.at(mesh->material).emissive.sum() > 1.0f) 
-            model.lights.push_back(&(*mesh)); 
-        else
-            model.objects.push_back(&(*mesh)); 
-    }
-    
-    std::fclose(pFile);
-    return true;
-}
-
-bool OBJLoader::LoadMtl(const char* path, Model& model) {
-    if (IsMtl(path) != 0) {
-        std::cerr << "Not a .mtl file!\n";
-        return false;
-    }
-
+    /*
     FILE* pFile = std::fopen(path, "r");
     if (pFile == NULL)
         std::perror("Error opening file");
@@ -288,20 +225,4 @@ bool OBJLoader::LoadMtl(const char* path, Model& model) {
     }
 
     std::fclose(pFile);
-    return true;
-}
-
-bool OBJLoader::IsFileType(const char* path, const char* extension) {
-    int len = std::strlen(path);
-    if (len > 4)
-        return std::strcmp(&path[len - 4], extension);
-    return false;
-}
-
-bool OBJLoader::IsObj(const char* path) {
-    return IsFileType(path, ".obj");
-}
-
-bool OBJLoader::IsMtl(const char* path) {
-    return IsFileType(path, ".mtl");
-}
+    */

@@ -20,10 +20,11 @@ const char* Shader::getShaderCode(const char* path)
   UI32 len = static_cast<UI32>(shaderStream.tellg()); // get size of file
   shaderStream.seekg(0); // reset to begining of stream
 
-  char* shader = new char[len];
-  memset(shader, '\0', len);
-
+  char* shader = new char[len + 1];
   shaderStream.read(shader, len);
+  shader[len] = '\0';
+  // memset(shader, '\0', len);
+
 
   shaderStream.close();
 

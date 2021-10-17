@@ -4,8 +4,10 @@
 
 #include <render/Shader.h>
 #include <render/Texture.h>
+#include <render/Mesh.h>
 
 #include <resource/TextureLoader.h>
+#include <resource/OBJLoader.h>
 
 #include <string>
 
@@ -47,6 +49,15 @@ int Application::run()
     DEBUG_PRINT("Could not initialise app\n");
     return -1;
   }
+  
+  // load mesh
+  std::vector<Mesh*> meshes;
+  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\Triangle.obj", meshes);
+
+  std::cout << meshes.front()->indices.size() << "\n";
+  std::cout << meshes.front()->positions.size() << "\n";
+  std::cout << meshes.front()->normals.size() << "\n";
+  std::cout << meshes.front()->textureCoords .size() << "\n";
 
   // main loop
   renderLoopGl();
@@ -101,7 +112,6 @@ void Application::renderLoopGl()
   Texture containerTexture{};
   TextureLoader::loadTexture(path, containerTexture, GL_RGB);
   
-
   // shaders
   Shader shader{};
   shader.create("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
@@ -127,8 +137,8 @@ void Application::renderLoopGl()
   {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    camX = sin(glfwGetTime()) * radius;
-    camZ = cos(glfwGetTime()) * radius;
+    camX = sinf(static_cast<F32>(glfwGetTime())) * radius;
+    camZ = cosf(static_cast<F32>(glfwGetTime())) * radius;
 
     view = Matrix4::lookAt(Vector3{ camX, 0.0f, camZ }, Vector3{ 0.0f, 0.0f, 0.0f }, UP);
     Matrix4 mvp = proj * view * model;

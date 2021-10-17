@@ -19,6 +19,7 @@
 #endif
 
 #include <vector>
+/*
 
 class Mesh {
 public:
@@ -58,6 +59,6 @@ public:
     void Render() const; // loop over meshes and draw
     void UseMaterial(const char* material) const;
 };
-
+*/
 
 #endif // ! MODEL_H_

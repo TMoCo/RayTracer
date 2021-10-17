@@ -9,9 +9,10 @@
 
 #include <image/Image.h>
 
-#include <scene/Model.h>
+#include <scene/Scene.h>
 
 #include <render/Camera.h>
+#include <render/Mesh.h>
 
 #include <raytracer/Ray.h>
 #include <raytracer/Surfel.h>
@@ -22,12 +23,12 @@ class RayTracer {
 public:
     RayTracer();
 
-    void RayTraceImage(Image& buffer, Model* original, Transform t, 
+    void RayTraceImage(Image& buffer, Scene* scene, Transform t, 
         Camera* camera, UI32 samples);
  
 private:
     // cast a ray 
-    colour CastRay(const Ray& ray, Model& model, UI32 depth);
+    colour CastRay(const Ray& ray, UI32 depth);
 
     // raytracing methods for triangle intersection 
     bool Intersect(const Ray& ray, const std::vector<Mesh*>& meshes, 

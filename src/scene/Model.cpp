@@ -3,6 +3,7 @@
 //
 
 #include <scene/Model.h>
+  /*
 
 Mesh::Mesh() : positions{}, normals{}, UVs{}, faces{}, meshName{}, material{} {}
 
@@ -32,7 +33,6 @@ void Mesh::DeepCopy(const Mesh& original, Mesh& copy) {
 }
 
 void Mesh::DrawMesh() const {
-  /*
     glBegin(GL_TRIANGLES);
     // PRINT("mesh faces %zi\n", faces.size());
     // PRINT("positions %zi\n normals %zi \nuvs %zi", positions.size(), normals.size(), UVs.size());
@@ -42,7 +42,6 @@ void Mesh::DrawMesh() const {
         glVertex3fv(positions[faces[f]]._v);
     }
     glEnd();
-  */
 }
 
 Model::Model() : meshes{}, materials{} {}
@@ -90,5 +89,6 @@ void Model::UseMaterial(const char* name) const {
         float shininess[4] = {material.specularExp, material.specularExp, material.specularExp, material.specularExp};
         glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
     }
-  */
+ 
 }
+*/

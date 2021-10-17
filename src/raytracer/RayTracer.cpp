@@ -8,20 +8,20 @@
 
 RayTracer::RayTracer() {}
 
-void RayTracer::RayTraceImage(Image& buffer, Model* original, 
+void RayTracer::RayTraceImage(Image& buffer, Scene* scene, 
     Transform t, Camera* camera, UI32 samples) {
     
     // local copy of model
-    Model model;
-    Model::DeepCopy(*original, model);
-
+    
     // transform copied model
-    for (Mesh& mesh : model.meshes) {
-        for (Vector3& position : mesh.positions)
-            position = t.transformPoint(position);
-        for (Vector3& normal : mesh.normals)
-            normal = t.rotate(normal);
-    }
+    /*
+      for (Mesh& mesh : model.meshes) {
+          for (Vector3& position : mesh.positions)
+              position = t.transformPoint(position);
+          for (Vector3& normal : mesh.normals)
+              normal = t.rotate(normal);
+      }
+    */
 
     // scale for aspect ratio
     F32 rWidth = 1.0f / (F32)buffer.Width(), rHeight = 1.0f / (F32)buffer.Height();
@@ -55,7 +55,7 @@ void RayTracer::RayTraceImage(Image& buffer, Model* original,
       primaryRay = Ray::generateCameraRay(*camera, { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight });
       // compute scene
       for (UI32 s = 0; s < samples; ++s)
-          c += CastRay(primaryRay, model, 0);
+          c += CastRay(primaryRay, 0);
 
       buffer[row][col] = Colour::gammaCorrection (Colour::reinhardExtendedTMO(c, 10.0f), gamma);
 
@@ -64,7 +64,7 @@ void RayTracer::RayTraceImage(Image& buffer, Model* original,
   }
 }
 
-colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
+colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
     colour c{};
 
     if (depth > MAX_DEPTH) // stop recursion 
@@ -73,62 +73,67 @@ colour RayTracer::CastRay(const Ray& inRay, Model& model, UI32 depth) {
         return c;
     }
 
+    std::vector<Mesh*> meshes;
+    std::vector<Mesh*> lights;
+
     // init variables
     Surfel surfel;
     F32 tNear = INFINITY;
 
     // intersection of ray with the model
-    if(Intersect(inRay, model.objects, surfel, tNear)) {
-        //PRINT("intersection");
-        // compute surfel position, normal and texture coordinates
-        surfel.Interpolate();
+    if (Intersect(inRay, meshes, surfel, tNear)) {
+      //PRINT("intersection");
+      // compute surfel position, normal and texture coordinates
+      surfel.Interpolate();
 
-        // colour with uvs
-        // Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
+      // colour with uvs
+      // Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
 
-        // colour = surfel.UV()._v;
-        // colour = barycentric._v;
+      // colour = surfel.UV()._v;
+      // colour = barycentric._v;
 
-        Ray ray; // ray used for lighting
+      Ray ray; // ray used for lighting
 
-        // direct lighting
-        Surfel shadow;
-        for (UI32 l = 0; l < model.lights.size(); ++l) {
-            tNear = INFINITY;
+      // direct lighting
+      Surfel shadow;
+      for (UI32 l = 0; l < lights.size(); ++l) {
+        tNear = INFINITY;
 
-            // from light to surfel
-            ray._origin =  RandomAreaLightPoint(model.lights[l]); // ray originate at light
-            ray._direction = (surfel.position - ray._origin).normalize(); // to surfel
-            
-            // get intersection of light to surfel
-            Intersect(ray, model.objects, shadow, tNear);
+        // from light to surfel
+        ray._origin = RandomAreaLightPoint(lights[l]); // ray originate at light
+        ray._direction = (surfel.position - ray._origin).normalize(); // to surfel
 
-            // > same mesh and same triangle = not in shadow
-            if ((shadow.mesh == surfel.mesh) && (shadow.tri == surfel.tri)) {
-                // compute lighting
-                c += 
-                    // light colour
-                    model.materials.at(model.lights[l]->material).emissive.toVector3()
-                    // surfel brdf
-                    * surfel.BRDF(-ray._direction, -inRay._direction, 
-                    model.materials.at(surfel.mesh->material))
-                    // light distance attenuation
-                    / (tNear * tNear);
-            }
+        // get intersection of light to surfel
+        Intersect(ray, meshes, shadow, tNear);
+
+        // > same mesh and same triangle = not in shadow
+        if ((shadow.mesh == surfel.mesh) && (shadow.tri == surfel.tri)) {
+          // compute lighting
+          c += {};
+            /*
+              // light colour
+              model.materials.at(model.lights[l]->material).emissive.toVector3()
+              // surfel brdf
+              * surfel.BRDF(-ray._direction, -inRay._direction,
+              model.materials.at(surfel.mesh->material))
+              // light distance attenuation
+              / (tNear * tNear);
+            */
         }
+      }
 
-        // indirect lighting
-        ray._direction = Quaternion::rotateVector(
-            // random point on hemisphere unit hemisphere
-            UniformSampleHemisphere(Random::UniformUV()), 
-            // rotation to align unit normal with surfel normal
-            Quaternion::getRotationFrom(UP, surfel.normal)); 
-        
-        c += CastRay(ray, model, depth + 1) 
-            * surfel.BRDF(ray._direction, -inRay._direction, model.materials.at(surfel.mesh->material));
+      // indirect lighting
+      ray._direction = Quaternion::rotateVector(
+        // random point on hemisphere unit hemisphere
+        UniformSampleHemisphere(Random::UniformUV()),
+        // rotation to align unit normal with surfel normal
+        Quaternion::getRotationFrom(UP, surfel.normal));
+
+      c += CastRay(ray, depth + 1);
+      //* surfel.BRDF(ray._direction, -inRay._direction, model.materials.at(surfel.mesh->material));
     }
-    else if(Intersect(inRay, model.lights, surfel, tNear)) 
-        c = &model.materials.at(surfel.mesh->material).emissive[0];
+    else if (Intersect(inRay, lights, surfel, tNear))
+      c = {};// &model.materials.at(surfel.mesh->material).emissive[0];
 
     return c;
 }
@@ -150,11 +155,11 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
         // apply bounding volume test here
         // if (!intersect(ray, mesh.bounds)) then skip mesh;
 
-        for (UI32 f = 0; f < meshes[m]->faces.size(); f+=9) {
-            edge1 = meshes[m]->positions[meshes[m]->faces[f+3]] 
-                - meshes[m]->positions[meshes[m]->faces[f]]; // V1 - v0
-            edge2 = meshes[m]->positions[meshes[m]->faces[f+6]] 
-                - meshes[m]->positions[meshes[m]->faces[f]]; // V2 - v0
+        for (UI32 f = 0; f < meshes[m]->indices.size(); f+=9) {
+            edge1 = meshes[m]->positions[meshes[m]->indices[f+3]]
+                - meshes[m]->positions[meshes[m]->indices[f]]; // V1 - v0
+            edge2 = meshes[m]->positions[meshes[m]->indices[f+6]]
+                - meshes[m]->positions[meshes[m]->indices[f]]; // V2 - v0
 
             h = ray._direction.cross(edge2);
             k = edge1.dot(h);
@@ -167,7 +172,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
             k = 1.0f / k; // reuse k
 
             // s = v0->origin
-            s = ray._origin - meshes[m]->positions[meshes[m]->faces[f]]; 
+            s = ray._origin - meshes[m]->positions[meshes[m]->indices[f]];
             u = k * s.dot(h);
             if (u < 0.0f || u > 1.0f)
                 continue;
@@ -194,7 +199,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
 
 Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
     // get a random triangle in the light mesh
-    UI32 index = Random::UniformI32(0, (static_cast<UI32>(light->faces.size()) / 9) - 1);
+    UI32 index = Random::UniformI32(0, (static_cast<UI32>(light->indices.size()) / 9) - 1);
     // barycentric coordinates
     Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
     // random point in the triangle

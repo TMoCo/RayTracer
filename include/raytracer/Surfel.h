@@ -7,11 +7,15 @@
 
 #include <core/core.h>
 
+#include <render/Mesh.h>
+
 #include <image/Colour.h>
 
 #include <math/thomath.h>
 
 #include <scene/Model.h>
+
+// TODO: Fix surfel to use new mesh
 
 struct Surfel {
     Vector3 barycentric; // barycentric coordinates
@@ -24,8 +28,9 @@ struct Surfel {
     Surfel() : barycentric{}, normal{}, position{}, tri(0), mesh(nullptr) {}
 
     inline void Interpolate() {
+      /*
         normal = 
-              barycentric.x * mesh->normals[mesh->faces[tri+5]]
+              barycentric.x * mesh->normals[mesh->indices[tri+5]]
             + barycentric.y * mesh->normals[mesh->faces[tri+8]]
             + barycentric.z * mesh->normals[mesh->faces[tri+2]];
 
@@ -34,14 +39,17 @@ struct Surfel {
             + barycentric.y * mesh->positions[mesh->faces[tri+6]]
             + barycentric.z * mesh->positions[mesh->faces[tri]]
             + EPSILON * normal; // displace in normal direction
+      */
     }
 
     inline Vector2 UV() {
         // return the surfel uv coordinates
+      /*
         return 
               barycentric.x * mesh->UVs[mesh->faces[tri+4]]
             + barycentric.y * mesh->UVs[mesh->faces[tri+7]]
             + barycentric.z * mesh->UVs[mesh->faces[tri+1]];
+      */
     }
 
     inline colour BRDF(const Vector3& light, const Vector3& view, const Material& material) {
