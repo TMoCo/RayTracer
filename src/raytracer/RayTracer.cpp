@@ -172,7 +172,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
             k = 1.0f / k; // reuse k
 
             // s = v0->origin
-            s = ray._origin - meshes[m]->positions[meshes[m]->indices[f]];
+            s = ray._origin - meshes[m]->positions[meshes[m]->indices[f]]; 
             u = k * s.dot(h);
             if (u < 0.0f || u > 1.0f)
                 continue;

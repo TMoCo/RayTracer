@@ -14,9 +14,12 @@ struct Mesh
   std::vector<Vector3> positions;
   std::vector<Vector3> normals;
   std::vector<Vector2> textureCoords;
+
   std::vector<UI32> indices;
 
-  bool generateBuffers();
+  void generateBuffers(bool interleave);
+
+  void draw();
 };
 
 #endif // ! MESH_H_

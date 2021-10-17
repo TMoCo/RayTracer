@@ -39,8 +39,8 @@ bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes)
   MeshBuilder meshBuilder;
 
   // file data
-  std::vector<Vector3> fPositions;
-  std::vector<Vector3> fNormals;
+  std::vector<F32> fPositions;
+  std::vector<F32> fNormals;
   std::vector<Vector2> fUvs;
 
   // while there are lines available
@@ -63,23 +63,19 @@ bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes)
       {
       case ' ':
         // vertex position
-        fPositions.push_back({
-          std::strtof(line.c_str() + 1, &next),
-          std::strtof(next, &next),
-          std::strtof(next, NULL) });
+        fPositions.push_back(std::strtof(line.c_str() + 1, &next));
+        fPositions.push_back(std::strtof(next, &next));
+        fPositions.push_back(std::strtof(next, NULL));
         break;
       case 'n':
         // vertex normal
-        fNormals.push_back({
-          std::strtof(line.c_str() + 2, &next),
-          std::strtof(next, &next),
-          std::strtof(next, NULL) });
+        fNormals.push_back(std::strtof(line.c_str() + 2, &next));
+        fNormals.push_back(std::strtof(next, &next));
+        fNormals.push_back(std::strtof(next, NULL));
         break;
       case 't':
         // vertex uv
-        fUvs.push_back({
-          std::strtof(line.c_str() + 2, &next),
-          std::strtof(next, NULL) });
+        fUvs.push_back({ std::strtof(line.c_str() + 2, &next), std::strtof(next, NULL) });
         break;
       default:
         break;
@@ -106,9 +102,15 @@ bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes)
 
           meshBuilder.uniqueIndices[vertex] = static_cast<UI32>(meshBuilder.uniqueIndices.size());
 
-          meshBuilder.mesh->positions.push_back(fPositions[std::stoi(vertexData[0]) > 0 ? std::stoi(vertexData[0]) - 1 : 0]);
-          meshBuilder.mesh->textureCoords.push_back(fUvs[std::stoi(vertexData[1]) > 0 ? std::stoi(vertexData[1]) - 1 : 0]);
-          meshBuilder.mesh->normals.push_back(fNormals[std::stoi(vertexData[2]) > 0 ? std::stoi(vertexData[2]) - 1 : 0]);
+          I32 posIndex = std::stoi(vertexData[0]) - 1;
+          I32 norIndex = std::stoi(vertexData[1]) - 1;
+          I32 texIndex = std::stoi(vertexData[2]) - 1;
+
+          // construct vector data types from floating point values 
+          meshBuilder.mesh->positions.push_back({ &fPositions[posIndex < 0 ? 0 : posIndex * 3] });
+          meshBuilder.mesh->normals.push_back(    { &fNormals[texIndex < 0 ? 0 : texIndex * 3] });
+          // vector2 is 2 floats so just copy 
+          meshBuilder.mesh->textureCoords.push_back(     fUvs[norIndex < 0 ? 0 : norIndex]);
         }
         meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(vertex)); // get vertex index
       }
