@@ -33,7 +33,7 @@ constexpr F32 PI_4 = 0.785398163397448309616f;
 constexpr F32 EPSILON = 0.00001f;
 
 constexpr F32 RADIANS(F32 x) {
-  return x * PI * 0.00555555556f;
+  return x * PI * 0.005555555556f;
 }
 
 #endif // !THOMATH_H_
