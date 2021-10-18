@@ -102,15 +102,15 @@ bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes)
 
           meshBuilder.uniqueIndices[vertex] = static_cast<UI32>(meshBuilder.uniqueIndices.size());
 
-          I32 posIndex = std::stoi(vertexData[0]) - 1;
-          I32 norIndex = std::stoi(vertexData[1]) - 1;
-          I32 texIndex = std::stoi(vertexData[2]) - 1;
+          I32 posIndex = std::stoi(vertexData[0]);
+          I32 norIndex = std::stoi(vertexData[1]);
+          I32 texIndex = std::stoi(vertexData[2]);
 
-          // construct vector data types from floating point values 
-          meshBuilder.mesh->positions.push_back({ &fPositions[posIndex < 0 ? 0 : posIndex * 3] });
-          meshBuilder.mesh->normals.push_back(    { &fNormals[texIndex < 0 ? 0 : texIndex * 3] });
+          // construct vector data types from floating point values
+          meshBuilder.mesh->positions.push_back({ &fPositions[posIndex == 0 ? 0 : (posIndex - 1) * 3] });
+          meshBuilder.mesh->normals.push_back({ &fNormals[texIndex == 0 ? 0 : (texIndex - 1) * 3] });
           // vector2 is 2 floats so just copy 
-          meshBuilder.mesh->textureCoords.push_back(     fUvs[norIndex < 0 ? 0 : norIndex]);
+          meshBuilder.mesh->textureCoords.push_back(fUvs[norIndex == 0 ? 0 : norIndex - 1]);
         }
         meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(vertex)); // get vertex index
       }
@@ -142,7 +142,6 @@ bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes)
       break;
     }
   }
-  // loop over 
 
   objStream.close();
   return true;

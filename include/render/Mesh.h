@@ -19,6 +19,8 @@ struct Mesh
 
   void generateBuffers(bool interleave);
 
+  void getAABB();
+
   void draw();
 };
 

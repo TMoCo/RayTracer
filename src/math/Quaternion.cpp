@@ -102,12 +102,12 @@ Quaternion Quaternion::inverse() const
 
 Quaternion Quaternion::angleAxis(F32 angle, const Vector3& axis)
 {
-  return Quaternion(axis.normalize() * std::sin(angle * 0.5f), std::cos(angle * 0.5f));
+  return Quaternion(axis.normalize() * sinf(angle * 0.5f), cosf(angle * 0.5f));
 }
 
 Quaternion Quaternion::getRotationFrom(const Vector3& from, const Vector3& to)
 {
-  return { from.cross(to), std::sqrt(from.dot(from) * to.dot(to) + from.dot(to)) };
+  return { from.cross(to), sqrtf(from.dot(from) * to.dot(to) + from.dot(to)) };
 }
 
 Vector3 Quaternion::rotateVector(const Vector3& vector, const Quaternion& quaternion)

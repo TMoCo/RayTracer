@@ -10,45 +10,67 @@ void Mesh::generateBuffers(bool interleave)
   glGenBuffers(1, &vbo);
   glGenBuffers(1, &ebo);
 
-  // for now assert that models have positions, normals and uvs
-  DEBUG_ASSERT(positions.size() == normals.size() && positions.size() == textureCoords.size(), "");
-  std::vector<F32> data{};
+  // guaranteed to at least have vertex position data
+  UI64 nVertices = positions.size();
+
+  std::vector<F32> data; 
+  data.reserve(nVertices * 3);
+  
+  // allocate space depending on extra mesh data
+  if (normals.size() > 0)
+    data.reserve(data.capacity() + nVertices * 3);
+  if (textureCoords.size() > 0)
+    data.reserve(data.capacity() + nVertices * 2);
+
   if (interleave)
   {
-    for (UI32 i = 0; i < positions.size(); ++i)
+    // todo: find better way to interleave data
+    for (UI32 i = 0; i < nVertices; ++i)
     {
       data.push_back(positions[i].x);
       data.push_back(positions[i].y);
       data.push_back(positions[i].z);
 
-      data.push_back(normals[i].x);
-      data.push_back(normals[i].y);
-      data.push_back(normals[i].z);
+      if (normals.size() > 0)
+      {
+        data.push_back(normals[i].x);
+        data.push_back(normals[i].y);
+        data.push_back(normals[i].z);
+      }
 
-      data.push_back(textureCoords[i].x);
-      data.push_back(textureCoords[i].y);
+      if (textureCoords.size() > 0)
+      {
+        data.push_back(textureCoords[i].x);
+        data.push_back(textureCoords[i].y);
+      }
     }
   }
   else
   {
-    for (UI32 i = 0; i < positions.size(); ++i)
+    for (UI32 i = 0; i < nVertices; ++i)
     {
       data.push_back(positions[i].x);
       data.push_back(positions[i].y);
       data.push_back(positions[i].z);
     }
 
-    for (UI32 i = 0; i < normals.size(); ++i)
+    if (normals.size() > 0)
     {
-      data.push_back(normals[i].x);
-      data.push_back(normals[i].y);
-      data.push_back(normals[i].z);
+      for (UI32 i = 0; i < nVertices; ++i)
+      {
+        data.push_back(normals[i].x);
+        data.push_back(normals[i].y);
+        data.push_back(normals[i].z);
+      }
     }
 
-    for (UI32 i = 0; i < textureCoords.size(); ++i)
+    if (textureCoords.size() > 0)
     {
-      data.push_back(textureCoords[i].x);
-      data.push_back(textureCoords[i].y);
+      for (UI32 i = 0; i < nVertices; ++i)
+      {
+        data.push_back(textureCoords[i].x);
+        data.push_back(textureCoords[i].y);
+      }
     }
   }
 
@@ -65,34 +87,51 @@ void Mesh::generateBuffers(bool interleave)
 
   if (interleave)
   {
-    UI32 stride = 8 * sizeof(F32);
-    UI32 offset = 0;
+    UI64 stride = 3 * sizeof(F32);
+    if (normals.size() > 0)
+      stride += 3 * sizeof(F32);
+    if (textureCoords.size() > 0)
+      stride += 2 * sizeof(F32);
+    
+    UI64 offset = 0;
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offset);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)offset);
     glEnableVertexAttribArray(0);
     offset += 3 * sizeof(F32);
+    
+    if (normals.size() > 0)
+    {
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)offset);
+      glEnableVertexAttribArray(1);
+      offset += 3 * sizeof(F32);
+    }
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)offset);
-    glEnableVertexAttribArray(1);
-    offset += 3 * sizeof(F32);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)offset);
-    glEnableVertexAttribArray(2);
+    if (textureCoords.size() > 0)
+    {
+      glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)offset);
+      glEnableVertexAttribArray(2);
+    }
   }
   else
   {
-    UI32 offset = 0;
+    UI64 offset = 0;
 
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, &offset);
-    offset += positions.size() * sizeof(F32);
+    offset += positions.size() * 3 * sizeof(F32);
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, &offset);
-    offset += normals.size() * sizeof(F32);
+    if (normals.size() > 0)
+    {
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+      glEnableVertexAttribArray(1);
+      offset += normals.size() * 3 * sizeof(F32);
+    }
 
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, &offset);
+    if (textureCoords.size() > 0)
+    {
+      glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+      glEnableVertexAttribArray(2);
+    }
   }
 
   glBindVertexArray(0); // unbind
@@ -103,6 +142,6 @@ void Mesh::draw()
   // bind vao and draw
   glBindVertexArray(vao);
   ebo 
-    ? glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0) 
-    : glDrawArrays(GL_TRIANGLES, 0, positions.size());
+    ? glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0) 
+    : glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions.size()));
 }

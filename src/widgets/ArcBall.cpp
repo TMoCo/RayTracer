@@ -4,10 +4,7 @@
 
 #include <widgets/ArcBall.h>
 
-#include <cmath>
-
-ArcBall::ArcBall() : base{0.0f, 0.0f, 0.0f, 1.0f}, 
-    current{0.0f, 0.0f, 0.0f, 1.0f}, drag{0.0f, 0.0f, 1.0f, 0.0f} {}
+ArcBall::ArcBall() : base{}, current{}, drag{0.0f, 0.0f, 1.0f, 0.0f} {}
 
 Quaternion ArcBall::FindQuat(const Vector2& v) {
     float d2 = v[0]*v[0] + v[1]*v[1];
@@ -36,5 +33,5 @@ void ArcBall::EndDrag(const Vector2& v) {
     // reset quaternions for next arcball use
     drag = {0.0f, 0.0f, 1.0f, 0.0f};
     base = current * base;
-    current = {0.0f, 0.0f, 0.0f, 1.0f};
+    current = {};
 }

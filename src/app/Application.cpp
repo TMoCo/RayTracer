@@ -5,6 +5,7 @@
 #include <render/Shader.h>
 #include <render/Texture.h>
 #include <render/Mesh.h>
+#include <render/bounds/AABB.h>
 
 #include <resource/TextureLoader.h>
 #include <resource/OBJLoader.h>
@@ -62,24 +63,30 @@ void Application::renderLoopGl()
 {
   // load mesh
   std::vector<Mesh*> meshes;
-  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\CornellBox.obj", meshes);
-  
+  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj", meshes);
   for (auto& mesh : meshes)
-  {
-    mesh->generateBuffers(true);
-  }
-
+    mesh->generateBuffers(false);
+  
   // texture
   Texture containerTexture{};
   TextureLoader::loadTexture("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
   
   // shaders
   Shader shader{};
-  shader.create("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
+  shader.create(
+    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
     "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
 
+  Shader debugShader{};
+  debugShader.create(
+    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.vert",
+    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
 
-  Transform t{ Vector3{0.0f, 3.0f, 0.0f}, Quaternion::angleAxis(RADIANS(-55.0f), RIGHT) };
+  // AABB
+  AABB aabb = AABB::getAABB(*meshes.front());
+  aabb.generateBuffers();
+
+  Transform t{ Vector3{0.0f, 0.0f, 0.0f}, Quaternion::angleAxis(RADIANS(0.0f), RIGHT) };
 
   Matrix4 model = t.toWorldMatrix();
   Matrix4 view;
@@ -102,14 +109,22 @@ void Application::renderLoopGl()
     view = Matrix4::lookAt(Vector3{ camX, 0.0f, camZ }, Vector3{ 0.0f, 0.0f, 0.0f }, UP);
     Matrix4 mvp = proj * view * model;
 
-    shader.setMatrix4("transform", proj * view * model);
 
     // ... render
-    shader.use();
-    containerTexture.bind();
-    for (auto& mesh : meshes)
     {
-      mesh->draw();
+      shader.use();
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      shader.setMatrix4("transform", proj * view * model);
+      containerTexture.bind(0);
+      for (auto& mesh : meshes)
+        mesh->draw();
+    }
+
+    {
+      debugShader.use();
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      debugShader.setMatrix4("transform", proj * view * model);
+      aabb.draw();
     }
 
     glfwPollEvents();

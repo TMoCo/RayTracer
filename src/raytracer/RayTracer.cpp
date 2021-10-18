@@ -11,18 +11,6 @@ RayTracer::RayTracer() {}
 void RayTracer::RayTraceImage(Image& buffer, Scene* scene, 
     Transform t, Camera* camera, UI32 samples) {
     
-    // local copy of model
-    
-    // transform copied model
-    /*
-      for (Mesh& mesh : model.meshes) {
-          for (Vector3& position : mesh.positions)
-              position = t.transformPoint(position);
-          for (Vector3& normal : mesh.normals)
-              normal = t.rotate(normal);
-      }
-    */
-
     // scale for aspect ratio
     F32 rWidth = 1.0f / (F32)buffer.Width(), rHeight = 1.0f / (F32)buffer.Height();
 

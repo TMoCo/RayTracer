@@ -19,7 +19,6 @@ struct Camera {
   F32 zNear;
   F32 zFar;
 
-  // camera transform (position + orientation)
   Transform transform;
 
   Camera(F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 
@@ -39,9 +38,10 @@ struct Camera {
     };
   }
 
-  inline Matrix4 getViewMatrix() const
+  inline Matrix4 getViewMatrix(const Vector3& target) const
   {
     // build view matrix
+    return Matrix4::lookAt(transform.position, target, Quaternion::rotateVector(UP, transform.orientation));
   }
 };
 
