@@ -23,13 +23,15 @@ typedef struct
 
 struct Window
 {
+  bool firstMouse = true;
+  F32 lastX, lastY;
+  Camera* mainCamera;
+
   I32 width, height;
   ViewPort viewPort;
 
-  Camera* camera;
-
   GLFWwindow* ptr; // left public for convenience
-
+  
   int createWindow(UI32 width, UI32 height, const char* name = "Window");
 
   void setViewPort();
@@ -38,7 +40,9 @@ struct Window
     
   void resize(UI32 width, UI32 height);
     
-  static void resizeCallBack(GLFWwindow* w, int h, int y);
+  static void resizeCallBack(GLFWwindow* p_win, int w, int h);
+
+  static void mouseCallBack(GLFWwindow* p_win, double x, double y);
 };
 
 #endif // ! WINDOW_H_

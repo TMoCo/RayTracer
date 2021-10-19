@@ -58,7 +58,7 @@ struct KDOP
 		F32 project;
 		for (auto& position : mesh.positions)
 			kdop.centre += position;
-		kdop.centre /= mesh.positions.size();
+		kdop.centre /= static_cast<F32>(mesh.positions.size());
 
 
 		for (auto& position : mesh.positions)

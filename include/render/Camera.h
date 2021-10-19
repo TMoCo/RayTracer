@@ -14,12 +14,25 @@
 
 // basic camera class 
 struct Camera {
+
+  typedef enum : UI32
+  {
+    LEFTWARD,
+    RIGHTWARD,
+    FORWARD,
+    BACKWARD
+  } kMovement;
+
   F32 aspectRatio;
   F32 FOV;
   F32 zNear;
   F32 zFar;
 
   Transform transform;
+
+  Vector3 front = FRONT;
+  Vector3 right = RIGHT;
+  Vector3 up = UP;
 
   Camera(F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 
     : aspectRatio(aspect), 
@@ -38,10 +51,31 @@ struct Camera {
     };
   }
 
-  inline Matrix4 getViewMatrix(const Vector3& target) const
+  inline Matrix4 getViewMatrix() const
   {
     // build view matrix
-    return Matrix4::lookAt(transform.position, target, Quaternion::rotateVector(UP, transform.orientation));
+    std::cout << front << "\n";
+    return Matrix4::lookAt(transform.position, transform.position + front, up);
+  }
+
+  inline void processInput(kMovement move, F32 speed)
+  {
+    // move in camera's direction
+    switch (move)
+    {
+    case LEFTWARD:
+      transform.position -= right * speed;
+      break;
+    case RIGHTWARD:
+      transform.position += right * speed;
+      break;
+    case FORWARD:
+      transform.position += front * speed;
+      break;
+    case BACKWARD:
+      transform.position -= front * speed;
+      break;
+    }
   }
 };
 

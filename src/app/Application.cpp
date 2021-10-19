@@ -84,11 +84,17 @@ void Application::renderLoopGl()
   Texture containerTexture{};
   TextureLoader::loadTexture("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
   
+  // scene camera
+  Camera camera{ 800.0f / 600.0f, RADIANS(45.0f), 0.1f, 100.0f };
+  camera.transform = { { 0.0f, 0.0f, 10.0f }, Quaternion::angleAxis(0, RIGHT) };
+
+  window.mainCamera = &camera;
+
   // global scene transform
-  Transform t{ Vector3{0.0f, 0.0f, 0.0f}, Quaternion::angleAxis(RADIANS(0.0f), RIGHT) };
+  Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(RADIANS(-30.0f), RIGHT) };
 
   Matrix4 model = t.toWorldMatrix();
-  Matrix4 view; // update every frame
+  Matrix4 view = camera.getViewMatrix(); // update every frame
   Matrix4 proj  = Matrix4::perspective(RADIANS(45.0f), 800.0f / 600.0f, 0.1f, 100.0f); // does not change
   
   glEnable(GL_DEPTH_TEST);
@@ -97,23 +103,40 @@ void Application::renderLoopGl()
 
   bool debug = false;
 
+  F32 deltaTime = 0.0f;
+  F32 previous = 0.0f;
   while (!glfwWindowShouldClose(window.ptr))
   {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+    F32 current = static_cast<F32>(glfwGetTime());
+    deltaTime = current - previous;
+    previous = current;
+
+    if (glfwGetKey(window.ptr, GLFW_KEY_ESCAPE))
+      break;
+
+    // ... process input
+    if (glfwGetKey(window.ptr, GLFW_KEY_W))
+      camera.processInput(Camera::FORWARD, deltaTime);
+    if (glfwGetKey(window.ptr, GLFW_KEY_S))
+      camera.processInput(Camera::BACKWARD, deltaTime);
+    if (glfwGetKey(window.ptr, GLFW_KEY_Q))
+      camera.processInput(Camera::LEFTWARD, deltaTime);
+    if (glfwGetKey(window.ptr, GLFW_KEY_D))
+      camera.processInput(Camera::RIGHTWARD, deltaTime);
+        
     // ... render scene
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     shader.use();
-    model = Matrix4::identity();
-    shader.setMatrix4("transform", proj * view * model);
+    shader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
     containerTexture.bind(0);
     for (auto& mesh : meshes)
       mesh->draw();
 
+    // ... debug
     if (debug)
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      model = Matrix4::identity();
       debugShader.use();
       debugShader.setMatrix4("transform", proj * view * model);
     }
@@ -130,7 +153,6 @@ void Application::renderLoopVk()
 {
   // do something
 }
-
 
 void Application::terminate()
 {
