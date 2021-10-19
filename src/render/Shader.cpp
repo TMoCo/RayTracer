@@ -88,8 +88,6 @@ void Shader::create(const std::string& vs_path, const std::string& fs_path)
   if (checkShaderCompile(id, "PROGRAM") == 0)
     valid = true;
 
-  valid ? std::cout << "valid shader\n" : std::cout << "invalid shader\n";
-
   // cleanup
   glDeleteShader(vs);
   glDeleteShader(fs);
