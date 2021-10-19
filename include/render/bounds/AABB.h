@@ -17,10 +17,11 @@ struct AABB
 
   Vector3 min;
   Vector3 max;
-  Vector3 origin;
+  Vector3 centre;
 
   // box indices
-  const UI32 indices[36] = {
+  static constexpr const UI32 indices[36] = 
+  {
     0, 2, 3,
     1, 2, 0,
     1, 2, 6,
@@ -40,7 +41,7 @@ struct AABB
     AABB aabb{};
     for (auto& position : mesh.positions)
     {
-      aabb.origin += position;
+      aabb.centre += position;
       
       // max
       if (position.x > aabb.max.x)
@@ -59,7 +60,7 @@ struct AABB
         aabb.min.z = position.z;
     }
 
-    aabb.origin /= static_cast<F32>(mesh.positions.size());
+    aabb.centre /= static_cast<F32>(mesh.positions.size());
 
     return aabb;
   }

@@ -10,6 +10,8 @@ struct Mesh
   // gl buffer handles
   UI32 vao, vbo, ebo;
 
+  ~Mesh();
+  
   // mesh data
   std::vector<Vector3> positions;
   std::vector<Vector3> normals;
@@ -18,8 +20,6 @@ struct Mesh
   std::vector<UI32> indices;
 
   void generateBuffers(bool interleave);
-
-  void getAABB();
 
   void draw();
 };

@@ -268,7 +268,6 @@ Matrix4 Matrix4::rotationMatrix(const Quaternion& q)
   F32 zz = q[2] * q[2];
   F32 zw = q[2] * q[3];
 
-  /*
   mat[0][0] = 1.0f - 2.0f * (yy + zz);
   mat[1][0] = 2.0f * (xy - zw);
   mat[2][0] = 2.0f * (xz + yw);
@@ -280,28 +279,6 @@ Matrix4 Matrix4::rotationMatrix(const Quaternion& q)
   mat[0][2] = 2.0f * (xz - yw);
   mat[1][2] = 2.0f * (yz + xw);
   mat[2][2] = 1.0f - 2.0f * (xx + yy);
-  */
-
-  mat[0][0] = (yy + zz);
-  mat[1][0] = (xy - zw);
-  mat[2][0] = (xz + yw);
-
-  mat[0][1] = (xy + zw);
-  mat[1][1] = (xx + zz);
-  mat[2][1] = (yz - xw);
-
-  mat[0][2] = (xz - yw);
-  mat[1][2] = (yz + xw);
-  mat[2][2] = (xx + yy);
-
-  __m128 s = _mm_set_ps1(2.0f);
-  mat.__m[0] = _mm_mul_ps(mat.__m[0], s);
-  mat.__m[1] = _mm_mul_ps(mat.__m[1], s);
-  mat.__m[2] = _mm_mul_ps(mat.__m[2], s);
-
-  mat[0][0] = 1.0f - mat[0][0];
-  mat[1][1] = 1.0f - mat[1][1];
-  mat[2][2] = 1.0f - mat[2][2];
 
   mat[3][3] = 1.0f;
   return mat;

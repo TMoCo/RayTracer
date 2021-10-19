@@ -5,17 +5,19 @@
 
 #include <math/thomath.h>
 
+#include <vector>
+
 struct Shader
 {
   UI32 id;
 
   bool valid;
 
-  const char* getShaderCode(const char* path);
+  const std::vector<char> getShaderCode(const std::string& path);
 
   UI32 checkShaderCompile(UI32 shader, const char* type);
 
-  void create(const char* vs_path, const char* fs_path); // basic create shader takes vs and fs arguments
+  void create(const std::string& vs_path, const std::string& fs_path); // basic create shader takes vs and fs arguments
 
   void use();
 

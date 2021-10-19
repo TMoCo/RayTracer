@@ -10,7 +10,6 @@
 #include <math/thomath.h>
 
 #include <render/Material.h>
-#include <render/Primitives.h>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>

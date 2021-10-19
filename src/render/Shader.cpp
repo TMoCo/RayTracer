@@ -7,28 +7,26 @@
 
 #include <glad/glad.h>
 
-const char* Shader::getShaderCode(const char* path)
+const std::vector<char> Shader::getShaderCode(const std::string& path)
 {
   std::ifstream shaderStream(path, std::ios::ate);
+  std::vector<char> data;
 
   if (!shaderStream.is_open())
   {
     DEBUG_PRINT("Could not open file stream\n");
-    return NULL; // empty 
   }
 
   UI32 len = static_cast<UI32>(shaderStream.tellg()); // get size of file
+  data.resize(len);
+
   shaderStream.seekg(0); // reset to begining of stream
 
-  char* shader = new char[len + 1];
-  shaderStream.read(shader, len);
-  shader[len] = '\0';
-  // memset(shader, '\0', len);
-
+  shaderStream.read(data.data(), len);
 
   shaderStream.close();
 
-  return shader;
+  return data;
 }
 
 UI32 Shader::checkShaderCompile(UI32 shader, const char* type)
@@ -58,27 +56,28 @@ UI32 Shader::checkShaderCompile(UI32 shader, const char* type)
   return 0;
 }
 
-void Shader::create(const char* vs_path, const char* fs_path)
+void Shader::create(const std::string& vs_path, const std::string& fs_path)
 {
   // get shader code
-  const char* vs_data = getShaderCode(vs_path);
-  DEBUG_PRINT("%s\n", vs_data);
+  const std::vector<char> vs_data = getShaderCode(vs_path);
+  const char* p_vs_data = vs_data.data();
+  DEBUG_PRINT("%s\n", vs_data.data());
 
-  const char* fs_data = getShaderCode(fs_path);
-  DEBUG_PRINT("%s\n", fs_data);
+  const std::vector<char> fs_data = getShaderCode(fs_path);
+  const char* p_fs_data = fs_data.data();
+  DEBUG_PRINT("%s\n", fs_data.data());
   
+
   // compile shaders
   UI32 vs = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vs, 1, &vs_data, NULL);
+  glShaderSource(vs, 1, &p_vs_data, NULL);
   glCompileShader(vs);
   checkShaderCompile(vs, "VERTEX");
-  delete[] vs_data;
 
   UI32 fs = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fs, 1, &fs_data, NULL);
+  glShaderSource(fs, 1, &p_fs_data, NULL);
   glCompileShader(fs);
   checkShaderCompile(fs, "FRAGMENT");
-  delete[] fs_data;
 
   // create program
   id = glCreateProgram();
@@ -88,6 +87,8 @@ void Shader::create(const char* vs_path, const char* fs_path)
 
   if (checkShaderCompile(id, "PROGRAM") == 0)
     valid = true;
+
+  valid ? std::cout << "valid shader\n" : std::cout << "invalid shader\n";
 
   // cleanup
   glDeleteShader(vs);

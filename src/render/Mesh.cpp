@@ -4,6 +4,17 @@
 
 #include <glad/glad.h>
 
+Mesh::~Mesh()
+{
+  if (vao)
+    glDeleteVertexArrays(1, &vao);
+  if (vbo)
+    glDeleteBuffers(1, &vbo);
+  if (ebo)
+    glDeleteBuffers(1, &ebo);
+}
+
+
 void Mesh::generateBuffers(bool interleave)
 {
   glGenVertexArrays(1, &vao);
