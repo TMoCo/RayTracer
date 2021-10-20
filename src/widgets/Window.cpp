@@ -73,20 +73,14 @@ void Window::mouseCallBack(GLFWwindow* p_win, double x, double y)
     window->lastX = static_cast<F32>(x);
     window->lastY = static_cast<F32>(y);
 
-    F32 sensitivity = 0.001f;
+    F32 sensitivity = 0.1f;
     xoffset *= sensitivity; // yaw
     yoffset *= sensitivity; // pitch
 
-    // rotate the front vector
-    window->mainCamera->front = Quaternion::rotateVector(
-      window->mainCamera->front, Quaternion::angleAxis(
-        yoffset, window->mainCamera->right));
+    window->mainCamera->yaw += xoffset;
+    window->mainCamera->pitch += yoffset;
 
-    window->mainCamera->front = Quaternion::rotateVector(
-      window->mainCamera->front, Quaternion::angleAxis(
-      -xoffset, window->mainCamera->up));
-
-    window->mainCamera->up = window->mainCamera->right.cross(window->mainCamera->front);
-    window->mainCamera->right = window->mainCamera->front.cross(window->mainCamera->up);
+    // rotations
+    window->mainCamera->update();
   }
 }

@@ -91,7 +91,7 @@ void Application::renderLoopGl()
   window.mainCamera = &camera;
 
   // global scene transform
-  Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(RADIANS(-30.0f), RIGHT) };
+  Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(RADIANS(0.0f), RIGHT) };
 
   Matrix4 model = t.toWorldMatrix();
   Matrix4 view = camera.getViewMatrix(); // update every frame
@@ -117,13 +117,13 @@ void Application::renderLoopGl()
 
     // ... process input
     if (glfwGetKey(window.ptr, GLFW_KEY_W))
-      camera.processInput(Camera::FORWARD, deltaTime);
+      camera.processInput(Camera::FORWARD, deltaTime * 10.0f);
     if (glfwGetKey(window.ptr, GLFW_KEY_S))
-      camera.processInput(Camera::BACKWARD, deltaTime);
+      camera.processInput(Camera::BACKWARD, deltaTime * 10.0f);
     if (glfwGetKey(window.ptr, GLFW_KEY_Q))
-      camera.processInput(Camera::LEFTWARD, deltaTime);
+      camera.processInput(Camera::LEFTWARD, deltaTime * 10.0f);
     if (glfwGetKey(window.ptr, GLFW_KEY_D))
-      camera.processInput(Camera::RIGHTWARD, deltaTime);
+      camera.processInput(Camera::RIGHTWARD, deltaTime * 10.0f);
         
     // ... render scene
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

@@ -34,6 +34,9 @@ struct Camera {
   Vector3 right = RIGHT;
   Vector3 up = UP;
 
+  F32 pitch = 0.0f;
+  F32 yaw = -90.0f;
+
   Camera(F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 
     : aspectRatio(aspect), 
       FOV(fov), 
@@ -54,7 +57,6 @@ struct Camera {
   inline Matrix4 getViewMatrix() const
   {
     // build view matrix
-    std::cout << front << "\n";
     return Matrix4::lookAt(transform.position, transform.position + front, up);
   }
 
@@ -76,6 +78,16 @@ struct Camera {
       transform.position -= front * speed;
       break;
     }
+  }
+
+  inline void update()
+  {
+    front = Vector3{
+      cosf(RADIANS(yaw)) * cosf(RADIANS(pitch)),
+      sinf(RADIANS(pitch)),
+      sinf(RADIANS(yaw)) * cosf(RADIANS(pitch)) }.normalize();
+    right = front.cross(UP).normalize();
+    up = right.cross(front).normalize();
   }
 };
 
