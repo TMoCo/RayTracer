@@ -35,7 +35,7 @@ struct Camera {
   Vector3 up = UP;
 
   F32 pitch = 0.0f;
-  F32 yaw = -90.0f;
+  F32 yaw = 270.0f;
 
   Camera(F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 
     : aspectRatio(aspect), 
@@ -82,11 +82,19 @@ struct Camera {
 
   inline void update()
   {
+    F32 intPart;
+    pitch = modf(pitch, &intPart);
+    pitch += (I32)intPart % 360;
+
     front = Vector3{
       cosf(RADIANS(yaw)) * cosf(RADIANS(pitch)),
       sinf(RADIANS(pitch)),
       sinf(RADIANS(yaw)) * cosf(RADIANS(pitch)) }.normalize();
-    right = front.cross(UP).normalize();
+    
+    right = pitch > 89.9f && pitch < 269.0f ? 
+      front.cross(DOWN).normalize() :
+      front.cross(UP).normalize();
+
     up = right.cross(front).normalize();
   }
 };
