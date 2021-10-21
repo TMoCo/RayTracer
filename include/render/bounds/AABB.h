@@ -11,13 +11,15 @@
 
 #include <glad/glad.h>
 
+#include <limits>
+
 struct AABB
 {
   UI32 vao, vbo;
 
-  Vector3 min;
-  Vector3 max;
-  Vector3 centre;
+  Vector3 min = Vector3{ std::numeric_limits<F32>::max() };
+  Vector3 max = Vector3{ std::numeric_limits<F32>::lowest() }; // note: min() = 0!
+  Vector3 centre = {};
 
   // box indices
   static constexpr const UI32 indices[36] = 
@@ -36,13 +38,13 @@ struct AABB
     4, 1, 5
   };
 
-  inline static AABB getAABB(const Mesh& mesh)
+  inline static AABB getAABB(const std::vector<Vector3>& positions)
   {
     AABB aabb{};
-    for (auto& position : mesh.positions)
+    for (auto& position : positions)
     {
       aabb.centre += position;
-      
+
       // max
       if (position.x > aabb.max.x)
         aabb.max.x = position.x;
@@ -60,9 +62,14 @@ struct AABB
         aabb.min.z = position.z;
     }
 
-    aabb.centre /= static_cast<F32>(mesh.positions.size());
+    aabb.centre /= static_cast<F32>(positions.size());
 
     return aabb;
+  }
+
+  inline static AABB getAABB(const Mesh& mesh)
+  {
+    return getAABB(mesh.positions);
   }
 
   inline void generateBuffers()
@@ -71,6 +78,21 @@ struct AABB
     glGenBuffers(1, &vbo);
 
     // create vertex data on the fly
+    std::vector<F32> data = getGlBufferData();
+  
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(0);
+  }
+
+  inline std::vector<F32> getGlBufferData()
+  {
     std::vector<F32> data{};
     data.resize(3 * 8); // 8 * (x,y,z)
 
@@ -94,7 +116,7 @@ struct AABB
          /
         /
        z
-    
+
     4 = min
     2 = max
     */
@@ -132,16 +154,8 @@ struct AABB
     data[21] = max.x;
     data[22] = min.y;
     data[23] = min.z;
-  
-    glBindVertexArray(vao);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glBindVertexArray(0);
+    return data;
   }
 
   inline void draw()

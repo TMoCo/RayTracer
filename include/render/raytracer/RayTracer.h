@@ -13,9 +13,9 @@
 
 #include <render/Camera.h>
 #include <render/Mesh.h>
+#include <render/raytracer/Ray.h>
+#include <render/raytracer/Surfel.h>
 
-#include <raytracer/Ray.h>
-#include <raytracer/Surfel.h>
 
 #define MAX_DEPTH 4
 

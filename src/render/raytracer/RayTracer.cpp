@@ -2,7 +2,7 @@
 // Raytracer class declaration
 //
 
-#include <raytracer/RayTracer.h>
+#include <render/raytracer/RayTracer.h>
 
 #include <core/Random.h>
 

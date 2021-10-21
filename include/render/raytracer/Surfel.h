@@ -13,8 +13,6 @@
 
 #include <math/thomath.h>
 
-#include <scene/Model.h>
-
 // TODO: Fix surfel to use new mesh
 
 struct Surfel {
@@ -52,14 +50,13 @@ struct Surfel {
       */
     }
 
-    inline colour BRDF(const Vector3& light, const Vector3& view, const Material& material) {
+    inline colour BRDF(const Vector3& light, const Vector3& view) { // include material
         // lambertian
         F32 lambertian = std::max(normal.dot(light), 0.0f);
         // glossy 
         F32 glossy = std::max((light + view).normalize().dot(normal), 0.0f);
         // compute surface color
-        return material.diffuse.toVector3()  * lambertian 
-            + material.specular.toVector3() * std::pow(glossy, material.specularExp);
+        return lambertian * std::pow(glossy, 0.28f);
     }
 };
 

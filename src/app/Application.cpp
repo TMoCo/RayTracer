@@ -8,6 +8,7 @@
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
 #include <render/primitives/Quad.h>
+#include <render/raytracer/BVH.h>
 
 #include <resource/TextureLoader.h>
 #include <resource/OBJLoader.h>
@@ -29,7 +30,7 @@ int Application::init()
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // create window
-  if (window.createWindow(800, 600))
+  if (window.createWindow(800, 600, "RayTracer window"))
     return -1;
 
   glfwMakeContextCurrent(window.ptr);
@@ -77,8 +78,14 @@ void Application::renderLoopGl()
   // load meshes from obj (eg, build a scene in blender)
   std::vector<Mesh*> meshes;
   OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj", meshes);
+  //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
   for (auto& mesh : meshes)
     mesh->generateBuffers(false);
+
+  // create BVH
+  BVH bvh{};
+  bvh.getPrimitives(meshes);
+  bvh.generateBuffers();
 
   // texture (TODO: make part of material struct)
   Texture containerTexture{};
@@ -101,7 +108,7 @@ void Application::renderLoopGl()
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-  bool debug = false;
+  bool debug = true;
 
   F32 deltaTime = 0.0f;
   F32 previous = 0.0f;
@@ -138,7 +145,8 @@ void Application::renderLoopGl()
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
-      debugShader.setMatrix4("transform", proj * view * model);
+      debugShader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
+      bvh.draw();
     }
 
     glfwPollEvents();
