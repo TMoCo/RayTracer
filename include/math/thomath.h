@@ -17,6 +17,13 @@
 
 #include <math/Transform.h>
 
+typedef enum : UI32
+{
+  X = 0,
+  Y = 1,
+  Z = 2
+} AXIS;
+
 // OpenGL directions (right handed coordinate system)
 constexpr Vector3 UP    {  0.0f,  1.0f,  0.0f };
 constexpr Vector3 DOWN  {  0.0f, -1.0f,  0.0f };

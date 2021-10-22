@@ -8,27 +8,29 @@
 
 RayTracer::RayTracer() {}
 
-void RayTracer::RayTraceImage(Image& buffer, Scene* scene, 
+void RayTracer::RayTraceImage(buffer<colour>& frameBuffer, std::vector<Mesh*> meshes,
     Transform t, Camera* camera, UI32 samples) {
     
-    // scale for aspect ratio
-    F32 rWidth = 1.0f / (F32)buffer.Width(), rHeight = 1.0f / (F32)buffer.Height();
+  // scale for aspect ratio
+  F32 rWidth = 1.0f / (F32)frameBuffer.getWidth(), rHeight = 1.0f / (F32)frameBuffer.getHeight();
 
-    Vector3 eye{0.0f, 0.0f, 0.0f}; // eye at origin
+  Vector3 eye{0.0f, 0.0f, 0.0f}; // eye at origin
 
-    // primary ray 
-    Ray primaryRay;
-    colour c;
-    primaryRay._origin = eye;
+  // primary ray 
+  Ray primaryRay;
+  colour c;
+  primaryRay._origin = eye;
 
-    // gamma correction
-    F32 gamma = 1.0f / 2.2f;
+  // gamma correction
+  F32 gamma = 1.0f / 2.2f;
+
+  Surfel s{};
+  F32 tNear;
 
   // push pixels onto a stack
 
-
-  for(UI32 row = 0; row < buffer.Height(); ++row) {
-    for (UI32 col = 0; col < buffer.Width(); ++col) {
+  for(UI32 row = 0; row < frameBuffer.getHeight(); ++row) {
+    for (UI32 col = 0; col < frameBuffer.getWidth(); ++col) {
       //** Fit into a thread
          
       // thread code:
@@ -40,15 +42,17 @@ void RayTracer::RayTraceImage(Image& buffer, Scene* scene,
       c = {};
 
       // ray direction
-      primaryRay = Ray::generateCameraRay(*camera, { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight });
+      primaryRay = Ray::generateCameraRay(camera, { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight });
+      tNear = std::numeric_limits<F32>::max();
+      if (Intersect(primaryRay, meshes, s, tNear))
+        frameBuffer[row][col] = Colour::Red;
+      else
+        frameBuffer[row][col] = Colour::White;
       // compute scene
-      for (UI32 s = 0; s < samples; ++s)
-          c += CastRay(primaryRay, 0);
-
-      buffer[row][col] = Colour::gammaCorrection (Colour::reinhardExtendedTMO(c, 10.0f), gamma);
-
       //**
     }
+    F32 percentage = (row * frameBuffer.getWidth()) / (float)(frameBuffer.getHeight() * frameBuffer.getWidth()) * 100.0f;
+    std::cout << percentage << " %" << std::endl;
   }
 }
 
@@ -143,10 +147,10 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
         // apply bounding volume test here
         // if (!intersect(ray, mesh.bounds)) then skip mesh;
 
-        for (UI32 f = 0; f < meshes[m]->indices.size(); f+=9) {
-            edge1 = meshes[m]->positions[meshes[m]->indices[f+3]]
+        for (UI32 f = 0; f < meshes[m]->indices.size(); f+=3) {
+            edge1 = meshes[m]->positions[meshes[m]->indices[f+1]]
                 - meshes[m]->positions[meshes[m]->indices[f]]; // V1 - v0
-            edge2 = meshes[m]->positions[meshes[m]->indices[f+6]]
+            edge2 = meshes[m]->positions[meshes[m]->indices[f+2]]
                 - meshes[m]->positions[meshes[m]->indices[f]]; // V2 - v0
 
             h = ray._direction.cross(edge2);

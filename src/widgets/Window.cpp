@@ -20,8 +20,6 @@ int Window::createWindow(UI32 w, UI32 h, const char* name)
   
   glfwGetWindowSize(ptr, &width, &height);
 
-  glfwSetWindowUserPointer(ptr, static_cast<void*>(this));
-
   lastX = width / 2.0f;
   lastY = height / 2.0f;
 

@@ -38,6 +38,60 @@ struct AABB
     4, 1, 5
   };
 
+  inline Vector3 diagonal() const
+  {
+    return max - min;
+  }
+
+  inline F32 surfaceArea() const
+  {
+    Vector3 d = diagonal();
+    return 2.0f * (d.x * d.y + d.x * d.z + d.y * d.z);
+  }
+
+  inline AXIS maxExtent() const
+  {
+    Vector3 d = diagonal();
+    if (d.x > d.y && d.x > d.z)
+      return AXIS::X;
+    else if (d.y > d.z)
+      return AXIS::Y;
+    else
+      return AXIS::Z;
+  }
+
+  inline static AABB mergeAABB(const AABB& left, const AABB& right)
+  {
+    AABB bbox{};
+    bbox.min = Vector3{
+      left.min.x < right.min.x ? left.min.x : right.min.x,
+      left.min.y < right.min.y ? left.min.y : right.min.y ,
+      left.min.z < right.min.z ? left.min.z : right.min.z};
+    bbox.max = Vector3{
+      left.max.x > right.max.x ? left.max.x : right.max.x,
+      left.max.y > right.max.y ? left.max.y : right.max.y ,
+      left.max.z > right.max.z ? left.max.z : right.max.z };
+    // centroid from bounds
+    bbox.centre = (bbox.max + bbox.min) * 0.5f;
+    return bbox;
+  }
+
+  inline static AABB mergeAABB(const AABB& box, const Vector3& point)
+  {
+    AABB bbox{};
+    bbox.min = Vector3{
+      box.min.x < point.x ? box.min.x : point.x,
+      box.min.y < point.y ? box.min.y : point.y ,
+      box.min.z < point.z ? box.min.z : point.z };
+    bbox.max = Vector3{
+      box.max.x < point.x ? box.max.x : point.x,
+      box.max.y < point.y ? box.max.y : point.y,
+      box.max.z < point.z ? box.max.z : point.z
+    };
+    bbox.centre = (bbox.max + bbox.min) * 0.5f;
+    return bbox;
+  }
+
   inline static AABB getAABB(const std::vector<Vector3>& positions)
   {
     AABB aabb{};
@@ -72,13 +126,13 @@ struct AABB
     return getAABB(mesh.positions);
   }
 
-  inline void generateBuffers()
+  inline void generatebuffers()
   {
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
 
     // create vertex data on the fly
-    std::vector<F32> data = getGlBufferData();
+    std::vector<F32> data = getGlbufferData();
   
     glBindVertexArray(vao);
 
@@ -91,7 +145,7 @@ struct AABB
     glBindVertexArray(0);
   }
 
-  inline std::vector<F32> getGlBufferData()
+  inline std::vector<F32> getGlbufferData()
   {
     std::vector<F32> data{};
     data.resize(3 * 8); // 8 * (x,y,z)

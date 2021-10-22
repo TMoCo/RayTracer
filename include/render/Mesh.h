@@ -5,12 +5,22 @@
 
 #include <vector>
 
+#include <glad/glad.h>
+
 struct Mesh
 {
   // gl buffer handles
   UI32 vao, vbo, ebo;
 
-  ~Mesh();
+  ~Mesh()
+  {
+    if (vao)
+      glDeleteVertexArrays(1, &vao);
+    if (vbo)
+      glDeleteBuffers(1, &vbo);
+    if (ebo)
+      glDeleteBuffers(1, &ebo);
+  }
   
   // mesh data
   std::vector<Vector3> positions;
@@ -19,7 +29,7 @@ struct Mesh
 
   std::vector<UI32> indices;
 
-  void generateBuffers(bool interleave);
+  void generatebuffers(bool interleave);
 
   void draw();
 };

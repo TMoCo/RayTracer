@@ -1,13 +1,73 @@
 #include <render/raytracer/BVH.h>
 
+void BVH::buildBVH(const std::vector<Mesh*>& meshes)
+{
+  // from meshes
+  getPrimitives(meshes);
+
+  std::vector<Primitive*> ordered;
+
+  // build nodes
+  BVHNode* root = buildNode(0, primitives.size(), ordered);
+
+}
+
+BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
+{
+  BVHNode* node = new BVHNode;
+  numNodes++;
+  AABB bbox{};
+  for (UI32 i = start; i < end; ++i)
+    bbox = AABB::mergeAABB(bbox, data[i].bbox);
+
+  UI32 nPrim = end - start;
+  if (nPrim == 1)
+  {
+    // leaf node
+    UI32 firstPrim = ordered.size();
+    for (UI32 i = start; i < end; ++i)
+      ordered.push_back(&data[i]);
+    node->initLeaf(firstPrim, nPrim, bbox);
+  }
+  else
+  {
+    AABB centroidBound{}; // get bounding box of primitive centroids
+    for (UI32 i = start; i < end; ++i)
+      centroidBound = AABB::mergeAABB(centroidBound, data[i].bbox.centre);
+    // get axis with max extent
+    AXIS axis = centroidBound.maxExtent();
+    UI32 mid = (start + end) >> 1;
+    if (centroidBound.max[axis] == centroidBound.min[axis])
+    {
+      // leaf node
+      UI32 firstPrim = ordered.size();
+      for (UI32 i = start; i < end; ++i)
+        ordered.push_back(&data[i]);
+      node->initLeaf(firstPrim, nPrim, bbox);
+      return node;
+    }
+    else
+    {
+      // internal node
+      node->initInternal(axis, 
+        buildNode(start, mid, ordered),
+        buildNode(mid, end, ordered));
+    }
+  }
+  return node;
+}
+
+// hard assumption: only triangular meshes
 void BVH::getPrimitives(const std::vector<Mesh*>& meshes)
 {
-  // hard assumption: only triangular meshes
-  UI64 numPrimitives = 0;
-  for (auto& mesh : meshes)
-    numPrimitives += mesh->indices.size() / 3;
-
+  // clear previous data
+  primitives.clear();
   primitives.reserve(numPrimitives);
+
+  data.clear();
+  data.reserve(numPrimitives);
+
+  numPrimitives = 0;
 
   for (auto& mesh : meshes)
   {
@@ -20,12 +80,16 @@ void BVH::getPrimitives(const std::vector<Mesh*>& meshes)
         mesh->positions[mesh->indices[3 * i]],
         mesh->positions[mesh->indices[3 * i + 1]],
         mesh->positions[mesh->indices[3 * i + 2]] });
-      primitives.push_back(prim);
+      prim.mesh = mesh;
+      // push primitive
+      data.push_back(prim);
+      primitives.push_back(&data.back());
     }
   }
+  numPrimitives = primitives.size();
 }
 
-void BVH::generateBuffers()
+void BVH::generatebuffers()
 {
   // loop 
   glGenVertexArrays(1, &vao);
@@ -43,7 +107,7 @@ void BVH::generateBuffers()
   for (UI64 i = 0; i < primitives.size(); ++i)
   {
     // copy positions
-    memcpy(&data[i * AABBsize], primitives[i].bbox.getGlBufferData().data(), AABBsize * sizeof(F32));
+    // memcpy(&data[i * AABBsize], primitives[i].bbox.getGlbufferData().data(), AABBsize * sizeof(F32));
     // copy indices with offset
     for (UI32 j = 0; j < 36; ++j)
       indices.push_back(AABB::indices[j] + i * 8);

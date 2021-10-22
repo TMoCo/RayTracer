@@ -10,12 +10,18 @@
 #include <glad/glad.h>
 #endif
 
+#include <render/raytracer/RayTracer.h>
 
 #include <widgets/Window.h> 
 
 class Application {
 private:
   Window window;
+
+  RayTracer raytracer;
+
+  bool pause;
+  bool debug;
 
   int init();
 
@@ -26,8 +32,10 @@ private:
 
   void renderLoopVk(); // todo: for vulkan applications
 
+  I32 processInput(F32 deltaTime);
+
 public:
-  int run();
+  I32 run();
 
 };
 

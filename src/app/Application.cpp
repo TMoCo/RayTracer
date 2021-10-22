@@ -25,6 +25,8 @@ int Application::init()
     return -1;
   }
 
+  debug = pause = false;
+
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -45,7 +47,7 @@ int Application::init()
   return 0;
 }
 
-int Application::run()
+I32 Application::run()
 {
 
   if (init() != 0)
@@ -77,15 +79,13 @@ void Application::renderLoopGl()
 
   // load meshes from obj (eg, build a scene in blender)
   std::vector<Mesh*> meshes;
-  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj", meshes);
-  //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
+  //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj", meshes);
+  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
   for (auto& mesh : meshes)
-    mesh->generateBuffers(false);
+    mesh->generatebuffers(false);
 
-  // create BVH
-  BVH bvh{};
-  bvh.getPrimitives(meshes);
-  bvh.generateBuffers();
+  // frame buffer
+  buffer<colour> fb{ 800, 600 };
 
   // texture (TODO: make part of material struct)
   Texture containerTexture{};
@@ -108,7 +108,7 @@ void Application::renderLoopGl()
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-  bool debug = true;
+  glfwSetWindowUserPointer(window.ptr, &window);
 
   F32 deltaTime = 0.0f;
   F32 previous = 0.0f;
@@ -119,19 +119,19 @@ void Application::renderLoopGl()
     deltaTime = current - previous;
     previous = current;
 
-    if (glfwGetKey(window.ptr, GLFW_KEY_ESCAPE))
+    // ... process input
+    if (processInput(deltaTime) == 0)
       break;
 
-    // ... process input
-    if (glfwGetKey(window.ptr, GLFW_KEY_W))
-      camera.processInput(Camera::FORWARD, deltaTime * 10.0f);
-    if (glfwGetKey(window.ptr, GLFW_KEY_S))
-      camera.processInput(Camera::BACKWARD, deltaTime * 10.0f);
-    if (glfwGetKey(window.ptr, GLFW_KEY_Q))
-      camera.processInput(Camera::LEFTWARD, deltaTime * 10.0f);
-    if (glfwGetKey(window.ptr, GLFW_KEY_D))
-      camera.processInput(Camera::RIGHTWARD, deltaTime * 10.0f);
-        
+    if (glfwGetKey(window.ptr, GLFW_KEY_R))
+    {
+      // raytrace image
+      std::cout << "raytracing...\n";
+      raytracer.RayTraceImage(fb, meshes, t, window.mainCamera, 1);
+      std::cout << "finished...\n";
+      TextureLoader::writeTexture("../screenshots/out.jpg", fb);
+    }
+
     // ... render scene
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     shader.use();
@@ -146,7 +146,6 @@ void Application::renderLoopGl()
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
       debugShader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
-      bvh.draw();
     }
 
     glfwPollEvents();
@@ -160,6 +159,46 @@ void Application::renderLoopGl()
 void Application::renderLoopVk()
 {
   // do something
+}
+
+I32 Application::processInput(F32 deltaTime)
+{
+  if (glfwGetKey(window.ptr, GLFW_KEY_ESCAPE))
+    return 0;
+  // pause
+  if (glfwGetKey(window.ptr, GLFW_KEY_P))
+  {
+    pause = !pause;
+    if (pause)
+      glfwSetWindowUserPointer(window.ptr, nullptr);
+    else
+    {
+      glfwSetWindowUserPointer(window.ptr, &window);
+      window.firstMouse = true;
+    }
+    return 1;
+  }
+  if (glfwGetKey(window.ptr, GLFW_KEY_W))
+  {
+    window.mainCamera->processInput(Camera::FORWARD, deltaTime * 10.0f);
+    return 1;
+  }
+  if (glfwGetKey(window.ptr, GLFW_KEY_S))
+  {
+    window.mainCamera->processInput(Camera::BACKWARD, deltaTime * 10.0f);
+    return 1;
+  }
+  if (glfwGetKey(window.ptr, GLFW_KEY_Q))
+  {
+    window.mainCamera->processInput(Camera::LEFTWARD, deltaTime * 10.0f);
+    return 1;
+  }
+  if (glfwGetKey(window.ptr, GLFW_KEY_D))
+  {
+    window.mainCamera->processInput(Camera::RIGHTWARD, deltaTime * 10.0f);
+    return 1;
+  }
+  return 1;
 }
 
 void Application::terminate()

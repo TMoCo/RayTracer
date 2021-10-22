@@ -9,23 +9,23 @@
 RayTracerWidget::RayTracerWidget(QWidget* parent, Model* m, Transform* t, 
     Camera* c) : 
     QOpenGLWidget(parent), model(m), transform{t}, camera{c}, 
-    raytracer(), frameBuffer() {}
+    raytracer(), framebuffer() {}
 
 void RayTracerWidget::initializeGL() {}
 
 void RayTracerWidget::resizeGL(int w, int h) {
-    frameBuffer.Resize(w, h);
+    framebuffer.Resize(w, h);
 }
 
 void RayTracerWidget::paintGL() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     // display the image
-    glDrawPixels(width(), height(), GL_RGBA, GL_FLOAT, frameBuffer[0]); 
+    glDrawPixels(width(), height(), GL_RGBA, GL_FLOAT, framebuffer[0]); 
 }
 
 void RayTracerWidget::RayTrace(int samples) {
-    raytracer.RayTraceImage(frameBuffer, model, *transform, camera, samples);
+    raytracer.RayTraceImage(framebuffer, model, *transform, camera, samples);
     update(); // call update to display result
 }
 
@@ -37,6 +37,6 @@ void RayTracerWidget::SaveImage(QString name) {
     
     std::ofstream out(path);
     
-    frameBuffer.ToPPM(out);
+    framebuffer.ToPPM(out);
 }
 */
