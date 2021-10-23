@@ -32,8 +32,6 @@ private:
 
   void renderLoopVk(); // todo: for vulkan applications
 
-  I32 processInput(F32 deltaTime);
-
 public:
   I32 run();
 

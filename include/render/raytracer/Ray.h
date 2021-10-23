@@ -20,15 +20,10 @@ public:
 
   inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC) // pixel NDC
   {
-    F32 tanHalfFOV = std::tan(RADIANS(camera->FOV * 0.5f));
-    // a unit direction in -Z
-    Vector3 direction{
-      (2.0f * PNDC.x - 1.0f) * camera->aspectRatio * tanHalfFOV,
-      (2.0f * PNDC.y - 1.0f) * tanHalfFOV,
-      -1.0f };
-    // rotate direction and set origin as camera's position
-    return { camera->transform.position,
-      Quaternion::rotateVector(direction, Quaternion::getRotationFrom(FRONT, camera->front)).normalize() };
+    Vector3 horizontal = camera->right * camera->vpWidth;
+    Vector3 vertical = camera->vpHeight * camera->up;
+    Vector3 lowerLeftOrigin = camera->position - horizontal * 0.5f - vertical * 0.5f + camera->front;
+    return { camera->position, lowerLeftOrigin + PNDC.x * horizontal + PNDC.y * vertical - camera->position };
   }
 
   inline Vector3 At(F32 t) const 

@@ -8,6 +8,8 @@
 #include <core/types.h>
 #include <core/debug.h>
 
+#include <math.h>
+
 #define MAX_BUFFER_SIZE 4000UL // max 4k image
 
 template <typename T>
@@ -15,15 +17,15 @@ class buffer {
 private:
   T* data;
   
-  UI64 width, height;
+  UI64 width, height, depth;
 
   void allocate();
   
-  void free();
+  void release();
 
 public:
 
-  buffer(UI64 w = 0, UI64 h = 0);
+  buffer(UI64 w = 0, UI64 h = 0, UI64 d = 1);
   
   ~buffer();
 
@@ -31,20 +33,22 @@ public:
   
   inline UI64 getHeight() { return height; }
 
+  inline UI64 getDepth() { return depth; }
+
   T* operator[](UI32 index);
   
   const T* operator[](UI32 index) const;
 
   void clear();
 
-  bool resize(UI64 w, UI64 h);
+  bool resize(UI64 w, UI64 h, UI64 d);
 };
 
 
 template <typename T>
 void buffer<T>::allocate()
 {
-  data = (T*)std::calloc(width * height, sizeof(T));
+  data = (T*)calloc(width * height * depth, sizeof(T));
   if (data == nullptr)
   {
     DEBUG_PRINT("Could not allocate image!\n");
@@ -53,60 +57,59 @@ void buffer<T>::allocate()
 }
 
 template <typename T>
-void buffer<T>::free()
+void buffer<T>::release()
 {
   if (data)
   {
-    std::free(data);
+    free(data);
     data = nullptr;
   }
 }
 
 template <typename T>
-buffer<T>::buffer(UI64 w, UI64 h) : data(nullptr), width(w), height(h)
+buffer<T>::buffer(UI64 w, UI64 h, UI64 d) : data(nullptr), width(w), height(h), depth(d)
 {
-  resize(width, height);
+  resize(width, height, depth);
 }
 
 template <typename T>
 buffer<T>::~buffer()
 {
-  free();
+  release();
 }
 
 template <typename T>
 T* buffer<T>::operator[](UI32 index)
 {
-  return data + (index * height);
+  return data + (index * width);
 }
 
 template <typename T>
 const T* buffer<T>::operator[](UI32 index) const
 {
-  return data + (index * height);
+  return data + (index * width);
 }
 
 template <typename T>
 void buffer<T>::clear()
 {
-  memset(data, 0, width * height * sizeof(T));
+  memset(data, 0, width * height * depth * sizeof(T));
 }
 
 template <typename T>
-bool buffer<T>::resize(UI64 w, UI64 h)
+bool buffer<T>::resize(UI64 w, UI64 h, UI64 d)
 {
-  width = w < MAX_BUFFER_SIZE ? w : MAX_BUFFER_SIZE;
-  height = h < MAX_BUFFER_SIZE ? h : MAX_BUFFER_SIZE;
+  width  = w < MAX_BUFFER_SIZE ? w : MAX_BUFFER_SIZE;
+  height = h < MAX_BUFFER_SIZE ? h: MAX_BUFFER_SIZE;
+  depth  = d < 6 ? d : 6;
 
   if ((width == 0) || (height == 0))
     return false;
 
-  free(); // guarantees that pixels == nullptr
+  release(); // guarantees that pixels == nullptr
 
   allocate();
 
   return true;
 }
-
-
 #endif

@@ -28,17 +28,24 @@ struct Camera {
   F32 zNear;
   F32 zFar;
 
-  Transform transform;
+  // camera position
+  Vector3 position;
+
+  // updated by window resize
+  F32 vpHeight = 0.0f;
+  F32 vpWidth  = 0.0f;
+
+  // updated by mouse movement
+  F32 pitch = 0.0f;
+  F32 yaw = 270.0f;
 
   Vector3 front = FRONT;
   Vector3 right = RIGHT;
   Vector3 up = UP;
 
-  F32 pitch = 0.0f;
-  F32 yaw = 270.0f;
-
-  Camera(F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 
-    : aspectRatio(aspect), 
+  Camera(const Vector3& pos, F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 
+    : position(pos),
+      aspectRatio(aspect),
       FOV(fov), 
       zNear(near), 
       zFar(far) {}
@@ -57,7 +64,7 @@ struct Camera {
   inline Matrix4 getViewMatrix() const
   {
     // build view matrix
-    return Matrix4::lookAt(transform.position, transform.position + front, up);
+    return Matrix4::lookAt(position, position + front, up);
   }
 
   inline void processInput(kMovement move, F32 speed)
@@ -66,16 +73,16 @@ struct Camera {
     switch (move)
     {
     case LEFTWARD:
-      transform.position -= right * speed;
+      position -= right * speed;
       break;
     case RIGHTWARD:
-      transform.position += right * speed;
+      position += right * speed;
       break;
     case FORWARD:
-      transform.position += front * speed;
+      position += front * speed;
       break;
     case BACKWARD:
-      transform.position -= front * speed;
+      position -= front * speed;
       break;
     }
   }

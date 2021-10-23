@@ -16,13 +16,15 @@
 #include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
 
+#include <widgets/Window.h>
+
 #define MAX_DEPTH 4
 
 class RayTracer {
 public:
   RayTracer();
 
-  void RayTraceImage(buffer<colour>& frameBuffer , std::vector<Mesh*> meshes, Transform t, Camera* camera, UI32 samples);
+  void RayTraceImage(buffer<colour>& frameBuffer , std::vector<Mesh*> meshes, Transform t, const Camera* camera, UI32 samples);
  
 private:
   // cast a ray 

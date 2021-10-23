@@ -9,17 +9,15 @@
 RayTracer::RayTracer() {}
 
 void RayTracer::RayTraceImage(buffer<colour>& frameBuffer, std::vector<Mesh*> meshes,
-    Transform t, Camera* camera, UI32 samples) {
+    Transform t, const Camera* camera, UI32 samples) {
     
   // scale for aspect ratio
-  F32 rWidth = 1.0f / (F32)frameBuffer.getWidth(), rHeight = 1.0f / (F32)frameBuffer.getHeight();
-
-  Vector3 eye{0.0f, 0.0f, 0.0f}; // eye at origin
+  UI32 width  = static_cast<UI32>(frameBuffer.getWidth()), height = static_cast<UI32>(frameBuffer.getHeight());
+  F32 rWidth = 1.0f / static_cast<F32>(width), rHeight = 1.0f / static_cast<F32>(height);
 
   // primary ray 
   Ray primaryRay;
   colour c;
-  primaryRay._origin = eye;
 
   // gamma correction
   F32 gamma = 1.0f / 2.2f;
@@ -27,10 +25,11 @@ void RayTracer::RayTraceImage(buffer<colour>& frameBuffer, std::vector<Mesh*> me
   Surfel s{};
   F32 tNear;
 
-  // push pixels onto a stack
-
-  for(UI32 row = 0; row < frameBuffer.getHeight(); ++row) {
-    for (UI32 col = 0; col < frameBuffer.getWidth(); ++col) {
+  // scan pixels from bottom left corner
+  for (UI32 row = 0; row < height; ++row)
+  {
+    for (UI32 col = 0; col < width; ++col)
+    {
       //** Fit into a thread
          
       // thread code:
@@ -42,6 +41,9 @@ void RayTracer::RayTraceImage(buffer<colour>& frameBuffer, std::vector<Mesh*> me
       c = {};
 
       // ray direction
+      /*
+      if (row > frameBuffer.getHeight() / 2)
+      */
       primaryRay = Ray::generateCameraRay(camera, { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight });
       tNear = std::numeric_limits<F32>::max();
       if (Intersect(primaryRay, meshes, s, tNear))
@@ -51,8 +53,6 @@ void RayTracer::RayTraceImage(buffer<colour>& frameBuffer, std::vector<Mesh*> me
       // compute scene
       //**
     }
-    F32 percentage = (row * frameBuffer.getWidth()) / (float)(frameBuffer.getHeight() * frameBuffer.getWidth()) * 100.0f;
-    std::cout << percentage << " %" << std::endl;
   }
 }
 
@@ -163,7 +163,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
 
             k = 1.0f / k; // reuse k
 
-            // s = v0->origin
+            // s = origin - v0
             s = ray._origin - meshes[m]->positions[meshes[m]->indices[f]]; 
             u = k * s.dot(h);
             if (u < 0.0f || u > 1.0f)
@@ -176,6 +176,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
 
             k = k * edge2.dot(q);
             if (k > EPSILON) { // valid intersection
+              return true;
                 t = (ray.At(k) - ray._origin).length(); // test depth
                 if (t < tNear) {
                     tNear = t;

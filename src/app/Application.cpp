@@ -80,7 +80,8 @@ void Application::renderLoopGl()
   // load meshes from obj (eg, build a scene in blender)
   std::vector<Mesh*> meshes;
   //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj", meshes);
-  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
+  // OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
+  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\Triangle.obj", meshes);
   for (auto& mesh : meshes)
     mesh->generatebuffers(false);
 
@@ -92,10 +93,9 @@ void Application::renderLoopGl()
   TextureLoader::loadTexture("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
   
   // scene camera
-  Camera camera{ 800.0f / 600.0f, RADIANS(45.0f), 0.1f, 100.0f };
-  camera.transform = { { 0.0f, 0.0f, 10.0f }, Quaternion::angleAxis(0, RIGHT) };
+  Camera camera{ { 0.0f, 0.0f, 2.0f } };
 
-  window.mainCamera = &camera;
+  window.setMainCamera(&camera);
 
   // global scene transform
   Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(RADIANS(0.0f), RIGHT) };
@@ -120,14 +120,14 @@ void Application::renderLoopGl()
     previous = current;
 
     // ... process input
-    if (processInput(deltaTime) == 0)
+    if (Window::processInput(&window, deltaTime) == 0)
       break;
 
     if (glfwGetKey(window.ptr, GLFW_KEY_R))
     {
       // raytrace image
       std::cout << "raytracing...\n";
-      raytracer.RayTraceImage(fb, meshes, t, window.mainCamera, 1);
+      raytracer.RayTraceImage(fb, meshes, t, window.getCamera(), 1);
       std::cout << "finished...\n";
       TextureLoader::writeTexture("../screenshots/out.jpg", fb);
     }
@@ -159,46 +159,6 @@ void Application::renderLoopGl()
 void Application::renderLoopVk()
 {
   // do something
-}
-
-I32 Application::processInput(F32 deltaTime)
-{
-  if (glfwGetKey(window.ptr, GLFW_KEY_ESCAPE))
-    return 0;
-  // pause
-  if (glfwGetKey(window.ptr, GLFW_KEY_P))
-  {
-    pause = !pause;
-    if (pause)
-      glfwSetWindowUserPointer(window.ptr, nullptr);
-    else
-    {
-      glfwSetWindowUserPointer(window.ptr, &window);
-      window.firstMouse = true;
-    }
-    return 1;
-  }
-  if (glfwGetKey(window.ptr, GLFW_KEY_W))
-  {
-    window.mainCamera->processInput(Camera::FORWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  if (glfwGetKey(window.ptr, GLFW_KEY_S))
-  {
-    window.mainCamera->processInput(Camera::BACKWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  if (glfwGetKey(window.ptr, GLFW_KEY_Q))
-  {
-    window.mainCamera->processInput(Camera::LEFTWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  if (glfwGetKey(window.ptr, GLFW_KEY_D))
-  {
-    window.mainCamera->processInput(Camera::RIGHTWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  return 1;
 }
 
 void Application::terminate()

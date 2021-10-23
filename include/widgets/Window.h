@@ -21,28 +21,37 @@ typedef struct
   UI32 width, height;
 } ViewPort;
 
-struct Window
+class Window
 {
-  bool firstMouse = true;
-  F32 lastX, lastY;
-  Camera* mainCamera;
-
-  I32 width, height;
-  ViewPort viewPort;
-
+public:
   GLFWwindow* ptr; // left public for convenience
   
   int createWindow(UI32 width, UI32 height, const char* name = "Window");
 
   void setViewPort();
 
+  void setMainCamera(Camera* camera);
+
+  inline const Camera* getCamera() { return mainCamera; }
+
   F32 getAspectRatio();
     
   void resize(UI32 width, UI32 height);
-    
+ 
+  static int processInput(Window* window, F32 deltaTime);
+
   static void resizeCallBack(GLFWwindow* p_win, int w, int h);
 
   static void mouseCallBack(GLFWwindow* p_win, double x, double y);
+ 
+private:
+  bool firstMouse = true;
+  bool pause = false;
+  F32 lastX, lastY;
+  Camera* mainCamera;
+
+  I32 width, height;
+  ViewPort viewPort;
 };
 
 #endif // ! WINDOW_H_

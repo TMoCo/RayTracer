@@ -128,7 +128,7 @@ Vector3 Vector3::reflect(const Vector3& v, const Vector3& normal)
   return v - 2.0f * v.dot(normal) * normal; // assumes unit normal
 }
 
-Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const float& iorRatio)
+Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const F32& iorRatio)
 {
   F32 cosTheta = fmin(v.dot(normal), 1.0f); // assumes unit length
   Vector3 perpendicular = iorRatio * (v + cosTheta * normal);

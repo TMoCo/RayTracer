@@ -37,18 +37,25 @@ bool TextureLoader::loadTexture(const std::string& path, Texture& texture, GLenu
   return true;
 }
 
-void TextureLoader::writeTexture(const std::string& path, buffer<colour>& b)
+void TextureLoader::writeTexture(const std::string& path, buffer<colour>& image)
 {
-  // staging buffer 
-  buffer<byte> staging{ b.getWidth() * 3, b.getHeight()};
+  I32 width = static_cast<I32>(image.getWidth()), height = static_cast<I32>(image.getHeight());
+  DEBUG_ASSERT(width >= 0 && height >= 0, "");
 
-  for (UI32 i = 0; i < b.getWidth(); ++i)
-    for (UI32 j = 0; j < b.getHeight(); ++j)
-    {
-      staging[i*3][j]     = (byte)(b[i][j]).x;
-      staging[i*3][j] = (byte)(b[i][j]).y;
-      staging[i*3][j] = (byte)(b[i][j]).z;
-    }
-  
-  stbi_write_png(path.c_str(), staging.getWidth(), staging.getHeight(), 3, staging[0], staging.getWidth() * 3);
+  // staging buffer 
+  buffer<byte> staging{ image.getWidth(), image.getHeight(), 3 };
+
+  {
+    byte* pStaging = staging[0];
+    // stb expects image pixels stored from top to bottom, left to right
+    for (I32 i = height - 1; i >= 0; --i)
+      for (I32 j = 0; j < width; ++j)
+      {
+        *pStaging       = (byte)(image[i][j].x * 255.0f);
+        *(pStaging + 1) = (byte)(image[i][j].y * 255.0f);
+        *(pStaging + 2) = (byte)(image[i][j].z * 255.0f);
+        pStaging += 3;
+      }
+  }
+  stbi_write_jpg(path.c_str(), width, height, 3, staging[0], 50);
 }
