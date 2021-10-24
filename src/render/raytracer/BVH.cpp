@@ -9,7 +9,6 @@ void BVH::buildBVH(const std::vector<Mesh*>& meshes)
 
   // build nodes
   BVHNode* root = buildNode(0, primitives.size(), ordered);
-
 }
 
 BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)

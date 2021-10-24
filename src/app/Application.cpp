@@ -80,8 +80,8 @@ void Application::renderLoopGl()
   // load meshes from obj (eg, build a scene in blender)
   std::vector<Mesh*> meshes;
   //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj", meshes);
-  // OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
-  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\Triangle.obj", meshes);
+  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
+  //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\Triangle.obj", meshes);
   for (auto& mesh : meshes)
     mesh->generatebuffers(false);
 
