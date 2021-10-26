@@ -15,6 +15,7 @@
 // basic camera class 
 struct Camera {
 
+  // platform agnostic camera movement
   typedef enum : UI32
   {
     LEFTWARD,
@@ -23,6 +24,7 @@ struct Camera {
     BACKWARD
   } kMovement;
 
+  // camera data
   F32 aspectRatio;
   F32 FOV;
   F32 zNear;

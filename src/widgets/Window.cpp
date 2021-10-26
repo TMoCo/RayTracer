@@ -4,6 +4,7 @@
 
 int Window::createWindow(UI32 w, UI32 h, const char* name)
 {
+  // create window
   ptr = glfwCreateWindow(w, h, name, NULL, NULL);
   if (ptr == NULL)
   {
@@ -12,18 +13,18 @@ int Window::createWindow(UI32 w, UI32 h, const char* name)
     return -1;
   }
 
-  // cursor
+  // window size + viewport
+  viewPort.width  = width  = w;
+  viewPort.height = height = h;
+  viewPort.x = viewPort.y = 0;
+  setViewPort();
+  glfwSetFramebufferSizeCallback(ptr, resizeCallBack);
+
+  // cursor + mouse
   glfwSetInputMode(ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetCursorPosCallback(ptr, mouseCallBack);
-
-  glfwSetFramebufferSizeCallback(ptr, resizeCallBack);
-  
-  glfwGetWindowSize(ptr, &width, &height);
-
   lastX = width / 2.0f;
   lastY = height / 2.0f;
-
-  setViewPort();
 
   return 0;
 }
@@ -92,13 +93,15 @@ int Window::processInput(Window* window, F32 deltaTime)
   return 1;
 }
 
-void Window::resizeCallBack(GLFWwindow* p_win, int w, int h)
+void Window::resizeCallBack(GLFWwindow* p_win, I32 w, I32 h)
 {
   // get window 
   Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(p_win));
   if (window)
   {
     window->resize(static_cast<UI32>(w), static_cast<UI32>(h));
+    window->viewPort = { 0, 0, window->width, window->height };
+    window->setViewPort();
     if (window->mainCamera) // also update camera
     {
       window->mainCamera->aspectRatio = static_cast<F32>(w) / static_cast<F32>(h);
@@ -108,7 +111,7 @@ void Window::resizeCallBack(GLFWwindow* p_win, int w, int h)
   }
 }
 
-void Window::mouseCallBack(GLFWwindow* p_win, double x, double y)
+void Window::mouseCallBack(GLFWwindow* p_win, F64 x, F64 y)
 {
   Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(p_win));
   if (window)
@@ -122,17 +125,15 @@ void Window::mouseCallBack(GLFWwindow* p_win, double x, double y)
 
     F32 xoffset = static_cast<F32>(x) - window->lastX;
     F32 yoffset = window->lastY - static_cast<F32>(y);
+
     window->lastX = static_cast<F32>(x);
     window->lastY = static_cast<F32>(y);
 
     F32 sensitivity = 0.1f;
-    xoffset *= sensitivity; // yaw
-    yoffset *= sensitivity; // pitch
+    window->mainCamera->yaw += xoffset * sensitivity;
+    window->mainCamera->pitch += yoffset * sensitivity;
 
-    window->mainCamera->yaw += xoffset;
-    window->mainCamera->pitch += yoffset;
-
-    // rotations
+    // update camera with new yaw and pitch
     window->mainCamera->update();
   }
 }

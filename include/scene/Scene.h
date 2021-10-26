@@ -1,5 +1,5 @@
 //
-// A class for managing a scene
+// A tree data structure for managing a scene
 //
 
 #ifndef SCENE_H_
@@ -7,8 +7,17 @@
 
 #include <render/Camera.h>
 
+#include <scene/Node.h>
+
 struct Scene {
-  Camera camera;
+  std::string name;
+
+  Node* root;
+
+  Scene();
+  ~Scene();
+  
+  void clear(); // dfs delete nodes
 };
 
 #endif // !SCENE_H_

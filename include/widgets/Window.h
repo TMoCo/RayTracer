@@ -32,6 +32,10 @@ public:
 
   void setMainCamera(Camera* camera);
 
+  inline UI32 getWidth() { return width; }
+
+  inline UI32 getHeight() { return height; }
+
   inline const Camera* getCamera() { return mainCamera; }
 
   F32 getAspectRatio();
@@ -40,17 +44,20 @@ public:
  
   static int processInput(Window* window, F32 deltaTime);
 
-  static void resizeCallBack(GLFWwindow* p_win, int w, int h);
+  static void resizeCallBack(GLFWwindow* p_win, I32 w, I32 h);
 
-  static void mouseCallBack(GLFWwindow* p_win, double x, double y);
+  static void mouseCallBack(GLFWwindow* p_win, F64 x, F64 y);
  
 private:
+  bool pause = false; // TODO: move into application class
+
+  // mouse move
   bool firstMouse = true;
-  bool pause = false;
   F32 lastX, lastY;
+
   Camera* mainCamera;
 
-  I32 width, height;
+  UI32 width, height;
   ViewPort viewPort;
 };
 

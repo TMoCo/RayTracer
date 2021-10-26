@@ -7,10 +7,10 @@
 #include <render/Mesh.h>
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
-#include <render/primitives/Quad.h>
 #include <render/raytracer/BVH.h>
 
 #include <resource/TextureLoader.h>
+#include <resource/SceneLoader.h>
 #include <resource/OBJLoader.h>
 
 #include <string>
@@ -66,6 +66,10 @@ I32 Application::run()
 
 void Application::renderLoopGl()
 {
+  Scene scene{};
+  SceneLoader::loadScene(
+    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\teapot.scene", &scene);
+
   // shaders for scene
   Shader shader{};
   shader.create(
@@ -79,14 +83,12 @@ void Application::renderLoopGl()
 
   // load meshes from obj (eg, build a scene in blender)
   std::vector<Mesh*> meshes;
-  //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj", meshes);
   OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
-  //OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\Triangle.obj", meshes);
   for (auto& mesh : meshes)
     mesh->generatebuffers(false);
 
   // frame buffer
-  buffer<colour> fb{ 800, 600 };
+  buffer<colour> fb{ window.getWidth(), window.getHeight() };
 
   // texture (TODO: make part of material struct)
   Texture containerTexture{};
@@ -101,8 +103,8 @@ void Application::renderLoopGl()
   Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(RADIANS(0.0f), RIGHT) };
 
   Matrix4 model = t.toWorldMatrix();
-  Matrix4 view = camera.getViewMatrix(); // update every frame
-  Matrix4 proj  = Matrix4::perspective(RADIANS(45.0f), 800.0f / 600.0f, 0.1f, 100.0f); // does not change
+  Matrix4 view; // update every frame
+  Matrix4 proj;
   
   glEnable(GL_DEPTH_TEST);
 
@@ -126,13 +128,14 @@ void Application::renderLoopGl()
     if (glfwGetKey(window.ptr, GLFW_KEY_R))
     {
       // raytrace image
-      std::cout << "raytracing...\n";
       raytracer.RayTraceImage(fb, meshes, t, window.getCamera(), 1);
-      std::cout << "finished...\n";
       TextureLoader::writeTexture("../screenshots/out.jpg", fb);
     }
 
     // ... render scene
+    view = camera.getViewMatrix();
+    proj = Matrix4::perspective(RADIANS(camera.FOV), camera.aspectRatio, camera.zNear, camera.zFar);
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     shader.use();
     shader.setMatrix4("transform", proj * camera.getViewMatrix() * model);

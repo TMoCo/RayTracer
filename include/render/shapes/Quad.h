@@ -7,19 +7,30 @@
 
 #include <math/thomath.h>
 
+#include <render/shapes/shape.h>
+
 #include <glad/glad.h>
 
 #include <vector>
 
-struct Quad 
+struct Quad : Shape
 {
-  UI32 vao, vbo;
-
   static constexpr const UI32 indices[6] =
   {
     0, 1, 3,
     1, 2, 3
   };
+
+  // overload 
+  virtual AABB getAABB() const
+  {
+
+  }
+
+  virtual F32 getArea() const
+  {
+
+  }
 
   inline static Quad createQuad(
     const Vector2& xExtents = { -0.5f, 0.5f }, 
@@ -67,6 +78,8 @@ struct Quad
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
   }
+
+  UI32 vao, vbo;
 };
 
 #endif
