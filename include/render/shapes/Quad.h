@@ -22,12 +22,17 @@ struct Quad : Shape
   };
 
   // overload 
-  virtual AABB getAABB() const
+  AABB getAABB() const
   {
 
   }
 
-  virtual F32 getArea() const
+  F32 getArea() const
+  {
+
+  }
+
+  bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const
   {
 
   }

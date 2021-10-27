@@ -4,13 +4,14 @@
 
 #include <render/Material.h>
 
-#include <resource/OBJLoader.h>
 #include <resource/file.h>
+#include <resource/OBJLoader.h>
 
 #include <fstream>
 #include <regex>
 
-bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes) {
+bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceManager, bool singleMesh)
+{
   if (!file::isOfType(fileName, ".obj"))
   {
     DEBUG_PRINT("File provided is not .obj");
@@ -35,8 +36,15 @@ bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes)
   std::regex backslash { R"([/]+)" };
 
   // mesh data
-  meshes.clear(); // make sure meshes vector is empty
   MeshBuilder meshBuilder;
+  UI32 meshNum = 0;
+
+  // create new mesh and associate 
+  if (singleMesh)
+  {
+    resourceManager.meshes[fileName] = new Mesh; 
+    meshBuilder.reset(resourceManager.meshes[fileName]);
+  }
 
   // file data
   std::vector<F32> fPositions;
@@ -124,8 +132,16 @@ bool OBJLoader::loadObj(const std::string& fileName, std::vector<Mesh*>& meshes)
     break;
     case 'o':
       // create new mesh and associate it to the mesh builder
-      meshes.push_back(new Mesh);
-      meshBuilder.reset(meshes.back());
+      if (!singleMesh)
+      {
+        std::string objectName = line.substr(0, 2);
+        if (objectName.empty())
+          objectName = meshNum++;
+        // get object name and use with name for unique id
+        std::string id = fileName + objectName;
+        resourceManager.meshes[id] = new Mesh;
+        meshBuilder.reset(resourceManager.meshes[id]);
+      }
       break;
     case '#':
       // skip comment

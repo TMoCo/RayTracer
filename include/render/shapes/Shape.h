@@ -5,10 +5,6 @@
 #ifndef SHAPE_H_
 #define SHAPE_H_ 1
 
-#include <math/thomath.h>
-
-#include <render/bounds/AABB.h>
-#include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
 
 struct Shape

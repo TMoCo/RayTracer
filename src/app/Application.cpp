@@ -66,9 +66,13 @@ I32 Application::run()
 
 void Application::renderLoopGl()
 {
+  resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj");
+
+  /*
   Scene scene{};
   SceneLoader::loadScene(
     "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\teapot.scene", &scene);
+  */
 
   // shaders for scene
   Shader shader{};
@@ -82,10 +86,8 @@ void Application::renderLoopGl()
     "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
 
   // load meshes from obj (eg, build a scene in blender)
-  std::vector<Mesh*> meshes;
-  OBJLoader::loadObj("C:\\Users\\Tommy\\Documents\\Graphics\\Raytracer\\models\\CornellBox.obj", meshes);
-  for (auto& mesh : meshes)
-    mesh->generatebuffers(false);
+  Mesh* teapot = resourceManager.getMesh("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj");
+  teapot->generatebuffers(false);
 
   // frame buffer
   buffer<colour> fb{ window.getWidth(), window.getHeight() };
@@ -128,8 +130,8 @@ void Application::renderLoopGl()
     if (glfwGetKey(window.ptr, GLFW_KEY_R))
     {
       // raytrace image
-      raytracer.RayTraceImage(fb, meshes, t, window.getCamera(), 1);
-      TextureLoader::writeTexture("../screenshots/out.jpg", fb);
+      // raytracer.RayTraceImage(fb, meshes, t, window.getCamera(), 1);
+      // TextureLoader::writeTexture("../screenshots/out.jpg", fb);
     }
 
     // ... render scene
@@ -140,8 +142,8 @@ void Application::renderLoopGl()
     shader.use();
     shader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
     containerTexture.bind(0);
-    for (auto& mesh : meshes)
-      mesh->draw();
+
+    teapot->draw();
 
     // ... debug
     if (debug)

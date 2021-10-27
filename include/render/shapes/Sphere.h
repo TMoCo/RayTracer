@@ -7,7 +7,7 @@
 
 #include <render/shapes/Shape.h>
 
-struct Sphere : Shape
+struct Sphere
 {
 
 };

@@ -10,6 +10,8 @@
 #include <glad/glad.h>
 #endif
 
+#include <resource/ResourceManager.h>
+
 #include <render/raytracer/RayTracer.h>
 
 #include <widgets/Window.h> 
@@ -17,6 +19,8 @@
 class Application {
 private:
   Window window;
+
+  ResourceManager resourceManager;
 
   RayTracer raytracer;
 

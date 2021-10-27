@@ -45,7 +45,7 @@ struct Camera {
   Vector3 right = RIGHT;
   Vector3 up = UP;
 
-  Camera(const Vector3& pos, F32 aspect = 1.0f, F32 fov = 90.0f, F32 near = 0.1f, F32 far = 10.0f) 
+  Camera(const Vector3& pos, F32 aspect = 1.0f, F32 fov = 45.0f, F32 near = 0.1f, F32 far = 10.0f) 
     : position(pos),
       aspectRatio(aspect),
       FOV(fov), 

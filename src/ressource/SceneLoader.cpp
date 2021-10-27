@@ -1,6 +1,7 @@
+#include <resource/file.h>
 #include <resource/SceneLoader.h>
 
-#include <resource/file.h>
+#include <scene/Primitive.h>
 
 #include <fstream>
 
@@ -41,19 +42,21 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     if (token == nullptr) continue;
     
-    while (*token == ' ') token++;
+    while (*token == ' ') token++; // chomp whitespace
 
     if (*token == '#') continue;
 
     if (strcmp(token, "{") == 0)
     {
-      nodeStack.push_back(node);
+      nodeStack.push_back(newNode);
+      node = nodeStack.back();
       continue;
     }
 
     if (strcmp(token, "}") == 0)
     {
       nodeStack.pop_back();
+      node = nodeStack.back();
       continue;
     }
 
@@ -61,20 +64,26 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
     {
       scene->root = new Node;
       token = strtok_s(NULL, " ", &remainding);
-      std::cout << "new scene: " << token << "\n";
       scene->name = token;
-      node = scene->root;
+      newNode = scene->root;
       continue;
     }
       
     if (strcmp(token, "primitive") == 0)
     {
-      node = nodeStack.back();
-      node->addChild(new Node);
-      token = strtok_s(NULL, " ", &remainding);
-      std::cout << "new primitive: " << token << "\n";
+      DEBUG_ASSERT(scene->root != nullptr, "Can't add a primitive to an empty scene");
+      node->addChild(new Primitive);
+      newNode = node->children.back();
+      token = strtok_s(NULL, " ", &remainding); 
+      std::cout << "new primitive: '" << token << "'\n";
       node->name = token;
       continue;
+    }
+
+    if (strcmp(token, "shape") == 0)
+    {
+      // TODO: add check for primitive type
+      Primitive* p = reinterpret_cast<Primitive*>(node);
     }
 
     if (strcmp(token, "position") == 0)
@@ -92,6 +101,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
     {
 
     }
+
   }
   objStream.close();
   return 0;

@@ -7,6 +7,8 @@
 
 #include <render/Mesh.h>
 
+#include <resource/ResourceManager.h>
+
 #include <string>
 #include <unordered_map>
 
@@ -14,7 +16,7 @@
 
 struct OBJLoader 
 {
-  static bool loadObj(const std::string& path, std::vector<Mesh*>& meshes);
+  static bool loadObj(const std::string& path, ResourceManager& resourceManager, bool singleMesh);
 
   static bool loadMtl(const std::string& path);
 
