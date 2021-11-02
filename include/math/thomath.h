@@ -39,8 +39,15 @@ constexpr F32 PI_4 = 0.785398163397448309616f;
 
 constexpr F32 EPSILON = 0.00001f;
 
-constexpr F32 RADIANS(F32 x) {
+constexpr F32 radians(F32 x) 
+{
   return x * PI * 0.005555555556f;
+}
+
+constexpr F32 clamp(F32 val, F32 min, F32 max)
+{
+  DEBUG_ASSERT(min < max, "invalid min and max");
+  return (val > max ? max : val) < min ? min : val;
 }
 
 #endif // !THOMATH_H_

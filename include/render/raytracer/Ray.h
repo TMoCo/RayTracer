@@ -11,11 +11,12 @@
 
 struct Ray {
 public:
-  Vector3 _origin;
-  Vector3 _direction;
+  Vector3 origin;
+  Vector3 direction;
+  F32 tMax;
 
   Ray(const Vector3& o = {}, const Vector3& d = {}) 
-    : _origin{o}, _direction{d}
+    : origin{o}, direction{d}
   {}
 
   inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC) // pixel NDC
@@ -28,7 +29,7 @@ public:
 
   inline Vector3 At(F32 t) const 
   {
-    return _origin + t * _direction;
+    return origin + t * direction;
   }
 };
 

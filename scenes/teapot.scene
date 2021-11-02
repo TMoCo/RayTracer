@@ -3,7 +3,7 @@ scene teapotScene
 {
   primitive 
   {
-    shape mesh "C:\Users\Tommy\Documents\Graphics\teapot.obj"
+    shape sphere
     position 1 2 3
     rotation 1 2 3
   }

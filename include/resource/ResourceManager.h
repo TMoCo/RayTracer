@@ -15,6 +15,7 @@
 class ResourceManager 
 {
   friend class OBJLoader;
+  friend class SceneLoader;
 public:
   Mesh* tryGetMesh(const std::string& meshName);
   

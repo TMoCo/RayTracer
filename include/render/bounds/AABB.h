@@ -17,9 +17,8 @@ struct AABB
 {
   UI32 vao, vbo;
 
-  Vector3 min = Vector3{ std::numeric_limits<F32>::max() };
-  Vector3 max = Vector3{ std::numeric_limits<F32>::lowest() }; // note: min() = 0!
-  Vector3 centre = {};
+  Vector3 min;
+  Vector3 max; // note: min() = 0!
 
   // box indices
   static constexpr const UI32 indices[36] = 
@@ -37,6 +36,35 @@ struct AABB
     0, 1, 4,
     4, 1, 5
   };
+
+  AABB()
+    : min(std::numeric_limits<F32>::max()), max(std::numeric_limits<F32>::lowest())
+  {}
+
+  AABB(const Vector3& min, const Vector3& max) 
+    : min(std::numeric_limits<F32>::max()), max(std::numeric_limits<F32>::lowest()) 
+  {
+    // test min
+    if (this->min.x > min.x)
+      this->min.x = min.x;
+    if (this->min.y > min.y)
+      this->min.y = min.y;
+    if (this->min.z > min.z)
+      this->min.z = min.z;
+
+    // test max
+    if (this->max.x < max.x)
+      this->max.x = max.x;
+    if (this->max.y < max.y)
+      this->max.y = max.y;
+    if (this->max.z < max.z)
+      this->max.z = max.z;
+  }
+
+  inline Vector3 getCentroid() const
+  {
+    return (min + max) * 0.5f;
+  }
 
   inline Vector3 diagonal() const
   {
@@ -60,19 +88,27 @@ struct AABB
       return AXIS::Z;
   }
 
+  // optional hit arguments updated for positive intersections
+  inline bool intersect(const Ray& ray, const Vector3& invDir, const I32 negDir[3]) const
+  {
+    F32 tMin = (bounds[dirIsNeg[0]].x - ray.o.x) * invDir.x;
+    F32 tMax = (bounds[1 - dirIsNeg[0]].x - ray.o.x) * invDir.x;
+    F32 tyMin = (bounds[dirIsNeg[1]].y - ray.o.y) * invDir.y;
+    F32 tyMax = (bounds[1 - dirIsNeg[1]].y - ray.o.y) * invDir.y;
+
+  }
+
   inline static AABB mergeAABB(const AABB& left, const AABB& right)
   {
     AABB bbox{};
-    bbox.min = Vector3{
+    bbox.min = {
       left.min.x < right.min.x ? left.min.x : right.min.x,
       left.min.y < right.min.y ? left.min.y : right.min.y ,
       left.min.z < right.min.z ? left.min.z : right.min.z};
-    bbox.max = Vector3{
+    bbox.max = {
       left.max.x > right.max.x ? left.max.x : right.max.x,
       left.max.y > right.max.y ? left.max.y : right.max.y ,
       left.max.z > right.max.z ? left.max.z : right.max.z };
-    // centroid from bounds
-    bbox.centre = (bbox.max + bbox.min) * 0.5f;
     return bbox;
   }
 
@@ -88,36 +124,19 @@ struct AABB
       box.max.y < point.y ? box.max.y : point.y,
       box.max.z < point.z ? box.max.z : point.z
     };
-    bbox.centre = (bbox.max + bbox.min) * 0.5f;
     return bbox;
+  }
+
+  inline static AABB mergeAABB(const Vector3& point, const AABB& box)
+  {
+    return mergeAABB(box, point);
   }
 
   inline static AABB getAABB(const std::vector<Vector3>& positions)
   {
     AABB aabb{};
     for (auto& position : positions)
-    {
-      aabb.centre += position;
-
-      // max
-      if (position.x > aabb.max.x)
-        aabb.max.x = position.x;
-      if (position.y > aabb.max.y)
-        aabb.max.y = position.y;
-      if (position.z > aabb.max.z)
-        aabb.max.z = position.z;
-
-      // min
-      if (position.x < aabb.min.x)
-        aabb.min.x = position.x;
-      if (position.y < aabb.min.y)
-        aabb.min.y = position.y;
-      if (position.z < aabb.min.z)
-        aabb.min.z = position.z;
-    }
-
-    aabb.centre /= static_cast<F32>(positions.size());
-
+      mergeAABB(aabb, position);
     return aabb;
   }
 

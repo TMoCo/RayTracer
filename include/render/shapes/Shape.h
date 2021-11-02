@@ -5,10 +5,14 @@
 #ifndef SHAPE_H_
 #define SHAPE_H_ 1
 
+#include <render/bounds/AABB.h>
 #include <render/raytracer/Surfel.h>
+#include <render/raytracer/Ray.h>
 
 struct Shape
 {
+  Shape(bool reverseOrientation) 
+    : reverseOrientation(reverseOrientation) {}
   virtual AABB getAABB() const = 0;
   virtual F32 getArea() const = 0;
   inline F32 getPdf() { return 1.0f / getArea(); }
@@ -19,6 +23,8 @@ struct Shape
     Surfel isect;
     return intersect(ray, &tHit, &isect);
   }
+
+  bool reverseOrientation;
 };
 
 #endif // !SHAPE_H_

@@ -6,10 +6,7 @@
 
 #include <core/Random.h>
 
-RayTracer::RayTracer() {}
-
-void RayTracer::RayTraceImage(buffer<colour>& frameBuffer, std::vector<Mesh*> meshes,
-    Transform t, const Camera* camera, UI32 samples) {
+void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera* camera, UI32 samples) {
     
   // scale for aspect ratio
   UI32 width  = static_cast<UI32>(frameBuffer.getWidth()), height = static_cast<UI32>(frameBuffer.getHeight());
@@ -40,17 +37,13 @@ void RayTracer::RayTraceImage(buffer<colour>& frameBuffer, std::vector<Mesh*> me
 
       c = {};
 
-      // ray direction
-      /*
-      if (row > frameBuffer.getHeight() / 2)
-      */
       primaryRay = Ray::generateCameraRay(camera, { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight });
       tNear = std::numeric_limits<F32>::max();
-      if (Intersect(primaryRay, meshes, s, tNear))
-        frameBuffer[row][col] = Colour::Red;
-      else
-        frameBuffer[row][col] = Colour::White;
-      // compute scene
+
+      // traverse scene
+
+      frameBuffer[row][col] = Colour::Red;
+
       //**
     }
   }

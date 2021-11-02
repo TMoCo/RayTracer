@@ -22,14 +22,13 @@
 
 class RayTracer {
 public:
-  RayTracer();
-
-  void RayTraceImage(buffer<colour>& frameBuffer , std::vector<Mesh*> meshes, Transform t, const Camera* camera, UI32 samples);
+  void raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera* camera, UI32 samples);
  
 private:
   // cast a ray 
   colour CastRay(const Ray& ray, UI32 depth);
 
+  // TODO: move intersection test to shapes
   // raytracing methods for triangle intersection 
   bool Intersect(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear);
     
@@ -48,8 +47,6 @@ private:
   Vector3 UniformSampleTriangleBasuOwen(const F32& u);
 
   Vector3 UniformSampleTriangle(const Vector2& uv);
-
-
 };
 
 #endif 
