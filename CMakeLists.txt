@@ -100,8 +100,8 @@ include_directories(
 # link libraries
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
-# visual studio project filters
 if(MSVC_IDE)
+  # visual studio project filters
   macro(GROUP_SOURCES CUR_DIR FILE_EXT)
     file(GLOB CHILDREN RELATIVE ${PROJECT_SOURCE_DIR}/${CUR_DIR} ${PROJECT_SOURCE_DIR}/${CUR_DIR}/*)
       foreach(CHILD ${CHILDREN})
@@ -119,9 +119,17 @@ if(MSVC_IDE)
 
   # run macro for headers
   GROUP_SOURCES("include" "h")
+  
+  if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+  message("valid version")
+  target_precompile_headers(${PROJECT_NAME} PRIVATE <math/thomath.h>)
+  endif()
 
+  # set start up project
   if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.8.0")
     set(VS_STARTUP_PROJECT ${PROJECT_NAME})
   endif()
+  
+  
 
 endif()

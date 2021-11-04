@@ -27,7 +27,6 @@ constexpr Vector3 BACK{ 0.0f,  0.0f,  1.0f };
 constexpr F32 PI = 3.14159265358979323846f;
 constexpr F32 PI_2 = 1.57079632679489661923f;
 constexpr F32 PI_4 = 0.785398163397448309616f;
-
 constexpr F32 EPSILON = 0.00001f;
 
 #endif // !CONSTANTS_H_
