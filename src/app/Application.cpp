@@ -129,8 +129,8 @@ void Application::renderLoopGl()
     if (glfwGetKey(window.ptr, GLFW_KEY_R))
     {
       // ... raytrace scene
-      // raytracer.raytrace(fb, meshes, t, window.getCamera(), 1);
-      // TextureLoader::writeTexture("../screenshots/out.jpg", fb);
+      raytracer.raytrace(fb, &scene, window.getCamera(), 1);
+      TextureLoader::writeTexture("../screenshots/out.jpg", fb);
     }
 
     // ... render scene

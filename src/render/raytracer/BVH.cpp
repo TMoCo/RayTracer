@@ -16,8 +16,8 @@ BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
   BVHNode* node = new BVHNode;
   numNodes++;
   AABB bbox{};
-  for (UI32 i = start; i < end; ++i)
-    bbox = AABB::mergeAABB(bbox, data[i].bbox);
+  //for (UI32 i = start; i < end; ++i)
+    //bbox = AABB::mergeAABB(bbox, data[i].bbox);
 
   UI32 nPrim = end - start;
   if (nPrim == 1)
@@ -31,8 +31,8 @@ BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
   else
   {
     AABB centroidBound{}; // get bounding box of primitive centroids
-    for (UI32 i = start; i < end; ++i)
-      centroidBound = AABB::mergeAABB(centroidBound, data[i].bbox.getCentroid());
+    //for (UI32 i = start; i < end; ++i)
+      // centroidBound = AABB::mergeAABB(centroidBound, data[i].bbox.getCentroid());
     // get axis with max extent
     AXIS axis = centroidBound.maxExtent();
     UI32 mid = (start + end) >> 1;
@@ -74,12 +74,6 @@ void BVH::getPrimitives(const std::vector<Mesh*>& meshes)
     {
       // for each triangle, generate a primitive object
       Primitive prim{};
-      prim.index = static_cast<UI32>(primitives.size());
-      prim.bbox = AABB::getAABB({ 
-        mesh->positions[mesh->indices[3 * i]],
-        mesh->positions[mesh->indices[3 * i + 1]],
-        mesh->positions[mesh->indices[3 * i + 2]] });
-      prim.mesh = mesh;
       // push primitive
       data.push_back(prim);
       primitives.push_back(&data.back());

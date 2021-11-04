@@ -8,6 +8,7 @@
 #include <render/Camera.h>
 
 #include <scene/Node.h>
+#include <scene/Primitive.h>
 
 struct Scene {
   std::string name;
@@ -18,6 +19,8 @@ struct Scene {
   ~Scene();
   
   void clear(); // dfs delete nodes
+
+  std::vector<Primitive*> primitives;
 };
 
 #endif // !SCENE_H_

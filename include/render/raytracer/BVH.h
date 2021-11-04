@@ -9,12 +9,8 @@
 
 #include <render/bounds/AABB.h>
 
-struct Primitive
-{
-  UI32 index;
-  Mesh* mesh;
-  AABB bbox{};
-};
+#include <scene/Primitive.h>
+
 
 struct BVHNode
 {

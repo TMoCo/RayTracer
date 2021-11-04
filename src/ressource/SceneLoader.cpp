@@ -77,6 +77,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
       DEBUG_ASSERT(scene->root != nullptr, "Can't add a primitive to an empty scene");
       node->addChild(new Primitive);
       newNode = node->children.back();
+      scene->primitives.push_back(reinterpret_cast<Primitive*>(node->children.back()));
       token = strtok_s(NULL, " ", &remainding); 
       std::cout << "new primitive: '" << token << "'\n";
       newNode->name = token ? token : "empty";
@@ -110,6 +111,10 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
   }
   objStream.close();
+
+  // TODO: generate BVH when scene data is loaded
+  std::cout << "primitives in scene: " << scene->primitives.size() << "\n";
+
   return 0;
 }
 

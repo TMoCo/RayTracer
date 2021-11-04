@@ -5,6 +5,8 @@
 #ifndef SPHERE_H_
 #define SPHERE_H_ 1
 
+#include <cmath>
+
 #include <render/shapes/Shape.h>
 
 class Sphere : public Shape
@@ -35,9 +37,19 @@ public:
     F32 b = 2.0f * (ray.direction.dot(ray.origin));
     F32 c = ray.origin.dot(ray.origin) - radius * radius;
 
-
-    // 
-    return false;
+    F32 t0, t1;
+    if (!quadratic(a, b, c, &t0, &t1))
+      return false; // no roots so no intersections with sphere
+    if (t0 > ray.tMax || t1 <= 0.0f) // t0 < t1
+      return false; // t0 greater than max or t1 smaller or equal to 0, the intersection is outside of considered range
+    F32 t = t0;
+    if (t <= 0.0f)
+    {
+      t = t1;
+      if (t > ray.tMax)
+        return false;
+    }
+    return true;
   }
 
   inline F32 getArea() const override

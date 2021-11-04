@@ -20,7 +20,6 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera
   F32 gamma = 1.0f / 2.2f;
 
   Surfel s{};
-  F32 tNear;
 
   // scan pixels from bottom left corner
   for (UI32 row = 0; row < height; ++row)
@@ -35,14 +34,21 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera
       //   compute pixel colour
       //   pop pixel 
 
-      c = {};
+      c = {}; // init empty colour
+      frameBuffer[row][col] = Colour::White;
 
+      // generate primary ray from the camera
       primaryRay = Ray::generateCameraRay(camera, { (col + 0.5f) * rWidth, (row + 0.5f) * rHeight });
-      tNear = std::numeric_limits<F32>::max();
+      primaryRay.tMax = std::numeric_limits<F32>::max(); // TODO: use better tmax value
 
       // traverse scene
+      // TODO: intersect with BVH
 
-      frameBuffer[row][col] = Colour::Red;
+      // for now, just loop over all primitives in the scene and test intersection
+      for (auto& prim : scene->primitives)
+        if (prim->shape->IntersectP(primaryRay))
+          frameBuffer[row][col] = Colour::Red;
+
 
       //**
     }
