@@ -23,7 +23,7 @@ BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
   if (nPrim == 1)
   {
     // leaf node
-    UI32 firstPrim = ordered.size();
+    UI32 firstPrim = static_cast<UI32>(ordered.size());
     for (UI32 i = start; i < end; ++i)
       ordered.push_back(&data[i]);
     node->initLeaf(firstPrim, nPrim, bbox);
@@ -32,14 +32,14 @@ BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
   {
     AABB centroidBound{}; // get bounding box of primitive centroids
     for (UI32 i = start; i < end; ++i)
-      centroidBound = AABB::mergeAABB(centroidBound, data[i].bbox.centre);
+      centroidBound = AABB::mergeAABB(centroidBound, data[i].bbox.getCentroid());
     // get axis with max extent
     AXIS axis = centroidBound.maxExtent();
     UI32 mid = (start + end) >> 1;
     if (centroidBound.max[axis] == centroidBound.min[axis])
     {
       // leaf node
-      UI32 firstPrim = ordered.size();
+      UI32 firstPrim = static_cast<UI32>(ordered.size());
       for (UI32 i = start; i < end; ++i)
         ordered.push_back(&data[i]);
       node->initLeaf(firstPrim, nPrim, bbox);

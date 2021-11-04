@@ -6,6 +6,7 @@
 #define AABB_H_
 
 #include <render/Mesh.h>
+#include <render/raytracer/Ray.h>
 
 #include <math/thomath.h>
 
@@ -37,12 +38,11 @@ struct AABB
     4, 1, 5
   };
 
-  AABB()
-    : min(std::numeric_limits<F32>::max()), max(std::numeric_limits<F32>::lowest())
+  AABB() : min(std::numeric_limits<F32>::max()), max(std::numeric_limits<F32>::lowest())
   {}
 
-  AABB(const Vector3& min, const Vector3& max) 
-    : min(std::numeric_limits<F32>::max()), max(std::numeric_limits<F32>::lowest()) 
+  AABB(const Vector3& min, const Vector3& max) : min(std::numeric_limits<F32>::max()), 
+    max(std::numeric_limits<F32>::lowest()) 
   {
     // test min
     if (this->min.x > min.x)
@@ -91,11 +91,12 @@ struct AABB
   // optional hit arguments updated for positive intersections
   inline bool intersect(const Ray& ray, const Vector3& invDir, const I32 negDir[3]) const
   {
+    /*
     F32 tMin = (bounds[dirIsNeg[0]].x - ray.o.x) * invDir.x;
     F32 tMax = (bounds[1 - dirIsNeg[0]].x - ray.o.x) * invDir.x;
     F32 tyMin = (bounds[dirIsNeg[1]].y - ray.o.y) * invDir.y;
     F32 tyMax = (bounds[1 - dirIsNeg[1]].y - ray.o.y) * invDir.y;
-
+    */
   }
 
   inline static AABB mergeAABB(const AABB& left, const AABB& right)

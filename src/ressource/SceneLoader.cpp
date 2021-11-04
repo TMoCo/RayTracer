@@ -1,6 +1,8 @@
 #include <resource/file.h>
 #include <resource/SceneLoader.h>
 
+#include <render/shapes/Sphere.h>
+
 #include <scene/Primitive.h>
 
 #include <fstream>
@@ -37,8 +39,6 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
   {
     objStream.getline(line, 1024);
     token = strtok_s(line, " ", &remainding);
-    std::cout << token << "\n";
-    std::cout << "'" << remainding << "'\n";
 
     if (token == nullptr) continue;
     
@@ -48,6 +48,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     if (strcmp(token, "{") == 0)
     {
+      std::cout << "{\n";
       nodeStack.push_back(newNode);
       node = nodeStack.back();
       continue;
@@ -55,14 +56,16 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     if (strcmp(token, "}") == 0)
     {
+      std::cout << "}\n";
       nodeStack.pop_back();
-      node = nodeStack.back();
+      node = nodeStack.empty() ? nullptr : nodeStack.back();
       continue;
     }
 
     if (strcmp(token, "scene") == 0)
     {
       scene->root = new Node;
+      scene->root->name = "root";
       token = strtok_s(NULL, " ", &remainding);
       scene->name = token;
       newNode = scene->root;
@@ -76,14 +79,17 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
       newNode = node->children.back();
       token = strtok_s(NULL, " ", &remainding); 
       std::cout << "new primitive: '" << token << "'\n";
-      node->name = token;
+      newNode->name = token ? token : "empty";
       continue;
     }
 
     if (strcmp(token, "shape") == 0)
     {
-      // TODO: add check for primitive type
+      DEBUG_ASSERT(typeid(*node) == typeid(Primitive), "Shape must be added to a primitive!");
       Primitive* p = reinterpret_cast<Primitive*>(node);
+      token = strtok_s(NULL, " ", &remainding);
+      std::cout << "new shape: '" << token << "'\n create info: " << remainding << "\n";
+      p->shape = parseShape(token, remainding ? remainding : "");
     }
 
     if (strcmp(token, "position") == 0)
@@ -105,4 +111,17 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
   }
   objStream.close();
   return 0;
+}
+
+Shape* SceneLoader::parseShape(const char* shape, char* data)
+{
+  if (strcmp(shape, "sphere") == 0)
+  {
+    // parse data as 
+    F32 radius = strtof(data, &data);
+    F32 zMin = strtof(data, &data);
+    F32 zMax = strtof(data, &data);
+    F32 phiMax = strtof(data, &data);
+    return new Sphere(false, radius, zMin, zMax, phiMax);
+  }
 }

@@ -38,7 +38,7 @@ void Window::setMainCamera(Camera* camera)
 {
   mainCamera = camera;
   camera->aspectRatio = width / static_cast<F32>(height);
-  mainCamera->vpHeight = 2.0f * tan(RADIANS(mainCamera->FOV * 0.5f));
+  mainCamera->vpHeight = 2.0f * tan(radians(mainCamera->FOV * 0.5f));
   mainCamera->vpWidth = mainCamera->vpHeight * mainCamera->aspectRatio;
 }
 
@@ -105,7 +105,7 @@ void Window::resizeCallBack(GLFWwindow* p_win, I32 w, I32 h)
     if (window->mainCamera) // also update camera
     {
       window->mainCamera->aspectRatio = static_cast<F32>(w) / static_cast<F32>(h);
-      window->mainCamera->vpHeight = 2.0f * tan(RADIANS(window->mainCamera->FOV * 0.5f));
+      window->mainCamera->vpHeight = 2.0f * tan(radians(window->mainCamera->FOV * 0.5f));
       window->mainCamera->vpWidth = window->mainCamera->vpHeight * window->mainCamera->aspectRatio;
     }
   }

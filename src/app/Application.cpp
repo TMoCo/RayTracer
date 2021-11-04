@@ -66,13 +66,12 @@ I32 Application::run()
 
 void Application::renderLoopGl()
 {
-  resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj");
+  Mesh* triangles = resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\Triangles.obj");
+  triangles->generatebuffers(false);
 
-  /*
   Scene scene{};
   SceneLoader::loadScene(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\teapot.scene", &scene);
-  */
+    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", &scene);
 
   // shaders for scene
   Shader shader{};
@@ -86,8 +85,8 @@ void Application::renderLoopGl()
     "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
 
   // load meshes from obj (eg, build a scene in blender)
-  Mesh* teapot = resourceManager.getMesh("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj");
-  teapot->generatebuffers(false);
+  // Mesh* teapot = resourceManager.getMesh("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj");
+  // teapot->generatebuffers(false);
 
   // frame buffer
   buffer<colour> fb{ window.getWidth(), window.getHeight() };
@@ -102,7 +101,7 @@ void Application::renderLoopGl()
   window.setMainCamera(&camera);
 
   // global scene transform
-  Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(RADIANS(0.0f), RIGHT) };
+  Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(radians(0.0f), RIGHT) };
 
   Matrix4 model = t.toWorldMatrix();
   Matrix4 view; // update every frame
@@ -136,14 +135,14 @@ void Application::renderLoopGl()
 
     // ... render scene
     view = camera.getViewMatrix();
-    proj = Matrix4::perspective(RADIANS(camera.FOV), camera.aspectRatio, camera.zNear, camera.zFar);
+    proj = Matrix4::perspective(radians(camera.FOV), camera.aspectRatio, camera.zNear, camera.zFar);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     shader.use();
     shader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
     containerTexture.bind(0);
 
-    teapot->draw();
+    triangles->draw();
 
     // ... debug
     if (debug)

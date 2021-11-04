@@ -1,0 +1,12 @@
+# sphere scene
+scene sphere
+{
+  primitive test
+  {
+    # a sphere with radius 1, zmin -1, zmax 1, phiMax 4pi
+    shape sphere 1 -1 1 360
+    # sphere transformation
+    position 0 0 0
+    rotation 0 0 0
+  }
+}

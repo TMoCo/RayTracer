@@ -54,7 +54,7 @@ struct Camera {
 
   inline Vector3 getCameraVector(const Vector2& PNDC) const {
     // fov
-    F32 tanHalfFOV = std::tan(RADIANS(FOV * 0.5f));
+    F32 tanHalfFOV = std::tan(radians(FOV * 0.5f));
     // given pixel normalised device coordinates, return a vector in camera's direction
     return {
         (2.0f * PNDC.x - 1.0f) * aspectRatio * tanHalfFOV,
@@ -96,9 +96,9 @@ struct Camera {
     pitch += (I32)intPart % 360;
 
     front = Vector3{
-      cosf(RADIANS(yaw)) * cosf(RADIANS(pitch)),
-      sinf(RADIANS(pitch)),
-      sinf(RADIANS(yaw)) * cosf(RADIANS(pitch)) }.normalize();
+      cosf(radians(yaw)) * cosf(radians(pitch)),
+      sinf(radians(pitch)),
+      sinf(radians(yaw)) * cosf(radians(pitch)) }.normalize();
     
     right = pitch > 89.9f && pitch < 269.0f ? 
       front.cross(DOWN).normalize() :

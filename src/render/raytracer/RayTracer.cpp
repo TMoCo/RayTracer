@@ -85,8 +85,8 @@ colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
         tNear = INFINITY;
 
         // from light to surfel
-        ray._origin = RandomAreaLightPoint(lights[l]); // ray originate at light
-        ray._direction = (surfel.position - ray._origin).normalize(); // to surfel
+        ray.origin = RandomAreaLightPoint(lights[l]); // ray originate at light
+        ray.direction = (surfel.position - ray.origin).normalize(); // to surfel
 
         // get intersection of light to surfel
         Intersect(ray, meshes, shadow, tNear);
@@ -99,7 +99,7 @@ colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
               // light colour
               model.materials.at(model.lights[l]->material).emissive.toVector3()
               // surfel brdf
-              * surfel.BRDF(-ray._direction, -inRay._direction,
+              * surfel.BRDF(-ray.direction, -inRay.direction,
               model.materials.at(surfel.mesh->material))
               // light distance attenuation
               / (tNear * tNear);
@@ -108,14 +108,14 @@ colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
       }
 
       // indirect lighting
-      ray._direction = Quaternion::rotateVector(
+      ray.direction = Quaternion::rotateVector(
         // random point on hemisphere unit hemisphere
         UniformSampleHemisphere(Random::UniformUV()),
         // rotation to align unit normal with surfel normal
         Quaternion::getRotationFrom(UP, surfel.normal));
 
       c += CastRay(ray, depth + 1);
-      //* surfel.BRDF(ray._direction, -inRay._direction, model.materials.at(surfel.mesh->material));
+      //* surfel.BRDF(ray.direction, -inRay.direction, model.materials.at(surfel.mesh->material));
     }
     else if (Intersect(inRay, lights, surfel, tNear))
       c = {};// &model.materials.at(surfel.mesh->material).emissive[0];
@@ -146,7 +146,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
             edge2 = meshes[m]->positions[meshes[m]->indices[f+2]]
                 - meshes[m]->positions[meshes[m]->indices[f]]; // V2 - v0
 
-            h = ray._direction.cross(edge2);
+            h = ray.direction.cross(edge2);
             k = edge1.dot(h);
 
             // if cross prod of ray and edge2 is perpendicular to egde1, then 
@@ -157,20 +157,20 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
             k = 1.0f / k; // reuse k
 
             // s = origin - v0
-            s = ray._origin - meshes[m]->positions[meshes[m]->indices[f]]; 
+            s = ray.origin - meshes[m]->positions[meshes[m]->indices[f]]; 
             u = k * s.dot(h);
             if (u < 0.0f || u > 1.0f)
                 continue;
 
             q = s.cross(edge1);
-            v = k * ray._direction.dot(q);
+            v = k * ray.direction.dot(q);
             if (v < 0.0f || u + v > 1.0f)
                 continue;
 
             k = k * edge2.dot(q);
             if (k > EPSILON) { // valid intersection
               return true;
-                t = (ray.At(k) - ray._origin).length(); // test depth
+                t = (ray.At(k) - ray.origin).length(); // test depth
                 if (t < tNear) {
                     tNear = t;
                     surfel.tri = f;     // save index of current face

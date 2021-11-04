@@ -14,8 +14,9 @@
 
 // TODO: remove warning sources (strcpy, strtok, size_t to UI32)
 
-struct OBJLoader 
+class OBJLoader 
 {
+public:
   static bool loadObj(const std::string& path, ResourceManager& resourceManager, bool singleMesh);
 
   static bool loadMtl(const std::string& path);

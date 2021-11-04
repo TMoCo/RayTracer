@@ -1,5 +1,5 @@
 //
-// A class for managing a scene
+// scene primitive
 //
 
 #ifndef PRIMITIVE_H_
@@ -15,8 +15,13 @@
 
 #include <vector>
 
-struct Primitive : Node
+class Primitive : public Node
 {
+public:
+  Primitive() : Node(), shape(nullptr) {}
+
+  ~Primitive() {}
+
   // get the union of all children primitives
   AABB getBounds();
 

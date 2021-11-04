@@ -2,7 +2,7 @@
 {
   primitive
   {
-    triangle 
+    shape triangle 
     position 0 0 0
     rotation 0 0 0
   }

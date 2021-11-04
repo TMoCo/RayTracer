@@ -3,13 +3,10 @@
 
 Mesh* ResourceManager::tryGetMesh(const std::string& meshName)
 {
-  if (meshes.count(meshName) != 0)
-    return meshes[meshName];
-  else
-  {
-    // load mesh
-    OBJLoader::loadObj(meshName, *this, true);
-  }
+  // on failure, load mesh
+  return meshes.count(meshName) != 0 ? 
+    meshes[meshName] : OBJLoader::loadObj(meshName, *this, true) ? 
+    meshes[meshName] : nullptr;
 }
 
 Mesh* ResourceManager::getMesh(const std::string& meshName)

@@ -1,5 +1,15 @@
 #include <scene/Node.h>
 
+Node::Node() : dirty(false)
+{
+
+}
+
+Node::~Node()
+{
+  clear();
+}
+
 void Node::updateTransform()
 {
     dirty = false;

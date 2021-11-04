@@ -3,7 +3,7 @@ scene teapotScene
 {
   primitive 
   {
-    shape sphere
+    shape mesh "path/to/object"
     position 1 2 3
     rotation 1 2 3
   }

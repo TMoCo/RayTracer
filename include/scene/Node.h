@@ -9,8 +9,9 @@
 
 #include <math/Transform.h>
 
-struct Node
+class Node
 {
+public:
   std::string name;
 
   Node* parent;
@@ -21,7 +22,9 @@ struct Node
 
   bool dirty;
 
-  void updateTransform();
+  Node();
+
+  virtual ~Node();
 
   void clear();
 
@@ -34,6 +37,8 @@ struct Node
   void setParent(Node* newParent);
   
   Node* getParent();
+
+  void updateTransform();
 
   Transform getLocalTransform();
   
