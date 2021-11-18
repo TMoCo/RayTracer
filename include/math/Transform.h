@@ -11,11 +11,7 @@
 
 class Transform {
 public:
-  Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f }) : 
-    position(position), rotation(rotation)
-  {}
-
-  Matrix4 getMatrix();
+  Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f });
 
   void rotate(const Quaternion& quaternion);
 
@@ -23,19 +19,14 @@ public:
 
   void scale(const Vector3& scale);
 
-  void lookAt(Transform& target, Vector3 up = UP);
-
-  void update();
-
   // world position rotation
-  Vector3 position;  
+  Vector3 position;
+
   Quaternion rotation;
 
   // matrix representation
-  Matrix4 local;
-  Matrix4 invLocal;
-  Matrix4 global;
-  Matrix4 invGlobal;
+  Matrix4 matrix;
+  Matrix4 inverseMatrix;
 
 };
 

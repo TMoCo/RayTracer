@@ -90,6 +90,8 @@ typedef struct Vector3 {
 // binary operators
 Vector3 operator /(Vector3 lhs, const F32& rhs);
 
+Vector3 operator /(const F32 lhs, Vector3& rhs);
+
 Vector3 operator *(const F32& lhs, Vector3 rhs);
 
 Vector3 operator *(Vector3 lhs, const F32& rhs);

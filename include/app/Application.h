@@ -13,6 +13,7 @@
 #include <resource/ResourceManager.h>
 
 #include <render/raytracer/RayTracer.h>
+#include <scene/Scene.h>
 
 #include <widgets/Window.h> 
 
@@ -32,7 +33,7 @@ private:
   void terminate();
 
   // render loops (belong to their respective renderers?)
-  void renderLoopGl();
+  void renderLoopGl(Scene* scene);
 
   void renderLoopVk(); // todo: for vulkan applications
 

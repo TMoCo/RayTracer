@@ -56,22 +56,21 @@ I32 Application::run()
     return -1;
   }
 
+  Scene* scene = new Scene;
+  SceneLoader::loadScene("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", scene);
+
   // main loop
-  renderLoopGl();
+  renderLoopGl(scene);
 
   terminate();
 
   return 0;
 }
 
-void Application::renderLoopGl()
+void Application::renderLoopGl(Scene* scene)
 {
   //Mesh* triangles = resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\Triangles.obj");
   //triangles->generatebuffers(false);
-
-  Scene scene{};
-  SceneLoader::loadScene(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", &scene);
 
   // shaders for scene
   //Shader shader{};
@@ -100,13 +99,10 @@ void Application::renderLoopGl()
 
   window.setMainCamera(&camera);
 
-  std::cout << scene.primitives.size() << " primitives in the scene\n";
-  std::cout << scene.primitives.back()->local.position << "\n";
-
   // global scene transform
   Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(radians(0.0f), RIGHT) };
 
-  Matrix4 model = t.getMatrix();
+  Matrix4 model = t.matrix;
   Matrix4 view; // update every frame
   Matrix4 proj;
   
@@ -132,7 +128,7 @@ void Application::renderLoopGl()
     if (glfwGetKey(window.ptr, GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(fb, &scene, window.getCamera(), 1);
+      raytracer.raytrace(fb, scene, window.getCamera(), 1);
       TextureLoader::writeTexture("../screenshots/out.jpg", fb);
     }
 

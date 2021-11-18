@@ -48,8 +48,6 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera
       for (auto& prim : scene->primitives)
         if (prim->shape->IntersectP(primaryRay))
           frameBuffer[row][col] = Colour::Red;
-
-
       //**
     }
   }

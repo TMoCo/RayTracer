@@ -111,7 +111,6 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
   objStream.close();
 
   // TODO: generate BVH when scene data is loaded
-  std::cout << "primitives in scene: " << scene->primitives.size() << "\n";
 
   return 0;
 }

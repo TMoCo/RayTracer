@@ -141,6 +141,12 @@ Vector3 operator /(Vector3 lhs, const F32& rhs)
   return lhs /= rhs;
 }
 
+Vector3 operator /(const F32 lhs, Vector3& rhs)
+{
+  return Vector3{ lhs } / rhs;
+}
+
+
 Vector3 operator *(const F32& lhs, Vector3 rhs)
 {
   return rhs *= lhs;
