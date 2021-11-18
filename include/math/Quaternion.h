@@ -95,6 +95,8 @@ public:
   // quaternion builder
   static Quaternion angleAxis(F32 angle, const Vector3& axis);
 
+  static Quaternion eulerAngles(F32 pitch, F32 yaw, F32 roll);
+
   static Quaternion getRotationFrom(const Vector3& from, const Vector3& to); // rotation from one point to another
 
   static Vector3 rotateVector(const Vector3& vector, const Quaternion& quaternion); // apply rotation to a right quaternion

@@ -105,6 +105,20 @@ Quaternion Quaternion::angleAxis(F32 angle, const Vector3& axis)
   return Quaternion(axis.normalize() * sinf(angle * 0.5f), cosf(angle * 0.5f));
 }
 
+Quaternion Quaternion::eulerAngles(F32 pitch, F32 yaw, F32 roll)
+{
+  Quaternion quaternion{};
+  F32 roll2 = radians(roll * 0.5f), pitch2 = radians(pitch * 0.5f), yaw2 = radians(yaw * 0.5f);
+  F32 sp = sinf(pitch2), cp = cosf(pitch2);
+  F32 sy = sinf(yaw2), cy = cosf(yaw2);
+  F32 sr = sinf(roll2), cr = cosf(roll2);
+  quaternion._vector.x = sp * cy * cr + cp * sy * sr;
+  quaternion._vector.y = cp * sy * cr - sp * cy * sr;
+  quaternion._vector.z = sp * sy * cr + cp * cy * sr;
+  quaternion._scalar   = cr * cp * cy - sr * sp * sy;
+  return quaternion;
+}
+
 Quaternion Quaternion::getRotationFrom(const Vector3& from, const Vector3& to)
 {
   return Quaternion{ from.cross(to), sqrtf(from.dot(from) * to.dot(to) + from.dot(to)) }.unit();

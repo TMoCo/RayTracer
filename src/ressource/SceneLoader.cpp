@@ -35,6 +35,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
   Node* node;
   Node* newNode;
 
+  UI32 lineNum = 0;
   while (!objStream.eof())
   {
     objStream.getline(line, 1024);
@@ -86,7 +87,6 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     if (strcmp(token, "shape") == 0)
     {
-      DEBUG_ASSERT(typeid(*node) == typeid(Primitive), "Shape must be added to a primitive!");
       Primitive* p = reinterpret_cast<Primitive*>(node);
       token = strtok_s(NULL, " ", &remainding);
       std::cout << "new shape: '" << token << "'\n create info: " << remainding << "\n";
@@ -95,12 +95,9 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     if (strcmp(token, "position") == 0)
     {
-      Vector3 position;
-      strtok_s(NULL, " ", &token);
-      position.x = strtof(token, &token);
-      position.y = strtof(token, &token);
-      position.z = strtof(token, &token);
-      node->local.position = position;
+      node->local.position.x = strtof(remainding, &token);
+      node->local.position.y = strtof(token, &token);
+      node->local.position.z = strtof(token, NULL);
       continue;
     }
     
@@ -109,6 +106,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     }
 
+    lineNum++;
   }
   objStream.close();
 

@@ -20,8 +20,6 @@ class Primitive : public Node
 public:
   Primitive() : Node(), shape(nullptr) {}
 
-  ~Primitive() {}
-
   // get the union of all children primitives
   AABB getBounds();
 

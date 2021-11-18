@@ -129,8 +129,7 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
   }
   return *this;
 
-  /*
-  
+  /*  
   // loop based
   Matrix4 p = *this;
   UI32 r, c = 0; // row col
@@ -144,7 +143,6 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
       p._m[(c << 2) + 3] * other._m[12 + r];
   }
   return *this;
-
 
   // old simd solution
   Matrix4 p = Matrix4::Transpose(*this);
@@ -198,10 +196,7 @@ const F32* Matrix4::operator [](const UI32 index) const
 Matrix4 Matrix4::identity() 
 {
   Matrix4 mat{};
-  mat[0][0] = 1.0f;
-  mat[1][1] = 1.0f;
-  mat[2][2] = 1.0f;
-  mat[3][3] = 1.0f;
+  mat[0][0] = mat[1][1] = mat[2][2] = mat[3][3] = 1.0f;
   return mat;
 }
 
@@ -238,21 +233,14 @@ Matrix4 Matrix4::transpose(const Matrix4& mat)
   return t;
 }
 
-Matrix4 Matrix4::translationMatrix(const Vector3& v)
+Matrix4 Matrix4::translation(const Vector3& v)
 {
   Matrix4 mat = Matrix4::identity();
   memcpy(mat._m + 12, v._v, SIZEOF_VEC3); // bonus of column major <3
   return mat;
 }
 
-Matrix4 Matrix4::translate(Matrix4 m, const Vector3& v)
-{
-  // multiply final column with homogenised vector
-  m.__m[3] = _mm_mul_ps(m.__m[3], Vector4::toHomogeneous(v).__v);
-  return m;
-}
-
-Matrix4 Matrix4::rotationMatrix(const Quaternion& q)
+Matrix4 Matrix4::rotation(const Quaternion& q)
 {
   Matrix4 mat{};
 
@@ -284,17 +272,12 @@ Matrix4 Matrix4::rotationMatrix(const Quaternion& q)
   return mat;
 }
 
-Matrix4 Matrix4::rotate(Matrix4 m, const Quaternion& q)
-{
-  return m;
-}
-
-Matrix4 Matrix4::scaleMatrix(const F32& s)
+Matrix4 Matrix4::scale(const Vector3& scale)
 {
   Matrix4 mat{};
-  mat[0][0] = s;
-  mat[1][1] = s;
-  mat[2][2] = s;
+  mat[0][0] = scale.x;
+  mat[1][1] = scale.y;
+  mat[2][2] = scale.z;
   mat[3][3] = 1.0f;
   return mat;
 }

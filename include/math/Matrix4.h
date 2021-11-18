@@ -14,9 +14,10 @@
 
 constexpr UI32 SIZEOF_MAT4 = 0x40;
 
-// column major matrix
+// TODO: add matrix inverse method
 typedef struct Matrix4 {
 public:
+// column major matrix
   union {
     F32     _m[16];
     __m128 __m[4];
@@ -69,15 +70,11 @@ public:
 
   static Matrix4 transpose(const Matrix4& m);
 
-  static Matrix4 translationMatrix(const Vector3& v);
+  static Matrix4 translation(const Vector3& v);
 
-  static Matrix4 translate(Matrix4 m, const Vector3& v);
+  static Matrix4 rotation(const Quaternion& q);
 
-  static Matrix4 rotationMatrix(const Quaternion& q);
-
-  static Matrix4 rotate(Matrix4 m, const Quaternion& q);
-
-  static Matrix4 scaleMatrix(const F32& s);
+  static Matrix4 scale(const Vector3& scale);
 
   static Matrix4 perspective(F32 FOV, F32 aspectRatio, F32 near, F32 far);
 

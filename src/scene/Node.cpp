@@ -48,19 +48,3 @@ Node* Node::getParent()
 {
   return parent;
 }
-
-Transform Node::getLocalTransform()
-{
-  return local;
-}
-
-Transform Node::getGlobalTransform()
-{
-  if (dirty)
-    updateTransform();
-  if (parent)
-    global = parent->getGlobalTransform(); // multiply by local 
-  else
-    global = local;
-  return global;
-}

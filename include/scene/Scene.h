@@ -20,7 +20,7 @@ struct Scene {
   
   void clear(); // dfs delete nodes
 
-  std::vector<Primitive*> primitives;
+  std::vector<Primitive*> primitives; // container for all primitives
 };
 
 #endif // !SCENE_H_

@@ -23,8 +23,8 @@ public:
   bool dirty;
 
   Node();
-
-  virtual ~Node();
+  
+  ~Node();
 
   void clear();
 
@@ -39,10 +39,6 @@ public:
   Node* getParent();
 
   void updateTransform();
-
-  Transform getLocalTransform();
-  
-  Transform getGlobalTransform();
 };
 
 #endif // !NODE_H_

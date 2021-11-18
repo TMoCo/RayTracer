@@ -4,32 +4,33 @@
 
 #include <math/Transform.h>
 
-Matrix4 Transform::toWorldMatrix() const 
+// TODO: implement transform methods
+Matrix4 Transform::getMatrix()
 {
-  return Matrix4::translationMatrix(position) * Matrix4::rotationMatrix(orientation);
+  return {};
 }
 
-Vector3 Transform::transformPoint(const Vector3& vec3) const 
+void Transform::rotate(const Quaternion& quaternion)
 {
-    return (toWorldMatrix() * Vector4::toHomogeneous(vec3))._v;
+  local *= Matrix4::rotation(quaternion);
 }
 
-Vector3 Transform::rotate(const Vector3& vec3) const 
-{
-  return Quaternion::rotateVector(vec3, orientation);
+void Transform::translate(const Vector3& vec3) 
+{  
+  local *= Matrix4::translation(vec3);
 }
 
-Vector3 Transform::translate(const Vector3& vec3) const 
+void Transform::scale(const Vector3& scale)
 {
-  return position + vec3;
+  local *= Matrix4::scale(scale);
 }
 
-Transform Transform::transformChild(const Transform& parent, const Transform& child)
+void Transform::lookAt(Transform& target, Vector3 up)
 {
-  Transform composite;
-  // multiply parent by child
-  composite.orientation = parent.orientation * child.orientation;
-  // rotate the child translation by the parent orientation and translate parent
-  composite.position = parent.position + parent.rotate(child.position);
-  return composite;
+  local *= Matrix4::lookAt(position, target.position, up);
+}
+
+void Transform::update()
+{
+  // update transform 
 }

@@ -84,7 +84,7 @@ typedef struct Vector3 {
 
   static Vector3 reflect(const Vector3& v, const Vector3& normal);
 
-  static Vector3 refract(const Vector3& v, const Vector3& normal, const float& iorRatio);
+  static Vector3 refract(const Vector3& v, const Vector3& normal, const F32& iorRatio);
 } Vector3;
 
 // binary operators

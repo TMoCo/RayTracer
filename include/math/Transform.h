@@ -9,23 +9,34 @@
 #include <math/Quaternion.h>
 #include <math/Vector3.h>
 
-struct Transform {
-    Vector3 position;
+class Transform {
+public:
+  Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f }) : 
+    position(position), rotation(rotation)
+  {}
 
-    Quaternion orientation;
+  Matrix4 getMatrix();
 
-    Transform(const Vector3& p = {}, const Quaternion& o = {}) : position{ p }, orientation{ o } {}
+  void rotate(const Quaternion& quaternion);
 
-    Matrix4 toWorldMatrix() const;
+  void translate(const Vector3& vec3);
 
-    Vector3 transformPoint(const Vector3& vec3) const;
+  void scale(const Vector3& scale);
 
-    Vector3 rotate(const Vector3& vec3) const;
+  void lookAt(Transform& target, Vector3 up = UP);
 
-    Vector3 translate(const Vector3& vec3) const;
+  void update();
 
-    // modify the transform
-    static Transform transformChild(const Transform& parent, const Transform& child);
+  // world position rotation
+  Vector3 position;  
+  Quaternion rotation;
+
+  // matrix representation
+  Matrix4 local;
+  Matrix4 invLocal;
+  Matrix4 global;
+  Matrix4 invGlobal;
+
 };
 
 #endif // !TRANSFORM_H_

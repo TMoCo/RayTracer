@@ -66,23 +66,23 @@ I32 Application::run()
 
 void Application::renderLoopGl()
 {
-  Mesh* triangles = resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\Triangles.obj");
-  triangles->generatebuffers(false);
+  //Mesh* triangles = resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\Triangles.obj");
+  //triangles->generatebuffers(false);
 
   Scene scene{};
   SceneLoader::loadScene(
     "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", &scene);
 
   // shaders for scene
-  Shader shader{};
-  shader.create(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
+  //Shader shader{};
+  //shader.create(
+    //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
+    //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
 
-  Shader debugShader{}; // for viewing AABB, view frustum, BVH hierarchies
-  debugShader.create(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.vert",
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
+  //Shader debugShader{}; // for viewing AABB, view frustum, BVH hierarchies
+  //debugShader.create(
+    //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.vert",
+    //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
 
   // load meshes from obj (eg, build a scene in blender)
   // Mesh* teapot = resourceManager.getMesh("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj");
@@ -92,18 +92,21 @@ void Application::renderLoopGl()
   buffer<colour> fb{ window.getWidth(), window.getHeight() };
 
   // texture (TODO: make part of material struct)
-  Texture containerTexture{};
-  TextureLoader::loadTexture("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
+  // Texture containerTexture{};
+  // TextureLoader::loadTexture("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
   
   // scene camera
   Camera camera{ { 0.0f, 0.0f, 2.0f } };
 
   window.setMainCamera(&camera);
 
+  std::cout << scene.primitives.size() << " primitives in the scene\n";
+  std::cout << scene.primitives.back()->local.position << "\n";
+
   // global scene transform
   Transform t{ Vector3{ 0.0f, 0.0f, 0.0f }, Quaternion::angleAxis(radians(0.0f), RIGHT) };
 
-  Matrix4 model = t.toWorldMatrix();
+  Matrix4 model = t.getMatrix();
   Matrix4 view; // update every frame
   Matrix4 proj;
   
@@ -138,18 +141,18 @@ void Application::renderLoopGl()
     proj = Matrix4::perspective(radians(camera.FOV), camera.aspectRatio, camera.zNear, camera.zFar);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    shader.use();
-    shader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
-    containerTexture.bind(0);
+    //shader.use();
+    //shader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
+    //containerTexture.bind(0);
 
-    triangles->draw();
+    //triangles->draw();
 
     // ... debug
     if (debug)
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      debugShader.use();
-      debugShader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
+      //debugShader.use();
+      //debugShader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
     }
 
     glfwPollEvents();
