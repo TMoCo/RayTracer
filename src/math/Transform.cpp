@@ -8,9 +8,8 @@
 Transform::Transform(Vector3 position, Quaternion rotation, Vector3 scale) 
 {
   // construct matrix and its inverse
-  matrix = Matrix4::scale(scale) * Matrix4::rotation(rotation) * Matrix4::translation(position);
-  inverseMatrix = Matrix4::translation(-position)* Matrix4::transpose(Matrix4::rotation(rotation)) 
-    * Matrix4::scale(1.0f / scale);
+  matrix = Matrix4::translation(position) * Matrix4::rotation(rotation) * Matrix4::scale(scale);
+  inverseMatrix = Matrix4::scale(1.0f / scale) * Matrix4::transpose(Matrix4::rotation(rotation)) * Matrix4::translation(-position);
 }
 
 void Transform::rotate(const Quaternion& quaternion)
