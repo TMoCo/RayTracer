@@ -102,10 +102,9 @@ void Application::renderLoopGl(Scene* scene)
   window.setMainCamera(&camera);
 
   // global scene transform
-  Transform t{ Vector3{ 1.0f, 2.0f, 3.0f }, Quaternion::angleAxis(radians(90.0f), RIGHT), {1.0f, 2.0f, 3.0f } };
-
-  std::cout << t.matrix << "\n";
-  std::cout << t.inverseMatrix << "\n";
+  Transform t{ Vector3{ 1.0f, 2.0f, 3.0f }, Quaternion::angleAxis(radians(90.0f), RIGHT), {1.0f, 1.0f, 1.0f } };
+  
+  std::cout << t.transformVector3({ 1,2,3 }) << "\n";
 
   Matrix4 model = t.matrix;
   Matrix4 view; // update every frame

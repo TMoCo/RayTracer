@@ -84,25 +84,17 @@ F32 Vector3::dot(const Vector3& other) const
   return _mm_cvtss_f32(dot); // "free" instruction for getting lowest fp value in quadword
 }
 
-/*
-Vector3 Vector3::Cross(const Vector3& other) const {
-    return {
-        _v[1] * other[2] - _v[2] * other[1],
-        _v[2] * other[0] - _v[0] * other[2], 
-        _v[0] * other[1] - _v[1] * other[0]};
-}
-*/
-
 Vector3 Vector3::cross(const Vector3& other) const 
 {
-  __m128 res = _mm_sub_ps(
+  Vector3 res{};
+  res.__v = _mm_sub_ps(
     _mm_mul_ps(
       _mm_shuffle_ps(__v, __v, _MM_SHUFFLE(3, 0, 2, 1)),
       _mm_shuffle_ps(other.__v, other.__v, _MM_SHUFFLE(3, 1, 0, 2))), 
     _mm_mul_ps(
       _mm_shuffle_ps(__v, __v, _MM_SHUFFLE(3, 1, 0, 2)),
       _mm_shuffle_ps(other.__v, other.__v, _MM_SHUFFLE(3, 0, 2, 1))));
-  return Vector3{reinterpret_cast<F32*>(&res)};
+  return res;
 }
 
 F32 Vector3::length() const 
@@ -116,8 +108,8 @@ F32 Vector3::length() const
 
 F32 Vector3::lengthSquared() const
 {
-  F32 length = this->length();
-  return length * length;
+  F32 l = length();
+  return l * l;
 }
 
 Vector3 Vector3::normalize() const 

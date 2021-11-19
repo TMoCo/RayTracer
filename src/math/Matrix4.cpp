@@ -251,7 +251,9 @@ Matrix4 Matrix4::transpose(const Matrix4& mat)
 Matrix4 Matrix4::translation(const Vector3& v)
 {
   Matrix4 mat = Matrix4::identity();
-  memcpy(mat._m + 12, v._v, SIZEOF_VEC3); // bonus of column major <3
+  mat._m[12] = v.x;
+  mat._m[13] = v.y;
+  mat._m[14] = v.z;
   return mat;
 }
 
@@ -353,17 +355,16 @@ Matrix4 operator *(const F32 lhs, Matrix4& rhs)
 
 Vector4 operator *(Matrix4 mat, const Vector4& vec) 
 {
-  __m128 res = _mm_add_ps( // 7 instructions instead of 24
+  Vector4 res{};
+  res.__v = _mm_add_ps( // 7 instructions instead of 24
     _mm_add_ps(
       _mm_mul_ps(_mm_set_ps1(vec.x), mat.__m[0]),
       _mm_mul_ps(_mm_set_ps1(vec.y), mat.__m[1])), 
     _mm_add_ps(
       _mm_mul_ps(_mm_set_ps1(vec.z), mat.__m[2]),
       _mm_mul_ps(_mm_set_ps1(vec.w), mat.__m[3])));
-
-  return {reinterpret_cast<F32*>(&res)};
+  return res;
 }
-
 std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
   // converts to Vector4 (slow)
   return inStream 
@@ -374,9 +375,9 @@ std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
 }
 
 std::ostream & operator << (std::ostream &outStream, const Matrix4 &matrix) {
-  return outStream // constructs Vector4s (slow)
-    << Vector4{matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0]} << '\n' 
-    << Vector4{matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1]} << '\n' 
-    << Vector4{matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2]} << '\n' 
-    << Vector4{matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3]};
+  return outStream
+    << matrix[0][0] << " " << matrix[1][0] << " " << matrix[2][0] << " " << matrix[3][0] << '\n'
+    << matrix[0][1] << " " << matrix[1][1] << " " << matrix[2][1] << " " << matrix[3][1] << '\n'
+    << matrix[0][2] << " " << matrix[1][2] << " " << matrix[2][2] << " " << matrix[3][2] << '\n'
+    << matrix[0][3] << " " << matrix[1][3] << " " << matrix[2][3] << " " << matrix[3][3];
 }

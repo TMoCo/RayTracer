@@ -71,8 +71,9 @@ const F32& Vector4::operator [](const UI32 index) const
 
 Vector3 Vector4::toPoint() const 
 {
-  __m128 vec = _mm_div_ps(__v, _mm_set_ps1(w));
-  return { reinterpret_cast<F32*>(&vec) };
+  Vector3 point{};
+  point.__v = _mm_div_ps(__v, _mm_set_ps1(w));
+  return point;
 }
 
 Vector3 Vector4::toVector3() const 

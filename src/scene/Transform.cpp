@@ -29,12 +29,20 @@ void Transform::scale(const Vector3& scale)
 
 Ray Transform::transformRay(const Ray& ray)
 {
-  Ray r{};
-  return r;
+  return { transformPoint(ray.origin), transformVector3(ray.direction)};
 }
 
 Vector3 Transform::transformPoint(const Vector3& point)
 {
-  Vector4 p = Vector4::toHomogeneous(point);
-  return {};
+  return (matrix * Vector4::toHomogeneous(point)).toPoint();
+}
+
+Vector3 Transform::transformNormal(const Vector3& normal)
+{
+  return (Matrix4::transpose(inverseMatrix) * Vector4::toHomogeneous(normal)).toVector3();
+}
+
+Vector3 Transform::transformVector3(const Vector3& vector3)
+{
+  return (matrix * Vector4::toHomogeneous(vector3)).toVector3();
 }

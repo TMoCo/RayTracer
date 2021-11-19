@@ -23,7 +23,9 @@ public:
 
   Vector3 transformPoint(const Vector3& point);
 
-  Vector3 transformVector3(const Vector3& vec3);
+  Vector3 transformNormal(const Vector3& normal);
+
+  Vector3 transformVector3(const Vector3& vector3);
 
   // world position rotation
   Vector3 position;
