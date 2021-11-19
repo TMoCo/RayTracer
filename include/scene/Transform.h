@@ -35,7 +35,6 @@ public:
   // matrix representation
   Matrix4 matrix;
   Matrix4 inverseMatrix;
-
 };
 
 #endif // !TRANSFORM_H_

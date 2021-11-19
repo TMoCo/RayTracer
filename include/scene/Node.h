@@ -5,22 +5,15 @@
 #ifndef NODE_H_
 #define NODE_H_ 1
 
-#include <vector>
-
 #include <scene/Transform.h>
+
+#include <vector>
 
 class Node
 {
+  friend class SceneLoader;
 public:
   std::string name;
-
-  Node* parent;
-  std::vector<Node*> children;
-
-  Transform local;
-  Transform global;
-
-  bool dirty;
 
   Node();
   
@@ -39,6 +32,17 @@ public:
   Node* getParent();
 
   void updateTransform();
+
+protected:
+  Node* parent;
+
+  std::vector<Node*> children;
+
+  Transform local;
+
+  Transform global;
+
+  bool dirty;
 };
 
 #endif // !NODE_H_

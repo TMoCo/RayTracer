@@ -3,7 +3,7 @@
 
 #include <render/shapes/Sphere.h>
 
-#include <scene/Primitive.h>
+#include <scene/Geometry.h>
 
 #include <fstream>
 
@@ -49,7 +49,6 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     if (strcmp(token, "{") == 0)
     {
-      std::cout << "{\n";
       nodeStack.push_back(newNode);
       node = nodeStack.back();
       continue;
@@ -57,7 +56,6 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 
     if (strcmp(token, "}") == 0)
     {
-      std::cout << "}\n";
       nodeStack.pop_back();
       node = nodeStack.empty() ? nullptr : nodeStack.back();
       continue;
@@ -73,24 +71,22 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
       continue;
     }
       
-    if (strcmp(token, "primitive") == 0)
+    if (strcmp(token, "geometry") == 0)
     {
-      DEBUG_ASSERT(scene->root != nullptr, "Can't add a primitive to an empty scene");
-      node->addChild(new Primitive);
+      DEBUG_ASSERT(scene->root != nullptr, "Can't add geometry to an empty scene");
+      node->addChild(new Geometry);
       newNode = node->children.back();
-      scene->primitives.push_back(reinterpret_cast<Primitive*>(node->children.back()));
       token = strtok_s(NULL, " ", &remainding); 
-      std::cout << "new primitive: '" << token << "'\n";
       newNode->name = token ? token : "empty";
       continue;
     }
 
     if (strcmp(token, "shape") == 0)
     {
-      Primitive* p = reinterpret_cast<Primitive*>(node);
+      Geometry* geometry = reinterpret_cast<Geometry*>(node);
       token = strtok_s(NULL, " ", &remainding);
-      std::cout << "new shape: '" << token << "'\n create info: " << remainding << "\n";
-      p->shape = parseShape(token, remainding ? remainding : "");
+      geometry->primitive = new GeometricPrimitive(
+        createShape(&geometry->global, token, remainding ? remainding : ""));
     }
 
     if (strcmp(token, "position") == 0)
@@ -115,7 +111,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
   return 0;
 }
 
-Shape* SceneLoader::parseShape(const char* shape, char* data)
+Shape* SceneLoader::createShape(Transform* toWorld, const char* shape, char* data)
 {
   if (strcmp(shape, "sphere") == 0)
   {
@@ -124,7 +120,7 @@ Shape* SceneLoader::parseShape(const char* shape, char* data)
     F32 zMin = strtof(data, &data);
     F32 zMax = strtof(data, &data);
     F32 phiMax = strtof(data, &data);
-    return new Sphere(false, radius, zMin, zMax, phiMax);
+    return new Sphere(toWorld, false, radius, zMin, zMax, phiMax);
   }
   return nullptr;
 }

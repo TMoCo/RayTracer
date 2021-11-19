@@ -12,8 +12,7 @@
 class Shape
 {
 public:
-
-  Shape(bool reverseOrientation) : reverseOrientation(reverseOrientation) {}
+  Shape(Transform* toWorld, bool reverseOrientation) : reverseOrientation(reverseOrientation), toWorld(toWorld) {}
 
   virtual AABB getAABB() const = 0;
 
@@ -31,6 +30,8 @@ public:
   }
 
   bool reverseOrientation;
+
+  Transform* toWorld;
 };
 
 #endif // !SHAPE_H_

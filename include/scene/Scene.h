@@ -8,19 +8,25 @@
 #include <render/Camera.h>
 
 #include <scene/Node.h>
-#include <scene/Primitive.h>
 
-struct Scene {
+class Scene 
+{
+  friend class SceneLoader;
+public:
   std::string name;
 
-  Node* root;
-
   Scene();
+
   ~Scene();
   
   void clear(); // dfs delete nodes
 
-  std::vector<Primitive*> primitives; // container for all primitives
+  void draw();
+
+private:
+  Node* root;
+
+  // std::vector<Primitive*> primitives; // container for all primitives
 };
 
 #endif // !SCENE_H_

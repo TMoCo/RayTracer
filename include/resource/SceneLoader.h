@@ -17,7 +17,7 @@ public:
   static int loadScene(const std::string& fileName, Scene* scene);
 
 private:
-  static Shape* parseShape(const char* shape, char* data);
+  static Shape* createShape(Transform* toWorld, const char* shape, char* data);
 };
 
 #endif

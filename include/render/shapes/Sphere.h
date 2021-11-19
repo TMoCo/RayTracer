@@ -12,8 +12,8 @@
 class Sphere : public Shape
 {
 public:
-  Sphere(bool reverseOrientation, F32 radius, F32 zMin, F32 zMax, F32 phiMax)
-    : Shape(reverseOrientation),
+  Sphere(Transform* toWorld, bool reverseOrientation, F32 radius, F32 zMin, F32 zMax, F32 phiMax)
+    : Shape(toWorld, reverseOrientation),
       radius(radius),
       zMin(clamp(fmin(zMin, zMax), -radius, radius)),
       zMax(clamp(fmax(zMin, zMax), -radius, radius)),
@@ -57,6 +57,7 @@ public:
     return (radius * radius) * 4 * PI;
   }
 
+private:
   F32 radius;
   F32 zMin, zMax;
   F32 thetaMin, thetaMax, phiMax;

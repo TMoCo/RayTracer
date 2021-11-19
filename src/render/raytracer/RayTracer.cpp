@@ -45,9 +45,11 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera
       // TODO: intersect with BVH
 
       // for now, just loop over all primitives in the scene and test intersection
+      /*
       for (auto& prim : scene->primitives)
         if (prim->shape->IntersectP(primaryRay))
           frameBuffer[row][col] = Colour::Red;
+      */
       //**
     }
   }

@@ -14,3 +14,13 @@ void Scene::clear()
 {
   root->clear();
 }
+
+void Scene::draw()
+{
+  /*
+  for (auto primitive : primitives)
+  {
+    primitive->draw();
+  }
+  */
+}
