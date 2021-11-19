@@ -4,6 +4,8 @@
 
 #include <math/thomath.h>
 
+#include <intrin.h>
+
 Matrix4& Matrix4::operator =(const Matrix4& other) 
 {
   memcpy(_m, other._m, SIZEOF_MAT4); 
@@ -12,8 +14,21 @@ Matrix4& Matrix4::operator =(const Matrix4& other)
 
 bool Matrix4::operator ==(const Matrix4& other) const 
 {
-  // bad, change to vector 4 comparison!
-  return memcmp(&_m, other[0], SIZEOF_MAT4) == 0; // same values == 0
+  union
+  {
+    __m128 res;
+    I32 val[4];
+  } cmp;
+  cmp.res = _mm_and_ps( // bitwise operations on masks from compeq
+    _mm_and_ps(
+      _mm_cmpeq_ps(__m[0], other.__m[0]),
+      _mm_cmpeq_ps(__m[1], other.__m[1])
+    ),
+    _mm_and_ps(
+      _mm_cmpeq_ps(__m[2], other.__m[2]),
+      _mm_cmpeq_ps(__m[3], other.__m[3])
+    ));
+  return cmp.val[0] & cmp.val[1] & cmp.val[2] & cmp.val[3];
 }
 
 Matrix4& Matrix4::operator +=(const Matrix4& other) 
