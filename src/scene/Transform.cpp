@@ -26,3 +26,15 @@ void Transform::scale(const Vector3& scale)
 {
   matrix *= Matrix4::scale(scale);
 }
+
+Ray Transform::transformRay(const Ray& ray)
+{
+  Ray r{};
+  return r;
+}
+
+Vector3 Transform::transformPoint(const Vector3& point)
+{
+  Vector4 p = Vector4::toHomogeneous(point);
+  return {};
+}

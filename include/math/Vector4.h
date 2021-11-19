@@ -26,11 +26,13 @@ public:
 
   constexpr Vector4() :_v{} {}
 
+  constexpr Vector4(Vector3 vec3, F32 w = 1.0f) : _v{ vec3.x, vec3.y, vec3.z, w } {}
+
   constexpr Vector4(F32 X, F32 Y, F32 Z, F32 W = 1.0f) : _v{ X, Y, Z, W } {}
 
-  Vector4(const F32* values) : _v{} { memcpy(_v, values, SIZEOF_VEC4); }
+  constexpr Vector4(const F32* values) : _v{ values[0], values[1], values[2], values[3]} {}
 
-  Vector4(const Vector4& other) : _v{} {memcpy(_v, other._v, SIZEOF_VEC4); }
+  constexpr Vector4(const Vector4& other) : _v{ other.x, other.y, other.z, other.w } {}
 
   // binary operators
   Vector4& operator =(const Vector4& other);
@@ -76,7 +78,7 @@ public:
 
   const F32& operator [](const UI32 index) const;
 
-  Vector3 point3D() const; // perspective divide
+  Vector3 toPoint() const; // perspective divide
 
   Vector3 toVector3() const; // drop w
 

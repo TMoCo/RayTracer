@@ -6,7 +6,10 @@
 
 Vector4& Vector4::operator =(const Vector4& other) 
 {
-  memcpy(_v, other._v, SIZEOF_VEC4); 
+  x = other.x;
+  y = other.y;
+  z = other.z;
+  w = other.w;
   return *this;
 }
 
@@ -66,7 +69,7 @@ const F32& Vector4::operator [](const UI32 index) const
   return _v[index];
 }
 
-Vector3 Vector4::point3D() const 
+Vector3 Vector4::toPoint() const 
 {
   __m128 vec = _mm_div_ps(__v, _mm_set_ps1(w));
   return { reinterpret_cast<F32*>(&vec) };
@@ -79,10 +82,7 @@ Vector3 Vector4::toVector3() const
 
 Vector4 Vector4::toHomogeneous(const Vector3& other, F32 W)
 {
-  Vector4 homogeneous;
-  memcpy(homogeneous._v, other._v, SIZEOF_VEC3);
-  homogeneous.w = W;
-  return homogeneous;
+  return {other, W};
 }
 
 F32 Vector4::dot(const Vector4& other) const

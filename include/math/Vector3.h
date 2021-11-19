@@ -14,7 +14,7 @@ constexpr UI32 SIZEOF_VEC3 = 0xc;
 
 typedef struct Vector3 {
   union {
-    F32 _v[4]; // still in fact 4 for simd operations (4th element is zeroe ignored)
+    F32 _v[4]; // still in fact 4 for simd operations (4th element is ignored in computation)
 
     __m128 __v;
 
@@ -29,9 +29,9 @@ typedef struct Vector3 {
 
   constexpr Vector3(F32 X, F32 Y, F32 Z) : _v{ X, Y, Z } {}
 
-  Vector3(const F32* values) : _v{} { memcpy(_v, values, SIZEOF_VEC3); }
+  constexpr Vector3(const F32* values) : _v{ values[0], values[1], values[2] } {}
 
-  Vector3(const Vector3& other) : _v{} { memcpy(_v, other._v, SIZEOF_VEC3); }
+  constexpr Vector3(const Vector3& other) : _v{ other.x, other.y, other.z } {}
 
   // binary operators
   Vector3& operator =(const Vector3& other);

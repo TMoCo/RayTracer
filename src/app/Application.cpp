@@ -15,6 +15,8 @@
 
 #include <string>
 
+#include <iomanip>
+
 // app setup
 int Application::init()
 {

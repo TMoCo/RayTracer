@@ -7,6 +7,8 @@
 
 #include <math/thomath.h>
 
+#include <render/raytracer/Ray.h>
+
 class Transform {
 public:
   Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f });
@@ -16,6 +18,12 @@ public:
   void translate(const Vector3& vec3);
 
   void scale(const Vector3& scale);
+
+  Ray transformRay(const Ray& ray);
+
+  Vector3 transformPoint(const Vector3& point);
+
+  Vector3 transformVector3(const Vector3& vec3);
 
   // world position rotation
   Vector3 position;

@@ -12,7 +12,9 @@
 
 Vector3& Vector3::operator =(const Vector3& other) 
 {
-  memcpy(_v, other._v, SIZEOF_VEC3);
+  x = other.x;
+  y = other.y;
+  z = other.z;
   return *this;
 }
 
