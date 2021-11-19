@@ -2,7 +2,7 @@
 // Transform class definition
 //
 
-#include <math/Transform.h>
+#include <scene/Transform.h>
 
 // TODO: implement transform methods
 Transform::Transform(Vector3 position, Quaternion rotation, Vector3 scale) 

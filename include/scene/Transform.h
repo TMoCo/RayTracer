@@ -5,9 +5,7 @@
 #ifndef TRANSFORM_H_
 #define TRANSFORM_H_ 1
 
-#include <math/Matrix4.h>
-#include <math/Quaternion.h>
-#include <math/Vector3.h>
+#include <math/thomath.h>
 
 class Transform {
 public:

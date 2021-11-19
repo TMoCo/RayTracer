@@ -126,4 +126,5 @@ Shape* SceneLoader::parseShape(const char* shape, char* data)
     F32 phiMax = strtof(data, &data);
     return new Sphere(false, radius, zMin, zMax, phiMax);
   }
+  return nullptr;
 }

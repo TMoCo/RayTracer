@@ -8,7 +8,7 @@ void BVH::buildBVH(const std::vector<Mesh*>& meshes)
   std::vector<Primitive*> ordered;
 
   // build nodes
-  BVHNode* root = buildNode(0, primitives.size(), ordered);
+  BVHNode* root = buildNode(0, (UI32)primitives.size(), ordered);
 }
 
 BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
@@ -79,7 +79,7 @@ void BVH::getPrimitives(const std::vector<Mesh*>& meshes)
       primitives.push_back(&data.back());
     }
   }
-  numPrimitives = primitives.size();
+  numPrimitives = (UI32)primitives.size();
 }
 
 void BVH::generatebuffers()
@@ -103,7 +103,7 @@ void BVH::generatebuffers()
     // memcpy(&data[i * AABBsize], primitives[i].bbox.getGlbufferData().data(), AABBsize * sizeof(F32));
     // copy indices with offset
     for (UI32 j = 0; j < 36; ++j)
-      indices.push_back(AABB::indices[j] + i * 8);
+      indices.push_back(AABB::indices[j] + (UI32)i * 8);
   }
   
   glBindVertexArray(vao);
@@ -124,5 +124,5 @@ void BVH::generatebuffers()
 void BVH::draw()
 {
   glBindVertexArray(vao);
-  glDrawElements(GL_TRIANGLES, primitives.size() * 36, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, (GLsizei)primitives.size() * 36, GL_UNSIGNED_INT, 0);
 }

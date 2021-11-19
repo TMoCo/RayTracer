@@ -100,7 +100,7 @@ void Application::renderLoopGl(Scene* scene)
   window.setMainCamera(&camera);
 
   // global scene transform
-  Transform t{ Vector3{ 1.0f, 2.0f, 3.0f }, Quaternion::angleAxis(radians(90.0f), RIGHT) };
+  Transform t{ Vector3{ 1.0f, 2.0f, 3.0f }, Quaternion::angleAxis(radians(90.0f), RIGHT), {1.0f, 2.0f, 3.0f } };
 
   std::cout << t.matrix << "\n";
   std::cout << t.inverseMatrix << "\n";
