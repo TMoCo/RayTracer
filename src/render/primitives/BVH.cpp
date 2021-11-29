@@ -5,13 +5,9 @@ void BVH::buildBVH(const std::vector<Mesh*>& meshes)
   // from meshes
   getPrimitives(meshes);
 
-  std::vector<Primitive*> ordered;
-
-  // build nodes
-  BVHNode* root = buildNode(0, (UI32)primitives.size(), ordered);
 }
 
-BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
+BVHNode* BVH::buildNode(UI32 start, UI32 end)
 {
   BVHNode* node = new BVHNode;
   numNodes++;
@@ -49,8 +45,8 @@ BVHNode* BVH::buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered)
     {
       // internal node
       node->initInternal(axis, 
-        buildNode(start, mid, ordered),
-        buildNode(mid, end, ordered));
+        buildNode(start, mid),
+        buildNode(mid, end));
     }
   }
   return node;

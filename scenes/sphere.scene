@@ -4,10 +4,9 @@ scene sphere
   geometry test_sphere
   {
     # sphere transformation info
-    position: 0 0 0
-    rotation: 0 0 0
-    # a sphere with radius 1, zmin -1, zmax 1, phiMax 4pi
-    shape: sphere
-    shapeData: 1 -1 1 360
+    position 0 0 0
+    rotation 0 0 0
+    # a sphere with radius = 1, zmin = -1 , zmax = 1, phiMax = 4pi
+    shape sphere 1 -1 1 360
   }
 }

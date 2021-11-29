@@ -5,6 +5,7 @@
 #ifndef NODE_H_
 #define NODE_H_ 1
 
+#include <render/primitives/Primitive.h>
 #include <scene/Transform.h>
 
 #include <vector>
@@ -15,7 +16,7 @@ class Node
 public:
   std::string name;
 
-  Node();
+  Node(const std::string& name, Node* parent = nullptr);
   
   ~Node();
 
@@ -43,6 +44,8 @@ protected:
   Transform global;
 
   bool dirty;
+
+  Primitive* primitive; // can be an aggregate, geometry, a mesh
 };
 
 #endif // !NODE_H_

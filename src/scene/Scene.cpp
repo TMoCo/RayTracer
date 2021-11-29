@@ -1,8 +1,8 @@
 #include <scene/Scene.h>
 
-Scene::Scene()
+Scene::Scene() : root(nullptr)
 {
-  root = new Node;
+
 }
 
 Scene::~Scene()
@@ -12,7 +12,11 @@ Scene::~Scene()
 
 void Scene::clear()
 {
-  root->clear();
+  if (root)
+  {
+    root->clear();
+    delete root;
+  }
 }
 
 void Scene::draw()

@@ -9,9 +9,6 @@
 
 #include <render/bounds/AABB.h>
 
-#include <scene/Primitive.h>
-
-
 struct BVHNode
 {
   inline void initLeaf(UI32 first, UI32 num, const AABB& b)
@@ -42,7 +39,7 @@ class BVH
 {
   void buildBVH(const std::vector<Mesh*>& meshes);
 
-  BVHNode* buildNode(UI32 start, UI32 end, std::vector<Primitive*>& ordered);
+  BVHNode* buildNode(UI32 start, UI32 end);
 
   void getPrimitives(const std::vector<Mesh*>& meshes);
   
@@ -55,11 +52,6 @@ private:
 
   UI64 numNodes;
   UI32 numPrimitives;
-
-  std::vector<Primitive*> primitives;
-
-  // primitve data
-  std::vector<Primitive> data{};
 };
 
 #endif

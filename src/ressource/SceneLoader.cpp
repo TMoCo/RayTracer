@@ -1,9 +1,7 @@
+#include <render/shapes/Sphere.h>
+#include <render/primitives/GeometricPrimitive.h>
 #include <resource/file.h>
 #include <resource/SceneLoader.h>
-
-#include <render/shapes/Sphere.h>
-
-#include <scene/Geometry.h>
 
 #include <fstream>
 
@@ -23,8 +21,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
     return 1;
   }
 
-  if (scene->root != nullptr)
-    scene->clear();
+  scene->clear(); // make sure scene is empty
 
   // open file and generate scene
   char line[1024];
@@ -58,56 +55,53 @@ int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
     {
       nodeStack.pop_back();
       node = nodeStack.empty() ? nullptr : nodeStack.back();
+      node->local.update();
       continue;
     }
 
     if (strcmp(token, "scene") == 0)
     {
-      scene->root = new Node;
-      scene->root->name = "root";
-      token = strtok_s(NULL, " ", &remainding);
-      scene->name = token;
+      scene->root = new Node("root");
       newNode = scene->root;
+      token = strtok_s(NULL, " ", &remainding);
+      scene->name = token ? token : "new scene";
       continue;
     }
       
     if (strcmp(token, "geometry") == 0)
     {
       DEBUG_ASSERT(scene->root != nullptr, "Can't add geometry to an empty scene");
-      node->addChild(new Geometry);
+      token = strtok_s(NULL, " ", &remainding); // node name
+      node->addChild(new Node(token ? token : "geometry", node));
       newNode = node->children.back();
-      token = strtok_s(NULL, " ", &remainding); 
-      newNode->name = token ? token : "empty";
       continue;
     }
 
     if (strcmp(token, "shape") == 0)
     {
-      Geometry* geometry = reinterpret_cast<Geometry*>(node);
-      token = strtok_s(NULL, " ", &remainding);
-      geometry->primitive = new GeometricPrimitive(
-        createShape(&geometry->global, token, remainding ? remainding : ""));
+      token = strtok_s(NULL, " ", &remainding); // token = shape type, remainding = shape create info
+      node->primitive =
+        new GeometricPrimitive(createShape(&node->global, token, remainding ? remainding : ""));
     }
 
     if (strcmp(token, "position") == 0)
     {
-      node->local.position.x = strtof(remainding, &token);
-      node->local.position.y = strtof(token, &token);
-      node->local.position.z = strtof(token, NULL);
+      node->local.position = 
+        Vector3{ strtof(remainding, &token), strtof(token, &token), strtof(token, NULL) };
       continue;
     }
     
     if (strcmp(token, "rotation") == 0)
     {
-
+      node->local.rotation = 
+        Quaternion::eulerAngles(strtof(remainding, &token), strtof(token, &token), strtof(token, NULL));
+      continue;
     }
 
     lineNum++;
   }
   objStream.close();
-
   // TODO: generate BVH when scene data is loaded
-
   return 0;
 }
 

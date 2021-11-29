@@ -4,10 +4,8 @@
 
 #include <render/Shader.h>
 #include <render/Texture.h>
-#include <render/Mesh.h>
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
-#include <render/raytracer/BVH.h>
 
 #include <resource/TextureLoader.h>
 #include <resource/SceneLoader.h>
@@ -58,7 +56,7 @@ I32 Application::run()
     return -1;
   }
 
-  Scene* scene = new Scene;
+  Scene* scene = nullptr;
   SceneLoader::loadScene("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", scene);
 
   // main loop

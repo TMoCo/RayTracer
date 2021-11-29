@@ -1,9 +1,10 @@
-#include <render/Mesh.h>
+#include <render/primitives/Mesh.h>
 
 #include <core/debug.h>
 
 void Mesh::generatebuffers(bool interleave)
 {
+  /*
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
   glGenBuffers(1, &ebo);
@@ -133,13 +134,16 @@ void Mesh::generatebuffers(bool interleave)
   }
 
   glBindVertexArray(0); // unbind
+  */
 }
 
 void Mesh::draw()
 {
+  /*
   // bind vao and draw
   glBindVertexArray(vao);
   ebo 
     ? glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0) 
     : glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions.size()));
+  */
 }

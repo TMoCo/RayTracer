@@ -1,6 +1,6 @@
 #include <scene/Node.h>
 
-Node::Node() : dirty(false)
+Node::Node(const std::string& name, Node* parent) : dirty(false), name(name), parent(parent)
 {
 
 }
@@ -19,7 +19,7 @@ void Node::clear()
 {
   for (auto& child : children)
   {
-    child->clear();
+    child->clear(); // recursively delete all children
     delete child;
   }
 }

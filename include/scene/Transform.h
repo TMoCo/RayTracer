@@ -13,11 +13,11 @@ class Transform {
 public:
   Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f });
 
-  void rotate(const Quaternion& quaternion);
+  void rotateBy(const Quaternion& quaternion);
 
-  void translate(const Vector3& vec3);
+  void translateBy(const Vector3& vec3);
 
-  void scale(const Vector3& scale);
+  void scaleBy(const Vector3& scale);
 
   Ray transformRay(const Ray& ray);
 
@@ -27,10 +27,14 @@ public:
 
   Vector3 transformVector3(const Vector3& vector3);
 
-  // world position rotation
+  void update();
+
+  // world position rotation and scale
   Vector3 position;
 
   Quaternion rotation;
+
+  Vector3 scale;
 
   // matrix representation
   Matrix4 matrix;

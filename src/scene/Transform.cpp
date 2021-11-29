@@ -5,24 +5,24 @@
 #include <scene/Transform.h>
 
 // TODO: implement transform methods
-Transform::Transform(Vector3 position, Quaternion rotation, Vector3 scale) 
+Transform::Transform(Vector3 position, Quaternion rotation, Vector3 scale) :
+  position(position), rotation(rotation), scale(scale)
 {
   // construct matrix and its inverse
-  matrix = Matrix4::translation(position) * Matrix4::rotation(rotation) * Matrix4::scale(scale);
-  inverseMatrix = Matrix4::scale(1.0f / scale) * Matrix4::transpose(Matrix4::rotation(rotation)) * Matrix4::translation(-position);
+  update();
 }
 
-void Transform::rotate(const Quaternion& quaternion)
+void Transform::rotateBy(const Quaternion& quaternion)
 {
   matrix *= Matrix4::rotation(quaternion);
 }
 
-void Transform::translate(const Vector3& vec3) 
+void Transform::translateBy(const Vector3& vec3) 
 {  
   matrix *= Matrix4::translation(vec3);
 }
 
-void Transform::scale(const Vector3& scale)
+void Transform::scaleBy(const Vector3& scale)
 {
   matrix *= Matrix4::scale(scale);
 }
@@ -45,4 +45,11 @@ Vector3 Transform::transformNormal(const Vector3& normal)
 Vector3 Transform::transformVector3(const Vector3& vector3)
 {
   return (matrix * Vector4::toHomogeneous(vector3)).toVector3();
+}
+
+void Transform::update()
+{
+  matrix = Matrix4::translation(position) * Matrix4::rotation(rotation) * Matrix4::scale(scale);
+  inverseMatrix = Matrix4::scale(1.0f / scale) * Matrix4::transpose(Matrix4::rotation(rotation))
+    * Matrix4::translation(-position);
 }
