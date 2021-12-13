@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Shape interface class
 //
 
@@ -10,8 +12,11 @@
 #define SHAPE_H_ 1
 
 #include <render/bounds/AABB.h>
+
 #include <render/raytracer/Surfel.h>
 #include <render/raytracer/Ray.h>
+
+#include <scene/Transform.h>
 
 class Shape
 {
@@ -33,9 +38,9 @@ public:
     return intersect(ray, &tHit, &isect);
   }
 
-  bool reverseOrientation;
-
   Transform* toWorld;
+
+  bool reverseOrientation;
 };
 
 #endif // !SHAPE_H_

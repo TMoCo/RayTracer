@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // A tree data structure for managing a scene
 //
 
@@ -16,6 +18,7 @@
 class Scene 
 {
   friend class SceneLoader;
+
 public:
   std::string name;
 

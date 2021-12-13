@@ -9,7 +9,7 @@
 #ifndef RESOURCE_MANAGER_H_
 #define RESOURCE_MANAGER_H_ 1
 
-#include <render/Mesh.h>
+#include <render/primitives/Mesh.h>
 
 #include <string>
 #include <unordered_map>
@@ -19,7 +19,9 @@
 class ResourceManager 
 {
   friend class OBJLoader;
+
   friend class SceneLoader;
+
 public:
   Mesh* tryGetMesh(const std::string& meshName);
   

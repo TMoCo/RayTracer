@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Raytracer class 
 //
 
@@ -16,9 +18,9 @@
 #include <scene/Scene.h>
 
 #include <render/Camera.h>
-#include <render/Mesh.h>
 #include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
+#include <render/primitives/Mesh.h>
 
 #include <widgets/Window.h>
 
@@ -29,11 +31,9 @@ public:
   void raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera* camera, UI32 samples);
  
 private:
-  // cast a ray 
   colour CastRay(const Ray& ray, UI32 depth);
 
-  // TODO: move intersection test to shapes
-  // raytracing methods for triangle intersection 
+  // TODO: move intersection test to respective shapes
   bool Intersect(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear);
     
   bool MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear);

@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Bounding volume hierarchy class
 //
 
@@ -12,6 +14,8 @@
 #include <math/thomath.h>
 
 #include <render/bounds/AABB.h>
+
+#include <render/primitives/Mesh.h>
 
 struct BVHNode
 {

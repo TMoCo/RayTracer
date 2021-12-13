@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // window class definition (assumes glfw has been initialised as part of an application init)
 // intended as an interface for managing gltf windows
 //

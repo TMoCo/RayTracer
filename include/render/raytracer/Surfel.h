@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Surfel struct declaration
 //
 
@@ -11,7 +13,7 @@
 
 #include <core/core.h>
 
-#include <render/Mesh.h>
+#include <render/primitives/Mesh.h>
 
 #include <image/Colour.h>
 

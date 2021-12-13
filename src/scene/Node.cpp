@@ -6,7 +6,7 @@
 
 #include <scene/Node.h>
 
-Node::Node(const std::string& name, Node* parent) : dirty(false), name(name), parent(parent)
+Node::Node(const std::string& name, Node* parent) : name(name), parent(parent)
 {
 
 }
@@ -18,7 +18,7 @@ Node::~Node()
 
 void Node::updateTransform()
 {
-    dirty = false;
+
 }
 
 void Node::clear()

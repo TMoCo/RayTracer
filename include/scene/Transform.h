@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Transform class declaration
 //
 
@@ -37,6 +39,7 @@ public:
   Vector3 position;
 
   Quaternion rotation;
+
 
   Vector3 scale;
 

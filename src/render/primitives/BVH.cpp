@@ -4,7 +4,7 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <render/raytracer/BVH.h>
+#include <render/primitives/BVH.h>
 
 void BVH::buildBVH(const std::vector<Mesh*>& meshes)
 {
@@ -15,6 +15,8 @@ void BVH::buildBVH(const std::vector<Mesh*>& meshes)
 
 BVHNode* BVH::buildNode(UI32 start, UI32 end)
 {
+  return nullptr;
+  /*
   BVHNode* node = new BVHNode;
   numNodes++;
   AABB bbox{};
@@ -56,11 +58,13 @@ BVHNode* BVH::buildNode(UI32 start, UI32 end)
     }
   }
   return node;
+  */
 }
 
 // hard assumption: only triangular meshes
 void BVH::getPrimitives(const std::vector<Mesh*>& meshes)
 {
+  /*
   // clear previous data
   primitives.clear();
   primitives.reserve(numPrimitives);
@@ -82,10 +86,12 @@ void BVH::getPrimitives(const std::vector<Mesh*>& meshes)
     }
   }
   numPrimitives = (UI32)primitives.size();
+  */
 }
 
 void BVH::generatebuffers()
 {
+  /*
   // loop 
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
@@ -121,10 +127,11 @@ void BVH::generatebuffers()
   glEnableVertexAttribArray(0);
 
   glBindVertexArray(0);
+  */
 }
 
 void BVH::draw()
 {
   glBindVertexArray(vao);
-  glDrawElements(GL_TRIANGLES, (GLsizei)primitives.size() * 36, GL_UNSIGNED_INT, 0);
+  // glDrawElements(GL_TRIANGLES, (GLsizei)primitives.size() * 36, GL_UNSIGNED_INT, 0);
 }

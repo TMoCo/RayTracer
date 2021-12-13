@@ -8,6 +8,21 @@
 
 #include <core/debug.h>
 
+AABB Mesh::getBounds() 
+{
+  return AABB::getAABB(positions);
+}
+
+bool Mesh::intersect(const Ray& ray) 
+{
+  return false;
+}
+
+bool Mesh::intersectP(const Ray& ray) 
+{
+  return false;
+}
+
 void Mesh::generatebuffers(bool interleave)
 {
   /*

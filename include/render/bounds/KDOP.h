@@ -11,7 +11,7 @@
 
 #include <math/thomath.h>
 
-#include <render/Mesh.h>
+#include <render/primitives/Mesh.h>
 
 #include <glad/glad.h>
 

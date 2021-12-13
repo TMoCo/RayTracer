@@ -20,7 +20,6 @@ void Scene::clear()
 {
   if (root)
   {
-    root->clear();
     delete root;
   }
 }

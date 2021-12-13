@@ -4,19 +4,19 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <render/raytracer/GeometricPrimitive.h>
+#include <render/primitives/GeometricPrimitive.h>
 
 AABB GeometricPrimitive::getBounds()
 {
-
+  return AABB{};
 }
 
 bool GeometricPrimitive::intersect(const Ray& ray)
 {
-
+  return false;
 }
 
 bool GeometricPrimitive::intersectP(const Ray& ray)
 {
-
+  return false;
 }

@@ -151,7 +151,7 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
 
         // apply bounding volume test here
         // if (!intersect(ray, mesh.bounds)) then skip mesh;
-
+        /*
         for (UI32 f = 0; f < meshes[m]->indices.size(); f+=3) {
             edge1 = meshes[m]->positions[meshes[m]->indices[f+1]]
                 - meshes[m]->positions[meshes[m]->indices[f]]; // V1 - v0
@@ -191,20 +191,23 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
                 }
             }
         }
+        */
     }
     return (surfel.mesh != nullptr); // no mesh == no intersection
 }
 
 Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
     // get a random triangle in the light mesh
-    UI32 index = Random::UniformI32(0, (static_cast<UI32>(light->indices.size()) / 9) - 1);
+    //UI32 index = Random::UniformI32(0, (static_cast<UI32>(light->indices.size()) / 9) - 1);
     // barycentric coordinates
-    Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
+    return UniformSampleTriangle(Random::UniformUV());
     // random point in the triangle
+    /*
     return 
         light->positions[index  ] * barycentric.x +
         light->positions[index+3] * barycentric.y +
         light->positions[index+3] * barycentric.z;
+    */
 }
 
 Vector2 RayTracer::UniformSampleDisk(const Vector2& uv) {

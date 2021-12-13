@@ -2,21 +2,23 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // AABB from mesh positions
 //
 
 #ifndef AABB_H_
 #define AABB_H_
 
-#include <render/Mesh.h>
-#include <render/raytracer/Ray.h>
-
 #include <math/thomath.h>
+
+#include <render/raytracer/Ray.h>
 
 #include <glad/glad.h>
 
 #include <limits>
+#include <vector>
 
 struct AABB
 {
@@ -143,11 +145,6 @@ struct AABB
     for (auto& position : positions)
       mergeAABB(aabb, position);
     return aabb;
-  }
-
-  inline static AABB getAABB(const Mesh& mesh)
-  {
-    return getAABB(mesh.positions);
   }
 
   inline void generatebuffers()
