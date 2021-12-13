@@ -1,3 +1,9 @@
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/
+
 #include <render/Texture.h>
 
 void Texture::generate(I32 w, I32 h, GLenum internalFormat, GLenum format, bool mip,  const void* data)

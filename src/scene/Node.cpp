@@ -1,3 +1,9 @@
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/
+
 #include <scene/Node.h>
 
 Node::Node(const std::string& name, Node* parent) : dirty(false), name(name), parent(parent)

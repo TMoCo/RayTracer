@@ -1,4 +1,8 @@
-#include <math/Matrix4.h>
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/#include <math/Matrix4.h>
 #include <math/Quaternion.h>
 #include <math/Transform.h>
 #include <image/Image.h>

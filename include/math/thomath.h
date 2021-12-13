@@ -1,4 +1,8 @@
-//
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*///
 // Utility include for all math types and struct, plus some constants and routines
 //
 

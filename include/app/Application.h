@@ -1,4 +1,8 @@
-#ifndef APP_H_
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/#ifndef APP_H_
 #define APP_H_ 1
 
 // define application type here (better way to do this?)

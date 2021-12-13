@@ -1,6 +1,8 @@
-//
-// Scene loader class
-//
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/
 
 #ifndef SCENE_LOADER_H
 #define SCENE_LOADER_H 1

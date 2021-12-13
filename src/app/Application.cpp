@@ -1,3 +1,9 @@
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/
+
 #include <app/Application.h>
 
 #include <core/debug.h>
@@ -21,7 +27,7 @@ int Application::init()
   // setup glfw 
   if (!glfwInit())
   {
-    DEBUG_PRINT("Could not initialise gltw\n");
+    DEBUG_PRINT("Failed to initialise GLFW!\n");
     return -1;
   }
 
@@ -32,15 +38,18 @@ int Application::init()
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // create window
-  if (window.createWindow(800, 600, "RayTracer window"))
+  if (window.create(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window"))
+  {
+    DEBUG_PRINT("Failed to create window!\n");
     return -1;
+  }
 
-  glfwMakeContextCurrent(window.ptr);
+  glfwMakeContextCurrent(window.getWindowPointer());
 
   // load opengl 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
-    DEBUG_PRINT("Failed to initialize GLAD\n");
+    DEBUG_PRINT("Failed to initialize GLAD!\n");
     return -1;
   }
 
@@ -49,10 +58,9 @@ int Application::init()
 
 I32 Application::run()
 {
-
-  if (init() != 0)
+  if (!init())
   {
-    DEBUG_PRINT("Could not initialise app\n");
+    DEBUG_PRINT("Failed to initialise app!\n");
     return -1;
   }
 
@@ -112,11 +120,11 @@ void Application::renderLoopGl(Scene* scene)
 
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-  glfwSetWindowUserPointer(window.ptr, &window);
+  glfwSetWindowUserPointer(window.getWindowPointer(), &window);
 
   F32 deltaTime = 0.0f;
   F32 previous = 0.0f;
-  while (!glfwWindowShouldClose(window.ptr))
+  while (!glfwWindowShouldClose(window.getWindowPointer()))
   {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     F32 current = static_cast<F32>(glfwGetTime());
@@ -124,10 +132,9 @@ void Application::renderLoopGl(Scene* scene)
     previous = current;
 
     // ... process input
-    if (Window::processInput(&window, deltaTime) == 0)
-      break;
+    if (Window::processInput(&window, deltaTime, pause) == 0) break;
 
-    if (glfwGetKey(window.ptr, GLFW_KEY_R))
+    if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
       raytracer.raytrace(fb, scene, window.getCamera(), 1);
@@ -156,7 +163,7 @@ void Application::renderLoopGl(Scene* scene)
     glfwPollEvents();
 
 #ifdef OPENGL
-    glfwSwapBuffers(window.ptr);
+    glfwSwapBuffers(window.getWindowPointer());
 #endif
   }
 }

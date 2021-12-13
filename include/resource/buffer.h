@@ -1,4 +1,8 @@
-//
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*///
 // Image class
 //
 
@@ -24,7 +28,6 @@ private:
   void release();
 
 public:
-
   buffer(UI64 w = 0, UI64 h = 0, UI64 d = 1);
   
   ~buffer();
@@ -48,7 +51,7 @@ public:
 template <typename T>
 void buffer<T>::allocate()
 {
-  data = (T*)calloc(width * height * depth, sizeof(T));
+  data = (T*)std::calloc(width * height * depth, sizeof(T));
   if (data == nullptr)
   {
     DEBUG_PRINT("Could not allocate image!\n");
@@ -61,7 +64,7 @@ void buffer<T>::release()
 {
   if (data)
   {
-    free(data);
+    std::free(data);
     data = nullptr;
   }
 }
@@ -93,7 +96,7 @@ const T* buffer<T>::operator[](UI32 index) const
 template <typename T>
 void buffer<T>::clear()
 {
-  memset(data, 0, width * height * depth * sizeof(T));
+  std::memset(data, 0, width * height * depth * sizeof(T));
 }
 
 template <typename T>

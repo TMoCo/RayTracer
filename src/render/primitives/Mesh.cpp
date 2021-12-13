@@ -1,3 +1,9 @@
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/
+
 #include <render/primitives/Mesh.h>
 
 #include <core/debug.h>
@@ -147,3 +153,4 @@ void Mesh::draw()
     : glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions.size()));
   */
 }
+

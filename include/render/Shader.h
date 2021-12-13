@@ -1,4 +1,8 @@
-#ifndef SHADER_H_
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/#ifndef SHADER_H_
 #define SHADER_H_ 1
 
 #include <core/types.h>

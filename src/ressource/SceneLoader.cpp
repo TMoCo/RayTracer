@@ -1,3 +1,9 @@
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/
+
 #include <render/shapes/Sphere.h>
 #include <render/primitives/GeometricPrimitive.h>
 #include <resource/file.h>
@@ -5,19 +11,19 @@
 
 #include <fstream>
 
-int SceneLoader::loadScene(const std::string& fileName, Scene* scene)
+I32 SceneLoader::loadScene(const std::string& fileName, Scene* scene)
 {
   if (!file::isOfType(fileName, ".scene"))
   {
-    DEBUG_PRINT("File provided is not .scene");
-    return 1;
+    DEBUG_PRINT("File provided is not .scene!");
+    return -1;
   }
 
   std::ifstream objStream(fileName);
 
   if (!objStream.is_open())
   {
-    DEBUG_PRINT("Could not open file stream for file %s", fileName.c_str());
+    DEBUG_PRINT("Failed to open file stream for file %s", fileName.c_str());
     return 1;
   }
 

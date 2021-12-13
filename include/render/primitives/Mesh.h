@@ -1,4 +1,8 @@
-#ifndef MESH_H_
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/#ifndef MESH_H_
 #define MESH_H_
 
 #include <render/primitives/Primitive.h>

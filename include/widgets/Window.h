@@ -1,4 +1,8 @@
-//
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*///
 // window class definition (assumes glfw has been initialised as part of an application init)
 // intended as an interface for managing gltf windows
 //
@@ -15,6 +19,9 @@
 #endif
 #include <GLFW/glfw3.h>
 
+#define DEFAULT_WIDTH 800U
+#define DEFAULT_HEIGHT 600U
+
 typedef struct
 {
   I32 x, y;
@@ -24,9 +31,7 @@ typedef struct
 class Window
 {
 public:
-  GLFWwindow* ptr; // left public for convenience
-  
-  int createWindow(UI32 width, UI32 height, const char* name = "Window");
+  I32 create(UI32 width = DEFAULT_WIDTH, UI32 height = DEFAULT_HEIGHT, const char* name = "Window");
 
   void setViewPort();
 
@@ -38,27 +43,30 @@ public:
 
   inline const Camera* getCamera() { return mainCamera; }
 
+  inline GLFWwindow* getWindowPointer() { return pWindow; }
+
   F32 getAspectRatio();
     
   void resize(UI32 width, UI32 height);
  
-  static int processInput(Window* window, F32 deltaTime);
+  static I32 processInput(Window* window, F32 deltaTime, bool pause);
 
   static void resizeCallBack(GLFWwindow* p_win, I32 w, I32 h);
 
   static void mouseCallBack(GLFWwindow* p_win, F64 x, F64 y);
  
 private:
-  bool pause = false; // TODO: move into application class
+  GLFWwindow* pWindow = nullptr;
 
-  // mouse move
+  Camera* mainCamera = nullptr;
+
+  UI32 width = 0, height = 0;
+
+  ViewPort viewPort = { 0, 0, 0, 0 };
+
+  F32 lastX = 0, lastY = 0;
+
   bool firstMouse = true;
-  F32 lastX, lastY;
-
-  Camera* mainCamera;
-
-  UI32 width, height;
-  ViewPort viewPort;
 };
 
 #endif // ! WINDOW_H_

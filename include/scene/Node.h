@@ -1,4 +1,8 @@
-//
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*///
 // A class for managing a scene
 //
 
@@ -43,9 +47,7 @@ protected:
 
   Transform global;
 
-  bool dirty;
-
-  Primitive* primitive; // can be an aggregate, geometry, a mesh
+  Primitive* primitive; // can be an aggregate (eg: a mesh), or simple geometry (eg: a sphere)
 };
 
 #endif // !NODE_H_

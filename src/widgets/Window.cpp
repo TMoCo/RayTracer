@@ -1,32 +1,44 @@
+/*
+* AUTHOR: THOMAS MOENO COOPER
+* LAST MODIFIED: 13/12/2021
+* COPYRIGHT UNDER THE MIT LICENSE
+*/
+
 #include <widgets/Window.h>
 
 #include <core/debug.h>
 
-int Window::createWindow(UI32 w, UI32 h, const char* name)
+I32 Window::create(UI32 w, UI32 h, const char* name)
 {
   // create window
-  ptr = glfwCreateWindow(w, h, name, NULL, NULL);
-  if (ptr == NULL)
+  pWindow = glfwCreateWindow(w, h, name, NULL, NULL);
+
+  if (pWindow)
+  {
+    // window size + viewport
+    viewPort.width  = width  = w;
+    viewPort.height = height = h;
+    viewPort.x = viewPort.y = 0;
+    setViewPort();
+    
+    glfwSetFramebufferSizeCallback(pWindow, resizeCallBack);
+
+    // cursor + mouse
+    glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(pWindow, mouseCallBack);
+    lastX = width / 2.0f;
+    lastY = height / 2.0f;
+
+    return 0;
+  }
+  else
   {
     DEBUG_PRINT("Could not create window");
+    
     glfwTerminate();
+
     return -1;
   }
-
-  // window size + viewport
-  viewPort.width  = width  = w;
-  viewPort.height = height = h;
-  viewPort.x = viewPort.y = 0;
-  setViewPort();
-  glfwSetFramebufferSizeCallback(ptr, resizeCallBack);
-
-  // cursor + mouse
-  glfwSetInputMode(ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  glfwSetCursorPosCallback(ptr, mouseCallBack);
-  lastX = width / 2.0f;
-  lastY = height / 2.0f;
-
-  return 0;
 }
 
 void Window::setViewPort()
@@ -53,39 +65,38 @@ void Window::resize(UI32 w, UI32 h)
   height = h;
 }
 
-int Window::processInput(Window* window, F32 deltaTime)
+I32 Window::processInput(Window* window, F32 deltaTime, bool pause)
 {
-  if (glfwGetKey(window->ptr, GLFW_KEY_ESCAPE))
+  if (glfwGetKey(window->pWindow, GLFW_KEY_ESCAPE))
     return 0;
   // pause
-  if (glfwGetKey(window->ptr, GLFW_KEY_P))
+  if (glfwGetKey(window->pWindow, GLFW_KEY_P))
   {
-    window->pause = !window->pause;
-    if (window->pause)
-      glfwSetWindowUserPointer(window->ptr, nullptr);
+    if (pause)
+      glfwSetWindowUserPointer(window->pWindow, nullptr);
     else
     {
-      glfwSetWindowUserPointer(window->ptr, &window);
+      glfwSetWindowUserPointer(window->pWindow, &window);
       window->firstMouse = true;
     }
     return 1;
   }
-  if (glfwGetKey(window->ptr, GLFW_KEY_W))
+  if (glfwGetKey(window->pWindow, GLFW_KEY_W))
   {
     window->mainCamera->processInput(Camera::FORWARD, deltaTime * 10.0f);
     return 1;
   }
-  if (glfwGetKey(window->ptr, GLFW_KEY_S))
+  if (glfwGetKey(window->pWindow, GLFW_KEY_S))
   {
     window->mainCamera->processInput(Camera::BACKWARD, deltaTime * 10.0f);
     return 1;
   }
-  if (glfwGetKey(window->ptr, GLFW_KEY_Q))
+  if (glfwGetKey(window->pWindow, GLFW_KEY_Q))
   {
     window->mainCamera->processInput(Camera::LEFTWARD, deltaTime * 10.0f);
     return 1;
   }
-  if (glfwGetKey(window->ptr, GLFW_KEY_D))
+  if (glfwGetKey(window->pWindow, GLFW_KEY_D))
   {
     window->mainCamera->processInput(Camera::RIGHTWARD, deltaTime * 10.0f);
     return 1;
