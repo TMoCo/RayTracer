@@ -13,10 +13,11 @@
 
 #include <render/bounds/AABB.h>
 
-#include <render/raytracer/Surfel.h>
 #include <render/raytracer/Ray.h>
 
 #include <scene/Transform.h>
+
+class Surfel;
 
 class Shape
 {
@@ -30,13 +31,6 @@ public:
   inline F32 getPdf() { return 1.0f / getArea(); }
 
   virtual bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const = 0;
-
-  inline virtual bool intersectP(const Ray& ray) const
-  {
-    F32 tHit = ray.tMax;
-    Surfel intersection;
-    return intersect(ray, &tHit, &intersection);
-  }
 
   Transform* toWorld;
 

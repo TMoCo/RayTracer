@@ -42,9 +42,11 @@ Quaternion& Quaternion::operator /=(const Quaternion& other)
 
 Quaternion& Quaternion::operator *=(const Quaternion& other) 
 {
+  Vector3 v1 = { _v };
+  Vector3 v2 = { other._v };
   *this = Quaternion{
-    _scalar * other._vector + other._scalar * _vector + _vector.cross(other._vector),
-    _scalar * other._scalar - _vector.dot(other._vector)
+    _scalar * v2 + other._scalar * v1 + v1.cross(v2),
+    _scalar * other._scalar - v1.dot(v2)
   };
   return *this;
 }
@@ -78,7 +80,7 @@ const F32& Quaternion::operator [](const UI32 index) const
 
 Vector3 Quaternion::vector() const 
 {
-  return _vector;
+  return Vector3{ _v };
 }
 
 F32 Quaternion::scalar() const 
@@ -98,7 +100,7 @@ Quaternion Quaternion::unit() const
 
 Quaternion Quaternion::conjugate() const 
 {
-  return { -_vector, _scalar };
+  return { -Vector3{ _v }, _scalar };
 }
 
 Quaternion Quaternion::inverse() const 
@@ -118,9 +120,9 @@ Quaternion Quaternion::eulerAngles(F32 pitch, F32 yaw, F32 roll)
   F32 sp = sinf(pitch2), cp = cosf(pitch2);
   F32 sy = sinf(yaw2), cy = cosf(yaw2);
   F32 sr = sinf(roll2), cr = cosf(roll2);
-  quaternion._vector.x = sp * cy * cr + cp * sy * sr;
-  quaternion._vector.y = cp * sy * cr - sp * cy * sr;
-  quaternion._vector.z = sp * sy * cr + cp * cy * sr;
+  quaternion._v[0] = sp * cy * cr + cp * sy * sr;
+  quaternion._v[1] = cp * sy * cr - sp * cy * sr;
+  quaternion._v[2] = sp * sy * cr + cp * cy * sr;
   quaternion._scalar   = cr * cp * cy - sr * sp * sy;
   return quaternion;
 }
@@ -132,8 +134,8 @@ Quaternion Quaternion::getRotationFrom(const Vector3& from, const Vector3& to)
 
 Vector3 Quaternion::rotateVector(const Vector3& vector, const Quaternion& quaternion)
 {
-  Vector3 t = (2.0f * quaternion._vector).cross(vector);
-  return vector + quaternion._scalar * t + quaternion._vector.cross(t);
+  Vector3 t = (2.0f * Vector3{ quaternion._v }).cross(vector);
+  return vector + quaternion._scalar * t + Vector3{ quaternion._v }.cross(t);
 }
 
 Quaternion operator /(Quaternion lhs, const F32 rhs) 

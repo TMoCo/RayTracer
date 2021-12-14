@@ -22,6 +22,27 @@
 
 int Application::init()
 {
+  Transform t1 = { {1,2,3}, Quaternion::angleAxis(radians(90.0f), RIGHT), {1, 1, 1} };
+  Transform t2 = { {1,2,3}, Quaternion::angleAxis(radians(90.0f), RIGHT), {1, 1, 1} };
+  Transform t3 = { {1,2,3}, Quaternion::angleAxis(radians(90.0f), RIGHT), {1, 1, 1} };
+
+  t1.updateMatrixRepresentations();
+  t2.updateMatrixRepresentations();
+  t3.updateMatrixRepresentations();
+
+  Transform t4 = t1.applyToTransform(t2.applyToTransform(t3));
+  t4.updateMatrixRepresentations();
+  
+  std::cout << Quaternion::angleAxis(radians(90.0f), RIGHT) * Quaternion::angleAxis(radians(90.0f), RIGHT) << "\n\n";
+  std::cout << Quaternion::angleAxis(radians(90.0f), RIGHT) << "\n\n";
+
+  // t1 t2 t3
+  std::cout << t3.getMatrixRepresentation() * t2.getMatrixRepresentation() * t1.getMatrixRepresentation() << "\n\n";
+
+  std::cout << t4.getMatrixRepresentation() << "\n\n";
+
+  exit(1);
+
   if (!glfwInit())
   {
     DEBUG_PRINT("Failed to initialise GLFW!\n");
@@ -100,7 +121,7 @@ void Application::renderLoop(Scene* scene)
 
   Transform t{ Vector3{ 1.0f, 2.0f, 3.0f }, Quaternion::angleAxis(radians(90.0f), RIGHT), {1.0f, 1.0f, 1.0f } };
   
-  Matrix4 model = t.matrix;
+  Matrix4 model = t.getMatrixRepresentation();
   Matrix4 view;
   Matrix4 proj;
   

@@ -19,8 +19,6 @@ public:
   union {
     Vector4 _q;
 
-    Vector3 _vector;
-
     struct {
       F32 _v[3];
 
@@ -28,7 +26,7 @@ public:
     };
   };
 
-  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : _vector{ vector }, _scalar{ scalar } {}
+  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : _v{ vector.x, vector.y, vector.z }, _scalar{ scalar } {}
 
   Quaternion(const Quaternion& other) : _q{ other._q } {}
 

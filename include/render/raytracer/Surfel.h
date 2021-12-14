@@ -16,6 +16,7 @@
 #include <core/core.h>
 
 #include <render/primitives/Mesh.h>
+#include <render/shapes/Shape.h>
 
 #include <image/Colour.h>
 

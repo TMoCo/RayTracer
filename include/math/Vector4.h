@@ -13,7 +13,7 @@
 
 #include <math/Vector3.h> // for Homogeneous vectors (could move to Vectors.h in separate class...)
 
-#include <string.h>
+#include <cstring>
 #include <xmmintrin.h>
 
 constexpr UI32 SIZEOF_VEC4 = 0x10;

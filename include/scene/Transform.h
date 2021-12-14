@@ -16,33 +16,40 @@
 #include <render/raytracer/Ray.h>
 
 class Transform {
+  friend class Node;
+
 public:
   Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f });
 
-  void rotateBy(const Quaternion& quaternion);
+  Transform applyToTransform(const Transform& other) const;
 
-  void translateBy(const Vector3& vec3);
+  Ray applyToRay(const Ray& ray) const;
 
-  void scaleBy(const Vector3& scale);
+  Ray applyInverseToRay(const Ray& ray) const;
 
-  Ray applyToRay(const Ray& ray);
+  Vector3 applyToPoint(const Vector3& point) const;
 
-  Ray applyInverseToRay(const Ray& ray);
+  Vector3 applyInverseToPoint(const Vector3& point) const;
 
-  Vector3 applyToPoint(const Vector3& point);
+  Vector3 applyToNormal(const Vector3& normal) const;
 
-  Vector3 applyInverseToPoint(const Vector3& point);
+  Vector3 applyInverseToNormal(const Vector3& normal) const;
 
-  Vector3 applyToNormal(const Vector3& normal);
+  Vector3 applyToVector3(const Vector3& vector3) const;
 
-  Vector3 applyInverseToNormal(const Vector3& normal);
+  Vector3 applyInverseToVector3(const Vector3& vector3) const;
 
-  Vector3 applyToVector3(const Vector3& vector3);
+  Quaternion applyToRotation(const Quaternion& rotationAsQuat) const;
+  
+  Quaternion applyInverseToRotation(const Quaternion& rotationAsQuat) const;
 
-  Vector3 applyInverseToVector3(const Vector3& vector3);
+  void updateMatrixRepresentations();
 
-  void update();
+  const Matrix4& getMatrixRepresentation() const;
 
+  const Matrix4& getInverseMatrixRepresentation() const;
+
+//protected:
   Vector3 position;
 
   Quaternion rotation;
@@ -52,6 +59,8 @@ public:
   Matrix4 matrix;
 
   Matrix4 inverseMatrix;
+
+  bool outOfDate;
 };
 
 #endif // !TRANSFORM_H_

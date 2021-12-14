@@ -79,7 +79,6 @@ colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
     if (Intersect(inRay, meshes, surfel, tNear)) {
       //PRINT("intersection");
       // compute surfel position, normal and texture coordinates
-      surfel.Interpolate();
 
       // colour with uvs
       // Vector3 barycentric = UniformSampleTriangle(Random::UniformUV());
@@ -102,7 +101,7 @@ colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
         Intersect(ray, meshes, shadow, tNear);
 
         // > same mesh and same triangle = not in shadow
-        if ((shadow.mesh == surfel.mesh) && (shadow.tri == surfel.tri)) {
+        //if ((shadow.mesh == surfel.mesh) && (shadow.tri == surfel.tri)) {
           // compute lighting
           c += {};
             /*
@@ -114,7 +113,7 @@ colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
               // light distance attenuation
               / (tNear * tNear);
             */
-        }
+        //}
       }
 
       // indirect lighting
@@ -191,7 +190,8 @@ bool RayTracer::MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
         }
         */
     }
-    return (surfel.mesh != nullptr); // no mesh == no intersection
+    //return (surfel != nullptr); // no mesh == no intersection
+    return false;
 }
 
 Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {

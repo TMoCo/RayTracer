@@ -6,7 +6,7 @@
 
 #include <scene/Node.h>
 
-Node::Node(const std::string& name, Node* parent) : name(name), parent(parent)
+Node::Node(const std::string& name, Node* parent) : name(name), parent(parent), primitive(nullptr), outOfDate{ false }
 {
 
 }
@@ -16,41 +16,103 @@ Node::~Node()
   clear();
 }
 
-void Node::updateTransform()
+Transform* Node::getLocalTransform()
 {
-  local.update();
+  if (outOfDate)
+  {
+    local.updateMatrixRepresentations();
+    outOfDate = false;
+  }
+
+  return &local;
+}
+
+Transform* Node::getWorldTransform()
+{
+  if (outOfDate)
+  {
+    world = *getLocalTransform();
+  
+    Node* parentNode = parent;
+    while (parentNode != nullptr)
+    {
+      world.position = Quaternion::rotateVector(world.position, parentNode->local.rotation) * parentNode->local.scale;
+      world.rotation *= parentNode->local.rotation;
+      world.scale += parentNode->local.scale;
+    }
+    world.updateMatrixRepresentations();
+  }
+
+  return &world;
+}
+
+void Node::addChildNode(Node* node)
+{
+  children.push_back(node);
+}
+
+Node* Node::getChildNode(const std::string& name)
+{
+  return nullptr;
+}
+
+std::vector<Node*>& Node::getChildrenNodes()
+{
+  return children;
+}
+
+void Node::setChildrenOutOfDate()
+{
+  for (Node* child : children)
+  {
+    child->outOfDate = true;
+    child->setChildrenOutOfDate();
+  }
+}
+
+void Node::setParentNode(Node* newParent)
+{
+  parent = newParent;
+}
+
+Node* Node::getParentNode()
+{
+  return parent;
+}
+
+Node* Node::getRootNode()
+{
+  Node* root = this;
+  while (root->parent != nullptr)
+  {
+    root = root->parent;
+  }
+  return root;
 }
 
 void Node::clear()
 {
   for (auto& child : children)
   {
-    child->clear(); // recursively delete all children
+    child->clear(); 
     delete child;
   }
 }
 
-void Node::addChild(Node* node)
+void Node::translateNode(const Vector3& translation)
 {
-  children.push_back(node);
+  local.position += translation;
+  outOfDate = true;
 }
 
-Node* Node::getChild(const std::string& name)
+void Node::rotateNode(const Quaternion& rotation)
 {
-  return nullptr;
+  local.rotation *= rotation;
+  outOfDate = true;
 }
 
-std::vector<Node*>& Node::getChildren()
+void Node::scaleNode(const Vector3& scale)
 {
-  return children;
-}
-
-void Node::setParent(Node* newParent)
-{
-  parent = newParent;
-}
-
-Node* Node::getParent()
-{
-  return parent;
+  local.scale += scale;
+  outOfDate = true;
 }

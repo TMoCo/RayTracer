@@ -4,6 +4,10 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
+//
+// Scene node, building block of the scene data structure
+//
+
 #ifndef NODE_H_
 #define NODE_H_ 1
 
@@ -16,6 +20,7 @@
 class Node
 {
   friend class SceneLoader;
+
 public:
   std::string name;
 
@@ -23,19 +28,31 @@ public:
   
   ~Node();
 
+  Transform* getLocalTransform();
+
+  Transform* getWorldTransform();
+
+  Node* getChildNode(const std::string& name);
+
+  std::vector<Node*>& getChildrenNodes();
+
+  void setChildrenOutOfDate();
+  
+  Node* getParentNode();
+
+  Node* getRootNode();
+  
+  void setParentNode(Node* newParent);
+
+  void addChildNode(Node* node);
+
   void clear();
 
-  Node* getChild(const std::string& name);
+  void translateNode(const Vector3& translation);
 
-  std::vector<Node*>& getChildren();
-  
-  Node* getParent();
-  
-  void setParent(Node* newParent);
+  void rotateNode(const Quaternion& rotation);
 
-  void updateTransform();
-
-  void addChild(Node* node);
+  void scaleNode(const Vector3& scale);
 
 protected:
   Node* parent;
@@ -44,9 +61,11 @@ protected:
 
   Transform local;
 
-  Transform global;
+  Transform world;
 
-  Primitive* primitive; // can be an aggregate (eg: a mesh), or simple geometry (eg: a sphere)
+  Primitive* primitive; // can be an aggregate (eg: a mesh), or a shape (eg: a sphere)
+
+  bool outOfDate;
 };
 
 #endif // !NODE_H_
