@@ -62,14 +62,14 @@ I32 Application::run()
   Scene scene;
   SceneLoader::loadScene("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", scene);
 
-  renderLoopGl(&scene);
+  renderLoop(&scene);
 
   terminate();
 
   return 0;
 }
 
-void Application::renderLoopGl(Scene* scene)
+void Application::renderLoop(Scene* scene)
 {
   //Mesh* triangles = resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\Triangles.obj");
   //triangles->generatebuffers(false);
@@ -151,11 +151,6 @@ void Application::renderLoopGl(Scene* scene)
     glfwSwapBuffers(window.getWindowPointer());
 #endif
   }
-}
-
-void Application::renderLoopVk()
-{
-  // do something
 }
 
 void Application::terminate()

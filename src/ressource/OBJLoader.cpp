@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -156,11 +156,9 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
       // empty line
       break;
     default:
-      // process a string 
-      if (line.find("usemtl") != std::string::npos)
-        break;
-      if (line.find("mtllib") != std::string::npos)
-        break;
+      // TODO: add material
+      if (line.find("usemtl") != std::string::npos) break;
+      if (line.find("mtllib") != std::string::npos) break;
       break;
     }
   }
@@ -169,11 +167,13 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
   return true;
 }  
 
-bool OBJLoader::loadMtl(const std::string& path) {
+bool OBJLoader::loadMtl(const std::string& path) 
+{
   if (!file::isOfType(path, ".mtl")) {
     DEBUG_PRINT("file provided is not .mtl");
     return false;
   }
+
   return true;
 }
     /*

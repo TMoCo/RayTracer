@@ -29,17 +29,13 @@ private:
 
   RayTracer raytracer;
 
-  bool pause;
-  bool debug;
+  bool pause, debug;
 
   int init();
 
   void terminate();
 
-  // render loops (belong to their respective renderers?)
-  void renderLoopGl(Scene* scene);
-
-  void renderLoopVk(); // todo: for vulkan applications
+  void renderLoop(Scene* scene);
 
 public:
   I32 run();

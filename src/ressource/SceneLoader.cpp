@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -11,6 +11,7 @@
 #include <resource/SceneLoader.h>
 
 #include <fstream>
+#include <cstring>
 
 I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 {
@@ -63,6 +64,8 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     if (strcmp(token, "}") == 0)
     {
       nodeStack.pop_back();
+
+      node->updateTransform();
       node = nodeStack.empty() ? nullptr : nodeStack.back();
 
       continue;
@@ -126,14 +129,24 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
 Shape* SceneLoader::createShape(Transform* toWorld, const char* shape, char* data)
 {
-  if (strcmp(shape, "sphere") == 0)
+  if (std::strcmp(shape, "sphere") == 0)
   {
-    // parse data as 
     F32 radius = strtof(data, &data);
     F32 zMin = strtof(data, &data);
     F32 zMax = strtof(data, &data);
     F32 phiMax = strtof(data, &data);
     return new Sphere(toWorld, false, radius, zMin, zMax, phiMax);
   }
+
+  if (std::strcmp(shape, "cylindre") == 0)
+  {
+
+  }
+
+  if (std::strcmp(shape, "disk") == 0)
+  {
+
+  }
+
   return nullptr;
 }

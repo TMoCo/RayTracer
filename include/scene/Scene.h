@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -28,12 +28,14 @@ public:
   
   void clear(); // dfs delete nodes
 
-  void draw();
+  void draw() const;
+
+  const std::vector<Primitive*>& getPrimitives() const;
 
 private:
   Node* root;
 
-  // std::vector<Primitive*> primitives; // container for all primitives
+  std::vector<Primitive*> primitives; // container for all primitives
 };
 
 #endif // !SCENE_H_

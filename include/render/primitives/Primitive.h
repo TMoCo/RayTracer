@@ -16,10 +16,13 @@ class Primitive
 {
 public:
   virtual AABB getBounds() = 0;
+
   virtual bool intersect(const Ray& ray) = 0;
+  
   virtual bool intersectP(const Ray& ray) = 0;
-  // for computing lighting 
+  
   // virtual const AreaLight* getAreaLight() = 0;
+  
   // virtual const Material* getMaterial() = 0;
 
 };

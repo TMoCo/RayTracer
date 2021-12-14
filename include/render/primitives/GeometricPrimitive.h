@@ -15,6 +15,7 @@
 class GeometricPrimitive : protected Primitive
 {
   friend class SceneLoader;
+
 public:
   GeometricPrimitive(Shape* shape) : Primitive(), shape(shape) {}
 

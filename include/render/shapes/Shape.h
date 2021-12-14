@@ -31,11 +31,11 @@ public:
 
   virtual bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const = 0;
 
-  inline virtual bool IntersectP(const Ray& ray) const
+  inline virtual bool intersectP(const Ray& ray) const
   {
-    F32 tHit = std::numeric_limits<F32>::max();
-    Surfel isect;
-    return intersect(ray, &tHit, &isect);
+    F32 tHit = ray.tMax;
+    Surfel intersection;
+    return intersect(ray, &tHit, &intersection);
   }
 
   Transform* toWorld;

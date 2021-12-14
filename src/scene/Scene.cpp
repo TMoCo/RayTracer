@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -24,7 +24,12 @@ void Scene::clear()
   }
 }
 
-void Scene::draw()
+const std::vector<Primitive*>& Scene::getPrimitives() const 
+{
+  return primitives;
+}
+
+void Scene::draw() const
 {
   /*
   for (auto primitive : primitives)

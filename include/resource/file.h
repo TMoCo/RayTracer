@@ -11,7 +11,7 @@
 
 #include <core/debug.h>
 
-#include <string.h>
+#include <cstring>
 #include <string>
 
 namespace file

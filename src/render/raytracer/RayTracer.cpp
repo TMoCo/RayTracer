@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -10,7 +10,7 @@
 
 #include <render/raytracer/RayTracer.h>
 
-#include <core/Random.h>
+#include <core/random.h>
 
 void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera* camera, UI32 samples) {
     
@@ -51,11 +51,9 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera
       // TODO: intersect with BVH
 
       // for now, just loop over all primitives in the scene and test intersection
-      /*
-      for (auto& prim : scene->primitives)
-        if (prim->shape->IntersectP(primaryRay))
+      for (auto& prim : scene->getPrimitives())
+        if (prim->intersectP(primaryRay))
           frameBuffer[row][col] = Colour::Red;
-      */
       //**
     }
   }
@@ -122,7 +120,7 @@ colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
       // indirect lighting
       ray.direction = Quaternion::rotateVector(
         // random point on hemisphere unit hemisphere
-        UniformSampleHemisphere(Random::UniformUV()),
+        UniformSampleHemisphere(random::UniformUV()),
         // rotation to align unit normal with surfel normal
         Quaternion::getRotationFrom(UP, surfel.normal));
 
@@ -200,7 +198,7 @@ Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
     // get a random triangle in the light mesh
     //UI32 index = Random::UniformI32(0, (static_cast<UI32>(light->indices.size()) / 9) - 1);
     // barycentric coordinates
-    return UniformSampleTriangle(Random::UniformUV());
+    return UniformSampleTriangle(random::UniformUV());
     // random point in the triangle
     /*
     return 

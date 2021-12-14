@@ -1,15 +1,17 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
 //
-// Surfel struct declaration
+// Surfel declaration
 //
 
 #ifndef SURFEL_H_
 #define SURFEL_H_
+
+#include <math/thomath.h>
 
 #include <core/core.h>
 
@@ -17,34 +19,30 @@
 
 #include <image/Colour.h>
 
-#include <math/thomath.h>
+class Surfel {
+public:
+  Surfel() {}
 
-// TODO: Fix surfel to use new mesh
+  Surfel(const Vector3& position, const Vector2& UV, const Vector3& outDirection, 
+    const Vector3& dPdU, const Vector3& dPdV, const Vector3& dNdU, const Vector3& dNdV, const Shape* shape)
+    : position{ position }, normal{ dPdU.cross(dPdV).normalize() }, outDirection{ outDirection }, UV{ UV }, 
+    dPdU{ dPdU }, dPdV{ dPdV }, dNdU{ dNdU }, dNdV{ dNdV }, shape{ shape }
+  {
+    // reverse normals? shading geometry?
+  }
 
-struct Surfel {
-    Vector3 barycentric; // barycentric coordinates
-    Vector3 normal;
-    Vector3 position;
-    UI32 tri;   // index of first vertex in surfel coordinates
-    const Mesh* mesh;
-    bool isLight;
+  Vector3 position;
+  
+  Vector3 normal;
 
-    Surfel() : barycentric{}, normal{}, position{}, tri(0), mesh(nullptr) {}
+  Vector3 outDirection;
 
-    inline void Interpolate() {
-    }
+  Vector2 UV;
 
-    inline Vector2 UV() {
-    }
+  Vector3 dPdU, dPdV; // partial derivatives of point p with respect to u and v
+  Vector3 dNdU, dNdV; // ditto for normal
 
-    inline colour BRDF(const Vector3& light, const Vector3& view) { // include material
-        // lambertian
-        F32 lambertian = std::max(normal.dot(light), 0.0f);
-        // glossy 
-        F32 glossy = std::max((light + view).normalize().dot(normal), 0.0f);
-        // compute surface color
-        return lambertian * std::pow(glossy, 0.28f);
-    }
+  const Shape* shape = nullptr;
 };
 
 #endif // !SURFEL_H_

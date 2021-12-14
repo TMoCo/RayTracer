@@ -1,15 +1,14 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
-// A class for managing a scene
-//
+*/
 
 #ifndef NODE_H_
 #define NODE_H_ 1
 
 #include <render/primitives/Primitive.h>
+
 #include <scene/Transform.h>
 
 #include <vector>
@@ -26,17 +25,17 @@ public:
 
   void clear();
 
-  void addChild(Node* node);
-
   Node* getChild(const std::string& name);
 
   std::vector<Node*>& getChildren();
   
-  void setParent(Node* newParent);
-  
   Node* getParent();
+  
+  void setParent(Node* newParent);
 
   void updateTransform();
+
+  void addChild(Node* node);
 
 protected:
   Node* parent;

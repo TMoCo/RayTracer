@@ -86,8 +86,6 @@ public:
 
   Vector3 toVector3() const; // drop w
 
-  static Vector4 toHomogeneous(const Vector3& point, F32 w = 1.0f);
-
   F32 dot(const Vector4& other) const;
 
   F32 length() const;

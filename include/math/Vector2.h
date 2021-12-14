@@ -11,7 +11,7 @@
 
 #include <core/types.h>
 
-#include <string.h>
+#include <cstring>
 
 constexpr UI32 SIZEOF_VEC2 = 0x8;
 

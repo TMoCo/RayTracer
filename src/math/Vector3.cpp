@@ -12,7 +12,7 @@
 
 #include <core/core.h>
 
-#include <string.h>
+#include <cstring>
 #include <math.h>
 #include <iomanip>
 

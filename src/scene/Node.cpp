@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -18,7 +18,7 @@ Node::~Node()
 
 void Node::updateTransform()
 {
-
+  local.update();
 }
 
 void Node::clear()

@@ -87,11 +87,6 @@ Vector3 Vector4::toVector3() const
   return { _v };
 }
 
-Vector4 Vector4::toHomogeneous(const Vector3& other, F32 W)
-{
-  return {other, W};
-}
-
 F32 Vector4::dot(const Vector4& other) const
 {
   __m128 dot = _mm_mul_ps(__v, other.__v);

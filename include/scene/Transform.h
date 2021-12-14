@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -25,26 +25,32 @@ public:
 
   void scaleBy(const Vector3& scale);
 
-  Ray transformRay(const Ray& ray);
+  Ray applyToRay(const Ray& ray);
 
-  Vector3 transformPoint(const Vector3& point);
+  Ray applyInverseToRay(const Ray& ray);
 
-  Vector3 transformNormal(const Vector3& normal);
+  Vector3 applyToPoint(const Vector3& point);
 
-  Vector3 transformVector3(const Vector3& vector3);
+  Vector3 applyInverseToPoint(const Vector3& point);
+
+  Vector3 applyToNormal(const Vector3& normal);
+
+  Vector3 applyInverseToNormal(const Vector3& normal);
+
+  Vector3 applyToVector3(const Vector3& vector3);
+
+  Vector3 applyInverseToVector3(const Vector3& vector3);
 
   void update();
 
-  // world position rotation and scale
   Vector3 position;
 
   Quaternion rotation;
 
-
   Vector3 scale;
 
-  // matrix representation
   Matrix4 matrix;
+
   Matrix4 inverseMatrix;
 };
 

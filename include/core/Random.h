@@ -1,9 +1,11 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 14/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
-// utility random number generation
+*/
+
+//
+// utility for random number generation
 //
 
 #include <core/types.h>
@@ -12,36 +14,40 @@
 
 #include <random>
 
-namespace Random {
+namespace random {
+  typedef std::uniform_real_distribution<F32> uniform_f;
+  typedef std::uniform_int_distribution<I32>  uniform_i;
+  typedef std::uniform_int_distribution<UI32> uniform_ui;
 
-    typedef std::uniform_real_distribution<F32> uniform_f;
-    typedef std::uniform_int_distribution<I32>  uniform_i;
-    typedef std::uniform_int_distribution<UI32> uniform_ui;
+  static std::mt19937 generator;
 
-    // random float
-    inline F32 UniformF32() {
-        static uniform_f distribution(0.0f, 1.0f);
-        static std::mt19937 generator;
-        return distribution(generator);
-    }
+  inline F32 UniformF32() 
+  {
+    static uniform_f distribution(0.0f, 1.0f);
+    return distribution(generator);
+  }
 
-    inline F32 UniformF32(F32 min, F32 max) {
-        static uniform_f distribution(min, max);
-        static std::mt19937 generator;
-        return distribution(generator);
-    }
+  inline F32 UniformF32(F32 min, F32 max) 
+  {
+    static uniform_f distribution(min, max);
+    return distribution(generator);
+  }
 
-    // random int
-    inline I32 UniformI32(I32 min, I32 max) {
-        static uniform_i distribution(min, max);
-        static std::mt19937 generator;
-        return distribution(generator);
-    }
+  inline I32 UniformI32(I32 min, I32 max) 
+  {
+    static uniform_i distribution(min, max);
+    return distribution(generator);
+  }
 
-    // random uv 
-    inline Vector2 UniformUV() {
-        static uniform_f distribution(0.0f, 1.0f);
-        static std::mt19937 generator;
-        return { distribution(generator), distribution(generator) };
-    }
+  inline UI32 UniformUI32(UI32 min, UI32 max)
+  {
+    static uniform_ui distribution(min, max);
+    return distribution(generator);
+  }
+
+  inline Vector2 UniformUV() 
+  {
+    static uniform_f distribution(0.0f, 1.0f);
+    return { distribution(generator), distribution(generator) };
+  }
 };

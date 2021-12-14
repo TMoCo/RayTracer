@@ -14,7 +14,7 @@
 #include <math/Vector4.h>
 #include <math/Quaternion.h>
 
-#include <string.h>
+#include <cstring>
 
 constexpr UI32 SIZEOF_MAT4 = 0x40;
 
