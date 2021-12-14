@@ -81,32 +81,30 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     if (strcmp(token, "geometry") == 0)
     {
       DEBUG_ASSERT(scene.root != nullptr, "Can't add geometry to an empty scene!");
-      
-      token = strtok_s(NULL, " ", &remainding); // node name
+      token = strtok_s(NULL, " ", &remainding);
       node->addChildNode(new Node(token ? token : "geometry", node));
       newNode = node->children.back();
-      
       continue;
     }
 
     if (strcmp(token, "shape") == 0)
     {
-      token = strtok_s(NULL, " ", &remainding); // token = shape type, remainding = shape create info
+      token = strtok_s(NULL, " ", &remainding);
       node->primitive =
         new GeometricPrimitive(createShape(node->getWorldTransform(), token, remainding ? remainding : ""));
-      
       continue;
     }
 
     if (strcmp(token, "position") == 0)
     {
-      node->translateNode(Vector3{ strtof(remainding, &token), strtof(token, &token), strtof(token, NULL) });
+      node->local.translateBy({ strtof(remainding, &token), strtof(token, &token), strtof(token, NULL) });
       continue;
     }
     
     if (strcmp(token, "rotation") == 0)
     {
-      node->rotateNode(Quaternion::eulerAngles(strtof(remainding, &token), strtof(token, &token), strtof(token, NULL)));
+      node->local.rotateBy(
+        Quaternion::eulerAngles(strtof(remainding, &token), strtof(token, &token), strtof(token, NULL)));
       continue;
     }
 

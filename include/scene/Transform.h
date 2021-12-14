@@ -21,6 +21,12 @@ class Transform {
 public:
   Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f });
 
+  void translateBy(const Vector3& translation);
+
+  void rotateBy(const Quaternion& rotation);
+
+  void scaleBy(const Vector3& scale);
+
   Transform applyToTransform(const Transform& other) const;
 
   Ray applyToRay(const Ray& ray) const;
@@ -39,23 +45,11 @@ public:
 
   Vector3 applyInverseToVector3(const Vector3& vector3) const;
 
-  Quaternion applyToRotation(const Quaternion& rotationAsQuat) const;
-  
-  Quaternion applyInverseToRotation(const Quaternion& rotationAsQuat) const;
+  const Matrix4& getMatrix() const;
 
-  void updateMatrixRepresentations();
+  const Matrix4& getInverseMatrix() const;
 
-  const Matrix4& getMatrixRepresentation() const;
-
-  const Matrix4& getInverseMatrixRepresentation() const;
-
-//protected:
-  Vector3 position;
-
-  Quaternion rotation;
-
-  Vector3 scale;
-
+protected:
   Matrix4 matrix;
 
   Matrix4 inverseMatrix;

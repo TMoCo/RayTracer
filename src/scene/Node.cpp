@@ -18,29 +18,17 @@ Node::~Node()
 
 Transform* Node::getLocalTransform()
 {
-  if (outOfDate)
-  {
-    local.updateMatrixRepresentations();
-    outOfDate = false;
-  }
-
   return &local;
 }
 
 Transform* Node::getWorldTransform()
 {
-  if (outOfDate)
-  {
-    world = *getLocalTransform();
+  world = local;
   
-    Node* parentNode = parent;
-    while (parentNode != nullptr)
-    {
-      world.position = Quaternion::rotateVector(world.position, parentNode->local.rotation) * parentNode->local.scale;
-      world.rotation *= parentNode->local.rotation;
-      world.scale += parentNode->local.scale;
-    }
-    world.updateMatrixRepresentations();
+  Node* parentNode = parent;
+  while (parentNode != nullptr)
+  {
+    world = parentNode->local.applyToTransform(world);
   }
 
   return &world;
@@ -97,22 +85,4 @@ void Node::clear()
     child->clear(); 
     delete child;
   }
-}
-
-void Node::translateNode(const Vector3& translation)
-{
-  local.position += translation;
-  outOfDate = true;
-}
-
-void Node::rotateNode(const Quaternion& rotation)
-{
-  local.rotation *= rotation;
-  outOfDate = true;
-}
-
-void Node::scaleNode(const Vector3& scale)
-{
-  local.scale += scale;
-  outOfDate = true;
 }

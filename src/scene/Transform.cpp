@@ -10,16 +10,37 @@
 
 #include <scene/Transform.h>
 
-Transform::Transform(Vector3 position, Quaternion rotation, Vector3 scale) :
-  position(position), rotation(rotation), scale(scale), outOfDate(true)
+Transform::Transform(Vector3 translation, Quaternion rotation, Vector3 scale)
 {
-  // updateMatrixRepresentations();
+  matrix = Matrix4::scale(scale) * Matrix4::rotation(rotation) * Matrix4::translation(translation);
+  inverseMatrix = Matrix4::translation(-translation) * Matrix4::transpose(Matrix4::rotation(rotation)) * Matrix4::scale(1.0f / scale);
+}
+
+void Transform::translateBy(const Vector3& translation)
+{
+  matrix = matrix * Matrix4::translation(translation);
+  inverseMatrix = Matrix4::translation(-translation) * inverseMatrix;
+}
+
+void Transform::rotateBy(const Quaternion& rotation)
+{
+  Matrix4 rotationMatrix = Matrix4::rotation(rotation);
+  matrix = matrix * rotationMatrix;
+  inverseMatrix = Matrix4::transpose(rotationMatrix) * inverseMatrix;
+}
+
+void Transform::scaleBy(const Vector3& scale)
+{
+  matrix = matrix * Matrix4::scale(scale);
+  inverseMatrix = Matrix4::scale(1.0f / scale) * inverseMatrix;
 }
 
 Transform Transform::applyToTransform(const Transform& other) const
 {
-  return { position + Quaternion::rotateVector(other.position, rotation), other.rotation * rotation,
-    other.scale * scale };
+  Transform result;
+  result.matrix = matrix * other.matrix;
+  result.inverseMatrix = other.inverseMatrix * inverseMatrix;
+  return result;
 }
 
 Ray Transform::applyToRay(const Ray& ray) const
@@ -44,12 +65,12 @@ Vector3 Transform::applyInverseToPoint(const Vector3& point) const
 
 Vector3 Transform::applyToNormal(const Vector3& normal) const
 {
-  return Quaternion::rotateVector(normal, rotation).normalize();
+  return (Matrix4::transpose(matrix) * Vector4 { normal }).toVector3().normalize();
 }
 
 Vector3 Transform::applyInverseToNormal(const Vector3& normal) const
 {
-  return Quaternion::rotateVector(normal, rotation.inverse()).normalize();
+  return (matrix * Vector4 { normal }).toVector3().normalize();
 }
 
 Vector3 Transform::applyToVector3(const Vector3& vector3) const
@@ -62,49 +83,12 @@ Vector3 Transform::applyInverseToVector3(const Vector3& vector3) const
   return (inverseMatrix * Vector4{ vector3 }).toVector3();
 }
 
-Quaternion Transform::applyToRotation(const Quaternion& rotationAsQuat) const
-{
-  return rotationAsQuat * rotation;
-}
-
-Quaternion Transform::applyInverseToRotation(const Quaternion& rotationAsQuat) const
-{
-  return rotationAsQuat * rotation.inverse();
-}
-
-
-void Transform::updateMatrixRepresentations()
-{
-  // matrix = Matrix4::translation(position) * Matrix4::rotation(rotation) * Matrix4::scale(scale);
-  matrix = Matrix4::rotation(rotation);
-  matrix[3][0] = position.x;
-  matrix[3][1] = position.y;
-  matrix[3][2] = position.z;
-  matrix[0][0] *= scale.x;
-  matrix[1][1] *= scale.y;
-  matrix[2][2] *= scale.z;
-
-  //inverseMatrix = Matrix4::scale(1.0f / scale) * Matrix4::transpose(Matrix4::rotation(rotation))
-  //  * Matrix4::translation(-position);
-  Quaternion inverseRotation = rotation.inverse();
-  Vector3 inverseScale = 1.0f / scale;
-  Vector3 inversePosition = Quaternion::rotateVector(-position, inverseRotation) * inverseScale;
-
-  inverseMatrix = Matrix4::rotation(inverseRotation);
-  inverseMatrix[0][0] *= inverseScale.x;
-  inverseMatrix[1][1] *= inverseScale.y;
-  inverseMatrix[2][2] *= inverseScale.z;
-  inverseMatrix[3][0] = inversePosition.x;
-  inverseMatrix[3][1] = inversePosition.y;
-  inverseMatrix[3][2] = inversePosition.z;
-}
-
-const Matrix4& Transform::getMatrixRepresentation() const
+const Matrix4& Transform::getMatrix() const
 { 
   return matrix; 
 }
 
-const Matrix4& Transform::getInverseMatrixRepresentation() const 
+const Matrix4& Transform::getInverseMatrix() const 
 {
   return inverseMatrix;
 }

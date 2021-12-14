@@ -48,12 +48,6 @@ public:
 
   void clear();
 
-  void translateNode(const Vector3& translation);
-
-  void rotateNode(const Quaternion& rotation);
-
-  void scaleNode(const Vector3& scale);
-
 protected:
   Node* parent;
 
