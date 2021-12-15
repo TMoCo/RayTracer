@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -22,23 +22,6 @@
 
 int Application::init()
 {
-
-  Transform t1 = { {1,2,3}, Quaternion::angleAxis(radians(90.0f), RIGHT), {2, 2, 2} };
-  Transform t2 = { {2,3,6}, Quaternion::angleAxis(radians(190.0f), FRONT), {1, 1, 1} };
-  Transform t3 = { {5,3,1}, Quaternion::angleAxis(radians(-40.0f), UP), {1, 1, 1} };
-
-  std::cout << t1.getMatrix() << "\n\n";
-  std::cout << t1.getInverseMatrix() << "\n\n";
-
-  Transform t4 = t1.applyToTransform(t2.applyToTransform(t3));
-  
-  std::cout << t4.getMatrix() << "\n\n";
-  std::cout << t4.getInverseMatrix() << "\n\n";
-
-  std::cout << t4.getMatrix() * t4.getInverseMatrix() << "\n\n";
-
-  exit(1);
-
   if (!glfwInit())
   {
     DEBUG_PRINT("Failed to initialise GLFW!\n");

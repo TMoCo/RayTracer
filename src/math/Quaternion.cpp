@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -117,13 +117,14 @@ Quaternion Quaternion::eulerAngles(F32 pitch, F32 yaw, F32 roll)
 {
   Quaternion quaternion{};
   F32 roll2 = radians(roll * 0.5f), pitch2 = radians(pitch * 0.5f), yaw2 = radians(yaw * 0.5f);
-  F32 sp = sinf(pitch2), cp = cosf(pitch2);
-  F32 sy = sinf(yaw2), cy = cosf(yaw2);
-  F32 sr = sinf(roll2), cr = cosf(roll2);
-  quaternion._v[0] = sp * cy * cr + cp * sy * sr;
-  quaternion._v[1] = cp * sy * cr - sp * cy * sr;
-  quaternion._v[2] = sp * sy * cr + cp * cy * sr;
-  quaternion._scalar   = cr * cp * cy - sr * sp * sy;
+  F32 sinpitch = sinf(pitch2), cospitch = cosf(pitch2);
+  F32 sinyaw = sinf(yaw2), cosyaw = cosf(yaw2);
+  F32 sinroll = sinf(roll2), cosroll = cosf(roll2);
+  quaternion._q[0] = sinyaw * sinroll * cospitch + cosyaw * cosroll * sinpitch;
+  quaternion._q[1] = sinyaw * cosroll * cospitch + cosyaw * sinroll * sinpitch;
+  quaternion._q[2] = cosyaw * sinroll * cospitch - sinyaw * cosroll * sinpitch;
+  quaternion._q[3] = cosyaw * cosroll * cospitch - sinyaw * sinroll * sinpitch;
+  std::cout << quaternion << "\n";
   return quaternion;
 }
 

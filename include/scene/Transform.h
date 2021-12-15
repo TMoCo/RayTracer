@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 14/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -19,7 +19,8 @@ class Transform {
   friend class Node;
 
 public:
-  Transform(Vector3 position = {}, Quaternion rotation = {}, Vector3 scale = { 1.0f, 1.0f, 1.0f });
+  Transform();
+  Transform(Vector3 position, Quaternion rotation, Vector3 scale);
 
   void translateBy(const Vector3& translation);
 

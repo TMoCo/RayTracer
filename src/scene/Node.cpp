@@ -1,14 +1,15 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 14/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
 #include <scene/Node.h>
 
-Node::Node(const std::string& name, Node* parent) : name(name), parent(parent), primitive(nullptr), outOfDate{ false }
+Node::Node(const std::string& name, Node* parent) 
+  : name(name), parent(parent), primitive(nullptr), outOfDate{ true }
 {
-
+  
 }
 
 Node::~Node()
@@ -23,13 +24,18 @@ Transform* Node::getLocalTransform()
 
 Transform* Node::getWorldTransform()
 {
-  world = local;
-  
-  Node* parentNode = parent;
-  while (parentNode != nullptr)
+  if (outOfDate)
   {
-    world = parentNode->local.applyToTransform(world);
+    world = local;
+    Node* parentNode = parent;
+    while (parentNode != nullptr)
+    {
+      world = parentNode->local.applyToTransform(world);
+      parentNode = parent->parent;
+    }
   }
+
+  std::cout << world.getMatrix() << "\n";
 
   return &world;
 }

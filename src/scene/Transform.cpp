@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 14/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -10,11 +10,17 @@
 
 #include <scene/Transform.h>
 
+Transform::Transform()
+  : matrix{ Matrix4::identity() },
+  inverseMatrix{ Matrix4::identity() },
+  outOfDate{ false }
+{ }
+
 Transform::Transform(Vector3 translation, Quaternion rotation, Vector3 scale)
-{
-  matrix = Matrix4::scale(scale) * Matrix4::rotation(rotation) * Matrix4::translation(translation);
-  inverseMatrix = Matrix4::translation(-translation) * Matrix4::transpose(Matrix4::rotation(rotation)) * Matrix4::scale(1.0f / scale);
-}
+  : matrix{ Matrix4::scale(scale) * Matrix4::rotation(rotation) * Matrix4::translation(translation) },
+  inverseMatrix{ Matrix4::translation(-translation) * Matrix4::transpose(Matrix4::rotation(rotation)) * Matrix4::scale(1.0f / scale) },
+  outOfDate{ false }
+{ }
 
 void Transform::translateBy(const Vector3& translation)
 {

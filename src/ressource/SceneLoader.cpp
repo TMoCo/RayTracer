@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 14/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -103,8 +103,10 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     
     if (strcmp(token, "rotation") == 0)
     {
-      node->local.rotateBy(
-        Quaternion::eulerAngles(strtof(remainding, &token), strtof(token, &token), strtof(token, NULL)));
+      F32 x = strtof(remainding, &token);
+      F32 y = strtof(token, &token);
+      F32 z = strtof(token, NULL);
+      node->local.rotateBy(Quaternion::eulerAngles(x, y, z));
       continue;
     }
 
