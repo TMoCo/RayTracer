@@ -1,9 +1,11 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
-// string utility for file name handling
+*/
+
+//
+// utility file for filename string manipulation
 //
 
 #ifndef FILE_H_
@@ -11,11 +13,14 @@
 
 #include <core/debug.h>
 
-#include <cstring>
+#include <fstream>
 #include <string>
+#include <string.h>
 
 namespace file
 {
+  constexpr UI32 MAX_LINE_SIZE = 1024U;
+
 #ifdef _WIN32
   constexpr char separator = '\\';
 #elif

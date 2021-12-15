@@ -16,8 +16,6 @@ typedef  std::chrono::system_clock sys_clock;
     Type(const Type& T) = delete; \
     Type& operator=(const Type& T) = delete;
 
-#define MAX_LINE 1024
-
 #define MAX_NAME_LENGTH 0x80 // todo: remove
 
 #endif // CORE_H_

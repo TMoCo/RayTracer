@@ -6,11 +6,9 @@
 
 #include <render/shapes/Sphere.h>
 #include <render/primitives/GeometricPrimitive.h>
-
 #include <resource/file.h>
 #include <resource/SceneLoader.h>
 
-#include <fstream>
 #include <cstring>
 
 I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
@@ -21,18 +19,17 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     return -1;
   }
 
-  std::ifstream objStream(fileName);
+  std::ifstream sceneFileStream(fileName);
 
-  if (!objStream.is_open())
+  if (!sceneFileStream.is_open())
   {
     DEBUG_PRINT("Failed to open file stream for file %s", fileName.c_str());
     return 1;
   }
 
-  scene.clear(); // make sure scene is empty
+  scene.clear();
 
-  // open file and generate scene
-  char line[1024];
+  char line[file::MAX_LINE_SIZE];
   char* token;
   char* remainding;
   std::vector<Node*> nodeStack;
@@ -41,9 +38,9 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
   Node* newNode;
 
   UI32 lineNum = 0;
-  while (!objStream.eof())
+  while (!sceneFileStream.eof())
   {
-    objStream.getline(line, 1024);
+    sceneFileStream.getline(line, file::MAX_LINE_SIZE);
 
     token = strtok_s(line, " ", &remainding);
 
@@ -103,9 +100,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     
     if (strcmp(token, "rotation") == 0)
     {
-      F32 x = strtof(remainding, &token);
-      F32 y = strtof(token, &token);
-      F32 z = strtof(token, NULL);
+      F32 x = strtof(remainding, &token), y = strtof(token, &token), z = strtof(token, NULL);
       node->local.rotateBy(Quaternion::eulerAngles(x, y, z));
       continue;
     }
@@ -113,7 +108,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     lineNum++;
   }
 
-  objStream.close();
+  sceneFileStream.close();
   // TODO: generate BVH when scene data is loaded
   return 0;
 }

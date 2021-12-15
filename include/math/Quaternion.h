@@ -1,8 +1,10 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Quaternionernion class declaration
 //
 
@@ -16,17 +18,9 @@
 
 typedef struct Quaternion {
 public:
-  union {
-    Vector4 _q;
+  Vector4 _q;
 
-    struct {
-      F32 _v[3];
-
-      F32 _scalar;
-    };
-  };
-
-  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : _v{ vector.x, vector.y, vector.z }, _scalar{ scalar } {}
+  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : _q{ vector.x, vector.y, vector.z, scalar } {}
 
   Quaternion(const Quaternion& other) : _q{ other._q } {}
 
@@ -36,7 +30,6 @@ public:
 
   Quaternion(const Vector4& vector) : _q{ vector } {}
 
-  // binary operators
   Quaternion&operator = (const Quaternion &other);
 
   bool operator ==(const Quaternion& other) const;
@@ -72,16 +65,13 @@ public:
   {
     return lhs *= rhs;
   }
-
-  // unary operators
+  
   Quaternion& operator -();
 
-  // access operators
   F32& operator [](const UI32 index);
 
   const F32& operator [](const UI32 index) const;
 
-  // relative to a given quaternion
   Vector3 vector() const;
 
   F32 scalar() const;
@@ -94,24 +84,23 @@ public:
 
   Quaternion inverse() const;
 
-  // quaternion builder
   static Quaternion angleAxis(F32 angle, const Vector3& axis);
 
   static Quaternion eulerAngles(F32 pitch, F32 yaw, F32 roll);
 
-  static Quaternion getRotationFrom(const Vector3& from, const Vector3& to); // rotation from one point to another
+  static Quaternion getRotationFrom(const Vector3& from, const Vector3& to);
 
-  static Vector3 rotateVector(const Vector3& vector, const Quaternion& quaternion); // apply rotation to a right quaternion
+  static Vector3 rotateVector(const Vector3& vector, const Quaternion& quaternion);
+
 } Quaternion;
 
-// binary operators
+
 Quaternion operator /(Quaternion lhs, const F32 rhs);
 
 Quaternion operator *(Quaternion lhs, const F32 rhs);
 
 Quaternion operator *(const F32 lhs, Quaternion& rhs);
 
-// stream operators
 std::istream & operator >> (std::istream &inStream, Quaternion& value);
 
 std::ostream & operator << (std::ostream &outStream, const Quaternion& value);
