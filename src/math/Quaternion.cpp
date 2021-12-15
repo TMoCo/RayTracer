@@ -10,7 +10,6 @@
 
 #include <math/thomath.h>
 
-// assignment operator
 Quaternion& Quaternion::operator = (const Quaternion &other) 
 {
   std::memcpy(_q._v, other._q._v, SIZEOF_VEC4);
@@ -115,17 +114,15 @@ Quaternion Quaternion::angleAxis(F32 angle, const Vector3& axis)
 
 Quaternion Quaternion::eulerAngles(F32 pitch, F32 yaw, F32 roll)
 {
-  Quaternion quaternion{};
   F32 roll2 = radians(roll * 0.5f), pitch2 = radians(pitch * 0.5f), yaw2 = radians(yaw * 0.5f);
-  F32 sinpitch = sinf(pitch2), cospitch = cosf(pitch2);
-  F32 sinyaw = sinf(yaw2), cosyaw = cosf(yaw2);
-  F32 sinroll = sinf(roll2), cosroll = cosf(roll2);
-  quaternion._q[0] = sinyaw * sinroll * cospitch + cosyaw * cosroll * sinpitch;
-  quaternion._q[1] = sinyaw * cosroll * cospitch + cosyaw * sinroll * sinpitch;
-  quaternion._q[2] = cosyaw * sinroll * cospitch - sinyaw * cosroll * sinpitch;
-  quaternion._q[3] = cosyaw * cosroll * cospitch - sinyaw * sinroll * sinpitch;
-  std::cout << quaternion << "\n";
-  return quaternion;
+  F32 sinpitch = sinf(pitch2), sinyaw = sinf(yaw2), sinroll = sinf(roll2);
+  F32 cospitch = cosf(pitch2), cosyaw = cosf(yaw2), cosroll = cosf(roll2);
+  return {
+  sinyaw * sinroll * cospitch + cosyaw * cosroll * sinpitch,
+  sinyaw * cosroll * cospitch + cosyaw * sinroll * sinpitch,
+  cosyaw * sinroll * cospitch - sinyaw * cosroll * sinpitch,
+  cosyaw * cosroll * cospitch - sinyaw * sinroll * sinpitch
+  };
 }
 
 Quaternion Quaternion::getRotationFrom(const Vector3& from, const Vector3& to)
