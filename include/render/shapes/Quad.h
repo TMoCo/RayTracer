@@ -6,8 +6,8 @@
 // Quad primitive struct
 //
 
-#ifndef QUAD_H_
-#define QUAD_H_ 1
+#ifndef QUAD_H
+#define QUAD_H 1
 
 #include <math/thomath.h>
 

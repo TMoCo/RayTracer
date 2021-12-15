@@ -8,8 +8,8 @@
 // utility file for filename string manipulation
 //
 
-#ifndef FILE_H_
-#define FILE_H_
+#ifndef FILE_H
+#define FILE_H
 
 #include <core/debug.h>
 
@@ -55,4 +55,4 @@ namespace file
   }
 };
 
-#endif // !FILE_H_
+#endif // !FILE_H

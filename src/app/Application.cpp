@@ -94,7 +94,7 @@ void Application::renderLoop(Scene* scene)
   // Texture containerTexture{};
   // TextureLoader::loadTexture("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
   
-  Camera camera{ { 0.0f, 0.0f, 2.0f } };
+  Camera camera{ { 0.0f, 0.0f, 0.0f } };
 
   window.setMainCamera(&camera);
 
@@ -109,6 +109,16 @@ void Application::renderLoop(Scene* scene)
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
   glfwSetWindowUserPointer(window.getWindowPointer(), &window);
+
+  Ray ray = Ray::generateCameraRay(window.getCamera(), { 0.75f, 0.75f });
+  std::cout << "origin: " << ray.origin << "  direction: " << ray.direction << "\n\n";
+
+  t = *scene->root->getChildrenNodes().front()->getWorldTransform();
+  std::cout << t.getMatrix() << "\n\n";
+  std::cout << t.getInverseMatrix() << "\n\n";
+
+  auto r = t.applyInverseToRay(ray);
+  std::cout << "origin: " << r.origin << "  direction: " << r.direction << "\n\n";
 
   F32 deltaTime = 0.0f, previous = 0.0f;
   while (!glfwWindowShouldClose(window.getWindowPointer()))

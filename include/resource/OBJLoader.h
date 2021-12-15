@@ -8,8 +8,8 @@
 // OBJLoader class declaration
 //
 
-#ifndef OBJ_LOADER_H_
-#define OBJ_LOADER_H_ 1
+#ifndef OBJ_LOADER_H
+#define OBJ_LOADER_H 1
 
 #include <render/primitives/Mesh.h>
 
@@ -44,5 +44,5 @@ public:
 };
 
 
-#endif // ! OBJ_LOADER_H_
+#endif // ! OBJ_LOADER_H
  

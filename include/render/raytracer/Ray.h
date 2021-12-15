@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -8,8 +8,8 @@
 // Ray struct declaration
 //
 
-#ifndef RAY_H_
-#define RAY_H_
+#ifndef RAY_H
+#define RAY_H
 
 #include <math/thomath.h>
 
@@ -17,17 +17,9 @@
 
 struct Ray {
 public:
-  Vector3 origin;
-
-  Vector3 direction;
-  
-  F32 tMax;
-
   Ray(const Vector3& origin = {}, const Vector3& direction = {}) 
-    : origin{ origin }, direction{ direction }, tMax{ 10.0f }
-  {
-
-  }
+    : origin{ origin }, direction{ direction }, tMax{ 100.0f }
+  { }
 
   inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC) // pixel NDC
   {
@@ -41,6 +33,12 @@ public:
   {
     return origin + t * direction;
   }
+  
+  Vector3 origin;
+
+  Vector3 direction;
+  
+  F32 tMax;
 };
 
-#endif // !RAY_H_
+#endif // !RAY_H

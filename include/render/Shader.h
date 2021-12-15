@@ -2,8 +2,8 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*/#ifndef SHADER_H_
-#define SHADER_H_ 1
+*/#ifndef SHADER_H
+#define SHADER_H 1
 
 #include <core/types.h>
 
@@ -41,4 +41,4 @@ struct Shader
   void setMatrix4(const char* name, const Matrix4& value) const;
 };
 
-#endif // !SHADER_H_
+#endif // !SHADER_H

@@ -56,16 +56,16 @@ endif()
 set(GLAD_INCLUDE_SEARCH_DIR
   "C:/Libraries/glad/include")
 
-set(GLAD_H_EADER_FILES
+set(GLAD_HEADER_FILES
   "glad/glad.h"
   "KHR/khrplatform.h")
 
 find_path(GLAD_INCLUDE_DIR 
-  NAMES ${GLAD_H_EADER_FILES} 
+  NAMES ${GLAD_HEADER_FILES} 
   PATHS ${GLAD_INCLUDE_SEARCH_DIR})
 
 if(GLAD_INCLUDE_DIR-NOTFOUND)
-  message(FATAL_ERROR "Could not find ${GLAD_H_EADER_FILES} in ${GLAD_INCLUDE_SEARCH_DIR}")
+  message(FATAL_ERROR "Could not find ${GLAD_HEADER_FILES} in ${GLAD_INCLUDE_SEARCH_DIR}")
 endif()
 
 add_library(GLAD "${GLAD_SRC_DIR}/${GLAD_SRC_FILES}")
@@ -74,15 +74,15 @@ add_library(GLAD "${GLAD_SRC_DIR}/${GLAD_SRC_FILES}")
 set(STB_IMAGE_INCLUDE_SEARCH_DIR
   "C:/Libraries/stb")
 
-set(STB_IMAGE_H_EADER_FILES
+set(STB_IMAGE_HEADER_FILES
   "stb_image.h")
 
 find_path(STB_IMAGE_INCLUDE_DIR 
-  NAMES ${STB_IMAGE_H_EADER_FILES} 
+  NAMES ${STB_IMAGE_HEADER_FILES} 
   PATHS ${STB_IMAGE_INCLUDE_SEARCH_DIR})
 
 if(STB_IMAGE_INCLUDE_DIR-NOTFOUND)
-  message(FATAL_ERROR "Could not find ${STB_IMAGE_H_EADER_FILES} in ${STB_IMAGE_INCLUDE_SEARCH_DIR}")
+  message(FATAL_ERROR "Could not find ${STB_IMAGE_HEADER_FILES} in ${STB_IMAGE_INCLUDE_SEARCH_DIR}")
 endif()
 
 # libraries

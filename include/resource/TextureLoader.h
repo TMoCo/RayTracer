@@ -6,8 +6,8 @@
 // Texture loader
 //
 
-#ifndef TEXTURE_LOADER_H_
-#define TEXTURE_LOADER_H_
+#ifndef TEXTURE_LOADER_H
+#define TEXTURE_LOADER_H
 
 #include <image/colour.h>
 
@@ -25,4 +25,4 @@ struct TextureLoader
   // load different texture files differently
 };
 
-#endif // !TEXTURE_LOADER_H_
+#endif // !TEXTURE_LOADER_H

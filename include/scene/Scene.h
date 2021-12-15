@@ -8,8 +8,8 @@
 // A tree data structure for managing a scene
 //
 
-#ifndef SCENE_H_
-#define SCENE_H_ 1
+#ifndef SCENE_H
+#define SCENE_H 1
 
 #include <render/Camera.h>
 
@@ -32,10 +32,10 @@ public:
 
   const std::vector<Primitive*>& getPrimitives() const;
 
-private:
   Node* root;
+private:
 
   std::vector<Primitive*> primitives; // container for all primitives
 };
 
-#endif // !SCENE_H_
+#endif // !SCENE_H

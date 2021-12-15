@@ -8,8 +8,8 @@
 // Scene node, building block of the scene data structure
 //
 
-#ifndef NODE_H_
-#define NODE_H_ 1
+#ifndef NODE_H
+#define NODE_H 1
 
 #include <render/primitives/Primitive.h>
 
@@ -62,4 +62,4 @@ protected:
   bool outOfDate;
 };
 
-#endif // !NODE_H_
+#endif // !NODE_H

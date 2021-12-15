@@ -4,8 +4,8 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#ifndef MESH_H_
-#define MESH_H_
+#ifndef MESH_H
+#define MESH_H
 
 #include <render/primitives/Primitive.h>
 
@@ -29,6 +29,8 @@ public:
 
   void draw();
 
+  void test() {}
+
 protected:
   std::vector<Primitive*> triangles;
 
@@ -39,4 +41,4 @@ protected:
   std::vector<Vector2> textureCoords;
 };
 
-#endif // ! MESH_H_
+#endif // ! MESH_H

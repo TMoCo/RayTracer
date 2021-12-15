@@ -6,8 +6,8 @@
 // Vector3 class declaration
 //
 
-#ifndef VECTOR3_H_
-#define VECTOR3_H_ 1
+#ifndef VECTOR3_H
+#define VECTOR3_H 1
 
 #include <core/types.h>
 
@@ -19,9 +19,7 @@ constexpr UI32 SIZEOF_VEC3 = 0xc;
 typedef struct Vector3 {
   union {
     F32 _v[4]; // still in fact 4 for simd operations (4th element is ignored in computation)
-
     __m128 __v;
-
     struct {
       F32 x, y, z; 
     };
@@ -37,7 +35,6 @@ typedef struct Vector3 {
 
   constexpr Vector3(const Vector3& other) : _v{ other.x, other.y, other.z } {}
 
-  // binary operators
   Vector3& operator =(const Vector3& other);
 
   bool operator ==(const Vector3& other) const;
@@ -54,20 +51,24 @@ typedef struct Vector3 {
 
   Vector3& operator *=(const F32& factor);
 
-  friend inline Vector3 operator +(Vector3 lhs, const Vector3& rhs) {
-      return lhs += rhs;
+  friend inline Vector3 operator +(Vector3 lhs, const Vector3& rhs) 
+  {
+    return lhs += rhs;
   }
 
-  friend inline Vector3 operator -(Vector3 lhs, const Vector3& rhs) {
-      return lhs -= rhs;
+  friend inline Vector3 operator -(Vector3 lhs, const Vector3& rhs) 
+  {
+    return lhs -= rhs;
   }
 
-  friend inline Vector3 operator /(Vector3 lhs, const Vector3& rhs) {
-      return lhs /= rhs;
+  friend inline Vector3 operator /(Vector3 lhs, const Vector3& rhs) 
+  {
+    return lhs /= rhs;
   }
 
-  friend inline Vector3 operator *(Vector3 lhs, const Vector3& rhs) {
-      return lhs *= rhs;
+  friend inline Vector3 operator *(Vector3 lhs, const Vector3& rhs) 
+  {
+    return lhs *= rhs;
   }
 
   Vector3 operator -() const;
@@ -89,9 +90,10 @@ typedef struct Vector3 {
   static Vector3 reflect(const Vector3& v, const Vector3& normal);
 
   static Vector3 refract(const Vector3& v, const Vector3& normal, const F32& iorRatio);
+
 } Vector3;
 
-// binary operators
+
 Vector3 operator /(Vector3 lhs, const F32& rhs);
 
 Vector3 operator /(const F32 lhs, Vector3& rhs);
@@ -100,9 +102,8 @@ Vector3 operator *(const F32& lhs, Vector3 rhs);
 
 Vector3 operator *(Vector3 lhs, const F32& rhs);
 
-// stream operators
 std::istream& operator >> (std::istream& inStream, Vector3& vector);
 
 std::ostream& operator << (std::ostream& outStream, const Vector3& vector);
 
-#endif // ! VECTOR3_H_
+#endif // ! VECTOR3_H

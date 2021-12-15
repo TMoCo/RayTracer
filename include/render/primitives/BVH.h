@@ -8,8 +8,8 @@
 // Bounding volume hierarchy class
 //
 
-#ifndef BHV_H_
-#define BVH_H_ 1
+#ifndef BHV_H
+#define BVH_H 1
 
 #include <math/thomath.h>
 

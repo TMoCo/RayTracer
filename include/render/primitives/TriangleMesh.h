@@ -6,8 +6,8 @@
 // type of primitive for a single geometric shape
 //
 
-#ifndef TRIANGLE_MESH_H_
-#define TRIANGLE_MESH_H_ 1
+#ifndef TRIANGLE_MESH_H
+#define TRIANGLE_MESH_H 1
 
 #include <render/raytracer/Primitive.h>
 #include <render/shapes/Shape.h>
@@ -33,4 +33,4 @@ protected:
   // Material* material;
 };
 
-#endif // !TRIANGLE_MESH_H_
+#endif // !TRIANGLE_MESH_H

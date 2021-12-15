@@ -6,8 +6,8 @@
 // k-DOP (discrete oriented polytope)
 //
 
-#ifndef K_DOP_H_
-#define K_DOP_H_
+#ifndef K_DOP_H
+#define K_DOP_H
 
 #include <math/thomath.h>
 
@@ -123,4 +123,4 @@ const std::vector<Vector3> KDOP::cornersAxes =
 	{ -1.0f, -1.0f, 1.0f }
 };
 
-#endif // !K_DOP_H_
+#endif // !K_DOP_H

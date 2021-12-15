@@ -6,8 +6,8 @@
 // colour 
 //
 
-#ifndef COLOUR_H_
-#define COLOUR_H_
+#ifndef COLOUR_H
+#define COLOUR_H
 
 #include <math/thomath.h>
 
@@ -45,4 +45,4 @@ namespace Colour {
 
 };
 
-#endif // !COLOUR_H_
+#endif // !COLOUR_H

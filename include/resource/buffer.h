@@ -6,8 +6,8 @@
 // Image class
 //
 
-#ifndef IMAGE_H_
-#define IMAGE_H_ 1
+#ifndef IMAGE_H
+#define IMAGE_H 1
 
 #include <core/types.h>
 #include <core/debug.h>

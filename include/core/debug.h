@@ -2,8 +2,8 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*/#ifndef DEBUG_H_
-#define DEBUG_H_ 1
+*/#ifndef DEBUG_H
+#define DEBUG_H 1
 
 #ifndef NDEBUG
 #include <iostream>
@@ -41,4 +41,4 @@ inline void __m_assert(const char* exp_str, bool exp, const char* file, int line
 
 #endif
 
-#endif // !DEBUG_H_
+#endif // !DEBUG_H

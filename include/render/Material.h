@@ -6,8 +6,8 @@
 // Material structs
 //
 
-#ifndef MATERIAL_H_
-#define MATERIAL_H_ 1
+#ifndef MATERIAL_H
+#define MATERIAL_H 1
 
 #include <math/Vector4.h>
 
@@ -36,4 +36,4 @@ struct StrCompare {
 
 typedef std::map<std::string, Material> MaterialMap;
 
-#endif // ! MATERIAL_H_
+#endif // ! MATERIAL_H

@@ -8,8 +8,8 @@
 // Transform class declaration
 //
 
-#ifndef TRANSFORM_H_
-#define TRANSFORM_H_ 1
+#ifndef TRANSFORM_H
+#define TRANSFORM_H 1
 
 #include <math/thomath.h>
 
@@ -58,4 +58,4 @@ protected:
   bool outOfDate;
 };
 
-#endif // !TRANSFORM_H_
+#endif // !TRANSFORM_H

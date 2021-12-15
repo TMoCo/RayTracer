@@ -8,8 +8,8 @@
 // AABB from mesh positions
 //
 
-#ifndef AABB_H_
-#define AABB_H_
+#ifndef AABB_H
+#define AABB_H
 
 #include <math/thomath.h>
 
@@ -240,4 +240,4 @@ struct AABB
   }
 };
 
-#endif // !AABB_H_
+#endif // !AABB_H

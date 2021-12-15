@@ -8,8 +8,8 @@
 // ArcBall class declaration
 //
 
-#ifndef ARCBALL_H_
-#define ARCBALL_H_ 1
+#ifndef ARCBALL_H
+#define ARCBALL_H 1
 
 #include <math/Quaternion.h>
 #include <math/Vector2.h>
@@ -31,4 +31,4 @@ public:
     void EndDrag(const Vector2& v);
 };
 
-#endif // !ARCBALL_H_
+#endif // !ARCBALL_H

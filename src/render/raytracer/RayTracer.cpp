@@ -27,6 +27,11 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera
 
   Surfel s{};
 
+  auto primitives = scene->getPrimitives();
+  std::cout << primitives.size() << "\n";
+  primitives.front()->test();
+
+  std::cout << "Ray tracing... ";
   // scan pixels from bottom left corner
   for (UI32 row = 0; row < height; ++row)
   {
@@ -52,11 +57,16 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera
 
       // for now, just loop over all primitives in the scene and test intersection
       for (auto& prim : scene->getPrimitives())
+      {
         if (prim->intersectP(primaryRay))
+        {
           frameBuffer[row][col] = Colour::Red;
+        }
+      }
       //**
     }
   }
+std::cout << "Finished!\n";
 }
 
 colour RayTracer::CastRay(const Ray& inRay, UI32 depth) {
@@ -209,82 +219,91 @@ Vector3 RayTracer::RandomAreaLightPoint(const Mesh* light) {
 }
 
 Vector2 RayTracer::UniformSampleDisk(const Vector2& uv) {
-    // https://www.pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations
-    // to range [-1,1]
-    Vector2 p = uv * 2.0f - Vector2{1.0f, 1.0f};
-    if (p.x + p.y == 0) // degenerate case
-        return Vector2{};
-    // generate a random point on a unit disk
-    F32 r, theta;
-    if (std::abs(p.x) > std::abs(p.y)) {
-        r = p.x;
-        // distorts grid to avoid collecting at origin
-        theta = PI_4 * (p.y / p.x);
-    }
-    else {
-        r = p.y;
-        theta = PI_2 - PI_4 * (p.x / p.y);
-    }
-    return r * Vector2{std::cos(theta), std::sin(theta)};
+  // https://www.pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations
+    
+  // to range [-1,1]
+  Vector2 p = uv * 2.0f - Vector2{1.0f, 1.0f};
+  if (p.x + p.y == 0) 
+  {
+    return Vector2{}; // degenerate case
+  }
+
+  // generate a random point on a unit disk
+  F32 r, theta;
+  if (std::abs(p.x) > std::abs(p.y)) 
+  {
+    r = p.x;
+    // distorts grid to avoid collecting at origin
+    theta = PI_FOUR * (p.y / p.x);
+  }
+  else 
+  {
+    r = p.y;
+    theta = PI_TWO - PI_FOUR * (p.x / p.y);
+  }
+
+  return r * Vector2{std::cos(theta), std::sin(theta)};
 }
 
 Vector3 RayTracer::UniformSampleHemisphere(const Vector2& uv) {
-    // generate a random vector on the unit hemisphere
-    F32 r = std::sqrt(std::max(0.0f, 1.0f - uv.x * uv.x));
-    F32 phi = 2.0f * PI * uv.y;
-    return {r * std::cos(phi), r * std::sin(phi), uv.x};
+  // generate a random vector on the unit hemisphere
+  F32 r = std::sqrt(std::max(0.0f, 1.0f - uv.x * uv.x));
+  F32 phi = TWO_PI * uv.y;
+  return { r * std::cos(phi), r * std::sin(phi), uv.x };
 }
 
 Vector3 RayTracer::CosineSampleHemisphere(const Vector2& uv) {
-    Vector2 d = UniformSampleDisk(uv);
-    F32 z = std::sqrt(std::max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
-    return {d.x, d.y, z};
+  Vector2 d = UniformSampleDisk(uv);
+  F32 z = std::sqrt(std::max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
+  return { d.x, d.y, z };
 }
 
 Vector3 RayTracer::UniformSampleTriangleBasuOwen(const F32& u) {
     // u in range [0,1], 1 << 32 = 2^32 (so must be UI64)
-    UI32 uFixedPoint = static_cast<UI32>(u * (1ULL << 32));
+  UI32 uFixedPoint = static_cast<UI32>(u * (1ULL << 32));
 
-    Vector2 A{1.0f, 0.0f}, B{0.0f, 1.0f}, C{0.0f, 0.0f};
-    Vector2 An, Bn, Cn; // used in iteration
-    UI32 digit; // base 4 digit
-    for (UI32 i = 0; i < 16; ++i) {
-        // extract base4 digit
-        digit = (uFixedPoint >> (2 * (15 - i))) & 3; // (u / (15 - i)) % 4
-        switch (digit) {
-        case 0:
-            An = (B + C) * 0.5f;
-            Bn = (A + C) * 0.5f;
-            Cn = (A + B) * 0.5f;
-            break;
-        case 1:
-            An = A;
-            Bn = (A + B) * 0.5f;
-            Cn = (A + C) * 0.5f;
-            break;
-        case 2:
-            An = (B + A) * 0.5f;
-            Bn = B;
-            Cn = (B + C) * 0.5f;
-            break;
-        case 3:
-            An = (C + A) * 0.5f;
-            Bn = (C + B) * 0.5f;
-            Cn = C;
-            break;
-        }
-        A = An;
-        B = Bn;
-        C = Cn;
+  Vector2 A{1.0f, 0.0f}, B{0.0f, 1.0f}, C{0.0f, 0.0f};
+  Vector2 An, Bn, Cn; // used in iteration
+  UI32 digit; // base 4 digit
+  for (UI32 i = 0; i < 16; ++i) 
+  {
+    // extract base4 digit
+    digit = (uFixedPoint >> (2 * (15 - i))) & 3; // == (u / (15 - i)) % 4
+    switch (digit) 
+    {
+    case 0:
+      An = (B + C) * 0.5f;
+      Bn = (A + C) * 0.5f;
+      Cn = (A + B) * 0.5f;
+      break;
+    case 1:
+      An = A;
+      Bn = (A + B) * 0.5f;
+      Cn = (A + C) * 0.5f;
+      break;
+    case 2:
+      An = (B + A) * 0.5f;
+      Bn = B;
+      Cn = (B + C) * 0.5f;
+      break;
+    case 3:
+      An = (C + A) * 0.5f;
+      Bn = (C + B) * 0.5f;
+      Cn = C;
+      break;
     }
-    An = (A + B + C) / 3.0f;
-    // barycentric coordinates
-    return {An.x, An.y, 1.0f - An.x - An.y};
+    A = An;
+    B = Bn;
+    C = Cn;
+  }
+  An = (A + B + C) / 3.0f;
+  // barycentric coordinates
+  return { An.x, An.y, 1.0f - An.x - An.y };
 }
 
 Vector3 RayTracer::UniformSampleTriangle(const Vector2& uv) {
-    F32 su0 = std::sqrt(uv.x);
-    F32 b0 = 1.0f - su0;
-    F32 b1 = uv.y - su0;
-    return {b0, b1, 1.0f - b0 - b1};
+  F32 su0 = std::sqrt(uv.x);
+  F32 b0 = 1.0f - su0;
+  F32 b1 = uv.y - su0;
+  return { b0, b1, 1.0f - b0 - b1 };
 }

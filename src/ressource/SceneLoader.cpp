@@ -89,6 +89,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
       token = strtok_s(NULL, " ", &remainding);
       node->primitive =
         new GeometricPrimitive(createShape(node->getWorldTransform(), token, remainding ? remainding : ""));
+      scene.primitives.push_back(node->primitive);
       continue;
     }
 

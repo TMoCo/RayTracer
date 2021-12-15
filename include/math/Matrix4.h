@@ -6,8 +6,8 @@
 // Matrix4 class declaration
 //
 
-#ifndef MATRIX4_H_
-#define MATRIX4_H_ 1
+#ifndef MATRIX4_H
+#define MATRIX4_H 1
 
 #include <core/types.h>
 
@@ -99,4 +99,4 @@ std::istream & operator >> (std::istream &outStream, Matrix4 &matrix);
 
 std::ostream & operator << (std::ostream &outStream, const Matrix4 &matrix);
 
-#endif // !MATRIX4_H_
+#endif // !MATRIX4_H

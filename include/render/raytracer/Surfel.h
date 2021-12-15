@@ -8,8 +8,8 @@
 // Surfel declaration
 //
 
-#ifndef SURFEL_H_
-#define SURFEL_H_
+#ifndef SURFEL_H
+#define SURFEL_H
 
 #include <math/thomath.h>
 
@@ -46,4 +46,4 @@ public:
   const Shape* shape = nullptr;
 };
 
-#endif // !SURFEL_H_
+#endif // !SURFEL_H

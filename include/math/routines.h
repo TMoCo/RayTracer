@@ -6,8 +6,8 @@
 // Mathematical routines
 //
 
-#ifndef ROUTINES_H_
-#define ROUTINES_H_ 1
+#ifndef ROUTINES_H
+#define ROUTINES_H 1
 
 #include <core/types.h>
 
@@ -39,4 +39,4 @@ constexpr bool quadratic(F32 a, F32 b, F32 c, F32* t0, F32* t1)
   return true;
 }
 
-#endif // !ROUTINES_H_
+#endif // !ROUTINES_H

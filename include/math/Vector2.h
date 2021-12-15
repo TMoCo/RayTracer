@@ -6,8 +6,8 @@
 // Vector2 class declaration
 //
 
-#ifndef VECTOR2_H_
-#define VECTOR2_H_ 1
+#ifndef VECTOR2_H
+#define VECTOR2_H 1
 
 #include <core/types.h>
 
@@ -65,4 +65,4 @@ Vector2 operator *(const F32& lhs, Vector2 rhs);
 
 
 
-#endif // ! VECTOR2_H_
+#endif // ! VECTOR2_H

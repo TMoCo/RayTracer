@@ -22,4 +22,4 @@ private:
   static Shape* createShape(Transform* toWorld, const char* shape, char* data);
 };
 
-#endif
+#endif //! SCENE_LOADER_H

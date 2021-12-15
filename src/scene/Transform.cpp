@@ -51,7 +51,7 @@ Transform Transform::applyToTransform(const Transform& other) const
 
 Ray Transform::applyToRay(const Ray& ray) const
 {
-  return { applyToPoint(ray.origin), applyToVector3(ray.direction)};
+  return { applyToPoint(ray.origin), applyToVector3(ray.direction) };
 }
 
 Ray Transform::applyInverseToRay(const Ray& ray) const
@@ -79,14 +79,26 @@ Vector3 Transform::applyInverseToNormal(const Vector3& normal) const
   return (matrix * Vector4 { normal }).toVector3().normalize();
 }
 
-Vector3 Transform::applyToVector3(const Vector3& vector3) const
+Vector3 Transform::applyToVector3(const Vector3& vector) const
 {
-  return (matrix * Vector4{ vector3 }).toVector3();
+  F32 x = vector.x, y = vector.y, z = vector.z;
+  return
+  {
+    matrix[0][0] * x + matrix[1][0] * y + matrix[2][0] * z,
+    matrix[0][1] * x + matrix[1][1] * y + matrix[2][1] * z,
+    matrix[0][2] * x + matrix[1][2] * y + matrix[2][2] * z
+  };
 }
 
-Vector3 Transform::applyInverseToVector3(const Vector3& vector3) const
+Vector3 Transform::applyInverseToVector3(const Vector3& vector) const
 {
-  return (inverseMatrix * Vector4{ vector3 }).toVector3();
+  F32 x = vector.x, y = vector.y, z = vector.z;
+  return
+  {
+    inverseMatrix[0][0] * x + inverseMatrix[1][0] * y + inverseMatrix[2][0] * z,
+    inverseMatrix[0][1] * x + inverseMatrix[1][1] * y + inverseMatrix[2][1] * z,
+    inverseMatrix[0][2] * x + inverseMatrix[1][2] * y + inverseMatrix[2][2] * z
+  };
 }
 
 const Matrix4& Transform::getMatrix() const

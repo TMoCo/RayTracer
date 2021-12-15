@@ -6,8 +6,8 @@
 // Some core preprocessor directives and constants
 //
 
-#ifndef CORE_H_
-#define CORE_H_ 1
+#ifndef CORE_H
+#define CORE_H 1
 
 #include <chrono>
 typedef  std::chrono::system_clock sys_clock;
@@ -18,4 +18,4 @@ typedef  std::chrono::system_clock sys_clock;
 
 #define MAX_NAME_LENGTH 0x80 // todo: remove
 
-#endif // CORE_H_
+#endif // CORE_H

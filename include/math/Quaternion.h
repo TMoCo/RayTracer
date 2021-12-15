@@ -8,8 +8,8 @@
 // Quaternionernion class declaration
 //
 
-#ifndef QUATERNION_H_
-#define QUATERNION_H_ 1
+#ifndef QUATERNION_H
+#define QUATERNION_H 1
 
 #include <core/types.h>
 
@@ -105,4 +105,4 @@ std::istream & operator >> (std::istream &inStream, Quaternion& value);
 
 std::ostream & operator << (std::ostream &outStream, const Quaternion& value);
 
-#endif // ! QUATERNION_H_
+#endif // ! QUATERNION_H

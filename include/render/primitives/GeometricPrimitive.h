@@ -6,8 +6,8 @@
 // type of primitive for a single geometric shape
 //
 
-#ifndef GEOMETRIC_PRIMITIVE_H_
-#define GEOMETRIC_PRIMITIVE_H_ 1
+#ifndef GEOMETRIC_PRIMITIVE_H
+#define GEOMETRIC_PRIMITIVE_H 1
 
 #include <render/primitives/Primitive.h>
 #include <render/shapes/Shape.h>
@@ -24,17 +24,19 @@ public:
   bool intersect(const Ray& ray);
 
   bool intersectP(const Ray& ray);
+
+  void test();
   // for computing lighting 
   // virtual const AreaLight* getAreaLight() = 0;
 
   // virtual const Material* getMaterial() = 0;
 
-protected:
   Shape* shape;
+protected:
   
   // Material* material;
 
   // AreaLight* areaLight;
 };
 
-#endif // !GEOMETRIC_PRIMITIVE_H_
+#endif // !GEOMETRIC_PRIMITIVE_H

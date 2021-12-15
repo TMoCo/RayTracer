@@ -6,8 +6,8 @@
 // OBJLoader class declaration
 //
 
-#ifndef RESOURCE_MANAGER_H_
-#define RESOURCE_MANAGER_H_ 1
+#ifndef RESOURCE_MANAGER_H
+#define RESOURCE_MANAGER_H 1
 
 #include <render/primitives/Mesh.h>
 
@@ -32,5 +32,5 @@ public:
 private:
   std::unordered_map<std::string, Mesh*> meshes;
 };
-#endif // !RESOURCE_MANAGER_H_
+#endif // !RESOURCE_MANAGER_H
  

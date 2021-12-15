@@ -6,8 +6,8 @@
 // primitive interface class
 //
 
-#ifndef PRIMITIVE_H_
-#define PRIMITIVE_H_ 1
+#ifndef PRIMITIVE_H
+#define PRIMITIVE_H 1
 
 #include <render/bounds/AABB.h>
 #include <render/raytracer/Ray.h>
@@ -20,6 +20,8 @@ public:
   virtual bool intersect(const Ray& ray) = 0;
   
   virtual bool intersectP(const Ray& ray) = 0;
+
+  virtual void test() = 0;
   
   // virtual const AreaLight* getAreaLight() = 0;
   
@@ -27,4 +29,4 @@ public:
 
 };
 
-#endif // !PRIMITIVE_H_
+#endif // !PRIMITIVE_H

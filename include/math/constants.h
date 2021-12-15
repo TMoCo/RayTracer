@@ -8,8 +8,8 @@
 // constants
 //
 
-#ifndef CONSTANTS_H_
-#define CONSTANTS_H_ 1
+#ifndef CONSTANTS_H
+#define CONSTANTS_H 1
 
 #include <core/types.h>
 #include <math/Vector3.h>
@@ -29,11 +29,14 @@ constexpr Vector3 RIGHT{ 1.0f,  0.0f,  0.0f };
 constexpr Vector3 FRONT{ 0.0f,  0.0f, -1.0f };
 constexpr Vector3 BACK{ 0.0f,  0.0f,  1.0f };
 
-constexpr F32 PI = 3.14159265358979323846f;
-constexpr F32 PI_2 = 1.57079632679489661923f;
-constexpr F32 PI_4 = 0.785398163397448309616f;
-constexpr F32 PI_180 = 0.017453292519943278f;
+constexpr F32 PI      = 3.141592653589793238463f;
+constexpr F32 PI_TWO  = 1.570796326794896619231f;
+constexpr F32 PI_FOUR = 0.7853981633974483096157f;
+constexpr F32 PI_180  = 0.01745329251994329576924f;
+constexpr F32 TWO_PI  = 6.283185307179586476925f;
+constexpr F32 FOUR_PI = 12.56637061435917295385f;
+
 constexpr F32 EPSILON = 0.00001f;
 constexpr F32 MACHINE_EPSILON = FLT_EPSILON;
 
-#endif // !CONSTANTS_H_
+#endif // !CONSTANTS_H

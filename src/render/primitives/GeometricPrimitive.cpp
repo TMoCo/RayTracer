@@ -5,6 +5,7 @@
 */
 
 #include <render/primitives/GeometricPrimitive.h>
+#include <render/raytracer/Surfel.h>
 
 AABB GeometricPrimitive::getBounds()
 {
@@ -18,5 +19,12 @@ bool GeometricPrimitive::intersect(const Ray& ray)
 
 bool GeometricPrimitive::intersectP(const Ray& ray)
 {
-  return false;
+  F32 tMax = 100.0f;
+  Surfel surfaceInteraction;
+  return shape->intersect(ray, &tMax, &surfaceInteraction);
+}
+
+void GeometricPrimitive::test()
+{
+  std::cout << "shape inverse matrix:\n" << shape->toWorld->getInverseMatrix() << "\n\n";
 }

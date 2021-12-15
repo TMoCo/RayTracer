@@ -6,8 +6,8 @@
 // Cylinder primitive structs
 //
 
-#ifndef CAPSULE_H_
-#define CAPSULE_H_ 1
+#ifndef CAPSULE_H
+#define CAPSULE_H 1
 
 #include <render/shapes/Shape.h>
 
@@ -16,4 +16,4 @@ struct Capsule
 
 };
 
-#endif //! CAPSULE_H_
+#endif //! CAPSULE_H

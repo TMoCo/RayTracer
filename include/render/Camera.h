@@ -6,8 +6,8 @@
 // Camera class declaration
 //
 
-#ifndef CAMERA_H_
-#define CAMERA_H_ 1
+#ifndef CAMERA_H
+#define CAMERA_H 1
 
 #include <core/types.h>
 #include <core/core.h>
@@ -112,4 +112,4 @@ struct Camera {
   }
 };
 
-#endif // !CAMERA_H_
+#endif // !CAMERA_H

@@ -6,8 +6,8 @@
 // Cylinder primitive structs
 //
 
-#ifndef CYLINDER_H_
-#define CYLINDER_H_ 1
+#ifndef CYLINDER_H
+#define CYLINDER_H 1
 
 #include <render/shapes/Shape.h>
 
@@ -16,4 +16,4 @@ struct Cylinder
 
 };
 
-#endif //! CYLINDER_H_
+#endif //! CYLINDER_H

@@ -8,8 +8,8 @@
 // Shape interface class
 //
 
-#ifndef SHAPE_H_
-#define SHAPE_H_ 1
+#ifndef SHAPE_H
+#define SHAPE_H 1
 
 #include <render/bounds/AABB.h>
 
@@ -37,4 +37,4 @@ public:
   bool reverseOrientation;
 };
 
-#endif // !SHAPE_H_
+#endif // !SHAPE_H

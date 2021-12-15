@@ -6,8 +6,8 @@
 // Texture object
 //
 
-#ifndef TEXTURE_H_
-#define TEXTURE_H_ 1
+#ifndef TEXTURE_H
+#define TEXTURE_H 1
 
 #include <core/types.h>
 
@@ -24,4 +24,4 @@ struct Texture
   void bind(I32 unit = -1);
 };
 
-#endif // !TEXTURE_H_
+#endif // !TEXTURE_H
