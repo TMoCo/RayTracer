@@ -12,7 +12,7 @@
 
 Quaternion& Quaternion::operator = (const Quaternion &other) 
 {
-  std::memcpy(&_q[0], &other._q[0], SIZEOF_VEC4);
+  _q = other._q;
   return *this;
 }
 
@@ -41,12 +41,9 @@ Quaternion& Quaternion::operator /=(const Quaternion& other)
 
 Quaternion& Quaternion::operator *=(const Quaternion& other) 
 {
-  Vector3 v1 = _q.toVector3();
-  Vector3 v2 = other._q.toVector3();
-  *this = Quaternion{
-    _q[3] * v2 + other._q[3] * v1 + v1.cross(v2),
-    _q[3] * other._q[3] - v1.dot(v2)
-  };
+  F32 tmp = scalar;
+  scalar = scalar * other.scalar - vector.dot(other.vector);
+  vector = tmp * other.vector + other.scalar * vector + vector.cross(other.vector);
   return *this;
 }
 
@@ -62,9 +59,9 @@ Quaternion& Quaternion::operator *=(const F32& factor)
   return *this;
 }
 
-Quaternion& Quaternion::operator -() 
+Quaternion Quaternion::operator -() const 
 {
-  return *this *= -1.0f;
+  return  { -_q };
 }
 
 F32& Quaternion::operator [](const UI32 index) 
@@ -77,14 +74,14 @@ const F32& Quaternion::operator [](const UI32 index) const
   return _q[index];
 }
 
-Vector3 Quaternion::vector() const 
+Vector3 Quaternion::getVector() const 
 {
-  return _q.toVector3();
+  return vector;
 }
 
-F32 Quaternion::scalar() const 
+F32 Quaternion::getScalar() const 
 {
-  return _q[3];
+  return scalar;
 }
 
 float Quaternion::norm() const 
@@ -133,9 +130,8 @@ Quaternion Quaternion::getRotationFrom(const Vector3& from, const Vector3& to)
 
 Vector3 Quaternion::rotateVector(const Vector3& vector, const Quaternion& quaternion)
 {
-  Vector3 v = quaternion._q.toVector3();
-  Vector3 t = (2.0f * v).cross(vector);
-  return vector + quaternion._q[3] * t + v.cross(t);
+  Vector3 t = (2.0f * quaternion.vector).cross(vector);
+  return vector + quaternion.scalar * t + quaternion.vector.cross(t);
 }
 
 Quaternion operator /(Quaternion lhs, const F32 rhs) 

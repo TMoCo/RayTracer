@@ -223,30 +223,28 @@ Matrix4 Matrix4::identity()
 
 Matrix4 Matrix4::transpose(const Matrix4& mat) 
 {
-  // matrix:
+  // start:
   // c0: a   b   c   d
   // c1: e   f   g   h   
   // c2: i   j   k   l
   // c3: m   n   o   p
 
-  // intermediate shuffle
   __m128 c0c1 = _mm_shuffle_ps(mat.__m[0], mat.__m[1], _MM_SHUFFLE(1, 0, 1, 0));
   __m128 c2c3 = _mm_shuffle_ps(mat.__m[2], mat.__m[3], _MM_SHUFFLE(1, 0, 1, 0));
   __m128 c1c0 = _mm_shuffle_ps(mat.__m[1], mat.__m[0], _MM_SHUFFLE(2, 3, 2, 3));
   __m128 c3c2 = _mm_shuffle_ps(mat.__m[3], mat.__m[2], _MM_SHUFFLE(2, 3, 2, 3));
-  // matrix:
+  // intermediate:
   // c0c1: a   b   e   f
   // c2c3: i   j   m   n   
   // c1c0: c   d   g   h
   // c3c2: k   l   o   p
 
   Matrix4 t;
-  // final shuffle
   t.__m[0] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(2, 0, 2, 0));
   t.__m[1] = _mm_shuffle_ps(c0c1, c2c3, _MM_SHUFFLE(3, 1, 3, 1));
   t.__m[2] = _mm_shuffle_ps(c1c0, c3c2, _MM_SHUFFLE(1, 3, 1, 3));
   t.__m[3] = _mm_shuffle_ps(c1c0, c3c2, _MM_SHUFFLE(0, 2, 0, 2));
-  // matrix:
+  // result:
   // t0: a   e   i   m
   // t1: b   f   j   n   
   // t2: c   g   k   o
@@ -324,7 +322,6 @@ Matrix4 Matrix4::lookAt(const Vector3& eye, const Vector3& target, const Vector3
   Vector3 camX = camZ.cross(up); // assumes unit up vector
   Vector3 camY = camX.cross(camZ);
   
-  // build matrix
   Matrix4 m{};
   m[0][0] = camX[0];
   m[1][0] = camX[1];

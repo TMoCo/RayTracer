@@ -18,9 +18,17 @@
 
 typedef struct Quaternion {
 public:
-  Vector4 _q;
+  union
+  {
+    Vector4 _q;
+    struct
+    {
+      Vector3 vector;
+      F32 scalar;
+    };
+  };
 
-  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : _q{ vector.x, vector.y, vector.z, scalar } {}
+  Quaternion(const Vector3& vector = {}, F32 scalar = 1.0f) : vector{ vector }, scalar{ scalar } {}
 
   Quaternion(const Quaternion& other) : _q{ other._q } {}
 
@@ -66,15 +74,15 @@ public:
     return lhs *= rhs;
   }
   
-  Quaternion& operator -();
+  Quaternion operator -() const;
 
   F32& operator [](const UI32 index);
 
   const F32& operator [](const UI32 index) const;
 
-  Vector3 vector() const;
+  Vector3 getVector() const;
 
-  F32 scalar() const;
+  F32 getScalar() const;
 
   F32 norm() const;
 

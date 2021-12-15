@@ -24,15 +24,14 @@ public:
 
   constexpr Matrix4(const F32* values) : _m{}
   {
-    UI32 columnIndex = 0, rowIndex = 0;
+    UI32 index = 0;
     for (UI32 e = 0; e < 4; ++e)
     {
-      columnIndex = e * 4;
-      rowIndex    = (e & 3) * 4;
-      _m[columnIndex    ] = values[rowIndex];
-      _m[columnIndex + 1] = values[rowIndex + 1];
-      _m[columnIndex + 2] = values[rowIndex + 2];
-      _m[columnIndex + 3] = values[rowIndex + 3];
+      index = e << 2;
+      _m[e     ] = values[index    ];
+      _m[e + 4 ] = values[index + 1];
+      _m[e + 8 ] = values[index + 2];
+      _m[e + 12] = values[index + 3];
     }
   }
 

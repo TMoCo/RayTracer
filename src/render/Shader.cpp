@@ -15,7 +15,6 @@
 const std::vector<char> Shader::getShaderCode(const std::string& path)
 {
   std::ifstream shaderStream(path, std::ios::ate);
-  std::vector<char> data;
 
   if (!shaderStream.is_open())
   {
@@ -23,6 +22,7 @@ const std::vector<char> Shader::getShaderCode(const std::string& path)
   }
 
   UI32 len = static_cast<UI32>(shaderStream.tellg());
+  std::vector<char> data;
   data.resize(len);
   
   shaderStream.seekg(0);
@@ -45,7 +45,7 @@ UI32 Shader::checkShaderCompile(UI32 shader, const char* type)
     {
       glGetShaderInfoLog(shader, file::MAX_LINE_SIZE, NULL, infoLog);
       DEBUG_PRINT("ERROR::SHADER_COMPILATION_ERROR of type: %s\n%s\n", type, infoLog);
-      return 1;
+      return -1;
     }
   }
   else
@@ -55,7 +55,7 @@ UI32 Shader::checkShaderCompile(UI32 shader, const char* type)
     {
       glGetProgramInfoLog(shader, file::MAX_LINE_SIZE, NULL, infoLog);
       DEBUG_PRINT("ERROR::SHADER_COMPILATION_ERROR of type: %s\n%s\n", type, infoLog);
-      return 1;
+      return -1;
     }
   }
   return 0;
@@ -120,7 +120,7 @@ void Shader::setFloat(const char* name, F32 value) const
 
 void Shader::setVec2(const char* name, const Vector2& value) const
 {
-  glUniform2fv(glGetUniformLocation(id, name), 1, value._v);
+  glUniform2fv(glGetUniformLocation(id, name), 1, &value[0]);
 }
 
 void Shader::setVec3(const char* name, const Vector3& value) const
