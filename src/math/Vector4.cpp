@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -60,9 +60,9 @@ Vector4& Vector4::operator *=(const F32& factor)
   return *this;
 }
 
-Vector4& Vector4::operator -() 
+Vector4 Vector4::operator -() const
 {
-  return *this *= -1.0f;
+  return { -x, -y, -z, -w };
 }
 
 F32& Vector4::operator [](const UI32 index) 

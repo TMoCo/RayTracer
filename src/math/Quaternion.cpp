@@ -12,7 +12,7 @@
 
 Quaternion& Quaternion::operator = (const Quaternion &other) 
 {
-  std::memcpy(_q._v, other._q._v, SIZEOF_VEC4);
+  std::memcpy(&_q[0], &other._q[0], SIZEOF_VEC4);
   return *this;
 }
 

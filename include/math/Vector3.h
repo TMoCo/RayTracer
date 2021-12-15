@@ -1,8 +1,10 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Vector3 class declaration
 //
 
@@ -12,7 +14,6 @@
 #include <core/types.h>
 
 #include <iostream>
-#include <xmmintrin.h>
 
 constexpr UI32 SIZEOF_VEC3 = 0xcU;
 
@@ -68,7 +69,7 @@ public:
 
   F32& operator [](const UI32 index);
 
-  const F32& operator [](const UI32 index) const;
+  constexpr const F32& operator [](const UI32 index) const;
     
   F32 dot(const Vector3& other) const;
 

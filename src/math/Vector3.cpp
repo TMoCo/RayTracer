@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -10,11 +10,7 @@
 
 #include <math/thomath.h>
 
-#include <core/core.h>
-
-#include <cstring>
 #include <math.h>
-#include <iomanip>
 
 Vector3& Vector3::operator =(const Vector3& other) 
 {
@@ -88,7 +84,7 @@ F32& Vector3::operator [](const UI32 index)
   return _v[index];
 }
 
-const F32& Vector3::operator [](const UI32 index) const 
+constexpr const F32& Vector3::operator [](const UI32 index) const 
 {
   return _v[index];
 }
@@ -124,7 +120,7 @@ Vector3 Vector3::normalize() const
 
 Vector3 Vector3::reflect(const Vector3& v, const Vector3& normal) 
 {
-  return v - 2.0f * v.dot(normal) * normal; // assumes unit normal
+  return v - 2.0f * v.dot(normal) * normal;
 }
 
 Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const F32& iorRatio)

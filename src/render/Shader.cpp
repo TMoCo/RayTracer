@@ -130,7 +130,7 @@ void Shader::setVec3(const char* name, const Vector3& value) const
 
 void Shader::setVec4(const char* name, const Vector4& value) const
 {
-  glUniform4fv(glGetUniformLocation(id, name), 1, value._v);
+  glUniform4fv(glGetUniformLocation(id, name), 1, &value[0]);
 }
 
 void Shader::setMatrix4(const char* name, const Matrix4& value) const

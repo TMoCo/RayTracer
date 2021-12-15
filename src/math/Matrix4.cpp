@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 15/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -257,9 +257,9 @@ Matrix4 Matrix4::transpose(const Matrix4& mat)
 Matrix4 Matrix4::translation(const Vector3& v)
 {
   Matrix4 mat = Matrix4::identity();
-  mat._m[12] = v.x;
-  mat._m[13] = v.y;
-  mat._m[14] = v.z;
+  mat._m[12] = v[0];
+  mat._m[13] = v[1];
+  mat._m[14] = v[2];
   return mat;
 }
 
@@ -298,9 +298,9 @@ Matrix4 Matrix4::rotation(const Quaternion& q)
 Matrix4 Matrix4::scale(const Vector3& scale)
 {
   Matrix4 mat{};
-  mat[0][0] = scale.x;
-  mat[1][1] = scale.y;
-  mat[2][2] = scale.z;
+  mat[0][0] = scale[0];
+  mat[1][1] = scale[1];
+  mat[2][2] = scale[2];
   mat[3][3] = 1.0f;
   return mat;
 }
@@ -359,18 +359,6 @@ Matrix4 operator *(const F32 lhs, Matrix4& rhs)
   return rhs * lhs;
 }
 
-Vector4 operator *(Matrix4 mat, const Vector4& vec) 
-{
-  Vector4 res{};
-  res.__v = _mm_add_ps( // 7 instructions instead of 24
-    _mm_add_ps(
-      _mm_mul_ps(_mm_set_ps1(vec.x), mat.__m[0]),
-      _mm_mul_ps(_mm_set_ps1(vec.y), mat.__m[1])), 
-    _mm_add_ps(
-      _mm_mul_ps(_mm_set_ps1(vec.z), mat.__m[2]),
-      _mm_mul_ps(_mm_set_ps1(vec.w), mat.__m[3])));
-  return res;
-}
 std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
   // converts to Vector4 (slow)
   return inStream 

@@ -7,6 +7,15 @@ scene sphere
     position 0 0 -10
     rotation 0 0 0
     # a sphere with radius = 1, zmin = -1 , zmax = 1, phiMax = 4pi
+    shape sphere 3 -1 1 360
+  }
+  
+  geometry test_sphere
+  {
+    # sphere transformation info
+    position 3 0 -5
+    rotation 0 0 0
+    # a sphere with radius = 1, zmin = -1 , zmax = 1, phiMax = 4pi
     shape sphere 1 -1 1 360
   }
 }

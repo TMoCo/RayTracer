@@ -5,28 +5,17 @@
 */
 
 #include <app/Application.h>
-
 #include <core/debug.h>
-
 #include <render/Shader.h>
 #include <render/Texture.h>
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
-
 #include <resource/TextureLoader.h>
 #include <resource/SceneLoader.h>
 #include <resource/OBJLoader.h>
 
-#include <string>
-#include <iomanip>
-
 int Application::init()
 {
-  Vector3 a = { 1,2,3 };
-  Vector3 b = { 3,2,1 };
-  std::cout << a.dot(b) << "\n";
-
-
   if (!glfwInit())
   {
     DEBUG_PRINT("Failed to initialise GLFW!\n");
@@ -115,16 +104,6 @@ void Application::renderLoop(Scene* scene)
 
   glfwSetWindowUserPointer(window.getWindowPointer(), &window);
 
-  Ray ray = Ray::generateCameraRay(window.getCamera(), { 0.75f, 0.75f });
-  std::cout << "origin: " << ray.origin << "  direction: " << ray.direction << "\n\n";
-
-  t = *scene->root->getChildrenNodes().front()->getWorldTransform();
-  std::cout << t.getMatrix() << "\n\n";
-  std::cout << t.getInverseMatrix() << "\n\n";
-
-  auto r = t.applyInverseToRay(ray);
-  std::cout << "origin: " << r.origin << "  direction: " << r.direction << "\n\n";
-
   F32 deltaTime = 0.0f, previous = 0.0f;
   while (!glfwWindowShouldClose(window.getWindowPointer()))
   {
@@ -149,8 +128,6 @@ void Application::renderLoop(Scene* scene)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     //shader.use();
     //shader.setMatrix4("transform", proj * camera.getViewMatrix() * model);
-    //containerTexture.bind(0);
-
 
     // ... debug
     if (debug)
