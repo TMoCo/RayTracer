@@ -12,16 +12,15 @@
 #define RAY_H
 
 #include <math/thomath.h>
-
 #include <render/Camera.h>
 
-struct Ray {
+class Ray {
 public:
   Ray(const Vector3& origin = {}, const Vector3& direction = {}) 
     : origin{ origin }, direction{ direction }, tMax{ 100.0f }
   { }
 
-  inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC) // pixel NDC
+  inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC)
   {
     Vector3 horizontal = camera->right * camera->vpWidth;
     Vector3 vertical = camera->vpHeight * camera->up;

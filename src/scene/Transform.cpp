@@ -81,7 +81,7 @@ Vector3 Transform::applyInverseToNormal(const Vector3& normal) const
 
 Vector3 Transform::applyToVector3(const Vector3& vector) const
 {
-  F32 x = vector.x, y = vector.y, z = vector.z;
+  F32 x = vector[0], y = vector[1], z = vector[2];
   return
   {
     matrix[0][0] * x + matrix[1][0] * y + matrix[2][0] * z,
@@ -92,7 +92,7 @@ Vector3 Transform::applyToVector3(const Vector3& vector) const
 
 Vector3 Transform::applyInverseToVector3(const Vector3& vector) const
 {
-  F32 x = vector.x, y = vector.y, z = vector.z;
+  F32 x = vector[0], y = vector[1], z = vector[2];
   return
   {
     inverseMatrix[0][0] * x + inverseMatrix[1][0] * y + inverseMatrix[2][0] * z,

@@ -125,7 +125,7 @@ void Shader::setVec2(const char* name, const Vector2& value) const
 
 void Shader::setVec3(const char* name, const Vector3& value) const
 {
-  glUniform3fv(glGetUniformLocation(id, name), 1, value._v);
+  glUniform3fv(glGetUniformLocation(id, name), 1, &value[0]);
 }
 
 void Shader::setVec4(const char* name, const Vector4& value) const

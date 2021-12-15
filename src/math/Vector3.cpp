@@ -31,43 +31,56 @@ bool Vector3::operator ==(const Vector3& other) const
 
 Vector3& Vector3::operator +=(const Vector3& other) 
 {
-  __v = _mm_add_ps(__v, other.__v);
+  x += other.x;
+  y += other.y;
+  z += other.z;
   return *this;
 }
 
 Vector3& Vector3::operator -=(const Vector3& other) 
 {
-  __v = _mm_sub_ps(__v, other.__v);
+  x -= other.x;
+  y -= other.y;
+  z -= other.z;
   return *this;
 }
 
 Vector3& Vector3::operator /=(const Vector3& other) 
 {
-  __v = _mm_div_ps(__v, other.__v);
+  x /= other.x;
+  y /= other.y;
+  z /= other.z;
   return *this;
 }
 
 Vector3& Vector3::operator *=(const Vector3& other) 
 {
-  __v = _mm_mul_ps(__v, other.__v);
+  x *= other.x;
+  y *= other.y;
+  z *= other.z;
   return *this;
 }
 
 Vector3& Vector3::operator /=(const F32& factor) 
 {
-  __v = _mm_div_ps(__v, _mm_set_ps1(factor));
+  F32 inverseFactor = 1.0f / factor;
+  x /= inverseFactor;
+  y /= inverseFactor;
+  z /= inverseFactor;
   return *this;
 }
 
 Vector3& Vector3::operator *=(const F32& factor) 
 {
-  __v = _mm_mul_ps(__v, _mm_set_ps1(factor));
+  x *= factor;
+  y *= factor;
+  z *= factor;
   return *this;
 }
 
 Vector3 Vector3::operator -() const 
 {
-  return *this * -1.0f;
+  return { -x, -y, -z };
 }
 
 F32& Vector3::operator [](const UI32 index) 
@@ -82,25 +95,12 @@ const F32& Vector3::operator [](const UI32 index) const
 
 F32 Vector3::dot(const Vector3& other) const 
 {
-  __m128 dot = _mm_mul_ps(__v, other.__v);
-  __m128 shuf = _mm_shuffle_ps(dot, dot, _MM_SHUFFLE(2, 3, 0, 1)); // [ C D | A B ]
-  dot = _mm_add_ps(dot, shuf); // sums = [ D+C C+D | B+A A+B ]
-  shuf = _mm_movehl_ps(shuf, dot); // [ C D | D+C C+D ]
-  dot = _mm_add_ss(dot, shuf);
-  return _mm_cvtss_f32(dot); // "free" instruction for getting lowest fp value in quadword
+  return x * other.x + y * other.y + z * other.z;
 }
 
 Vector3 Vector3::cross(const Vector3& other) const 
 {
-  Vector3 res{};
-  res.__v = _mm_sub_ps(
-    _mm_mul_ps(
-      _mm_shuffle_ps(__v, __v, _MM_SHUFFLE(3, 0, 2, 1)),
-      _mm_shuffle_ps(other.__v, other.__v, _MM_SHUFFLE(3, 1, 0, 2))), 
-    _mm_mul_ps(
-      _mm_shuffle_ps(__v, __v, _MM_SHUFFLE(3, 1, 0, 2)),
-      _mm_shuffle_ps(other.__v, other.__v, _MM_SHUFFLE(3, 0, 2, 1))));
-  return res;
+  return { y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x };
 }
 
 F32 Vector3::length() const 
@@ -108,14 +108,13 @@ F32 Vector3::length() const
 #if (__cplusplus >= 201703L)
   return std::hypot(_v[0], _v[1], _v[2]);
 #else
-  return std::sqrt(dot(*this));
+  return sqrtf(dot(*this));
 #endif
 }
 
 F32 Vector3::lengthSquared() const
 {
-  F32 l = length();
-  return l * l;
+  return dot(*this);
 }
 
 Vector3 Vector3::normalize() const 
@@ -130,8 +129,7 @@ Vector3 Vector3::reflect(const Vector3& v, const Vector3& normal)
 
 Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const F32& iorRatio)
 {
-  F32 cosTheta = fmin(v.dot(normal), 1.0f); // assumes unit length
-  Vector3 perpendicular = iorRatio * (v + cosTheta * normal);
+  Vector3 perpendicular = iorRatio * (v + fmin(v.dot(normal), 1.0f) * normal);
   Vector3 parallel = -sqrtf(fabs(1.0f - perpendicular.lengthSquared())) * normal;
   return perpendicular * parallel;
 }

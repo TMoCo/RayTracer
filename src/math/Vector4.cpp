@@ -77,9 +77,7 @@ const F32& Vector4::operator [](const UI32 index) const
 
 Vector3 Vector4::toPoint() const 
 {
-  Vector3 point{};
-  point.__v = _mm_div_ps(__v, _mm_set_ps1(w));
-  return point;
+  return w == 1 ? Vector3{ x, y, z } : Vector3{ x, y, z } / w;
 }
 
 Vector3 Vector4::toVector3() const 

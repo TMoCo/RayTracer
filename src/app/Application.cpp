@@ -22,6 +22,11 @@
 
 int Application::init()
 {
+  Vector3 a = { 1,2,3 };
+  Vector3 b = { 3,2,1 };
+  std::cout << a.dot(b) << "\n";
+
+
   if (!glfwInit())
   {
     DEBUG_PRINT("Failed to initialise GLFW!\n");

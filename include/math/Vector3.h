@@ -14,17 +14,10 @@
 #include <iostream>
 #include <xmmintrin.h>
 
-constexpr UI32 SIZEOF_VEC3 = 0xc;
+constexpr UI32 SIZEOF_VEC3 = 0xcU;
 
-typedef struct Vector3 {
-  union {
-    F32 _v[4]; // still in fact 4 for simd operations (4th element is ignored in computation)
-    __m128 __v;
-    struct {
-      F32 x, y, z; 
-    };
-  };
-
+typedef class Vector3 {
+public:
   constexpr Vector3() : _v{} {}
 
   constexpr Vector3(F32 value) : _v{ value, value, value } {}
@@ -90,6 +83,14 @@ typedef struct Vector3 {
   static Vector3 reflect(const Vector3& v, const Vector3& normal);
 
   static Vector3 refract(const Vector3& v, const Vector3& normal, const F32& iorRatio);
+
+private:
+  union {
+    F32 _v[3];
+    struct {
+      F32 x, y, z; 
+    };
+  };
 
 } Vector3;
 
