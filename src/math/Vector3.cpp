@@ -118,6 +118,11 @@ Vector3 Vector3::normalize() const
   return *this / length();
 }
 
+bool Vector3::isZeroVector() const
+{
+  return (x + y + z) < EPSILON;
+}
+
 Vector3 Vector3::reflect(const Vector3& v, const Vector3& normal) 
 {
   return v - 2.0f * v.dot(normal) * normal;

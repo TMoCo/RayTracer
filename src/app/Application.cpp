@@ -119,7 +119,7 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(imageBuffer, window.getCamera(), 100);
+      raytracer.raytrace(imageBuffer, window.getCamera(), 10);
       TextureLoader::writeTexture("../screenshots/out.jpg", imageBuffer);
     }
 

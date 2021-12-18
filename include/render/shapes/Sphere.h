@@ -58,10 +58,10 @@ public:
       }
     }
 
-    F32 pPhi, pTheta;
     Vector3 pHit = ray.At(t);
 
     /*
+    F32 pPhi, pTheta;
     pTheta = acosf(clamp(pHit[2] / radius, -1.0f, 1.0f));
     pPhi = atan2f(pHit[1], pHit[0]);
     pPhi += (F32)(pPhi < 0.0f) * TWO_PI;

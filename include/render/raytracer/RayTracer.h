@@ -34,22 +34,6 @@ private:
   bool mollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear) const;
 
   Vector3 randomAreaLightPoint(const Mesh* light) const;
-    
-  Vector2 uniformSampleDisk(const Vector2& uv) const;
-
-  Vector3 uniformSampleHemisphere(const Vector2& uv) const;
-  
-  Vector3 uniformSampleHemisphere(const Vector3& normal) const;
-
-  Vector3 uniformSampleHemisphere(const Vector2& uv, const Vector3& normal) const;
-  
-  Vector3 uniformSampleUnitSphere() const;
-
-  Vector3 cosineSampleHemisphere(const Vector2& uv) const;
-
-  Vector3 uniformSampleTriangleBasuOwen(const F32& u) const; // slower but has better variance
-
-  Vector3 uniformSampleTriangle(const Vector2& uv) const;
 
   Scene* scene;
 

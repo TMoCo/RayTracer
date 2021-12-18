@@ -12,12 +12,11 @@
 #define K_DOP_H
 
 #include <math/thomath.h>
-
 #include <render/primitives/Mesh.h>
 
 #include <glad/glad.h>
-
 #include <vector>
+
 
 class KDOP
 {

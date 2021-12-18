@@ -15,15 +15,8 @@
 
 constexpr UI32 SIZEOF_VEC2 = 0x8;
 
-typedef struct Vector2 {
-  union { 
-    F32 _v[2]; 
-
-    struct {
-      F32 x, y;
-    };
-  };
-
+typedef class Vector2 {
+public:
   Vector2() : _v{} {}
   
   Vector2(F32 X, F32 Y) : x(X), y(Y) {}
@@ -54,6 +47,17 @@ typedef struct Vector2 {
   F32& operator [](const UI32 index);
 
   const F32& operator [](const UI32 index) const;
+
+private:
+  union
+  {
+    F32 _v[2];
+
+    struct
+    {
+      F32 x, y;
+    };
+  };
 
 } Vector2;
 
