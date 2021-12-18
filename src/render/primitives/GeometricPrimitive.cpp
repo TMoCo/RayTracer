@@ -4,7 +4,15 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
+#include <core/debug.h>
+#include <render/bounds/AABB.h>
 #include <render/primitives/GeometricPrimitive.h>
+#include <render/shapes/Shape.h>
+
+
+GeometricPrimitive::GeometricPrimitive(Shape* shape, Material* material, AreaLight* areaLight)
+  : Primitive(), shape{ shape }, material{ material }, areaLight{ areaLight }
+{ }
 
 AABB GeometricPrimitive::getBounds() const
 {
@@ -31,4 +39,15 @@ bool GeometricPrimitive::intersectP(const Ray& ray) const
 
 void GeometricPrimitive::test()
 {
+  DEBUG_PRINT("%s", "Test function...\n");
+}
+
+const AreaLight* GeometricPrimitive::getAreaLight() const
+{
+  return areaLight;
+}
+
+const Material* GeometricPrimitive::getMaterial() const
+{
+  return material;
 }

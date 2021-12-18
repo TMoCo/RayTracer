@@ -20,8 +20,9 @@
 #include <limits>
 #include <vector>
 
-struct AABB
+class AABB
 {
+public:
   UI32 vao, vbo;
 
   Vector3 min;

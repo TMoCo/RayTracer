@@ -12,14 +12,15 @@
 #define GEOMETRIC_PRIMITIVE_H 1
 
 #include <render/primitives/Primitive.h>
-#include <render/shapes/Shape.h>
+
+class Shape;
 
 class GeometricPrimitive : protected Primitive
 {
   friend class SceneLoader;
 
 public:
-  GeometricPrimitive(Shape* shape) : Primitive(), shape(shape) {}
+  GeometricPrimitive(Shape* shape, Material* material, AreaLight* areaLight);
 
   AABB getBounds() const override;
 
@@ -28,17 +29,17 @@ public:
   bool intersectP(const Ray& ray) const override;
 
   void test();
-  // for computing lighting 
-  // virtual const AreaLight* getAreaLight() = 0;
 
-  // virtual const Material* getMaterial() = 0;
+  const AreaLight* getAreaLight() const override;
 
-  Shape* shape;
+  const Material* getMaterial() const override;
 
 protected:
-  // Material* material;
+  Shape* shape;
 
-  // AreaLight* areaLight;
+  Material* material;
+
+  AreaLight* areaLight;
 };
 
 #endif // !GEOMETRIC_PRIMITIVE_H

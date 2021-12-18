@@ -12,7 +12,8 @@
 #define SURFEL_H
 
 #include <math/thomath.h>
-#include <render/shapes/Shape.h>
+
+class Shape;
 
 class Surfel 
 {

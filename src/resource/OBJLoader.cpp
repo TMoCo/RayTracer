@@ -8,8 +8,7 @@
 // OBJLoader class definition
 //
 
-#include <render/Material.h>
-
+#include <render/materials/Material.h>
 #include <resource/file.h>
 #include <resource/OBJLoader.h>
 

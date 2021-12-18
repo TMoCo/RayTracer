@@ -4,9 +4,10 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <render/primitives/Mesh.h>
-
 #include <core/debug.h>
+#include <render/primitives/Mesh.h>
+#include <render/bounds/AABB.h>
+
 
 AABB Mesh::getBounds() const
 {
@@ -21,6 +22,21 @@ bool Mesh::intersect(const Ray& ray, Surfel* surfel) const
 bool Mesh::intersectP(const Ray& ray) const 
 {
   return false;
+}
+
+void Mesh::test()
+{
+
+}
+
+const AreaLight* Mesh::getAreaLight() const
+{
+  return nullptr;
+}
+
+const Material* Mesh::getMaterial() const
+{
+  return nullptr;
 }
 
 void Mesh::generatebuffers(bool interleave)

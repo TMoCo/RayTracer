@@ -26,12 +26,16 @@ public:
 
   bool intersectP(const Ray& ray) const override;
 
+  void test() override;
+
+  const Material* getMaterial() const override;
+
+  const AreaLight* getAreaLight() const override;
+
   /* OPENGL */
   void generatebuffers(bool interleave);
 
   void draw();
-
-  void test() {}
 
 protected:
   std::vector<Primitive*> triangles;

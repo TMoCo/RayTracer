@@ -1,8 +1,10 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 18/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // k-DOP (discrete oriented polytope)
 //
 
@@ -17,8 +19,9 @@
 
 #include <vector>
 
-struct KDOP
+class KDOP
 {
+public:
 	static const std::vector<Vector3> boxAxes;
 	static const std::vector<Vector3> edgesAxes;
 	static const std::vector<Vector3> cornersAxes;

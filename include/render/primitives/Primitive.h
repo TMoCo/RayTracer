@@ -11,9 +11,11 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H 1
 
-#include <render/bounds/AABB.h>
-#include <render/raytracer/Ray.h>
-#include <render/raytracer/Surfel.h>
+class AABB;
+class AreaLight;
+class Material;
+class Surfel;
+class Ray;
 
 class Primitive
 {
@@ -26,9 +28,9 @@ public:
 
   virtual void test() = 0;
   
-  // virtual const AreaLight* getAreaLight() = 0;
+  virtual const AreaLight* getAreaLight() const = 0;
   
-  // virtual const Material* getMaterial() = 0;
+  virtual const Material* getMaterial() const = 0;
 
 };
 
