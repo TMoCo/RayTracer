@@ -11,46 +11,48 @@
 #ifndef RAYTRACER_H
 #define RAYTRACER_H
 
-#include <core/core.h>
-
+#include <image/Colour.h>
 #include <resource/buffer.h>
-
-#include <scene/Scene.h>
-
 #include <render/Camera.h>
 #include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
 #include <render/primitives/Mesh.h>
-
+#include <scene/Scene.h>
 #include <widgets/Window.h>
 
 #define MAX_DEPTH 4
 
 class RayTracer {
 public:
-  void raytrace(buffer<colour>& frameBuffer, Scene* scene, const Camera* camera, UI32 samples);
+  void raytrace(buffer<colour>& frameBuffer, const Camera* camera, UI32 samples) const;
+
+  void setScene(Scene* scene);
  
 private:
-  colour CastRay(const Ray& ray, UI32 depth);
+  colour castRay(const Ray& ray, UI32 depth) const;
 
-  // TODO: move intersection test to respective shapes
-  bool Intersect(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear);
+  bool mollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear) const;
+
+  Vector3 randomAreaLightPoint(const Mesh* light) const;
     
-  bool MollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear);
+  Vector2 uniformSampleDisk(const Vector2& uv) const;
 
-  // compute lighting
-  Vector3 RandomAreaLightPoint(const Mesh* light);
-    
-  // monte carlo sampling methods
-  Vector2 UniformSampleDisk(const Vector2& uv);
+  Vector3 uniformSampleHemisphere(const Vector2& uv) const;
+  
+  Vector3 uniformSampleHemisphere(const Vector3& normal) const;
 
-  Vector3 UniformSampleHemisphere(const Vector2& uv);
-    
-  Vector3 CosineSampleHemisphere(const Vector2& uv);
-  // slower but has better variance
-  Vector3 UniformSampleTriangleBasuOwen(const F32& u);
+  Vector3 uniformSampleHemisphere(const Vector2& uv, const Vector3& normal) const;
+  
+  Vector3 uniformSampleUnitSphere() const;
 
-  Vector3 UniformSampleTriangle(const Vector2& uv);
+  Vector3 cosineSampleHemisphere(const Vector2& uv) const;
+
+  Vector3 uniformSampleTriangleBasuOwen(const F32& u) const; // slower but has better variance
+
+  Vector3 uniformSampleTriangle(const Vector2& uv) const;
+
+  Scene* scene;
+
 };
 
 #endif 

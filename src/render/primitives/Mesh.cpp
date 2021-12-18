@@ -8,17 +8,17 @@
 
 #include <core/debug.h>
 
-AABB Mesh::getBounds() 
+AABB Mesh::getBounds() const
 {
   return AABB::getAABB(positions);
 }
 
-bool Mesh::intersect(const Ray& ray) 
+bool Mesh::intersect(const Ray& ray, Surfel* surfel) const 
 {
   return false;
 }
 
-bool Mesh::intersectP(const Ray& ray) 
+bool Mesh::intersectP(const Ray& ray) const 
 {
   return false;
 }

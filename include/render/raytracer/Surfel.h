@@ -12,25 +12,16 @@
 #define SURFEL_H
 
 #include <math/thomath.h>
-
-#include <core/core.h>
-
-#include <render/primitives/Mesh.h>
 #include <render/shapes/Shape.h>
 
-#include <image/Colour.h>
-
-class Surfel {
+class Surfel 
+{
 public:
-  Surfel() {}
+  Surfel() : shape(nullptr) { }
 
-  Surfel(const Vector3& position, const Vector2& UV, const Vector3& outDirection, 
-    const Vector3& dPdU, const Vector3& dPdV, const Vector3& dNdU, const Vector3& dNdV, const Shape* shape)
-    : position{ position }, normal{ dPdU.cross(dPdV).normalize() }, outDirection{ outDirection }, UV{ UV }, 
-    dPdU{ dPdU }, dPdV{ dPdV }, dNdU{ dNdU }, dNdV{ dNdV }, shape{ shape }
-  {
-    // reverse normals? shading geometry?
-  }
+  Surfel(const Vector3& position, const Vector3& normal, const Vector3& outDirection, const Shape* shape)
+    : position{ position }, normal{ normal }, outDirection{ outDirection }, shape{ shape }
+  { }
 
   Vector3 position;
   
@@ -38,12 +29,7 @@ public:
 
   Vector3 outDirection;
 
-  Vector2 UV;
-
-  Vector3 dPdU, dPdV; // partial derivatives of point p with respect to u and v
-  Vector3 dNdU, dNdV; // ditto for normal
-
-  const Shape* shape = nullptr;
+  const Shape* shape;
 };
 
 #endif // !SURFEL_H

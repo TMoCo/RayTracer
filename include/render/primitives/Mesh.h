@@ -18,11 +18,13 @@ class Mesh : protected Primitive
   friend class KDOP;
 
 public:
-  AABB getBounds();
+  Mesh() : Primitive() {}
 
-  bool intersect(const Ray& ray);
+  AABB getBounds() const override;
 
-  bool intersectP(const Ray& ray);
+  bool intersect(const Ray& ray, Surfel* surfel) const override;
+
+  bool intersectP(const Ray& ray) const override;
 
   /* OPENGL */
   void generatebuffers(bool interleave);

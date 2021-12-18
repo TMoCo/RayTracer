@@ -9,6 +9,7 @@
 //
 
 #include <scene/Transform.h>
+#include <render/raytracer/Surfel.h>
 
 Transform::Transform()
   : matrix{ Matrix4::identity() },
@@ -49,14 +50,34 @@ Transform Transform::applyToTransform(const Transform& other) const
   return result;
 }
 
+Surfel Transform::applyToSurfel(const Surfel& surfel) const
+{
+  Surfel result{};
+  result.position = applyToPoint(surfel.position);
+  result.normal = applyToNormal(surfel.normal);
+  result.outDirection = applyToVector3(surfel.outDirection);
+  return result;
+}
+
+
+
+Surfel Transform::applyInverseToSurfel(const Surfel& surfel) const
+{
+  Surfel result{};
+  result.position = applyInverseToPoint(surfel.position);
+  result.normal = applyInverseToNormal(surfel.normal);
+  result.outDirection = applyInverseToVector3(surfel.outDirection);
+  return result;
+}
+
 Ray Transform::applyToRay(const Ray& ray) const
 {
-  return { applyToPoint(ray.origin), applyToVector3(ray.direction) };
+  return { applyToPoint(ray.origin), applyToVector3(ray.direction), ray.tMax};
 }
 
 Ray Transform::applyInverseToRay(const Ray& ray) const
 {
-  return { applyInverseToPoint(ray.origin), applyInverseToVector3(ray.direction) };
+  return { applyInverseToPoint(ray.origin), applyInverseToVector3(ray.direction), ray.tMax };
 }
 
 Vector3 Transform::applyToPoint(const Vector3& point) const
@@ -71,12 +92,24 @@ Vector3 Transform::applyInverseToPoint(const Vector3& point) const
 
 Vector3 Transform::applyToNormal(const Vector3& normal) const
 {
-  return (Matrix4::transpose(matrix) * Vector4 { normal }).toVector3().normalize();
-}
+  F32 x = normal[0], y = normal[1], z = normal[2];
+  return Vector3
+  {
+    matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * z,
+    matrix[1][0] * x + matrix[1][1] * y + matrix[1][2] * z,
+    matrix[2][0] * x + matrix[2][1] * y + matrix[2][2] * z
+  }.normalize();
+ }
 
 Vector3 Transform::applyInverseToNormal(const Vector3& normal) const
 {
-  return (matrix * Vector4 { normal }).toVector3().normalize();
+  F32 x = normal[0], y = normal[1], z = normal[2];
+  return Vector3
+  {
+    inverseMatrix[0][0] * x + inverseMatrix[0][1] * y + inverseMatrix[0][2] * z,
+    inverseMatrix[1][0] * x + inverseMatrix[1][1] * y + inverseMatrix[1][2] * z,
+    inverseMatrix[2][0] * x + inverseMatrix[2][1] * y + inverseMatrix[2][2] * z
+  }.normalize();
 }
 
 Vector3 Transform::applyToVector3(const Vector3& vector) const

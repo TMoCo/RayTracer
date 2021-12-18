@@ -8,9 +8,27 @@
 // Matrix4 class definition
 //
 
-#include <math/thomath.h>
+#include <math/Matrix4.h>
 
 #include <intrin.h>
+
+Matrix4::Matrix4() 
+  : _m{} 
+{ }
+
+Matrix4::Matrix4(const F32* values) 
+  : _m{}
+{
+  UI32 index = 0;
+  for (UI32 e = 0; e < 4; ++e)
+  {
+    index = e << 2;
+    _m[e] = values[index];
+    _m[e + 4] = values[index + 1];
+    _m[e + 8] = values[index + 2];
+    _m[e + 12] = values[index + 3];
+  }
+}
 
 Matrix4& Matrix4::operator =(const Matrix4& other) 
 {
@@ -183,16 +201,6 @@ Matrix4& Matrix4::operator *=(const Matrix4& other)
   return *this;
   */
 }
-
-Matrix4& Matrix4::operator /=(const F32& factor) 
-{
-  __m128 inv = _mm_set_ps1(1.0f / factor);
-  __m[0] = _mm_mul_ps(__m[0], inv);
-  __m[1] = _mm_mul_ps(__m[1], inv);
-  __m[2] = _mm_mul_ps(__m[2], inv);
-  __m[3] = _mm_mul_ps(__m[3], inv);
-  return *this;
-}
     
 Matrix4& Matrix4::operator *=(const F32& factor) 
 {
@@ -201,6 +209,16 @@ Matrix4& Matrix4::operator *=(const F32& factor)
   __m[1] = _mm_mul_ps(__m[1], f);
   __m[2] = _mm_mul_ps(__m[2], f);
   __m[3] = _mm_mul_ps(__m[3], f);
+  return *this;
+}
+
+Matrix4& Matrix4::operator /=(const F32& factor)
+{
+  __m128 inv = _mm_set_ps1(1.0f / factor);
+  __m[0] = _mm_mul_ps(__m[0], inv);
+  __m[1] = _mm_mul_ps(__m[1], inv);
+  __m[2] = _mm_mul_ps(__m[2], inv);
+  __m[3] = _mm_mul_ps(__m[3], inv);
   return *this;
 }
 
@@ -343,11 +361,13 @@ Matrix4 Matrix4::lookAt(const Vector3& eye, const Vector3& target, const Vector3
   return m;
 }
 
-Matrix4 operator /(Matrix4 lhs, const F32 rhs) {
+Matrix4 operator /(Matrix4 lhs, const F32 rhs) 
+{
   return lhs /= rhs;
 }
 
-Matrix4 operator *(Matrix4 lhs, const F32 rhs) {
+Matrix4 operator *(Matrix4 lhs, const F32 rhs) 
+{
   return lhs *= rhs;
 }
 
@@ -356,7 +376,8 @@ Matrix4 operator *(const F32 lhs, Matrix4& rhs)
   return rhs * lhs;
 }
 
-std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
+std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) 
+{
   // converts to Vector4 (slow)
   return inStream 
     >> *reinterpret_cast<Vector4*>(matrix[0]) 
@@ -365,7 +386,8 @@ std::istream & operator >> (std::istream &inStream, Matrix4 &matrix) {
     >> *reinterpret_cast<Vector4*>(matrix[3]);
 }
 
-std::ostream & operator << (std::ostream &outStream, const Matrix4 &matrix) {
+std::ostream & operator << (std::ostream &outStream, const Matrix4 &matrix) 
+{
   return outStream
     << matrix[0][0] << " " << matrix[1][0] << " " << matrix[2][0] << " " << matrix[3][0] << '\n'
     << matrix[0][1] << " " << matrix[1][1] << " " << matrix[2][1] << " " << matrix[3][1] << '\n'

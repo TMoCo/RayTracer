@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // primitive interface class
 //
 
@@ -11,15 +13,16 @@
 
 #include <render/bounds/AABB.h>
 #include <render/raytracer/Ray.h>
+#include <render/raytracer/Surfel.h>
 
 class Primitive
 {
 public:
-  virtual AABB getBounds() = 0;
+  virtual AABB getBounds() const = 0;
 
-  virtual bool intersect(const Ray& ray) = 0;
+  virtual bool intersect(const Ray& ray, Surfel* surfel) const = 0;
   
-  virtual bool intersectP(const Ray& ray) = 0;
+  virtual bool intersectP(const Ray& ray) const = 0;
 
   virtual void test() = 0;
   

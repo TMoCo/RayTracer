@@ -16,10 +16,6 @@
 
 int Application::init()
 {
-  F32 floats[16] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
-  Matrix4 matrix{ floats };
-  std::cout << matrix << "\n";
-
   if (!glfwInit())
   {
     DEBUG_PRINT("Failed to initialise GLFW!\n");
@@ -60,6 +56,8 @@ I32 Application::run()
   Scene scene;
   SceneLoader::loadScene("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", scene);
 
+  raytracer.setScene(&scene);
+
   renderLoop(&scene);
 
   terminate();
@@ -96,7 +94,7 @@ void Application::renderLoop(Scene* scene)
 
   window.setMainCamera(&camera);
 
-  Transform t{ Vector3{ 1.0f, 2.0f, 3.0f }, Quaternion::angleAxis(radians(90.0f), RIGHT), {1.0f, 1.0f, 1.0f } };
+  Transform t{ Vector3{ 1.0f, 2.0f, 3.0f }, Quaternion::angleAxis(radians(90.0f), RIGHT), { 1.0f, 1.0f, 1.0f } };
   
   Matrix4 model = t.getMatrix();
   Matrix4 view;
@@ -121,7 +119,7 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(imageBuffer, scene, window.getCamera(), 1);
+      raytracer.raytrace(imageBuffer, window.getCamera(), 100);
       TextureLoader::writeTexture("../screenshots/out.jpg", imageBuffer);
     }
 

@@ -20,20 +20,9 @@ constexpr UI32 SIZEOF_MAT4 = 0x40;
 
 typedef struct Matrix4 {
 public:
-  constexpr Matrix4() : _m{} {}
+  Matrix4();
 
-  constexpr Matrix4(const F32* values) : _m{}
-  {
-    UI32 index = 0;
-    for (UI32 e = 0; e < 4; ++e)
-    {
-      index = e << 2;
-      _m[e     ] = values[index    ];
-      _m[e + 4 ] = values[index + 1];
-      _m[e + 8 ] = values[index + 2];
-      _m[e + 12] = values[index + 3];
-    }
-  }
+  Matrix4(const F32* values);
 
   Matrix4& operator =(const Matrix4& other);
 
@@ -54,11 +43,13 @@ public:
     return lhs *= rhs;
   }
 
-  friend inline Matrix4 operator +(Matrix4 lhs, const Matrix4& rhs) {
+  friend inline Matrix4 operator +(Matrix4 lhs, const Matrix4& rhs) 
+  {
       return lhs += rhs;
   }
 
-  friend inline Matrix4 operator -(Matrix4 lhs, const Matrix4& rhs) {
+  friend inline Matrix4 operator -(Matrix4 lhs, const Matrix4& rhs) 
+  {
       return lhs -= rhs;
   }
 

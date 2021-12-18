@@ -5,14 +5,13 @@
 */
 
 //
-// Quaternionernion class declaration
+// Quaternion class declaration
 //
 
 #ifndef QUATERNION_H
 #define QUATERNION_H 1
 
 #include <core/types.h>
-
 #include <math/Vector3.h>
 #include <math/Vector4.h>
 
@@ -101,7 +100,6 @@ public:
   static Vector3 rotateVector(const Vector3& vector, const Quaternion& quaternion);
 
 } Quaternion;
-
 
 Quaternion operator /(Quaternion lhs, const F32 rhs);
 

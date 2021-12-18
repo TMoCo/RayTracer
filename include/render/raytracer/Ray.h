@@ -16,8 +16,8 @@
 
 class Ray {
 public:
-  Ray(const Vector3& origin = {}, const Vector3& direction = {}) 
-    : origin{ origin }, direction{ direction }, tMax{ 100.0f }
+  Ray(const Vector3& origin, const Vector3& direction, F32 tMax) 
+    : origin{ origin }, direction{ direction }, tMax{ tMax }
   { }
 
   inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC)
@@ -25,7 +25,7 @@ public:
     Vector3 horizontal = camera->right * camera->vpWidth;
     Vector3 vertical = camera->vpHeight * camera->up;
     Vector3 lowerLeftOrigin = camera->position - horizontal * 0.5f - vertical * 0.5f + camera->front;
-    return { camera->position, lowerLeftOrigin + PNDC.x * horizontal + PNDC.y * vertical - camera->position };
+    return { camera->position, lowerLeftOrigin + PNDC.x * horizontal + PNDC.y * vertical - camera->position, INFINITY };
   }
 
   inline Vector3 At(F32 t) const 
@@ -37,7 +37,7 @@ public:
 
   Vector3 direction;
   
-  F32 tMax;
+  mutable F32 tMax;
 };
 
 #endif // !RAY_H

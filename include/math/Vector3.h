@@ -69,7 +69,7 @@ public:
 
   F32& operator [](const UI32 index);
 
-  constexpr const F32& operator [](const UI32 index) const;
+  const F32& operator [](const UI32 index) const;
     
   F32 dot(const Vector3& other) const;
 

@@ -21,17 +21,17 @@ constexpr UI32 SIZEOF_VEC4 = 0x10;
 
 typedef struct Vector4 {
 public:
-  constexpr Vector4() :_v{} {}
+  Vector4() :_v{} {}
 
-  constexpr Vector4(const Vector3 vec3, F32 w = 1.0f) : _v{ vec3[0], vec3[1], vec3[2], w } {}
+  Vector4(const Vector3 vec3, F32 w = 1.0f) : _v{ vec3[0], vec3[1], vec3[2], w } {}
 
-  constexpr Vector4(F32 X, F32 Y, F32 Z, F32 W = 1.0f) : _v{ X, Y, Z, W } {}
+  Vector4(F32 X, F32 Y, F32 Z, F32 W = 1.0f) : _v{ X, Y, Z, W } {}
 
-  constexpr Vector4(const F32* values) : _v{ values[0], values[1], values[2], values[3]} {}
+  Vector4(const F32* values) : _v{ values[0], values[1], values[2], values[3]} {}
 
-  constexpr Vector4(const Vector4& other) : _v{ other.x, other.y, other.z, other.w } {}
+  Vector4(const Vector4& other) : _v{ other.x, other.y, other.z, other.w } {}
 
-  constexpr Vector4(const __m128& vector) : __v{ vector } {}
+  Vector4(const __m128& vector) : __v{ vector } {}
 
   // binary operators
   Vector4& operator =(const Vector4& other);

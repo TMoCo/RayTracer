@@ -21,33 +21,38 @@ namespace random {
 
   static std::mt19937 generator;
 
-  inline F32 UniformF32() 
+  inline F32 uniformF32() 
   {
     static uniform_f distribution(0.0f, 1.0f);
     return distribution(generator);
   }
 
-  inline F32 UniformF32(F32 min, F32 max) 
+  inline F32 uniformF32(F32 min, F32 max) 
   {
     static uniform_f distribution(min, max);
     return distribution(generator);
   }
 
-  inline I32 UniformI32(I32 min, I32 max) 
+  inline I32 uniformI32(I32 min, I32 max) 
   {
     static uniform_i distribution(min, max);
     return distribution(generator);
   }
 
-  inline UI32 UniformUI32(UI32 min, UI32 max)
+  inline UI32 uniformUI32(UI32 min, UI32 max)
   {
     static uniform_ui distribution(min, max);
     return distribution(generator);
   }
 
-  inline Vector2 UniformUV() 
+  inline Vector2 uniformUV() 
   {
     static uniform_f distribution(0.0f, 1.0f);
     return { distribution(generator), distribution(generator) };
+  }
+
+  inline Vector3 uniformVector3(F32 min, F32 max)
+  {
+    return { uniformF32(min, max), uniformF32(min, max), uniformF32(min, max) };
   }
 };

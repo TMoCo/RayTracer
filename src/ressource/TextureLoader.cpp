@@ -55,13 +55,16 @@ void TextureLoader::writeTexture(const std::string& path, buffer<colour>& image)
     byte* pStaging = staging[0];
     // stb expects image pixels stored from top to bottom, left to right
     for (I32 i = height - 1; i >= 0; --i)
+    {
       for (I32 j = 0; j < width; ++j)
       {
-        *pStaging       = (byte)(image[i][j].x * 255.0f);
-        *(pStaging + 1) = (byte)(image[i][j].y * 255.0f);
-        *(pStaging + 2) = (byte)(image[i][j].z * 255.0f);
+        *pStaging       = (byte)(sqrtf(image[i][j][0]) * 255.0f);
+        *(pStaging + 1) = (byte)(sqrtf(image[i][j][1]) * 255.0f);
+        *(pStaging + 2) = (byte)(sqrtf(image[i][j][2]) * 255.0f);
         pStaging += 3;
       }
+    }
   }
-  stbi_write_jpg(path.c_str(), width, height, 3, staging[0], 50);
+
+  stbi_write_jpg(path.c_str(), width, height, 3, staging[0], 90);
 }

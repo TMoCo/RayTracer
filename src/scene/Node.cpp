@@ -35,8 +35,6 @@ Transform* Node::getWorldTransform()
     }
   }
 
-  std::cout << world.getMatrix() << "\n";
-
   return &world;
 }
 

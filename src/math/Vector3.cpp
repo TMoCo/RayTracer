@@ -8,7 +8,7 @@
 // Vector3 class definition
 //
 
-#include <math/thomath.h>
+#include <math/Vector3.h>
 
 #include <math.h>
 
@@ -60,9 +60,9 @@ Vector3& Vector3::operator *=(const Vector3& other)
 Vector3& Vector3::operator /=(const F32& factor) 
 {
   F32 inverseFactor = 1.0f / factor;
-  x /= inverseFactor;
-  y /= inverseFactor;
-  z /= inverseFactor;
+  x *= inverseFactor;
+  y *= inverseFactor;
+  z *= inverseFactor;
   return *this;
 }
 
@@ -84,7 +84,7 @@ F32& Vector3::operator [](const UI32 index)
   return _v[index];
 }
 
-constexpr const F32& Vector3::operator [](const UI32 index) const 
+const F32& Vector3::operator [](const UI32 index) const 
 {
   return _v[index];
 }

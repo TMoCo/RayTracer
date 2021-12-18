@@ -12,9 +12,7 @@
 #define SHAPE_H 1
 
 #include <render/bounds/AABB.h>
-
 #include <render/raytracer/Ray.h>
-
 #include <scene/Transform.h>
 
 class Surfel;

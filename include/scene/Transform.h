@@ -15,6 +15,8 @@
 
 #include <render/raytracer/Ray.h>
 
+class Surfel;
+
 class Transform {
   friend class Node;
 
@@ -29,6 +31,10 @@ public:
   void scaleBy(const Vector3& scale);
 
   Transform applyToTransform(const Transform& other) const;
+
+  Surfel applyToSurfel(const Surfel& surfel) const;
+  
+  Surfel applyInverseToSurfel(const Surfel& surfel) const;
 
   Ray applyToRay(const Ray& ray) const;
 
