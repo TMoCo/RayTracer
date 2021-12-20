@@ -48,13 +48,6 @@ Vector3 UniformSampler::hemisphere(const Vector3& normal)
   return inUnitSphere.dot(normal) > 0.0f ? inUnitSphere : -inUnitSphere;
 }
 
-Vector3 UniformSampler::hemisphere(const Vector2& uv, const Vector3& normal)
-{
-  return Quaternion::rotateVector(
-    hemisphere(random::uniformUV()), Quaternion::getRotationFrom(UP, normal));
-
-}
-
 Vector3 UniformSampler::unitSphere()
 {
   Vector3 vector;

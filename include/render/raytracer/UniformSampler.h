@@ -25,8 +25,6 @@ public:
 
   static Vector3 hemisphere(const Vector3& normal);
 
-  static Vector3 hemisphere(const Vector2& uv, const Vector3& normal);
-
   static Vector3 unitSphere();
 
   static Vector3 unitSphere(const Vector2& uv);

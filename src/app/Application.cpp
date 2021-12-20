@@ -71,16 +71,16 @@ I32 Application::run()
 void Application::renderLoop(Scene* scene)
 {  
   // test materials
-  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.0f);
+  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.2f);
   Dielectric glass = Dielectric(1.5f);
   Lambertian floor = Lambertian({ 0.8f, 0.8f, 0.0f });
-  Lambertian gray = Lambertian({ 0.5f, 0.5f, 0.5f });
+  Lambertian mauve = Lambertian({ 0.3f, 0.1f, 0.6f });
 
   auto primitives = *scene->getPrimitives();
-  ((GeometricPrimitive*)primitives[0])->material = &glass;
-  //((GeometricPrimitive*)primitives[1])->material = &metal;
-  //((GeometricPrimitive*)primitives[2])->material = &metal;
-  ((GeometricPrimitive*)primitives[1])->material = &floor;
+  ((GeometricPrimitive*)primitives[0])->material = &mauve;
+  ((GeometricPrimitive*)primitives[1])->material = &glass;
+  ((GeometricPrimitive*)primitives[2])->material = &metal;
+  ((GeometricPrimitive*)primitives[3])->material = &floor;
   
   //Shader debugShader{}; // for viewing AABB, view frustum, BVH hierarchies
   //debugShader.create(
@@ -121,7 +121,7 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(imageBuffer, window.getCamera(), 30);
+      raytracer.raytrace(imageBuffer, window.getCamera(), 100);
       TextureLoader::writeTexture("../screenshots/out.jpg", imageBuffer);
     }
 

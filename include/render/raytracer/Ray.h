@@ -20,15 +20,15 @@ public:
   { }
 
   Ray(const Vector3& origin, const Vector3& direction, F32 tMax) 
-    : origin{ origin }, direction{ direction }, tMax{ tMax }
+    : origin{ origin }, direction{ direction.normalize() }, tMax{ tMax }
   { }
 
   inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC)
   {
-    Vector3 horizontal = camera->right * camera->vpWidth;
-    Vector3 vertical = camera->vpHeight * camera->up;
-    Vector3 lowerLeftOrigin = camera->position - horizontal * 0.5f - vertical * 0.5f + camera->front;
-    return { camera->position, lowerLeftOrigin + PNDC[0] * horizontal + PNDC[1] * vertical - camera->position, INFINITY };
+    Vector3 h = camera->right * camera->vpWidth;
+    Vector3 v = camera->vpHeight * camera->up;
+    Vector3 lowerLeftOrigin = camera->position - h * 0.5f - v * 0.5f + camera->front;
+    return { camera->position, lowerLeftOrigin + PNDC[0] * h + PNDC[1] * v - camera->position, INFINITY };
   }
 
   inline Vector3 At(F32 t) const 

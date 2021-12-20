@@ -49,9 +49,9 @@ public:
         return false; // no intersection
       }
 
-      t = t0 <= EPSILON ? t1 : t0; // smallest 
+      t = t0 <= 0.001f ? t1 : t0; // smallest 
 
-      if (t1 <= EPSILON || t0 > ray.tMax || t > ray.tMax)
+      if (t1 <= 0.001f || t0 > ray.tMax || t > ray.tMax)
       {
         return false;
       }

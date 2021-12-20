@@ -27,8 +27,9 @@ public:
   { 
     if (!isFrontFace)
     {
-      this->normal = -normal;
+      this->normal *= -1.0f;
     }
+    this->position += EPSILON * this->normal; // displace for shadow acne
   }
 
 

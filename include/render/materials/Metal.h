@@ -25,7 +25,7 @@ public:
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
     attenuation = albedo;
-    Vector3 outDir = Vector3::reflect(inRay.direction.normalize(), surfel.normal);
+    Vector3 outDir = Vector3::reflect(inRay.direction, surfel.normal);
     outRay = { surfel.position, outDir + fuzz * UniformSampler::unitSphere(random::uniformUV()), INFINITY };
     return outRay.direction.dot(surfel.normal) > 0.0f;
   }

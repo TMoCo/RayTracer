@@ -25,12 +25,27 @@ public:
   {
     attenuation = colour::White;    
     F32 refractionRatio = surfel.isFrontFace ? 1.0f / ior : ior;
-    Vector3 refracted = Vector3::refract(inRay.direction.normalize(), surfel.normal, refractionRatio);
-    outRay = { surfel.position + EPSILON * surfel.normal, refracted, INFINITY };
+    
+    F32 cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
+    F32 sinTheta = sqrtf(1.0f - cosTheta * cosTheta);
+
+    Vector3 direction = (refractionRatio * sinTheta > 1.0f) || (reflectanceSchlick(cosTheta, refractionRatio) > random::uniformF32())
+      ? Vector3::reflect(inRay.direction, surfel.normal)
+      : Vector3::refract(inRay.direction, surfel.normal, refractionRatio);
+
+    outRay = { surfel.position, direction, INFINITY };
     return true;
   }
 
   F32 ior;
+
+private:
+  static F32 reflectanceSchlick(F32 cosine, F32 refractionIndex)
+  {
+    F32 r0 = (1.0f - refractionIndex) / (1.0f + refractionIndex);
+    r0 *= r0;
+    return r0 + (1.0f - r0) * powf(1.0f - cosine, 5.0f);
+  }
 };
 
 #endif // !DIELECTRIC_H
