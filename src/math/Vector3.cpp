@@ -130,9 +130,10 @@ Vector3 Vector3::reflect(const Vector3& v, const Vector3& normal)
 
 Vector3 Vector3::refract(const Vector3& v, const Vector3& normal, const F32& iorRatio)
 {
-  Vector3 perpendicular = iorRatio * (v + fmin(v.dot(normal), 1.0f) * normal);
+  F32 cosTheta = fmin(normal.dot(-v), 1.0f);
+  Vector3 perpendicular = iorRatio * (v + cosTheta * normal);
   Vector3 parallel = -sqrtf(fabs(1.0f - perpendicular.lengthSquared())) * normal;
-  return perpendicular * parallel;
+  return perpendicular + parallel;
 }
 
 Vector3 operator /(Vector3 lhs, const F32& rhs)

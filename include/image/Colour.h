@@ -5,46 +5,46 @@
 */
 
 //
-// colour 
+// Colour 
 //
 
 #ifndef COLOUR_H
-#define COLOUR_H
+#define COLOUR_H 1
 
 #include <math/thomath.h>
 
 #define LUMINANCE { 0.2126f, 0.7152f, 0.0722f }
 
-typedef Vector3 colour;
+typedef Vector3 Colour;
 
-namespace Colour 
+namespace colour
 {
-  static colour Black{ 0.0f, 0.0f, 0.0f };
-  static colour White{ 1.0f, 1.0f, 1.0f };
-  static colour Red{ 1.0f, 0.0f, 0.0f };
-  static colour Green{ 0.0f, 1.0f, 0.0f };
-  static colour Blue{ 0.0f, 0.0f, 1.0f };
+  static Colour Black{ 0.0f, 0.0f, 0.0f };
+  static Colour White{ 1.0f, 1.0f, 1.0f };
+  static Colour Red{ 1.0f, 0.0f, 0.0f };
+  static Colour Green{ 0.0f, 1.0f, 0.0f };
+  static Colour Blue{ 0.0f, 0.0f, 1.0f };
 
-  inline F32 luminance(colour c) 
+  inline F32 luminance(Colour c)
   {
     return c.dot(LUMINANCE);
   }
 
-  inline colour gammaCorrection(colour c, F32 gamma) 
+  inline Colour gammaCorrection(Colour c, F32 gamma)
   {
     F32 invGamma = 1.0f / gamma;
-    return colour{ powf(c[0], invGamma), powf(c[1], invGamma), powf(c[2], invGamma) };
+    return { powf(c[0], invGamma), powf(c[1], invGamma), powf(c[2], invGamma) };
   }
 
   // https://64.github.io/tonemapping/
-  inline colour reinhardTMO(colour c) 
+  inline Colour reinhardTMO(Colour c)
   {
     return c / (White + c);
   }
 
-  inline colour reinhardExtendedTMO(colour c, F32 maxWhite) 
+  inline Colour reinhardExtendedTMO(Colour c, F32 maxWhite)
   {
-    return (c * (White + (c / colour{ maxWhite * maxWhite }))) / (White + c);
+    return (c * (White + (c / Colour{ maxWhite * maxWhite }))) / (White + c);
   }
 
 };

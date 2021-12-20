@@ -9,7 +9,7 @@
 //
 
 #ifndef RAYTRACER_H
-#define RAYTRACER_H
+#define RAYTRACER_H 1
 
 #include <image/Colour.h>
 #include <resource/buffer.h>
@@ -20,16 +20,14 @@
 #include <scene/Scene.h>
 #include <widgets/Window.h>
 
-#define MAX_DEPTH 4
-
 class RayTracer {
 public:
-  void raytrace(buffer<colour>& frameBuffer, const Camera* camera, UI32 samples) const;
+  void raytrace(buffer<Colour>& frameBuffer, const Camera* camera, UI32 samples) const;
 
   void setScene(Scene* scene);
  
 private:
-  colour castRay(const Ray& ray, UI32 depth) const;
+  Colour castRay(const Ray& ray, UI32 depth) const;
 
   bool mollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear) const;
 

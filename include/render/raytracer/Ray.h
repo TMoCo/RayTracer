@@ -9,13 +9,16 @@
 //
 
 #ifndef RAY_H
-#define RAY_H
+#define RAY_H 1
 
 #include <math/thomath.h>
 #include <render/Camera.h>
 
 class Ray {
 public:
+  Ray() : tMax{ 0.0f } 
+  { }
+
   Ray(const Vector3& origin, const Vector3& direction, F32 tMax) 
     : origin{ origin }, direction{ direction }, tMax{ tMax }
   { }
@@ -25,7 +28,7 @@ public:
     Vector3 horizontal = camera->right * camera->vpWidth;
     Vector3 vertical = camera->vpHeight * camera->up;
     Vector3 lowerLeftOrigin = camera->position - horizontal * 0.5f - vertical * 0.5f + camera->front;
-    return { camera->position, lowerLeftOrigin + PNDC.x * horizontal + PNDC.y * vertical - camera->position, INFINITY };
+    return { camera->position, lowerLeftOrigin + PNDC[0] * horizontal + PNDC[1] * vertical - camera->position, INFINITY };
   }
 
   inline Vector3 At(F32 t) const 

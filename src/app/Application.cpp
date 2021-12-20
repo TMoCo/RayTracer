@@ -6,10 +6,12 @@
 
 #include <app/Application.h>
 #include <core/debug.h>
-#include <render/Shader.h>
-#include <render/Texture.h>
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
+#include <render/materials/materials.h>
+#include <render/primitives/GeometricPrimitive.h>
+#include <render/Shader.h>
+#include <render/Texture.h>
 #include <resource/TextureLoader.h>
 #include <resource/SceneLoader.h>
 #include <resource/OBJLoader.h>
@@ -53,6 +55,7 @@ I32 Application::run()
     return -1;
   }
 
+
   Scene scene;
   SceneLoader::loadScene("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", scene);
 
@@ -66,26 +69,25 @@ I32 Application::run()
 }
 
 void Application::renderLoop(Scene* scene)
-{
-  //Mesh* triangles = resourceManager.tryGetMesh("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\models\\Triangles.obj");
-  //triangles->generatebuffers(false);
+{  
+  // test materials
+  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.0f);
+  Dielectric glass = Dielectric(1.5f);
+  Lambertian floor = Lambertian({ 0.8f, 0.8f, 0.0f });
+  Lambertian gray = Lambertian({ 0.5f, 0.5f, 0.5f });
 
-  // shaders for scene
-  //Shader shader{};
-  //shader.create(
-    //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
-    //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
-
+  auto primitives = *scene->getPrimitives();
+  ((GeometricPrimitive*)primitives[0])->material = &glass;
+  //((GeometricPrimitive*)primitives[1])->material = &metal;
+  //((GeometricPrimitive*)primitives[2])->material = &metal;
+  ((GeometricPrimitive*)primitives[1])->material = &floor;
+  
   //Shader debugShader{}; // for viewing AABB, view frustum, BVH hierarchies
   //debugShader.create(
     //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.vert",
     //"C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
 
-  // load meshes from obj (eg, build a scene in blender)
-  // Mesh* teapot = resourceManager.getMesh("C:\\Users\\Tommy\\Documents\\Graphics\\teapot.obj");
-  // teapot->generatebuffers(false);
-
-  buffer<colour> imageBuffer{ window.getWidth(), window.getHeight() };
+  buffer<Colour> imageBuffer{ window.getWidth(), window.getHeight() };
 
   // Texture containerTexture{};
   // TextureLoader::loadTexture("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
@@ -119,7 +121,7 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(imageBuffer, window.getCamera(), 10);
+      raytracer.raytrace(imageBuffer, window.getCamera(), 30);
       TextureLoader::writeTexture("../screenshots/out.jpg", imageBuffer);
     }
 

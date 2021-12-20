@@ -43,7 +43,7 @@ bool TextureLoader::loadTexture(const std::string& path, Texture& texture, GLenu
   return true;
 }
 
-void TextureLoader::writeTexture(const std::string& path, buffer<colour>& image)
+void TextureLoader::writeTexture(const std::string& path, buffer<Colour>& image)
 {
   I32 width = static_cast<I32>(image.getWidth()), height = static_cast<I32>(image.getHeight());
   DEBUG_ASSERT(width >= 0 && height >= 0, "");

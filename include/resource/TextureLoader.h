@@ -9,7 +9,7 @@
 #ifndef TEXTURE_LOADER_H
 #define TEXTURE_LOADER_H
 
-#include <image/colour.h>
+#include <image/Colour.h>
 
 #include <render/Texture.h>
 
@@ -21,7 +21,7 @@ struct TextureLoader
 {
   static bool loadTexture(const std::string& path, Texture& texture, GLenum internalFormat);
 
-  static void writeTexture(const std::string& path, buffer<colour>& buffer);
+  static void writeTexture(const std::string& path, buffer<Colour>& buffer);
   // load different texture files differently
 };
 

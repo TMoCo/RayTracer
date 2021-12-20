@@ -34,15 +34,14 @@ public:
                 { radius, radius, zMax } };
   }
 
-  inline bool intersect(const Ray& r, F32* tHit, Surfel* surfel) const override
+  inline bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const override
   {
-    Ray ray = toWorld->applyInverseToRay(r); // world space ray to object space
     F32 t;
-
     {
-      F32 a = ray.direction.dot(ray.direction);
-      F32 b = 2.0f * (ray.direction.dot(ray.origin));
-      F32 c = ray.origin.dot(ray.origin) - radius * radius;
+      Vector3 originCentre = ray.origin - toWorld->getTranslation();
+      F32 a = ray.direction.lengthSquared();
+      F32 b = 2.0f * (originCentre.dot(ray.direction));
+      F32 c = originCentre.lengthSquared() - radius * radius;
 
       F32 t0, t1;
       if (!quadratic(a, b, c, &t0, &t1))
@@ -50,9 +49,9 @@ public:
         return false; // no intersection
       }
 
-      t = t0 <= 0.0f ? t1 : t0; // smallest 
+      t = t0 <= EPSILON ? t1 : t0; // smallest 
 
-      if (t1 <= 0.0f || t0 > ray.tMax || t > ray.tMax)
+      if (t1 <= EPSILON || t0 > ray.tMax || t > ray.tMax)
       {
         return false;
       }
@@ -68,7 +67,7 @@ public:
     Vector2 uv = { pPhi / phiMax, (pTheta - thetaMin) / (thetaMax - thetaMin) }; // map from UV range [0,2pi] to [0,1]
     */
     
-    *surfel = toWorld->applyToSurfel({ pHit, pHit / radius, -ray.direction, this });
+    *surfel = { pHit, (pHit - toWorld->getTranslation()) / radius, -ray.direction, this };
     *tHit = t;
 
     return true;

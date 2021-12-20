@@ -14,15 +14,23 @@
 #include <math/thomath.h>
 
 class Shape;
+class Material;
 
 class Surfel 
 {
 public:
-  Surfel() : shape(nullptr) { }
+  Surfel() : shape{ nullptr }, material{ nullptr }, isFrontFace{ false } {}
 
   Surfel(const Vector3& position, const Vector3& normal, const Vector3& outDirection, const Shape* shape)
-    : position{ position }, normal{ normal }, outDirection{ outDirection }, shape{ shape }
-  { }
+    : position{ position }, normal{ normal }, outDirection{ outDirection }, shape{ shape }, material{ nullptr },
+    isFrontFace{ normal.dot(-outDirection) < 0.0f }
+  { 
+    if (!isFrontFace)
+    {
+      this->normal = -normal;
+    }
+  }
+
 
   Vector3 position;
   
@@ -31,6 +39,11 @@ public:
   Vector3 outDirection;
 
   const Shape* shape;
+
+  Material* material;
+
+  bool isFrontFace;
+
 };
 
 #endif // !SURFEL_H

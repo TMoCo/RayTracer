@@ -33,6 +33,7 @@ public:
   Transform* toWorld;
 
   bool reverseOrientation;
+
 };
 
 #endif // !SHAPE_H

@@ -8,6 +8,9 @@
 // Uniform sampling utility
 //
 
+#ifndef UNIFORM_SAMPLER_H
+#define UNIFORM_SAMPLER_H 1
+
 #include <core/types.h>
 
 class Vector3;
@@ -33,3 +36,5 @@ public:
   static Vector3 triangle(const Vector2& uv);
 
 };
+
+#endif // !UNIFORM_SAMPLER_H

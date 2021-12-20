@@ -7,8 +7,8 @@
 #include <core/debug.h>
 #include <render/bounds/AABB.h>
 #include <render/primitives/GeometricPrimitive.h>
+#include <render/raytracer/Surfel.h>
 #include <render/shapes/Shape.h>
-
 
 GeometricPrimitive::GeometricPrimitive(Shape* shape, Material* material, AreaLight* areaLight)
   : Primitive(), shape{ shape }, material{ material }, areaLight{ areaLight }
@@ -27,6 +27,7 @@ bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
     return false;
   }
   ray.tMax = tHit;
+  surfel->material = material;
   return true;
 }
 

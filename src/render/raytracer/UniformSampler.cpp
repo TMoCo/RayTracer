@@ -37,14 +37,14 @@ Vector3 UniformSampler::hemisphere(const Vector2& uv)
 {
   // generate a random vector on the unit hemisphere
   F32 z = uv[0];
-  F32 r = sqrtf(std::max(0.0f, 1.0f - z * z));
+  F32 r = sqrtf(fmax(0.0f, 1.0f - z * z));
   F32 phi = TWO_PI * uv[1];
   return { r * cosf(phi), r * sinf(phi), z };
 }
 
 Vector3 UniformSampler::hemisphere(const Vector3& normal)
 {
-  Vector3 inUnitSphere = unitSphere(random::uniformUV());
+  Vector3 inUnitSphere = (normal + unitSphere(random::uniformUV())).normalize();
   return inUnitSphere.dot(normal) > 0.0f ? inUnitSphere : -inUnitSphere;
 }
 
@@ -72,7 +72,7 @@ Vector3 UniformSampler::unitSphere()
 Vector3 UniformSampler::unitSphere(const Vector2& uv)
 {
   F32 z = 1.0f - 2.0f * uv[0];
-  F32 r = sqrtf(std::max(0.0f, 1.0f - z * z));
+  F32 r = sqrtf(fmax(0.0f, 1.0f - z * z));
   F32 phi = TWO_PI * uv[1];
   return { r * cosf(phi), r * sinf(phi), z };
 }

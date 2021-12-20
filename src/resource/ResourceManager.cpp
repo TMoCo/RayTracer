@@ -1,6 +1,6 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 18/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
@@ -23,4 +23,20 @@ Mesh* ResourceManager::getMesh(const std::string& meshName)
 void ResourceManager::removeMesh(const std::string& meshName)
 {
   meshes.erase(meshName);
+}
+
+Material* ResourceManager::tryGetMaterial(const std::string& materialName)
+{
+  return materials.count(materialName) != 0 ?
+    materials[materialName] : nullptr;
+}
+
+Material* ResourceManager::getMaterial(const std::string& materialName)
+{
+  return materials.count(materialName) != 0 ? materials[materialName] : nullptr;
+}
+
+void ResourceManager::removeMaterial(const std::string& materialName)
+{
+  materials.erase(materialName);
 }

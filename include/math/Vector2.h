@@ -11,8 +11,6 @@
 
 #include <core/types.h>
 
-#include <cstring>
-
 constexpr UI32 SIZEOF_VEC2 = 0x8;
 
 typedef class Vector2 {

@@ -56,6 +56,10 @@ public:
 
   const Matrix4& getInverseMatrix() const;
 
+  Vector3 getTranslation() const;
+  
+  Quaternion getRotation() const;
+
 protected:
   Matrix4 matrix;
 

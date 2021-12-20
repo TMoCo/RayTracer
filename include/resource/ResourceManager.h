@@ -9,13 +9,13 @@
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H 1
 
-#include <render/primitives/Mesh.h>
-
 #include <string>
 #include <unordered_map>
 
-// TODO: extend to other resource types (textures, materials, composite resources)
+class Mesh;
+class Material;
 
+// TODO: extend to other resource types (textures, materials, composite resources?)
 class ResourceManager 
 {
   friend class OBJLoader;
@@ -24,13 +24,21 @@ class ResourceManager
 
 public:
   Mesh* tryGetMesh(const std::string& meshName);
-  
-  Mesh* getMesh(const std::string& meshName);
 
-  void removeMesh(const std::string& meshName);
+  Mesh* getMesh(const std::string& meshName);
   
+  Material* tryGetMaterial(const std::string& materialName);
+
+  Material* getMaterial(const std::string& materialName);
+  
+  void removeMesh(const std::string& meshName);
+
+  void removeMaterial(const std::string& meshName);
+
 private:
   std::unordered_map<std::string, Mesh*> meshes;
+
+  std::unordered_map<std::string, Material*> materials;
 };
 #endif // !RESOURCE_MANAGER_H
  

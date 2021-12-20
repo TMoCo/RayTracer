@@ -59,8 +59,6 @@ Surfel Transform::applyToSurfel(const Surfel& surfel) const
   return result;
 }
 
-
-
 Surfel Transform::applyInverseToSurfel(const Surfel& surfel) const
 {
   Surfel result{};
@@ -142,4 +140,9 @@ const Matrix4& Transform::getMatrix() const
 const Matrix4& Transform::getInverseMatrix() const 
 {
   return inverseMatrix;
+}
+
+Vector3 Transform::getTranslation() const
+{
+  return { matrix[3][0], matrix[3][1], matrix[3][2] };
 }

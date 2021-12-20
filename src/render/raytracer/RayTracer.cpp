@@ -10,15 +10,20 @@
 
 #include <core/core.h>
 #include <core/random.h>
-#include <render/raytracer/RayTracer.h>
 #include <render/raytracer/UniformSampler.h>
+#include <render/materials/Material.h>
+#include <render/raytracer/RayTracer.h>
 
-void RayTracer::raytrace(buffer<colour>& frameBuffer, const Camera* camera, UI32 samples) const
+#define MAX_DEPTH 4
+
+void RayTracer::raytrace(buffer<Colour>& frameBuffer, const Camera* camera, UI32 samples) const
 {    
   // scale for aspect ratio
-  UI32 width  = static_cast<UI32>(frameBuffer.getWidth()), height = static_cast<UI32>(frameBuffer.getHeight());
+  UI32 width = static_cast<UI32>(frameBuffer.getWidth()), height = static_cast<UI32>(frameBuffer.getHeight());
   F32 rWidth = 1.0f / static_cast<F32>(width), rHeight = 1.0f / static_cast<F32>(height);
-  F32 scale = 1.0f / (F32)samples;
+  F32 scale  = 1.0f / (F32)samples;
+
+  frameBuffer.clear(); // reset frame buffer
 
   std::cout << "Ray tracing...";
   // scan pixels from left to right, bottom to top, starting in bottom left corner
@@ -31,7 +36,8 @@ void RayTracer::raytrace(buffer<colour>& frameBuffer, const Camera* camera, UI32
       {
         frameBuffer[row][col] +=
           castRay(Ray::generateCameraRay(camera, 
-            { (col + random::uniformF32()) * rWidth, (row + random::uniformF32()) * rHeight }), 0);
+            { (col + random::uniformF32()) * rWidth, (row + random::uniformF32()) * rHeight }), MAX_DEPTH);
+            //{ col * rWidth, row * rHeight }), MAX_DEPTH);
       }
       frameBuffer[row][col] *= scale;
     }
@@ -45,30 +51,37 @@ void RayTracer::setScene(Scene* scene)
   this->scene = scene;
 }
 
-colour RayTracer::castRay(const Ray& inRay, UI32 depth) const
+Colour RayTracer::castRay(const Ray& inRay, UI32 depth) const
 {
-  colour c{};
-
-  if (depth > MAX_DEPTH) // stop recursion 
+  if (depth == 0) // stop recursion 
   {
-    return c;
+    return colour::Black;
   }
 
   Surfel surfel;
   
-  for (auto& prim : scene->getPrimitives())
+  // TODO: move primitive detection into a scene function (a BVH intersection)
+  // scene->BVH->interect(inRay, surfel);
+  for (auto& prim : *scene->getPrimitives())
   {
     prim->intersect(inRay, &surfel);
   }
 
-  if (inRay.tMax != INFINITY)
+  if (inRay.tMax < INFINITY)
   {
-     return 0.5f * castRay(Ray{ surfel.position, UniformSampler::hemisphere(surfel.normal), INFINITY }, ++depth);
+    Ray scattered;
+    Colour attenuation;
+    if (surfel.material->scatter(inRay, surfel, attenuation, scattered))
+    {
+      return attenuation * castRay(scattered, --depth);
+      // return 0.5 * (colour::White + scattered.direction.normalize());
+    }
+    return colour::Black;
   }
   else
   {
     F32 t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
-    return (1.0f - t) * colour { 1.0f, 1.0f, 1.0f } + t * colour{ 0.5f, 0.7f, 1.0f };
+    return (1.0f - t) * colour::White + t * Colour{ 0.5f, 0.7f, 1.0f };
   }
 }
 
@@ -76,7 +89,7 @@ bool RayTracer::mollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes,
 {
     // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
     Vector3 edge1, edge2, h, s, q;
-    F32 k, t, u, v;
+    // F32 k, t, u, v;
     // test against all triangles in the model
     for (UI32 m = 0; m < meshes.size(); ++m) {
         // const Mesh& mesh = model.meshes[m];

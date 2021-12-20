@@ -34,7 +34,6 @@ public:
 
   const Material* getMaterial() const override;
 
-protected:
   Shape* shape;
 
   Material* material;

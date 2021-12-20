@@ -8,8 +8,10 @@
 // utility for random number generation
 //
 
-#include <core/types.h>
+#ifndef RANDOM_H
+#define RANDOM_H 1
 
+#include <core/types.h>
 #include <math/thomath.h>
 
 #include <random>
@@ -20,11 +22,11 @@ namespace random {
   typedef std::uniform_int_distribution<UI32> uniform_ui;
 
   static std::mt19937 generator;
+  static uniform_f distribution01(0.0f, 1.0f);
 
   inline F32 uniformF32() 
   {
-    static uniform_f distribution(0.0f, 1.0f);
-    return distribution(generator);
+    return distribution01(generator);
   }
 
   inline F32 uniformF32(F32 min, F32 max) 
@@ -47,8 +49,7 @@ namespace random {
 
   inline Vector2 uniformUV() 
   {
-    static uniform_f distribution(0.0f, 1.0f);
-    return { distribution(generator), distribution(generator) };
+    return { distribution01(generator), distribution01(generator) };
   }
 
   inline Vector3 uniformVector3(F32 min, F32 max)
@@ -56,3 +57,5 @@ namespace random {
     return { uniformF32(min, max), uniformF32(min, max), uniformF32(min, max) };
   }
 };
+
+#endif // !RANDOM_H

@@ -30,7 +30,7 @@ public:
 
   void draw() const;
 
-  const std::vector<Primitive*>& getPrimitives() const;
+  const std::vector<Primitive*>* getPrimitives() const;
 
   Node* root;
 private:
