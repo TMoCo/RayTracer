@@ -17,7 +17,7 @@
 
 Vector2& Vector2::operator =(const Vector2& other) 
 {
-  std::memcpy(this->_v, other._v, SIZEOF_VEC2); // 2 * sizeof(F32) = 8
+  std::memcpy(this->_v, other._v, SIZE_OF_VEC2); // 2 * sizeof(F32) = 8
   return *this;
 }
 

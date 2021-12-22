@@ -12,7 +12,7 @@
 #define RAYTRACER_H 1
 
 #include <image/Colour.h>
-#include <resource/buffer.h>
+#include <image/Image.h>
 #include <render/Camera.h>
 #include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
@@ -22,7 +22,7 @@
 
 class RayTracer {
 public:
-  void raytrace(buffer<Colour>& frameBuffer, const Camera* camera, UI32 samples) const;
+  void raytrace(Image& image, const Camera* camera, UI32 samples) const;
 
   void setScene(Scene* scene);
  

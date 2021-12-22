@@ -2,7 +2,9 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*///
+*/
+
+//
 // Sphere primitive
 //
 
@@ -25,13 +27,15 @@ public:
       thetaMin(acosf(clamp(zMin / radius, -1.0f, 1.0f))),
       thetaMax(acosf(clamp(zMax / radius, -1.0f, 1.0f))),
       phiMax(radians(clamp(phiMax, 0.0f, 360.0f)))
-  {}
+  { }
 
   inline AABB getAABB() const override
   {
-    // todo: account for varing values of theta
-    return AABB{{ -radius, -radius, zMin },
-                { radius, radius, zMax } };
+    return 
+    { 
+      Vector3{ -radius, -radius, -radius } + toWorld->getTranslation(), 
+      Vector3{ radius, radius, radius } + toWorld->getTranslation() 
+    };
   }
 
   inline bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const override
@@ -49,25 +53,22 @@ public:
         return false; // no intersection
       }
 
-      t = t0 <= 0.001f ? t1 : t0; // smallest 
+      t = t0 <= tMin ? t1 : t0; // smallest 
 
-      if (t1 <= 0.001f || t0 > ray.tMax || t > ray.tMax)
+      if (t1 <= tMin || t0 > ray.tMax || t > ray.tMax)
       {
         return false;
       }
     }
 
     Vector3 pHit = ray.At(t);
-
-    /*
+    Vector3 normal = (pHit - toWorld->getTranslation()) / radius;
     F32 pPhi, pTheta;
-    pTheta = acosf(clamp(pHit[2] / radius, -1.0f, 1.0f));
-    pPhi = atan2f(pHit[1], pHit[0]);
-    pPhi += (F32)(pPhi < 0.0f) * TWO_PI;
-    Vector2 uv = { pPhi / phiMax, (pTheta - thetaMin) / (thetaMax - thetaMin) }; // map from UV range [0,2pi] to [0,1]
-    */
+    pTheta = acosf(-normal[1]);
+    pPhi = atan2f(-normal[2], normal[0]) + PI;
+    Vector2 uv = { pPhi * REC_TWO_PI, pTheta * REC_PI }; // map from UV range [0,2pi] to [0,1]
     
-    *surfel = { pHit, (pHit - toWorld->getTranslation()) / radius, -ray.direction, this };
+    *surfel = { pHit, normal, uv, -ray.direction, this };
     *tHit = t;
 
     return true;

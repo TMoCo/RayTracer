@@ -16,30 +16,33 @@
 
 #define MAX_DEPTH 4
 
-void RayTracer::raytrace(buffer<Colour>& frameBuffer, const Camera* camera, UI32 samples) const
+void RayTracer::raytrace(Image& image, const Camera* camera, UI32 samples) const
 {    
   // scale for aspect ratio
-  UI32 width = static_cast<UI32>(frameBuffer.getWidth()), height = static_cast<UI32>(frameBuffer.getHeight());
-  F32 rWidth = 1.0f / static_cast<F32>(width), rHeight = 1.0f / static_cast<F32>(height);
+  UI32 width = (UI32)image.getWidth(), height = (UI32)image.getHeight();
+  F32 rWidth = 1.0f / (F32)width, rHeight = 1.0f / (F32)height;
   F32 scale  = 1.0f / (F32)samples;
 
-  frameBuffer.clear(); // reset frame buffer
+  image.clear(); // reset frame Image
 
   std::cout << "Ray tracing...";
   // scan pixels from left to right, bottom to top, starting in bottom left corner
   auto start = sys_clock::now();
-  for (UI32 row = 0; row < height; ++row)
+  Colour colour;
+  for (UI32 col = 0; col < height; ++col)
   { 
-    for (UI32 col = 0; col < width; ++col)
+    for (UI32 row = 0; row < width; ++row)
     {
+      colour = colour::Black;
       for (UI32 sample = 0; sample < samples; ++sample)
       {
-        frameBuffer[row][col] +=
+        colour +=
           castRay(Ray::generateCameraRay(camera, 
-            { (col + random::uniformF32()) * rWidth, (row + random::uniformF32()) * rHeight }), MAX_DEPTH);
+            { (row + random::uniformF32()) * rWidth, (col + random::uniformF32()) * rHeight }), MAX_DEPTH);
             //{ col * rWidth, row * rHeight }), MAX_DEPTH);
       }
-      frameBuffer[row][col] *= scale;
+      colour *= scale;
+      image.writePixelColour(row, col, &colour[0]);
     }
   }
   auto end = sys_clock::now();

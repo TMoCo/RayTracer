@@ -2,11 +2,12 @@
 * AUTHOR: THOMAS MOENO COOPER
 * LAST MODIFIED: 13/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
-*/#ifndef SHADER_H
+*/
+
+#ifndef SHADER_H
 #define SHADER_H 1
 
 #include <core/types.h>
-
 #include <math/thomath.h>
 
 #include <vector>

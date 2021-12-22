@@ -10,20 +10,6 @@ scene sphere
 
   geometry test_sphere
   {
-    position 2.5 0 -7
-    rotation 0 0 0
-    shape sphere 1 -1 1 360
-  }
-
-  geometry test_sphere
-  {
-    position -2.5 0 -7
-    rotation 0 0 0
-    shape sphere 1 -1 1 360
-  }
-
-  geometry test_sphere
-  {
     # sphere transformation info
     position 0 -502 -20
     rotation 0 0 0

@@ -61,8 +61,8 @@ struct Camera {
     F32 tanHalfFOV = std::tan(radians(FOV * 0.5f));
     // given pixel normalised device coordinates, return a vector in camera's direction
     return {
-        (2.0f * PNDC.x - 1.0f) * aspectRatio * tanHalfFOV,
-        (2.0f * PNDC.y - 1.0f) * tanHalfFOV,
+        (2.0f * PNDC[0] - 1.0f) * aspectRatio * tanHalfFOV,
+        (2.0f * PNDC[1] - 1.0f) * tanHalfFOV,
         -1.0f
     };
   }

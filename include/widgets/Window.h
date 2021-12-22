@@ -13,9 +13,9 @@
 #define WINDOW_H 1
 
 #include <core/types.h>
-
 #include <render/Camera.h>
 
+#include <glad/glad.h>
 #ifdef VULKAN
 #define GLFW_INCLUDE_VULKAN
 #endif

@@ -48,7 +48,7 @@ struct Quad : Shape
     Quad quad{};
 
     glGenVertexArrays(1, &quad.vao);
-    glGenBuffers(1, &quad.vbo);
+    glGenImages(1, &quad.vbo);
     
     std::vector<F32> data{};
     data.reserve(6 * 3);
@@ -72,8 +72,8 @@ struct Quad : Shape
 
     glBindVertexArray(quad.vao);
 
-    glBindBuffer(GL_ARRAY_BUFFER, quad.vbo);
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
+    glBindImage(GL_ARRAY_BUFFER, quad.vbo);
+    glImageData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);

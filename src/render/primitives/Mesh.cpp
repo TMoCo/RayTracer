@@ -39,12 +39,12 @@ const Material* Mesh::getMaterial() const
   return nullptr;
 }
 
-void Mesh::generatebuffers(bool interleave)
+void Mesh::generateImages(bool interleave)
 {
   /*
   glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
-  glGenBuffers(1, &ebo);
+  glGenImages(1, &vbo);
+  glGenImages(1, &ebo);
 
   // guaranteed to at least have vertex position data
   UI64 nVertices = positions.size();
@@ -112,13 +112,13 @@ void Mesh::generatebuffers(bool interleave)
 
   glBindVertexArray(vao);
 
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
+  glBindImage(GL_ARRAY_BUFFER, vbo);
+  glImageData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
 
   if (indices.size() > 0)
   {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(UI32), indices.data(), GL_STATIC_DRAW);
+    glBindImage(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glImageData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(UI32), indices.data(), GL_STATIC_DRAW);
   }
 
   if (interleave)

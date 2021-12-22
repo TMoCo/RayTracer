@@ -32,7 +32,7 @@ Matrix4::Matrix4(const F32* values)
 
 Matrix4& Matrix4::operator =(const Matrix4& other) 
 {
-  memcpy(_m, other._m, SIZEOF_MAT4); 
+  memcpy(_m, other._m, SIZE_OF_MAT4); 
   return *this;
 }
 

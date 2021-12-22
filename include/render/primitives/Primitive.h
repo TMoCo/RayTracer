@@ -16,6 +16,7 @@ class AreaLight;
 class Material;
 class Surfel;
 class Ray;
+class Node;
 
 class Primitive
 {
@@ -31,7 +32,6 @@ public:
   virtual const AreaLight* getAreaLight() const = 0;
   
   virtual const Material* getMaterial() const = 0;
-
 };
 
 #endif // !PRIMITIVE_H

@@ -5,7 +5,6 @@
 */
 
 #include <widgets/Window.h>
-
 #include <core/debug.h>
 
 I32 Window::create(UI32 w, UI32 h, const char* name)
@@ -19,7 +18,6 @@ I32 Window::create(UI32 w, UI32 h, const char* name)
     viewPort.width  = width  = w;
     viewPort.height = height = h;
     viewPort.x = viewPort.y = 0;
-    setViewPort();
     
     glfwSetFramebufferSizeCallback(pWindow, resizeCallBack);
 

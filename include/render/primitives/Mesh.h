@@ -33,7 +33,7 @@ public:
   const AreaLight* getAreaLight() const override;
 
   /* OPENGL */
-  void generatebuffers(bool interleave);
+  void generateImages(bool interleave);
 
   void draw();
 

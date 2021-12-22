@@ -14,6 +14,8 @@
 #include <math/thomath.h>
 #include <render/Camera.h>
 
+constexpr F32 tMin = 0.001f;
+
 class Ray {
 public:
   Ray() : tMax{ 0.0f } 
@@ -41,6 +43,7 @@ public:
   Vector3 direction;
   
   mutable F32 tMax;
+
 };
 
 #endif // !RAY_H

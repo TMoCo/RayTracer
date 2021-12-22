@@ -1,65 +1,41 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 20/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
 //
-// Bounding volume hierarchy class
+// Bounding volume hierarchy class declaration using AABB
 //
 
-#ifndef BHV_H
+#ifndef BVH_H
 #define BVH_H 1
 
-#include <math/thomath.h>
+#include <core/types.h>
 
-#include <render/bounds/AABB.h>
+#include <vector>
 
-#include <render/primitives/Mesh.h>
-
-struct BVHNode
-{
-  inline void initLeaf(UI32 first, UI32 num, const AABB& b)
-  {
-    firstPrim = first;
-    numPrim = num;
-    bbox = b;
-    children[0] = children[1] = nullptr;
-  }
-
-  inline void initInternal(AXIS axis, BVHNode* left, BVHNode* right)
-  {
-    children[0] = left;
-    children[1] = right;
-    bbox = AABB::mergeAABB(left->bbox, right->bbox);
-    splitAxis = axis;
-    numPrim = 0;
-  }
-
-  AABB bbox{};
-  UI32 firstPrim;
-  UI32 numPrim;
-  AXIS splitAxis;
-  BVHNode* children[2];
-};
+class AABB;
+class Scene;
+class Primitive;
 
 class BVH
 {
-  void buildBVH(const std::vector<Mesh*>& meshes);
+public:
+  BVH();
 
-  BVHNode* buildNode(UI32 start, UI32 end);
+  BVH(const Scene* scene);
 
-  void getPrimitives(const std::vector<Mesh*>& meshes);
-  
-  void generatebuffers();
-  
-  void draw();
+  void draw() const;
 
 private:
-  UI32 vao, vbo, ebo;
+  void generateOpenGLData();
 
-  UI64 numNodes;
-  UI32 numPrimitives;
+  UI32 VAO, VBO, IBO;
+
+  const std::vector<Primitive*>* scenePrimitives;
+
+  std::vector<Matrix4> AABBTransforms;
 };
 
-#endif
+#endif // !BVH_H

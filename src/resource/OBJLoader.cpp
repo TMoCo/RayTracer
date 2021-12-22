@@ -181,57 +181,57 @@ bool OBJLoader::loadMtl(const std::string& path)
         std::perror("Error opening file");
 
     // input
-    char buffer[MAX_LINE];
+    char Image[MAX_LINE];
     char* token;
 
     Material* material = nullptr;
 
-    while (std::fgets(buffer, MAX_LINE, pFile) != NULL) {
-        switch (buffer[0]) {
+    while (std::fgets(Image, MAX_LINE, pFile) != NULL) {
+        switch (Image[0]) {
         case 'N':
-            switch (buffer[1]) {
+            switch (Image[1]) {
             case 's':
-                token = std::strtok(&buffer[3], " \n");
+                token = std::strtok(&Image[3], " \n");
                 material->specularExp = std::strtof(token, NULL);
                 break;
             case 'i':
-                token = std::strtok(&buffer[3], " \n");
+                token = std::strtok(&Image[3], " \n");
                 material->ior = std::strtof(token, NULL);
                 break;
             }
             break;
         case 'K':
-            switch (buffer[1]) {
+            switch (Image[1]) {
             case 'a':
                 material->ambient = Vector4{
-                    std::strtof(&buffer[2], &token), 
+                    std::strtof(&Image[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};
                 break;
             case 'd':
                 material->diffuse = Vector4{
-                    std::strtof(&buffer[2], &token), 
+                    std::strtof(&Image[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};
                 break;
             case 's':
                 material->specular = Vector4{
-                    std::strtof(&buffer[2], &token), 
+                    std::strtof(&Image[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};
                 break;
             case 'e':
                 material->emissive = Vector4{
-                    std::strtof(&buffer[2], &token), 
+                    std::strtof(&Image[2], &token), 
                     std::strtof(token, &token), 
                     std::strtof(token, NULL)};
                 break;
             }
         case 'd':
-            material->dissolve = std::strtof(&buffer[2], NULL);
+            material->dissolve = std::strtof(&Image[2], NULL);
             break;
         default:
-            token = std::strtok(buffer, " ");
+            token = std::strtok(Image, " ");
             if (std::strcmp(token, "newmtl") == 0) {
                 token = std::strtok(NULL, " \n");
                 // insert a new material into the map
