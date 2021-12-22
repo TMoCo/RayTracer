@@ -21,6 +21,10 @@ class Material
 public:
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const = 0;
   
+  virtual Colour emit(const Vector2& UV) const
+  {
+    return colour::Black;
+  }
 };
 
 #endif // ! MATERIAL_H

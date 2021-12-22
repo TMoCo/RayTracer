@@ -83,10 +83,12 @@ void Application::renderLoop(Scene* scene)
   Lambertian floor = Lambertian({ 0.8f, 0.8f, 0.0f });
   Lambertian mauve = Lambertian({ 0.3f, 0.1f, 0.6f });
   TexturedLambertian earthMap = TexturedLambertian(&earthMapTexture);
+  DiffuseLight light = DiffuseLight({ 4.0f, 4.0f, 4.0f });
   // set material
   auto primitives = *scene->getPrimitives();
-  ((GeometricPrimitive*)primitives[0])->material = &earthMap;
-  ((GeometricPrimitive*)primitives[1])->material = &floor;
+  ((GeometricPrimitive*)primitives[0])->material = &glass;
+  ((GeometricPrimitive*)primitives[1])->material = &light;
+  ((GeometricPrimitive*)primitives[2])->material = &floor;
 
   // get AABB data
   std::vector<AABB> boundingBoxes;
@@ -154,7 +156,7 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(rayTracedImage, window.getCamera(), 50);
+      raytracer.raytrace(rayTracedImage, window.getCamera(), 150);
       rayTracedImage.writeToImageFile("../screenshots/out.jpg");
     }
 

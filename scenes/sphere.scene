@@ -3,7 +3,14 @@ scene sphere
 {
   geometry test_sphere
   {
-    position 0 0 -7
+    position 1 0 -7
+    rotation 0 0 0
+    shape sphere 1 -1 1 360
+  }
+
+  geometry test_sphere
+  {
+    position -1.5 2 -7
     rotation 0 0 0
     shape sphere 1 -1 1 360
   }

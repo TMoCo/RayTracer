@@ -39,7 +39,6 @@ void RayTracer::raytrace(Image& image, const Camera* camera, UI32 samples) const
         colour +=
           castRay(Ray::generateCameraRay(camera, 
             { (row + random::uniformF32()) * rWidth, (col + random::uniformF32()) * rHeight }), MAX_DEPTH);
-            //{ col * rWidth, row * rHeight }), MAX_DEPTH);
       }
       colour *= scale;
       image.writePixelColour(row, col, &colour[0]);
@@ -74,18 +73,23 @@ Colour RayTracer::castRay(const Ray& inRay, UI32 depth) const
   {
     Ray scattered;
     Colour attenuation;
+    Colour emition = surfel.material->emit(surfel.uv);
+  
     if (surfel.material->scatter(inRay, surfel, attenuation, scattered))
     {
-      return attenuation * castRay(scattered, --depth);
-      // return 0.5 * (colour::White + scattered.direction.normalize());
+      return emition + attenuation * castRay(scattered, --depth);
     }
-    return colour::Black;
+
+    return emition;
   }
-  else
-  {
-    F32 t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
-    return (1.0f - t) * colour::White + t * Colour{ 0.5f, 0.7f, 1.0f };
-  }
+
+  // TODO: Add background colour
+  /*
+  F32 t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
+  return (1.0f - t) * colour::White + t * Colour{ 0.5f, 0.7f, 1.0f };
+  */
+  return colour::Black;
+
 }
 
 bool RayTracer::mollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear) const

@@ -20,19 +20,19 @@ class Surfel;
 class Shape
 {
 public:
-  Shape(Transform* toWorld, bool reverseOrientation) : reverseOrientation(reverseOrientation), toWorld(toWorld) {}
+  Shape(Transform* toWorld) 
+    : toWorld(toWorld) 
+  { }
 
   virtual AABB getAABB() const = 0;
 
   virtual F32 getArea() const = 0;
 
-  inline F32 getPdf() { return 1.0f / getArea(); }
+  virtual F32 getPdf() const { return 1.0f / getArea(); }
 
   virtual bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const = 0;
 
   Transform* toWorld;
-
-  bool reverseOrientation;
 
 };
 

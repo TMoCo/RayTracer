@@ -15,5 +15,6 @@
 #include <render/materials/TexturedLambertian.h>
 #include <render/materials/Metal.h>
 #include <render/materials/Dielectric.h>
+#include <render/materials/DiffuseLight.h>
 
 #endif // ! MATERIAL_H

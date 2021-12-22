@@ -6,6 +6,7 @@
 
 #include <render/shapes/Sphere.h>
 #include <render/primitives/GeometricPrimitive.h>
+#include <render/primitives/TriangleMesh.h>
 #include <resource/file.h>
 #include <resource/SceneLoader.h>
 
@@ -93,6 +94,13 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
       continue;
     }
 
+    if (strcmp(token, "mesh") == 0)
+    {
+      token = strtok_s(NULL, " ", &remainding);
+      node->primitive =
+        new TriangleMesh();
+    }
+
     if (strcmp(token, "position") == 0)
     {
       node->local.translateBy({ strtof(remainding, &token), strtof(token, &token), strtof(token, NULL) });
@@ -119,12 +127,9 @@ Shape* SceneLoader::createShape(Transform* toWorld, const char* shape, char* dat
   if (std::strcmp(shape, "sphere") == 0)
   {
     F32 radius = strtof(data, &data);
-    F32 zMin = strtof(data, &data);
-    F32 zMax = strtof(data, &data);
-    F32 phiMax = strtof(data, &data);
-    return new Sphere(toWorld, false, radius, zMin, zMax, phiMax);
+    return new Sphere(toWorld, radius);
   }
-
+  
   if (std::strcmp(shape, "cylindre") == 0)
   {
 
