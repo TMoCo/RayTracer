@@ -62,10 +62,10 @@ public:
 			kdop.slabs[i].normal = axes[i].normalize(); // set normals
 
 		F32 project;
+		/*
 		for (auto& position : mesh.positions)
 			kdop.centre += position;
 		kdop.centre /= static_cast<F32>(mesh.positions.size());
-
 
 		for (auto& position : mesh.positions)
 		{
@@ -79,6 +79,7 @@ public:
 					kdop.slabs[i].dmin = project;
 			}
 		}
+		*/
 		return kdop;
 	}
 };

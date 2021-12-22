@@ -23,13 +23,9 @@ class ResourceManager
   friend class SceneLoader;
 
 public:
-  Mesh* tryGetMesh(const std::string& meshName);
-
-  Mesh* getMesh(const std::string& meshName);
+  Mesh* getMesh(const std::string& meshName) const;
   
-  Material* tryGetMaterial(const std::string& materialName);
-
-  Material* getMaterial(const std::string& materialName);
+  Material* getMaterial(const std::string& materialName) const;
   
   void removeMesh(const std::string& meshName);
 

@@ -8,6 +8,9 @@
 #include <render/primitives/Mesh.h>
 #include <render/bounds/AABB.h>
 
+Mesh::Mesh()
+  : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }
+{ }
 
 AABB Mesh::getBounds() const
 {
@@ -19,19 +22,9 @@ bool Mesh::intersect(const Ray& ray, Surfel* surfel) const
   return false;
 }
 
-bool Mesh::intersectP(const Ray& ray) const 
-{
-  return false;
-}
-
 void Mesh::test()
 {
-
-}
-
-const AreaLight* Mesh::getAreaLight() const
-{
-  return nullptr;
+  DEBUG_PRINT("Testing\n");
 }
 
 const Material* Mesh::getMaterial() const
@@ -39,45 +32,44 @@ const Material* Mesh::getMaterial() const
   return nullptr;
 }
 
-void Mesh::generateImages(bool interleave)
+void Mesh::generateBuffers(bool interleave)
 {
-  /*
-  glGenVertexArrays(1, &vao);
-  glGenImages(1, &vbo);
-  glGenImages(1, &ebo);
+  glGenVertexArrays(1, &VAO);
+  glGenBuffers(1, &VBO);
+  glGenBuffers(1, &EBO);
 
-  // guaranteed to at least have vertex position data
-  UI64 nVertices = positions.size();
-
-  std::vector<F32> data; 
+  std::vector<F32> data; // prepare mesh data to send to GPU
+  size_t nVertices = positions.size(); // assumes at least positions
   data.reserve(nVertices * 3);
-  
-  // allocate space depending on extra mesh data
   if (normals.size() > 0)
+  {
     data.reserve(data.capacity() + nVertices * 3);
+  }
   if (textureCoords.size() > 0)
+  {
     data.reserve(data.capacity() + nVertices * 2);
+  }
 
   if (interleave)
   {
     // todo: find better way to interleave data
     for (UI32 i = 0; i < nVertices; ++i)
     {
-      data.push_back(positions[i].x);
-      data.push_back(positions[i].y);
-      data.push_back(positions[i].z);
+      data.push_back(positions[i][0]);
+      data.push_back(positions[i][1]);
+      data.push_back(positions[i][2]);
 
       if (normals.size() > 0)
       {
-        data.push_back(normals[i].x);
-        data.push_back(normals[i].y);
-        data.push_back(normals[i].z);
+        data.push_back(normals[i][0]);
+        data.push_back(normals[i][1]);
+        data.push_back(normals[i][2]);
       }
 
       if (textureCoords.size() > 0)
       {
-        data.push_back(textureCoords[i].x);
-        data.push_back(textureCoords[i].y);
+        data.push_back(textureCoords[i][0]);
+        data.push_back(textureCoords[i][1]);
       }
     }
   }
@@ -85,18 +77,18 @@ void Mesh::generateImages(bool interleave)
   {
     for (UI32 i = 0; i < nVertices; ++i)
     {
-      data.push_back(positions[i].x);
-      data.push_back(positions[i].y);
-      data.push_back(positions[i].z);
+      data.push_back(positions[i][0]);
+      data.push_back(positions[i][1]);
+      data.push_back(positions[i][2]);
     }
 
     if (normals.size() > 0)
     {
       for (UI32 i = 0; i < nVertices; ++i)
       {
-        data.push_back(normals[i].x);
-        data.push_back(normals[i].y);
-        data.push_back(normals[i].z);
+        data.push_back(normals[i][0]);
+        data.push_back(normals[i][1]);
+        data.push_back(normals[i][2]);
       }
     }
 
@@ -104,42 +96,45 @@ void Mesh::generateImages(bool interleave)
     {
       for (UI32 i = 0; i < nVertices; ++i)
       {
-        data.push_back(textureCoords[i].x);
-        data.push_back(textureCoords[i].y);
+        data.push_back(textureCoords[i][0]);
+        data.push_back(textureCoords[i][1]);
       }
     }
   }
 
-  glBindVertexArray(vao);
+  glBindVertexArray(VAO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
 
-  glBindImage(GL_ARRAY_BUFFER, vbo);
-  glImageData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
-
-  if (indices.size() > 0)
+  if (indices.size() > 0) // indices
   {
-    glBindImage(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glImageData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(UI32), indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(UI32), indices.data(), GL_STATIC_DRAW);
   }
 
   if (interleave)
   {
-    UI64 stride = 3 * sizeof(F32);
+    size_t stride = SIZE_OF_VEC3;
     if (normals.size() > 0)
-      stride += 3 * sizeof(F32);
+    {
+      stride += SIZE_OF_VEC3;
+    }
     if (textureCoords.size() > 0)
-      stride += 2 * sizeof(F32);
+    {
+      stride += SIZE_OF_VEC2;
+    }
     
-    UI64 offset = 0;
+    size_t offset = 0;
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)offset);
     glEnableVertexAttribArray(0);
-    offset += 3 * sizeof(F32);
+    offset += SIZE_OF_VEC3;
     
     if (normals.size() > 0)
     {
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)offset);
       glEnableVertexAttribArray(1);
-      offset += 3 * sizeof(F32);
+      offset += SIZE_OF_VEC3;
     }
 
     if (textureCoords.size() > 0)
@@ -150,17 +145,17 @@ void Mesh::generateImages(bool interleave)
   }
   else
   {
-    UI64 offset = 0;
+    size_t offset = 0;
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
     glEnableVertexAttribArray(0);
-    offset += positions.size() * 3 * sizeof(F32);
+    offset += positions.size() * SIZE_OF_VEC3;
 
     if (normals.size() > 0)
     {
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
       glEnableVertexAttribArray(1);
-      offset += normals.size() * 3 * sizeof(F32);
+      offset += normals.size() * SIZE_OF_VEC3;
     }
 
     if (textureCoords.size() > 0)
@@ -171,17 +166,13 @@ void Mesh::generateImages(bool interleave)
   }
 
   glBindVertexArray(0); // unbind
-  */
 }
 
-void Mesh::draw()
+void Mesh::draw() const
 {
-  /*
-  // bind vao and draw
-  glBindVertexArray(vao);
-  ebo 
-    ? glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0) 
-    : glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions.size()));
-  */
+  glBindVertexArray(VAO);
+  EBO 
+    ? glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0) 
+    : glDrawArrays(GL_TRIANGLES, 0, (GLsizei)positions.size());
 }
 

@@ -1,11 +1,11 @@
 /*
 * AUTHOR: THOMAS MOENO COOPER
-* LAST MODIFIED: 13/12/2021
+* LAST MODIFIED: 22/12/2021
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
 #ifndef MESH_H
-#define MESH_H
+#define MESH_H 1
 
 #include <render/primitives/Primitive.h>
 
@@ -15,32 +15,28 @@ class Mesh : protected Primitive
 {  
   friend class OBJLoader;
 
-  friend class KDOP;
+  friend class Triangle;
 
 public:
-  Mesh() : Primitive() {}
+  Mesh();
 
   AABB getBounds() const override;
 
   bool intersect(const Ray& ray, Surfel* surfel) const override;
 
-  bool intersectP(const Ray& ray) const override;
-
   void test() override;
 
   const Material* getMaterial() const override;
 
-  const AreaLight* getAreaLight() const override;
+  void draw() const;
 
-  /* OPENGL */
-  void generateImages(bool interleave);
-
-  void draw();
+  void generateBuffers(bool interleave);
 
 protected:
+  UI32 VAO, VBO, EBO;
+
   std::vector<Primitive*> triangles;
 
-  // mesh data
   std::vector<UI32> indices;
   std::vector<Vector3> positions;
   std::vector<Vector3> normals;

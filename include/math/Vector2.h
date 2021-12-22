@@ -11,7 +11,7 @@
 
 #include <core/types.h>
 
-constexpr UI32 SIZE_OF_VEC2 = 0x8;
+constexpr size_t SIZE_OF_VEC2 = 0x8;
 
 typedef class Vector2 {
 public:

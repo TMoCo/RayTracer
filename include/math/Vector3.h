@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-constexpr UI32 SIZE_OF_VEC3 = 0xcU;
+constexpr size_t SIZE_OF_VEC3 = 0xcU;
 
 typedef class Vector3 {
 public:

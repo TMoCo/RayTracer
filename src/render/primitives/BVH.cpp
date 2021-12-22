@@ -54,7 +54,7 @@ void BVH::generateOpenGLData()
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, SIZE_OF_MAT4, (void*)0); 
   glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, SIZE_OF_MAT4, (void*)(SIZE_OF_VEC4)); 
+  glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, SIZE_OF_MAT4, (void*)SIZE_OF_VEC4); 
   glEnableVertexAttribArray(3);
   glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, SIZE_OF_MAT4, (void*)(2 * SIZE_OF_VEC4));
   glEnableVertexAttribArray(4);

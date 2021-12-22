@@ -89,7 +89,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     {
       token = strtok_s(NULL, " ", &remainding);
       node->primitive =
-        new GeometricPrimitive{ createShape(node->getWorldTransform(), token, remainding ? remainding : ""), nullptr, nullptr };
+        new GeometricPrimitive{ createShape(node->getWorldTransform(), token, remainding ? remainding : ""), nullptr };
       scene.primitives.push_back(node->primitive);
       continue;
     }
@@ -97,8 +97,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     if (strcmp(token, "mesh") == 0)
     {
       token = strtok_s(NULL, " ", &remainding);
-      node->primitive =
-        new TriangleMesh();
+      node->primitive = nullptr;
     }
 
     if (strcmp(token, "position") == 0)

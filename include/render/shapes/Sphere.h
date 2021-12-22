@@ -11,10 +11,11 @@
 #ifndef SPHERE_H
 #define SPHERE_H 1
 
-#include <cmath>
 
 #include <render/shapes/Shape.h>
 #include <render/raytracer/Surfel.h>
+
+#include <cmath>
 
 class Sphere : public Shape
 {

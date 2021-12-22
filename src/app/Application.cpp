@@ -59,7 +59,7 @@ I32 Application::run()
 
   Scene scene;
 
-  SceneLoader::loadScene("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", scene);
+  SceneLoader::loadScene("..\\scenes\\sphere.scene", scene);
 
   raytracer.setScene(&scene);
 
@@ -73,42 +73,34 @@ I32 Application::run()
 void Application::renderLoop(Scene* scene)
 {  
   // test textures
+  /*
   Texture containerTexture;
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
   Texture earthMapTexture;
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
+  */
+
+  OBJLoader::loadObj("..\\..\\models\\teapot.obj", resourceManager, true);
+  const Mesh* mesh = resourceManager.getMesh("teapot");
+
   // test materials
   Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.2f);
   Dielectric glass = Dielectric(1.5f);
   Lambertian floor = Lambertian({ 0.8f, 0.8f, 0.0f });
   Lambertian mauve = Lambertian({ 0.3f, 0.1f, 0.6f });
-  TexturedLambertian earthMap = TexturedLambertian(&earthMapTexture);
+  // TexturedLambertian earthMap = TexturedLambertian(&earthMapTexture);
   DiffuseLight light = DiffuseLight({ 4.0f, 4.0f, 4.0f });
+  
   // set material
   auto primitives = *scene->getPrimitives();
   ((GeometricPrimitive*)primitives[0])->material = &glass;
   ((GeometricPrimitive*)primitives[1])->material = &light;
   ((GeometricPrimitive*)primitives[2])->material = &floor;
 
-  // get AABB data
-  std::vector<AABB> boundingBoxes;
-  boundingBoxes.reserve(primitives.size());
-  for (auto& primitive : primitives)
-  {
-    boundingBoxes.push_back(primitive->getBounds());
-  }
-
   BVH bvh = BVH(scene);
 
-  Shader debugShader{}; // for viewing AABB, view frustum, BVH hierarchies
-  debugShader.create(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.vert",
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
-
-  Shader testShader{}; // for viewing AABB, view frustum, BVH hierarchies
-  testShader.create(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
+  Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
+  Shader testShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
 
   // test cube
   UI32 vao, vbo;
@@ -120,7 +112,6 @@ void Application::renderLoop(Scene* scene)
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
   glEnableVertexAttribArray(0);
   glBindVertexArray(0);
-
 
   Image rayTracedImage{ window.getWidth(), window.getHeight(), 3 };
   
@@ -156,14 +147,16 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(rayTracedImage, window.getCamera(), 150);
-      rayTracedImage.writeToImageFile("../screenshots/out.jpg");
+      raytracer.raytrace(rayTracedImage, window.getCamera(), 20);
+      rayTracedImage.writeToImageFile("..\\screenshots\\out.jpg");
     }
 
     // ... draw test cube
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    // testShader.use();
-    // testShader.setMatrix4("transform", VP * Matrix4::identity());
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    testShader.use();
+    testShader.setMatrix4("transform", VP);
+    mesh->draw();
+    
     // glBindVertexArray(vao);
     // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, GLCube::indices);
 

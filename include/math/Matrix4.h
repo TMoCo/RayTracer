@@ -16,7 +16,7 @@
 #include <math/Vector4.h>
 #include <math/Quaternion.h>
 
-constexpr UI32 SIZE_OF_MAT4 = 0x40;
+constexpr size_t SIZE_OF_MAT4 = 0x40;
 
 typedef struct Matrix4 {
 public:

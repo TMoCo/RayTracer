@@ -31,7 +31,6 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
     return false;
   }
 
-  // extract directory (if provided)
   std::string directory = file::getPath(fileName);
 
   // input processing
@@ -47,8 +46,9 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
   // create new mesh and associate 
   if (singleMesh)
   {
-    resourceManager.meshes[fileName] = new Mesh; 
-    meshBuilder.reset(resourceManager.meshes[fileName]);
+    std::string objectName = file::getFileName(fileName);
+    resourceManager.meshes[objectName] = new Mesh;
+    meshBuilder.reset(resourceManager.meshes[objectName]);
   }
 
   // file data
@@ -61,8 +61,7 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
   {
     std::getline(objStream, line);
 
-    if (line.empty())
-      continue;
+    if (line.empty()) continue;
 
     // evaluate first character
     lineIter = line.begin();
@@ -76,15 +75,15 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
       {
       case ' ':
         // vertex position
-        fPositions.push_back(std::strtof(line.c_str() + 1, &next));
-        fPositions.push_back(std::strtof(next, &next));
-        fPositions.push_back(std::strtof(next, NULL));
+        fPositions.push_back(strtof(line.c_str() + 1, &next));
+        fPositions.push_back(strtof(next, &next));
+        fPositions.push_back(strtof(next, NULL));
         break;
       case 'n':
         // vertex normal
-        fNormals.push_back(std::strtof(line.c_str() + 2, &next));
-        fNormals.push_back(std::strtof(next, &next));
-        fNormals.push_back(std::strtof(next, NULL));
+        fNormals.push_back(strtof(line.c_str() + 2, &next));
+        fNormals.push_back(strtof(next, &next));
+        fNormals.push_back(strtof(next, NULL));
         break;
       case 't':
         // vertex uv
@@ -105,25 +104,31 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
       // face is be tokenised into an intermediary set of strings containing vertex data v/t/n 
       for (auto& vertex : faceData)
       {
-        // check if the vertex exists already
+        // if vertex does not exit already parse string
         if (!meshBuilder.uniqueIndices.count(vertex))
         {
-          // if not, parse the string and create a new vertex in the mesh
+          meshBuilder.uniqueIndices[vertex] = (UI32)(meshBuilder.uniqueIndices.size());
+          
           std::vector<std::string> vertexData{ 
             std::sregex_token_iterator{ vertex.begin(), vertex.end(), backslash, -1 }, {} };
-          DEBUG_ASSERT(vertexData.size() == 3, "invalid face vertex format (expected v/t/n)");
 
-          meshBuilder.uniqueIndices[vertex] = static_cast<UI32>(meshBuilder.uniqueIndices.size());
+          size_t numVertexAttributes = vertexData.size();
 
-          I32 posIndex = std::stoi(vertexData[0]);
-          I32 norIndex = std::stoi(vertexData[1]);
-          I32 texIndex = std::stoi(vertexData[2]);
-
-          // construct vector data types from floating point values
-          meshBuilder.mesh->positions.push_back({ &fPositions[posIndex == 0 ? 0 : (posIndex - 1) * 3] });
-          meshBuilder.mesh->normals.push_back({ &fNormals[texIndex == 0 ? 0 : (texIndex - 1) * 3] });
-          // vector2 is 2 floats so just copy 
-          meshBuilder.mesh->textureCoords.push_back(fUvs[norIndex == 0 ? 0 : norIndex - 1]);
+          if (numVertexAttributes > 0) // position
+          {
+            size_t posIndex = stoull(vertexData[0]);
+            meshBuilder.mesh->positions.push_back({ &fPositions[posIndex == 0 ? 0 : (posIndex - 1) * 3] });
+          }
+          if (numVertexAttributes > 1) // texture coordinate
+          {
+            size_t texIndex = stoull(vertexData[1]);
+            meshBuilder.mesh->normals.push_back({ &fNormals[texIndex == 0 ? 0 : (texIndex - 1) * 3] });
+          }
+          if (numVertexAttributes > 2) // normal
+          {
+            size_t norIndex = stoull(vertexData[2]);
+            meshBuilder.mesh->textureCoords.push_back(fUvs[norIndex == 0 ? 0 : norIndex - 1]);
+          }
         }
         meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(vertex)); // get vertex index
       }
@@ -141,7 +146,9 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
       {
         std::string objectName = line.substr(0, 2);
         if (objectName.empty())
-          objectName = meshNum++;
+        {
+          objectName = file::getFileName(fileName) + std::to_string(++meshNum);
+        }
         // get object name and use with name for unique id
         std::string id = fileName + objectName;
         resourceManager.meshes[id] = new Mesh;
@@ -155,7 +162,7 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
       // empty line
       break;
     default:
-      // TODO: add material
+      // TODO: add material loading from file
       if (line.find("usemtl") != std::string::npos) break;
       if (line.find("mtllib") != std::string::npos) break;
       break;
@@ -168,7 +175,8 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
 
 bool OBJLoader::loadMtl(const std::string& path) 
 {
-  if (!file::isOfType(path, ".mtl")) {
+  if (!file::isOfType(path, ".mtl")) 
+  {
     DEBUG_PRINT("file provided is not .mtl");
     return false;
   }

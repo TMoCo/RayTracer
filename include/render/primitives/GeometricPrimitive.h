@@ -20,17 +20,13 @@ class GeometricPrimitive : protected Primitive
   friend class SceneLoader;
 
 public:
-  GeometricPrimitive(Shape* shape, Material* material, AreaLight* areaLight);
+  GeometricPrimitive(Shape* shape, Material* material);
 
   AABB getBounds() const override;
 
   bool intersect(const Ray& ray, Surfel* surfel) const override;
 
-  bool intersectP(const Ray& ray) const override;
-
   void test();
-
-  const AreaLight* getAreaLight() const override;
 
   const Material* getMaterial() const override;
 
@@ -38,7 +34,6 @@ public:
 
   Material* material;
 
-  AreaLight* areaLight;
 };
 
 #endif // !GEOMETRIC_PRIMITIVE_H

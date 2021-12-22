@@ -7,17 +7,15 @@
 #include <resource/ResourceManager.h>
 #include <resource/ObjLoader.h>
 
-Mesh* ResourceManager::tryGetMesh(const std::string& meshName)
+Mesh* ResourceManager::getMesh(const std::string& meshName) const
 {
-  // on failure, load mesh
-  return meshes.count(meshName) != 0 ? 
-    meshes[meshName] : OBJLoader::loadObj(meshName, *this, true) ? 
-    meshes[meshName] : nullptr;
-}
-
-Mesh* ResourceManager::getMesh(const std::string& meshName)
-{
-  return meshes.count(meshName) != 0 ? meshes[meshName] : nullptr;
+  if (meshes.count(meshName) != 0)
+  {
+    Mesh* mesh = meshes.at(meshName);
+    mesh->generateBuffers(false);
+    return mesh;
+  }
+  return nullptr;
 }
 
 void ResourceManager::removeMesh(const std::string& meshName)
@@ -25,15 +23,9 @@ void ResourceManager::removeMesh(const std::string& meshName)
   meshes.erase(meshName);
 }
 
-Material* ResourceManager::tryGetMaterial(const std::string& materialName)
+Material* ResourceManager::getMaterial(const std::string& materialName) const
 {
-  return materials.count(materialName) != 0 ?
-    materials[materialName] : nullptr;
-}
-
-Material* ResourceManager::getMaterial(const std::string& materialName)
-{
-  return materials.count(materialName) != 0 ? materials[materialName] : nullptr;
+  return materials.count(materialName) != 0 ? materials.at(materialName) : nullptr;
 }
 
 void ResourceManager::removeMaterial(const std::string& materialName)
