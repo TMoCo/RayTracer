@@ -6,9 +6,10 @@
 
 #include <render/shapes/Sphere.h>
 #include <render/primitives/GeometricPrimitive.h>
-#include <render/primitives/TriangleMesh.h>
+#include <render/primitives/Mesh.h>
 #include <resource/file.h>
 #include <resource/SceneLoader.h>
+#include <resource/OBJLoader.h>
 
 #include <cstring>
 
@@ -38,18 +39,26 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
   Node* node;
   Node* newNode;
 
-  UI32 lineNum = 0;
   while (!sceneFileStream.eof())
   {
     sceneFileStream.getline(line, file::MAX_LINE_SIZE);
 
     token = strtok_s(line, " ", &remainding);
 
-    if (token == nullptr) continue;
+    if (token == nullptr)
+    {
+      continue;
+    }
     
-    while (*token == ' ') token++; // chomp whitespace
+    while (*token == ' ') 
+    { 
+      token++; 
+    } 
 
-    if (*token == '#') continue;
+    if (*token == '#') 
+    { 
+      continue; 
+    }
 
     if (strcmp(token, "{") == 0)
     {
@@ -80,36 +89,35 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     {
       DEBUG_ASSERT(scene.root != nullptr, "Can't add geometry to an empty scene!");
       token = strtok_s(NULL, " ", &remainding);
+
       node->addChildNode(new Node(token ? token : "geometry", node));
+
       newNode = node->children.back();
       continue;
     }
 
     if (strcmp(token, "shape") == 0)
     {
-      token = strtok_s(NULL, " ", &remainding); // get next token in line
+      token = strtok_s(NULL, " ", &remainding);
 
       if (strcmp(token, "mesh") == 0)
       {
-        // load mesh
+        OBJLoader::loadObj(remainding, node->name, true);
+
+        Mesh* m = ResourceManager::get().getMesh(node->name);
+        m->generateBuffers(false);
+
+        node->setPrimitive(m);
       }
       else
       {
-        node->primitive = new GeometricPrimitive
-        { 
-          createShape(node->getWorldTransform(), token, remainding ? remainding : ""), 
-          nullptr // TODO: add material 
-        };
+        node->setPrimitive(new GeometricPrimitive
+          { createShape(node->getWorldTransform(), token, remainding ? remainding : ""), nullptr });
+          // TODO: add material 
       }
 
       scene.primitives.push_back(node->primitive);
       continue;
-    }
-
-    if (strcmp(token, "mesh") == 0)
-    {
-      token = strtok_s(NULL, " ", &remainding);
-      node->primitive = nullptr;
     }
 
     if (strcmp(token, "position") == 0)
@@ -124,8 +132,6 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
       node->local.rotateBy(Quaternion::eulerAngles(x, y, z));
       continue;
     }
-
-    lineNum++;
   }
 
   sceneFileStream.close();

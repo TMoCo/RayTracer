@@ -26,12 +26,9 @@ class GLCube
   }
 
 public: 
-  static GLCube* get()
+  static GLCube& get()
   {
-    if (!cube)
-    {
-      cube = new GLCube;
-    }
+    static GLCube cube;
     return cube;
   }
 

@@ -21,7 +21,6 @@ class Material;
 class ResourceManager 
 {
   friend class OBJLoader;
-
   friend class SceneLoader;
 
 public:
@@ -43,6 +42,7 @@ protected:
 private:
   ResourceManager();
 
+private:
   std::unordered_map<std::string, Mesh*> meshes;
 
   std::unordered_map<std::string, Material*> materials;

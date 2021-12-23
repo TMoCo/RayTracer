@@ -14,7 +14,7 @@
 class Mesh : protected Primitive
 {  
   friend class OBJLoader;
-
+  friend class SceneLoader;
   friend class Triangle;
 
 public:
@@ -30,17 +30,26 @@ public:
 
   void draw() const;
 
+protected:
   void generateBuffers(bool interleave);
+
+  void generateTriangles();
+
+  void generateNormals();
+
+  void generateTangents(); // todo: add tangents for normal mapping
 
 protected:
   UI32 VAO, VBO, EBO;
 
-  std::vector<Primitive*> triangles;
+  std::vector<Triangle*> triangles;
 
   std::vector<UI32> indices;
   std::vector<Vector3> positions;
   std::vector<Vector3> normals;
   std::vector<Vector2> textureCoords;
+
+  bool onGpu;
 };
 
 #endif // ! MESH_H

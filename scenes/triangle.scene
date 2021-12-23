@@ -1,9 +1,9 @@
 scene triangle
 {
-  geometry test_triangle
+  geometry teapot
   {
     position 0 0 0
     rotation 0 0 0
-    shape mesh C:\\Users\\Tommy\\Documents\\Graphics\\models\\triangle.obj  
+    shape mesh C:\Users\Tommy\Documents\Graphics\models\teapot.obj
   }
 }

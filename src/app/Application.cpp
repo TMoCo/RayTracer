@@ -60,7 +60,7 @@ I32 Application::run()
 
   Scene scene;
 
-  SceneLoader::loadScene("..\\scenes\\sphere.scene", scene);
+  SceneLoader::loadScene("..\\scenes\\triangle.scene", scene);
 
   raytracer.setScene(&scene);
 
@@ -81,10 +81,11 @@ void Application::renderLoop(Scene* scene)
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
   */
 
+  BVH bvh = BVH(scene);
+
   //
-  OBJLoader::loadObj("..\\..\\models\\teapot.obj", "teapot", true);
+  //OBJLoader::loadObj("..\\..\\models\\teapot.obj", "teapot", true);
   Mesh* mesh = ResourceManager::get().getMesh("teapot");
-  mesh->generateBuffers(false);
 
   // test materials
   Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.2f);
@@ -95,12 +96,12 @@ void Application::renderLoop(Scene* scene)
   DiffuseLight light = DiffuseLight({ 4.0f, 4.0f, 4.0f });
   
   // set material
+  /*
   auto primitives = *scene->getPrimitives();
   ((GeometricPrimitive*)primitives[0])->material = &glass;
   ((GeometricPrimitive*)primitives[1])->material = &light;
   ((GeometricPrimitive*)primitives[2])->material = &floor;
-
-  BVH bvh = BVH(scene);
+  */
 
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader testShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };

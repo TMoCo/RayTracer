@@ -91,9 +91,9 @@ AABB AABB::mergeAABB(const AABB& box, const Vector3& point)
   
   bbox.max = 
   {
-    box.max[0] < point[0] ? box.max[0] : point[0],
-    box.max[1] < point[1] ? box.max[1] : point[1],
-    box.max[2] < point[2] ? box.max[2] : point[2]
+    box.max[0] > point[0] ? box.max[0] : point[0],
+    box.max[1] > point[1] ? box.max[1] : point[1],
+    box.max[2] > point[2] ? box.max[2] : point[2]
   };
   
   return bbox;
@@ -110,73 +110,7 @@ AABB AABB::getAABB(const std::vector<Vector3>& positions)
 
   for (const Vector3& position : positions)
   {
-    mergeAABB(aabb, position);
+    aabb = mergeAABB(aabb, position);
   }
   return aabb;
-}
-
-void AABB::generateBuffers()
-{
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
-
-  // create vertex data on the fly
-  std::vector<F32> data = getGlBufferData();
-
-  glBindVertexArray(vao);
-
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glEnableVertexAttribArray(0);
-
-  glBindVertexArray(0);
-}
-
-std::vector<F32> AABB::getGlBufferData() const
-{
-  std::vector<F32> data{};
-  data.resize(3 * 8); // 8 * (x,y,z)
-
-  // 0
-  data[0] = min[0];
-  data[1] = max[1];
-  data[2] = min[2];
-  // 1
-  data[3] = min[0];
-  data[4] = max[1];
-  data[5] = max[2];
-  // 2
-  data[6] = max[0];
-  data[7] = max[1];
-  data[8] = max[2];
-  // 3
-  data[9] = max[0];
-  data[10] = max[1];
-  data[11] = min[2];
-  // 4
-  data[12] = min[0];
-  data[13] = min[1];
-  data[14] = min[2];
-  // 5
-  data[15] = min[0];
-  data[16] = min[1];
-  data[17] = max[2];
-  // 6
-  data[18] = max[0];
-  data[19] = min[1];
-  data[20] = max[2];
-  // 7
-  data[21] = max[0];
-  data[22] = min[1];
-  data[23] = min[2];
-
-  return data;
-}
-
-void AABB::draw() const
-{
-  glBindVertexArray(vao);
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, indices);
 }

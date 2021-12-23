@@ -82,6 +82,14 @@ Node* Node::getRootNode()
   return root;
 }
 
+Primitive* Node::setPrimitive(Primitive* p)
+{
+  p->parent->primitive = nullptr; // relieve primitive's previous parent
+
+  p->parent = this;
+  primitive = p;
+}
+
 void Node::clear()
 {
   for (auto& child : children)

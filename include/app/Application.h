@@ -13,22 +13,24 @@
 #include <render/raytracer/RayTracer.h>
 #include <scene/Scene.h>
 
-class Application {
+class Application 
+{
+public:
+  I32 run();
+
 private:
-  Window window;
-
-  RayTracer raytracer;
-
-  bool pause, debug;
-
   int init();
 
   void terminate();
 
   void renderLoop(Scene* scene);
 
-public:
-  I32 run();
+private:
+  Window window;
+
+  RayTracer raytracer;
+
+  bool pause, debug;
 
 };
 

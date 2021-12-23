@@ -46,6 +46,8 @@ public:
 
   void addChildNode(Node* node);
 
+  Primitive* setPrimitive(Primitive* p);
+
   void clear();
 
 protected:

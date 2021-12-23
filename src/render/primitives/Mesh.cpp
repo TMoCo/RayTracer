@@ -5,11 +5,13 @@
 */
 
 #include <core/debug.h>
-#include <render/primitives/Mesh.h>
 #include <render/bounds/AABB.h>
+#include <render/shapes/Triangle.h>
+#include <render/primitives/Mesh.h>
+#include <scene/Node.h>
 
 Mesh::Mesh()
-  : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }
+  : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }, onGpu{ false }
 { }
 
 AABB Mesh::getBounds() const
@@ -30,6 +32,17 @@ void Mesh::test()
 const Material* Mesh::getMaterial() const
 {
   return nullptr;
+}
+
+void Mesh::draw() const
+{
+  if (onGpu)
+  {
+    glBindVertexArray(VAO);
+    EBO
+      ? glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0)
+      : glDrawArrays(GL_TRIANGLES, 0, (GLsizei)positions.size());
+  }
 }
 
 void Mesh::generateBuffers(bool interleave)
@@ -164,15 +177,34 @@ void Mesh::generateBuffers(bool interleave)
       glEnableVertexAttribArray(2);
     }
   }
-
+  onGpu = true;
   glBindVertexArray(0); // unbind
 }
 
-void Mesh::draw() const
+void Mesh::generateTriangles()
 {
-  glBindVertexArray(VAO);
-  EBO 
-    ? glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0) 
-    : glDrawArrays(GL_TRIANGLES, 0, (GLsizei)positions.size());
+  size_t numTriangles = indices.size() / 3;
+  
+  if (numTriangles == 0)
+  {
+    DEBUG_PRINT("Could not generate triangles (no indices)!");
+    return;
+  }
+
+  triangles.reserve(numTriangles);
+
+  for (UI32 i = 0; i < indices.size(); i+=3)
+  {
+    triangles.push_back(new Triangle(parent->getWorldTransform(), this, i));    
+  }
 }
 
+void Mesh::generateNormals()
+{
+  // todo
+}
+
+void Mesh::generateTangents()
+{
+  // todo
+}

@@ -105,7 +105,7 @@ bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectNa
     {
       // tokenise face data by whitespace
       std::vector<std::string> faceData{
-      std::sregex_token_iterator{ line.begin() + 2, line.end(), whitespace, -1 }, {} };
+      std::sregex_token_iterator{ lineIter, line.end(), whitespace, -1 }, {} };
       DEBUG_ASSERT(faceData.size() < 5, "faces with more than 4 vertices are not currently supported");
             
       // face is be tokenised into an intermediary set of strings containing vertex data v/t/n 

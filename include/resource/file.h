@@ -30,6 +30,12 @@ namespace file
   inline static bool isOfType(const std::string& fileName, const std::string& extension)
   {
     DEBUG_ASSERT(fileName.length() > extension.length(), "");
+    std::cout << fileName.length() << "\n";
+    std::cout << strlen(fileName.c_str()) << "\n";
+    std::cout << extension.length() << "\n";
+    std::cout << strlen(extension.c_str()) << "\n";
+    std::cout << "\"" << fileName.c_str() + (fileName.length() - extension.length()) << "\"\n";
+    std::cout << "\"" << extension.c_str() << "\"\n";
     // compare the final n chars of name where n = length of extension
     return strcmp(fileName.c_str() + (fileName.length() - extension.length()), extension.c_str()) == 0;
   }

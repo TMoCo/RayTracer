@@ -27,6 +27,8 @@ public:
   virtual void test() = 0;
   
   virtual const Material* getMaterial() const = 0;
+
+  Node* parent;
 };
 
 #endif // !PRIMITIVE_H
