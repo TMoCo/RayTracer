@@ -30,6 +30,7 @@ public:
 
   void draw() const;
 
+  Material* material;
 protected:
   void generateBuffers(bool interleave);
 
@@ -45,9 +46,10 @@ protected:
   std::vector<Triangle*> triangles;
 
   std::vector<UI32> indices;
-  std::vector<Vector3> positions;
-  std::vector<Vector3> normals;
-  std::vector<Vector2> textureCoords;
+  std::vector<Vector3> pos;
+  std::vector<Vector3> nor;
+  std::vector<Vector2> tex;
+
 
   bool onGpu;
 };

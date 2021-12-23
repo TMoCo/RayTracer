@@ -22,9 +22,10 @@ int Application::init()
 {
   if (!glfwInit())
   {
-    DEBUG_PRINT("Failed to initialise GLFW!\n");
+    ERROR_MSG("Failed to initialize GLFW!\n");
     return -1;
   }
+
   debug = pause = false;
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -33,7 +34,7 @@ int Application::init()
 
   if (window.create(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window"))
   {
-    DEBUG_PRINT("Failed to create window!\n");
+    ERROR_MSG("Failed to create window!");
     return -1;
   }
 
@@ -41,7 +42,7 @@ int Application::init()
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
-    DEBUG_PRINT("Failed to initialize GLAD!\n");
+    ERROR_MSG("Failed to initialise GLAD!");
     return -1;
   }
 
@@ -54,15 +55,13 @@ I32 Application::run()
 {
   if (init() != 0)
   {
-    DEBUG_PRINT("Failed to initialise app!\n");
+    ERROR_MSG("Failed to initialise app!");
     return -1;
   }
 
   Scene scene;
 
   SceneLoader::loadScene("..\\scenes\\triangle.scene", scene);
-
-  raytracer.setScene(&scene);
 
   renderLoop(&scene);
 
@@ -77,31 +76,30 @@ void Application::renderLoop(Scene* scene)
   /*
   Texture containerTexture;
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
+  */
   Texture earthMapTexture;
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
-  */
 
   BVH bvh = BVH(scene);
 
   //
   //OBJLoader::loadObj("..\\..\\models\\teapot.obj", "teapot", true);
-  Mesh* mesh = ResourceManager::get().getMesh("teapot");
+  Mesh* mesh = ResourceManager::get().getMesh("triangle");
 
   // test materials
-  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.2f);
+  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.05f);
   Dielectric glass = Dielectric(1.5f);
   Lambertian floor = Lambertian({ 0.8f, 0.8f, 0.0f });
   Lambertian mauve = Lambertian({ 0.3f, 0.1f, 0.6f });
-  // TexturedLambertian earthMap = TexturedLambertian(&earthMapTexture);
+  TexturedLambertian earthMap = TexturedLambertian(&earthMapTexture);
   DiffuseLight light = DiffuseLight({ 4.0f, 4.0f, 4.0f });
   
   // set material
-  /*
   auto primitives = *scene->getPrimitives();
-  ((GeometricPrimitive*)primitives[0])->material = &glass;
-  ((GeometricPrimitive*)primitives[1])->material = &light;
-  ((GeometricPrimitive*)primitives[2])->material = &floor;
-  */
+  ((Mesh*)primitives[0])->material = &metal;
+  ((GeometricPrimitive*)primitives[1])->material = &earthMap;
+  ((GeometricPrimitive*)primitives[2])->material = &metal;
+  ((GeometricPrimitive*)primitives[3])->material = &floor;
 
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader testShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
@@ -140,7 +138,7 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(rayTracedImage, window.getCamera(), 20);
+      raytracer.raytrace(scene, rayTracedImage, window.getCamera(), 1);
       rayTracedImage.writeToImageFile("..\\screenshots\\out.jpg");
     }
 

@@ -6,10 +6,9 @@
 
 #include <scene/Scene.h>
 
-Scene::Scene() : root(nullptr)
-{
-
-}
+Scene::Scene() 
+  : root(nullptr)
+{ }
 
 Scene::~Scene()
 {
@@ -24,17 +23,19 @@ void Scene::clear()
   }
 }
 
+void Scene::draw() const
+{ }
+
 const std::vector<Primitive*>* Scene::getPrimitives() const 
 {
   return &primitives;
 }
 
-void Scene::draw() const
+bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
 {
-  /*
-  for (auto primitive : primitives)
+  for (auto& primitive : primitives)
   {
-    primitive->draw();
+    primitive->intersect(inRay, surfel);
   }
-  */
+  return inRay.tMax < INFINITY;
 }

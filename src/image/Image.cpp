@@ -79,7 +79,7 @@ UI32 Image::size() const
 
 void Image::writePixelColour(UI32 u, UI32 v, const F32* colourValues)
 {
-  byte* pixel = data + v * (size_t)(width + u) * channels;
+  byte* pixel = data + (size_t)(v * width + u) * channels;
   for (UI32 i = 0; i < channels; ++i)
   {
     *(pixel + i) = (byte)(sqrtf(*(colourValues + i)) * 255.0f);

@@ -59,9 +59,9 @@ bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectNa
   }
 
   // file data
-  std::vector<F32> fPositions;
-  std::vector<F32> fNormals;
-  std::vector<Vector2> fUvs;
+  std::vector<F32> fPos;
+  std::vector<F32> fNor;
+  std::vector<F32> fTex;
 
   // while there are lines available
   while (!objStream.eof())
@@ -82,19 +82,20 @@ bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectNa
       {
       case ' ':
         // vertex position
-        fPositions.push_back(strtof(line.c_str() + 1, &next));
-        fPositions.push_back(strtof(next, &next));
-        fPositions.push_back(strtof(next, NULL));
+        fPos.push_back(strtof(line.c_str() + 1, &next));
+        fPos.push_back(strtof(next, &next));
+        fPos.push_back(strtof(next, NULL));
         break;
       case 'n':
         // vertex normal
-        fNormals.push_back(strtof(line.c_str() + 2, &next));
-        fNormals.push_back(strtof(next, &next));
-        fNormals.push_back(strtof(next, NULL));
+        fNor.push_back(strtof(line.c_str() + 2, &next));
+        fNor.push_back(strtof(next, &next));
+        fNor.push_back(strtof(next, NULL));
         break;
       case 't':
         // vertex uv
-        fUvs.push_back({ strtof(line.c_str() + 2, &next), strtof(next, NULL) });
+        fTex.push_back(strtof(line.c_str() + 2, &next));
+        fTex.push_back(strtof(next, NULL));
         break;
       default:
         break;
@@ -105,7 +106,7 @@ bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectNa
     {
       // tokenise face data by whitespace
       std::vector<std::string> faceData{
-      std::sregex_token_iterator{ lineIter, line.end(), whitespace, -1 }, {} };
+      std::sregex_token_iterator{ line.begin() + 2, line.end(), whitespace, -1 }, {} };
       DEBUG_ASSERT(faceData.size() < 5, "faces with more than 4 vertices are not currently supported");
             
       // face is be tokenised into an intermediary set of strings containing vertex data v/t/n 
@@ -124,17 +125,17 @@ bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectNa
           if (numVertexAttributes > 0) // position
           {
             size_t posIndex = stoull(vertexData[0]);
-            meshBuilder.mesh->positions.push_back({ &fPositions[posIndex == 0 ? 0 : (posIndex - 1) * 3] });
+            meshBuilder.mesh->pos.push_back({ &fPos[posIndex == 0 ? 0 : (posIndex - 1) * 3] });
           }
           if (numVertexAttributes > 1) // texture coordinate
           {
             size_t texIndex = stoull(vertexData[1]);
-            meshBuilder.mesh->textureCoords.push_back(fUvs[texIndex == 0 ? 0 : texIndex - 1]);
+            meshBuilder.mesh->tex.push_back({ &fTex[texIndex == 0 ? 0 : (texIndex - 1) * 2] });
           }
           if (numVertexAttributes > 2) // normal
           {
             size_t norIndex = stoull(vertexData[2]);
-            meshBuilder.mesh->normals.push_back({ &fNormals[norIndex == 0 ? 0 : (norIndex - 1) * 3] });
+            meshBuilder.mesh->nor.push_back({ &fNor[norIndex == 0 ? 0 : (norIndex - 1) * 3] });
           }
         }
         meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(vertex)); // get vertex index

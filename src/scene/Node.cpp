@@ -8,9 +8,7 @@
 
 Node::Node(const std::string& name, Node* parent) 
   : name(name), parent(parent), primitive(nullptr), outOfDate{ true }
-{
-  
-}
+{ }
 
 Node::~Node()
 {
@@ -82,12 +80,17 @@ Node* Node::getRootNode()
   return root;
 }
 
-Primitive* Node::setPrimitive(Primitive* p)
+const Primitive* Node::setPrimitive(Primitive* p)
 {
-  p->parent->primitive = nullptr; // relieve primitive's previous parent
+  if (p->parent)
+  {
+    p->parent->primitive = nullptr; // relieve primitive's previous parent
+  }
 
   p->parent = this;
   primitive = p;
+
+  return primitive;
 }
 
 void Node::clear()

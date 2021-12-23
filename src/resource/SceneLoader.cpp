@@ -105,9 +105,14 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
         OBJLoader::loadObj(remainding, node->name, true);
 
         Mesh* m = ResourceManager::get().getMesh(node->name);
-        m->generateBuffers(false);
-
         node->setPrimitive(m);
+
+        m->generateBuffers(false);
+        if (m->nor.size() == 0)
+        {
+          m->generateNormals();
+        }
+        m->generateTriangles();
       }
       else
       {

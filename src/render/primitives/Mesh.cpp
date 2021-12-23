@@ -11,17 +11,32 @@
 #include <scene/Node.h>
 
 Mesh::Mesh()
-  : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }, onGpu{ false }
+  : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }, onGpu{ false }, material{ nullptr }
 { }
 
 AABB Mesh::getBounds() const
 {
-  return AABB::getAABB(positions);
+  return AABB::getAABB(pos);
 }
 
 bool Mesh::intersect(const Ray& ray, Surfel* surfel) const 
 {
-  return false;
+  F32 tHit = ray.tMax;
+  for (Triangle* triangle : triangles)
+  {
+    triangle->intersect(ray, &tHit, surfel);
+  }
+  
+  if (tHit < ray.tMax)
+  {
+    ray.tMax = tHit;
+    surfel->material = material;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void Mesh::test()
@@ -31,7 +46,7 @@ void Mesh::test()
 
 const Material* Mesh::getMaterial() const
 {
-  return nullptr;
+  return material;
 }
 
 void Mesh::draw() const
@@ -41,7 +56,7 @@ void Mesh::draw() const
     glBindVertexArray(VAO);
     EBO
       ? glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0)
-      : glDrawArrays(GL_TRIANGLES, 0, (GLsizei)positions.size());
+      : glDrawArrays(GL_TRIANGLES, 0, (GLsizei)pos.size());
   }
 }
 
@@ -52,13 +67,13 @@ void Mesh::generateBuffers(bool interleave)
   glGenBuffers(1, &EBO);
 
   std::vector<F32> data; // prepare mesh data to send to GPU
-  size_t nVertices = positions.size(); // assumes at least positions
+  size_t nVertices = pos.size(); // assumes at least positions
   data.reserve(nVertices * 3);
-  if (normals.size() > 0)
+  if (nor.size() > 0)
   {
     data.reserve(data.capacity() + nVertices * 3);
   }
-  if (textureCoords.size() > 0)
+  if (tex.size() > 0)
   {
     data.reserve(data.capacity() + nVertices * 2);
   }
@@ -68,21 +83,21 @@ void Mesh::generateBuffers(bool interleave)
     // todo: find better way to interleave data
     for (UI32 i = 0; i < nVertices; ++i)
     {
-      data.push_back(positions[i][0]);
-      data.push_back(positions[i][1]);
-      data.push_back(positions[i][2]);
+      data.push_back(pos[i][0]);
+      data.push_back(pos[i][1]);
+      data.push_back(pos[i][2]);
 
-      if (normals.size() > 0)
+      if (nor.size() > 0)
       {
-        data.push_back(normals[i][0]);
-        data.push_back(normals[i][1]);
-        data.push_back(normals[i][2]);
+        data.push_back(nor[i][0]);
+        data.push_back(nor[i][1]);
+        data.push_back(nor[i][2]);
       }
 
-      if (textureCoords.size() > 0)
+      if (tex.size() > 0)
       {
-        data.push_back(textureCoords[i][0]);
-        data.push_back(textureCoords[i][1]);
+        data.push_back(tex[i][0]);
+        data.push_back(tex[i][1]);
       }
     }
   }
@@ -90,27 +105,27 @@ void Mesh::generateBuffers(bool interleave)
   {
     for (UI32 i = 0; i < nVertices; ++i)
     {
-      data.push_back(positions[i][0]);
-      data.push_back(positions[i][1]);
-      data.push_back(positions[i][2]);
+      data.push_back(pos[i][0]);
+      data.push_back(pos[i][1]);
+      data.push_back(pos[i][2]);
     }
 
-    if (normals.size() > 0)
+    if (nor.size() > 0)
     {
       for (UI32 i = 0; i < nVertices; ++i)
       {
-        data.push_back(normals[i][0]);
-        data.push_back(normals[i][1]);
-        data.push_back(normals[i][2]);
+        data.push_back(nor[i][0]);
+        data.push_back(nor[i][1]);
+        data.push_back(nor[i][2]);
       }
     }
 
-    if (textureCoords.size() > 0)
+    if (tex.size() > 0)
     {
       for (UI32 i = 0; i < nVertices; ++i)
       {
-        data.push_back(textureCoords[i][0]);
-        data.push_back(textureCoords[i][1]);
+        data.push_back(tex[i][0]);
+        data.push_back(tex[i][1]);
       }
     }
   }
@@ -128,11 +143,11 @@ void Mesh::generateBuffers(bool interleave)
   if (interleave)
   {
     size_t stride = SIZE_OF_VEC3;
-    if (normals.size() > 0)
+    if (nor.size() > 0)
     {
       stride += SIZE_OF_VEC3;
     }
-    if (textureCoords.size() > 0)
+    if (tex.size() > 0)
     {
       stride += SIZE_OF_VEC2;
     }
@@ -143,14 +158,14 @@ void Mesh::generateBuffers(bool interleave)
     glEnableVertexAttribArray(0);
     offset += SIZE_OF_VEC3;
     
-    if (normals.size() > 0)
+    if (nor.size() > 0)
     {
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)offset);
       glEnableVertexAttribArray(1);
       offset += SIZE_OF_VEC3;
     }
 
-    if (textureCoords.size() > 0)
+    if (tex.size() > 0)
     {
       glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)offset);
       glEnableVertexAttribArray(2);
@@ -162,16 +177,16 @@ void Mesh::generateBuffers(bool interleave)
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
     glEnableVertexAttribArray(0);
-    offset += positions.size() * SIZE_OF_VEC3;
+    offset += pos.size() * SIZE_OF_VEC3;
 
-    if (normals.size() > 0)
+    if (nor.size() > 0)
     {
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
       glEnableVertexAttribArray(1);
-      offset += normals.size() * SIZE_OF_VEC3;
+      offset += nor.size() * SIZE_OF_VEC3;
     }
 
-    if (textureCoords.size() > 0)
+    if (tex.size() > 0)
     {
       glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
       glEnableVertexAttribArray(2);
@@ -195,13 +210,27 @@ void Mesh::generateTriangles()
 
   for (UI32 i = 0; i < indices.size(); i+=3)
   {
-    triangles.push_back(new Triangle(parent->getWorldTransform(), this, i));    
+    triangles.push_back(new Triangle(parent->getWorldTransform(), this, &indices[i]));    
   }
 }
 
 void Mesh::generateNormals()
 {
-  // todo
+  nor.resize(pos.size());
+  if (indices.size() != 0)
+  {
+    for (size_t i = 0; i < indices.size(); i+=3 )
+    {
+      nor[i / 3] = (pos[indices[i]] - pos[indices[i + 1]]).cross(pos[indices[i]] - pos[indices[i + 2]]);
+    }
+  }
+  else
+  {
+    for (size_t i = 0; i < pos.size(); i += 3)
+    {
+      nor[i] = (pos[i] - pos[i + 1]).cross(pos[i] - pos[i + 2]);
+    }
+  }
 }
 
 void Mesh::generateTangents()
