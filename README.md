@@ -48,6 +48,10 @@ A glass ball illuminated by a ball of light, look at those caustics!
 - [ ] instanced geometry
 - [ ] atmospheric effects (fog, clouds)
 
+## Link to main resources used:
+- [Physically Based Rendering](https://www.pbr-book.org/3ed-2018/contents) - Goes into a lot of detail explaining the theory behind PBR whilst also providing a lot of code with the PBRT code base.
+- [Ray Tracing in one weekend books](https://raytracing.github.io/) - Much more palatable than the PBR book, provides source code and instructions for building a ray tracer.
+
 ## Libraries/APIs used
 - OpenGL 
 - glfw window API
