@@ -16,6 +16,7 @@
 #include <resource/OBJLoader.h>
 #include <resource/TextureLoader.h>
 #include <resource/SceneLoader.h>
+#include <resource/ResourceManager.h>
 
 int Application::init()
 {
@@ -80,8 +81,10 @@ void Application::renderLoop(Scene* scene)
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
   */
 
-  OBJLoader::loadObj("..\\..\\models\\triangle.obj", resourceManager, true);
-  const Mesh* mesh = resourceManager.getMesh("triangle");
+  //
+  OBJLoader::loadObj("..\\..\\models\\teapot.obj", "teapot", true);
+  Mesh* mesh = ResourceManager::get().getMesh("teapot");
+  mesh->generateBuffers(false);
 
   // test materials
   Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.2f);

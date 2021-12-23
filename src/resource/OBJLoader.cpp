@@ -15,8 +15,11 @@
 #include <fstream>
 #include <regex>
 
-bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceManager, bool singleMesh)
+bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectName, bool singleMesh)
 {
+  // HARD CODE SINGLE MESH
+  singleMesh = true;
+
   if (!file::isOfType(fileName, ".obj"))
   {
     DEBUG_PRINT("File provided is not .obj");
@@ -43,12 +46,16 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
   MeshBuilder meshBuilder;
   UI32 meshNum = 0;
 
+  std::string meshName = objectName;
+  if (meshName.empty())
+  {
+    meshName = file::getFileName(fileName);
+  }
+
   // create new mesh and associate 
   if (singleMesh)
   {
-    std::string objectName = file::getFileName(fileName);
-    resourceManager.meshes[objectName] = new Mesh;
-    meshBuilder.reset(resourceManager.meshes[objectName]);
+    meshBuilder.reset(ResourceManager::get().addMesh(meshName, new Mesh));
   }
 
   // file data
@@ -87,7 +94,7 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
         break;
       case 't':
         // vertex uv
-        fUvs.push_back({ std::strtof(line.c_str() + 2, &next), std::strtof(next, NULL) });
+        fUvs.push_back({ strtof(line.c_str() + 2, &next), strtof(next, NULL) });
         break;
       default:
         break;
@@ -141,18 +148,11 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
     }
     break;
     case 'o':
-      // create new mesh and associate it to the mesh builder
       if (!singleMesh)
       {
-        std::string objectName = line.substr(0, 2);
-        if (objectName.empty())
-        {
-          objectName = file::getFileName(fileName) + std::to_string(++meshNum);
-        }
-        // get object name and use with name for unique id
-        std::string id = fileName + objectName;
-        resourceManager.meshes[id] = new Mesh;
-        meshBuilder.reset(resourceManager.meshes[id]);
+        std::string subObjName = line.substr(0, 2); // eg: o teapot
+        meshBuilder.reset(ResourceManager::get().
+          addMesh(subObjName.empty() ? meshName + std::to_string(++meshNum) : meshName + subObjName, new Mesh));
       }
       break;
     case '#':

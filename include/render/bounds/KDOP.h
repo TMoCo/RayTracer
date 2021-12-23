@@ -61,8 +61,8 @@ public:
 		for (UI32 i = 0; i < kdop.slabs.size(); ++i)
 			kdop.slabs[i].normal = axes[i].normalize(); // set normals
 
-		F32 project;
 		/*
+		F32 project;
 		for (auto& position : mesh.positions)
 			kdop.centre += position;
 		kdop.centre /= static_cast<F32>(mesh.positions.size());

@@ -106,7 +106,7 @@ const std::vector<char> Shader::getShaderCode(const std::string& path)
 
   if (!shaderStream.is_open())
   {
-    DEBUG_PRINT("Failed to open file stream!\path provided: %s)", path.c_str());
+    DEBUG_PRINT("Failed to open file stream!\npath provided: %s)", path.c_str());
     return data;
   }
 

@@ -10,15 +10,12 @@
 #include <glad/glad.h>
 
 #include <widgets/Window.h> 
-#include <resource/ResourceManager.h>
 #include <render/raytracer/RayTracer.h>
 #include <scene/Scene.h>
 
 class Application {
 private:
   Window window;
-
-  ResourceManager resourceManager;
 
   RayTracer raytracer;
 

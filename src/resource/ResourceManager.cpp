@@ -5,17 +5,29 @@
 */
 
 #include <resource/ResourceManager.h>
-#include <resource/ObjLoader.h>
 
-Mesh* ResourceManager::getMesh(const std::string& meshName) const
+ResourceManager::ResourceManager()
+{ }
+
+ResourceManager& ResourceManager::get()
+{
+  static ResourceManager rm;
+  return rm;
+}
+
+Mesh* ResourceManager::addMesh(const std::string& meshName, Mesh* mesh)
 {
   if (meshes.count(meshName) != 0)
   {
-    Mesh* mesh = meshes.at(meshName);
-    mesh->generateBuffers(false);
-    return mesh;
+    removeMesh(meshName);
   }
-  return nullptr;
+  meshes[meshName] = mesh;
+  return meshes[meshName];
+}
+
+Mesh* ResourceManager::getMesh(const std::string& meshName) const
+{
+  return meshes.count(meshName) != 0 ? meshes.at(meshName) : nullptr;
 }
 
 void ResourceManager::removeMesh(const std::string& meshName)
@@ -31,4 +43,9 @@ Material* ResourceManager::getMaterial(const std::string& materialName) const
 void ResourceManager::removeMaterial(const std::string& materialName)
 {
   materials.erase(materialName);
+}
+
+Material* ResourceManager::addMaterial(const std::string& materialName, Material* material)
+{
+  return nullptr;
 }
