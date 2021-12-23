@@ -9,13 +9,13 @@
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
 #include <render/materials/materials.h>
-#include <render/primitives/GeometricPrimitive.h>
-#include <render/shapes/GLShapes.h>
 #include <render/primitives/BVH.h>
+#include <render/primitives/GeometricPrimitive.h>
 #include <render/Shader.h>
+#include <render/shapes/GLShapes.h>
+#include <resource/OBJLoader.h>
 #include <resource/TextureLoader.h>
 #include <resource/SceneLoader.h>
-#include <resource/OBJLoader.h>
 
 int Application::init()
 {
@@ -80,8 +80,8 @@ void Application::renderLoop(Scene* scene)
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
   */
 
-  OBJLoader::loadObj("..\\..\\models\\teapot.obj", resourceManager, true);
-  const Mesh* mesh = resourceManager.getMesh("teapot");
+  OBJLoader::loadObj("..\\..\\models\\triangle.obj", resourceManager, true);
+  const Mesh* mesh = resourceManager.getMesh("triangle");
 
   // test materials
   Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.2f);
@@ -102,23 +102,12 @@ void Application::renderLoop(Scene* scene)
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader testShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
 
-  // test cube
-  UI32 vao, vbo;
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
-  glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLCube::unitCube), GLCube::unitCube, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glEnableVertexAttribArray(0);
-  glBindVertexArray(0);
-
   Image rayTracedImage{ window.getWidth(), window.getHeight(), 3 };
   
   Camera camera{ { 0.0f, 0.0f, 0.0f }, 1.0f, 45.0f, 0.1f, 2000.0f };
   window.setMainCamera(&camera);
 
-  Matrix4 VP; // view * projection
+  Matrix4 PV; // projection * view
   
   glEnable(GL_DEPTH_TEST);
 
@@ -142,7 +131,7 @@ void Application::renderLoop(Scene* scene)
       break;
     }
 
-    VP = Matrix4::perspective(radians(camera.FOV), camera.aspectRatio, camera.zNear, camera.zFar) * camera.getViewMatrix();
+    PV = camera.getProjectionViewMatrix();
 
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
@@ -151,21 +140,18 @@ void Application::renderLoop(Scene* scene)
       rayTracedImage.writeToImageFile("..\\screenshots\\out.jpg");
     }
 
-    // ... draw test cube
+    // ... draw a mesh
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     testShader.use();
-    testShader.setMatrix4("transform", VP);
+    testShader.setMatrix4("transform", PV);
     mesh->draw();
     
-    // glBindVertexArray(vao);
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, GLCube::indices);
-
     // ... debug
     if (debug)
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
-      debugShader.setMatrix4("VP", VP);
+      debugShader.setMatrix4("VP", PV);
       bvh.draw();
     }
 

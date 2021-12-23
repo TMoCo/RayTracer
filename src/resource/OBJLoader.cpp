@@ -122,12 +122,12 @@ bool OBJLoader::loadObj(const std::string& fileName, ResourceManager& resourceMa
           if (numVertexAttributes > 1) // texture coordinate
           {
             size_t texIndex = stoull(vertexData[1]);
-            meshBuilder.mesh->normals.push_back({ &fNormals[texIndex == 0 ? 0 : (texIndex - 1) * 3] });
+            meshBuilder.mesh->textureCoords.push_back(fUvs[texIndex == 0 ? 0 : texIndex - 1]);
           }
           if (numVertexAttributes > 2) // normal
           {
             size_t norIndex = stoull(vertexData[2]);
-            meshBuilder.mesh->textureCoords.push_back(fUvs[norIndex == 0 ? 0 : norIndex - 1]);
+            meshBuilder.mesh->normals.push_back({ &fNormals[norIndex == 0 ? 0 : (norIndex - 1) * 3] });
           }
         }
         meshBuilder.mesh->indices.push_back(meshBuilder.uniqueIndices.at(vertex)); // get vertex index

@@ -17,7 +17,6 @@ scene sphere
 
   geometry test_sphere
   {
-    # sphere transformation info
     position 0 -502 -20
     rotation 0 0 0
     shape sphere 500 -1 1 360

@@ -87,9 +87,21 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
     if (strcmp(token, "shape") == 0)
     {
-      token = strtok_s(NULL, " ", &remainding);
-      node->primitive =
-        new GeometricPrimitive{ createShape(node->getWorldTransform(), token, remainding ? remainding : ""), nullptr };
+      token = strtok_s(NULL, " ", &remainding); // get next token in line
+
+      if (strcmp(token, "mesh") == 0)
+      {
+        // load mesh
+      }
+      else
+      {
+        node->primitive = new GeometricPrimitive
+        { 
+          createShape(node->getWorldTransform(), token, remainding ? remainding : ""), 
+          nullptr // TODO: add material 
+        };
+      }
+
       scene.primitives.push_back(node->primitive);
       continue;
     }
