@@ -24,16 +24,21 @@ My initial coursework was written for Linux, and I started this project on the s
 
 ## Screenshots
 A selection of screen shots taken whilst developing the applicaiton:
-
-Sphere normals:
 ![normals](https://user-images.githubusercontent.com/56483943/147217267-d7b643c7-b6c9-4ed0-8c6b-c4972e3f656c.jpg)
-A fuzzy metallic ball, a diffuse ball and a glass ball
+
+Sphere Normals
+
 ![ThreeBalls](https://user-images.githubusercontent.com/56483943/147217290-835f5955-d1bb-4ccd-8114-4df7b90fcc83.jpg)
-Planet earth
+
+A fuzzy metallic ball, a diffuse ball and a glass ball
+
 ![Earth](https://user-images.githubusercontent.com/56483943/147217986-029a85b9-8209-44db-a718-174cd7bbe44b.jpg)
-A glass ball illuminated by a ball of light, look at those caustics!
+
+Planet earth
+
 ![GlassBallAndLight1000Samples](https://user-images.githubusercontent.com/56483943/147218504-a9d69c80-9ba2-4620-ad80-980de5511340.jpg)
 
+A glass ball illuminated by a ball of light, look at those caustics!
 
 ## Desirable features
 - [ ] acceleration data structures
