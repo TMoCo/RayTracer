@@ -20,20 +20,13 @@
 #include <scene/Scene.h>
 #include <widgets/Window.h>
 
-class RayTracer {
+class RayTracer 
+{
 public:
-  void raytrace(Image& image, const Camera* camera, UI32 samples) const;
-
-  void setScene(Scene* scene);
+  void raytrace(const Scene* scene, Image& image, const Camera* camera, UI32 samples) const;
  
 private:
-  Colour castRay(const Ray& ray, UI32 depth) const;
-
-  bool mollerTrumbore(const Ray& ray, const std::vector<Mesh*>& meshes, Surfel& surfel, F32& tNear) const;
-
-  Vector3 randomAreaLightPoint(const Mesh* light) const;
-
-  Scene* scene;
+  Colour castRay(const Scene* scene, const Ray& ray, UI32 depth) const;
 
 };
 

@@ -12,21 +12,17 @@
 
 #include <vector>
 
-struct Shader
+class Shader
 {
-  UI32 id;
+public:
+  Shader();
 
-  bool valid;
-
-  const std::vector<char> getShaderCode(const std::string& path);
-
-  UI32 checkShaderCompile(UI32 shader, const char* type);
-
-  void create(const std::string& vs_path, const std::string& fs_path); // basic create shader takes vs and fs arguments
+  Shader(const std::string& vs_path, const std::string& fs_path);
 
   void use();
 
-  // set uniforms ...
+  bool isValid() const;
+
   void setBool(const char* name, bool value) const;
 
   void setInt(const char* name, I32 value) const; 
@@ -40,6 +36,15 @@ struct Shader
   void setVec4(const char* name, const Vector4& value) const;
 
   void setMatrix4(const char* name, const Matrix4& value) const;
+
+private:
+  const std::vector<char> getShaderCode(const std::string& path);
+
+  I32 checkShaderCompile(UI32 shader, const char* type);
+
+  UI32 id;
+
+  bool valid;
 };
 
 #endif // !SHADER_H

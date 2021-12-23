@@ -11,15 +11,17 @@
 
 #include <core/types.h>
 
-constexpr UI32 SIZE_OF_VEC2 = 0x8;
+constexpr size_t SIZE_OF_VEC2 = 0x8;
 
 typedef class Vector2 {
 public:
   Vector2() : _v{} {}
   
-  Vector2(F32 X, F32 Y) : x(X), y(Y) {}
+  Vector2(F32 x, F32 y) : x(x), y(y) {}
   
   Vector2(const Vector2& other) : _v{ other.x, other.y } {}
+
+  Vector2(const F32* values) : _v{ values[0], values[1] } {}
 
   Vector2& operator =(const Vector2& other);
 

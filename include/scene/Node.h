@@ -46,6 +46,8 @@ public:
 
   void addChildNode(Node* node);
 
+  const Primitive* setPrimitive(Primitive* p);
+
   void clear();
 
 protected:
@@ -60,6 +62,7 @@ protected:
   Primitive* primitive; // can be an aggregate (eg: a mesh), or a shape (eg: a sphere)
 
   bool outOfDate;
+
 };
 
 #endif // !NODE_H

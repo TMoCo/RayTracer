@@ -12,7 +12,6 @@
 #define PRIMITIVE_H 1
 
 class AABB;
-class AreaLight;
 class Material;
 class Surfel;
 class Ray;
@@ -25,13 +24,11 @@ public:
 
   virtual bool intersect(const Ray& ray, Surfel* surfel) const = 0;
   
-  virtual bool intersectP(const Ray& ray) const = 0;
-
   virtual void test() = 0;
   
-  virtual const AreaLight* getAreaLight() const = 0;
-  
   virtual const Material* getMaterial() const = 0;
+
+  Node* parent;
 };
 
 #endif // !PRIMITIVE_H

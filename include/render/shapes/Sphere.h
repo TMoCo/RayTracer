@@ -11,22 +11,17 @@
 #ifndef SPHERE_H
 #define SPHERE_H 1
 
-#include <cmath>
 
 #include <render/shapes/Shape.h>
 #include <render/raytracer/Surfel.h>
 
+#include <cmath>
+
 class Sphere : public Shape
 {
 public:
-  Sphere(Transform* toWorld, bool reverseOrientation, F32 radius, F32 zMin, F32 zMax, F32 phiMax)
-    : Shape(toWorld, reverseOrientation),
-      radius(radius),
-      zMin(clamp(fmin(zMin, zMax), -radius, radius)),
-      zMax(clamp(fmax(zMin, zMax), -radius, radius)),
-      thetaMin(acosf(clamp(zMin / radius, -1.0f, 1.0f))),
-      thetaMax(acosf(clamp(zMax / radius, -1.0f, 1.0f))),
-      phiMax(radians(clamp(phiMax, 0.0f, 360.0f)))
+  Sphere(Transform* toWorld, F32 radius)
+    : Shape(toWorld), radius(radius)
   { }
 
   inline AABB getAABB() const override
@@ -81,10 +76,6 @@ public:
 
 private:
   F32 radius;
-  
-  F32 zMin, zMax;
-  
-  F32 thetaMin, thetaMax, phiMax;
 };
 
 #endif // !SPHERE_H

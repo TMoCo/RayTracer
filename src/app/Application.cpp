@@ -9,21 +9,23 @@
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
 #include <render/materials/materials.h>
-#include <render/primitives/GeometricPrimitive.h>
-#include <render/shapes/GLShapes.h>
 #include <render/primitives/BVH.h>
+#include <render/primitives/GeometricPrimitive.h>
 #include <render/Shader.h>
+#include <render/shapes/GLShapes.h>
+#include <resource/OBJLoader.h>
 #include <resource/TextureLoader.h>
 #include <resource/SceneLoader.h>
-#include <resource/OBJLoader.h>
+#include <resource/ResourceManager.h>
 
 int Application::init()
 {
   if (!glfwInit())
   {
-    DEBUG_PRINT("Failed to initialise GLFW!\n");
+    ERROR_MSG("Failed to initialize GLFW!\n");
     return -1;
   }
+
   debug = pause = false;
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -32,7 +34,7 @@ int Application::init()
 
   if (window.create(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window"))
   {
-    DEBUG_PRINT("Failed to create window!\n");
+    ERROR_MSG("Failed to create window!");
     return -1;
   }
 
@@ -40,7 +42,7 @@ int Application::init()
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
-    DEBUG_PRINT("Failed to initialize GLAD!\n");
+    ERROR_MSG("Failed to initialise GLAD!");
     return -1;
   }
 
@@ -53,15 +55,13 @@ I32 Application::run()
 {
   if (init() != 0)
   {
-    DEBUG_PRINT("Failed to initialise app!\n");
+    ERROR_MSG("Failed to initialise app!");
     return -1;
   }
 
   Scene scene;
 
-  SceneLoader::loadScene("C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\scenes\\sphere.scene", scene);
-
-  raytracer.setScene(&scene);
+  SceneLoader::loadScene("..\\scenes\\triangle.scene", scene);
 
   renderLoop(&scene);
 
@@ -73,59 +73,43 @@ I32 Application::run()
 void Application::renderLoop(Scene* scene)
 {  
   // test textures
+  /*
   Texture containerTexture;
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
+  */
   Texture earthMapTexture;
   TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
+
+  BVH bvh = BVH(scene);
+
+  //
+  //OBJLoader::loadObj("..\\..\\models\\teapot.obj", "teapot", true);
+  Mesh* mesh = ResourceManager::get().getMesh("triangle");
+
   // test materials
-  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.2f);
+  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.05f);
   Dielectric glass = Dielectric(1.5f);
   Lambertian floor = Lambertian({ 0.8f, 0.8f, 0.0f });
   Lambertian mauve = Lambertian({ 0.3f, 0.1f, 0.6f });
   TexturedLambertian earthMap = TexturedLambertian(&earthMapTexture);
+  DiffuseLight light = DiffuseLight({ 4.0f, 4.0f, 4.0f });
+  
   // set material
   auto primitives = *scene->getPrimitives();
-  ((GeometricPrimitive*)primitives[0])->material = &earthMap;
-  ((GeometricPrimitive*)primitives[1])->material = &floor;
+  ((Mesh*)primitives[0])->material = &metal;
+  ((GeometricPrimitive*)primitives[1])->material = &earthMap;
+  ((GeometricPrimitive*)primitives[2])->material = &metal;
+  ((GeometricPrimitive*)primitives[3])->material = &floor;
 
-  // get AABB data
-  std::vector<AABB> boundingBoxes;
-  boundingBoxes.reserve(primitives.size());
-  for (auto& primitive : primitives)
-  {
-    boundingBoxes.push_back(primitive->getBounds());
-  }
-
-  BVH bvh = BVH(scene);
-
-  Shader debugShader{}; // for viewing AABB, view frustum, BVH hierarchies
-  debugShader.create(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.vert",
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\debug.frag");
-
-  Shader testShader{}; // for viewing AABB, view frustum, BVH hierarchies
-  testShader.create(
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\vs.vert",
-    "C:\\Users\\Tommy\\Documents\\Graphics\\RayTracer\\src\\shaders\\fs.frag");
-
-  // test cube
-  UI32 vao, vbo;
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
-  glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLCube::unitCube), GLCube::unitCube, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glEnableVertexAttribArray(0);
-  glBindVertexArray(0);
-
+  Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
+  Shader testShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
 
   Image rayTracedImage{ window.getWidth(), window.getHeight(), 3 };
   
   Camera camera{ { 0.0f, 0.0f, 0.0f }, 1.0f, 45.0f, 0.1f, 2000.0f };
   window.setMainCamera(&camera);
 
-  Matrix4 VP; // view * projection
+  Matrix4 PV; // projection * view
   
   glEnable(GL_DEPTH_TEST);
 
@@ -149,28 +133,27 @@ void Application::renderLoop(Scene* scene)
       break;
     }
 
-    VP = Matrix4::perspective(radians(camera.FOV), camera.aspectRatio, camera.zNear, camera.zFar) * camera.getViewMatrix();
+    PV = camera.getProjectionViewMatrix();
 
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(rayTracedImage, window.getCamera(), 50);
-      rayTracedImage.writeToImageFile("../screenshots/out.jpg");
+      raytracer.raytrace(scene, rayTracedImage, window.getCamera(), 1);
+      rayTracedImage.writeToImageFile("..\\screenshots\\out.jpg");
     }
 
-    // ... draw test cube
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    // testShader.use();
-    // testShader.setMatrix4("transform", VP * Matrix4::identity());
-    // glBindVertexArray(vao);
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, GLCube::indices);
-
+    // ... draw a mesh
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    testShader.use();
+    testShader.setMatrix4("transform", PV);
+    mesh->draw();
+    
     // ... debug
     if (debug)
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
-      debugShader.setMatrix4("VP", VP);
+      debugShader.setMatrix4("VP", PV);
       bvh.draw();
     }
 

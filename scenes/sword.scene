@@ -1,0 +1,9 @@
+scene sword
+{
+  geometry sword
+  {
+    position 0 0 0
+    rotation 0 0 0
+    shape mesh C:\Users\Tommy\Documents\Graphics\models\SwordMinecraft.obj
+  }
+}

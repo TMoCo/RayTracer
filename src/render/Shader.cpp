@@ -4,71 +4,25 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <render/Shader.h>
-
-#include <resource/file.h>
-
 #include <core/debug.h>
+#include <render/Shader.h>
+#include <resource/file.h>
 
 #include <glad/glad.h>
 
-const std::vector<char> Shader::getShaderCode(const std::string& path)
-{
-  std::ifstream shaderStream(path, std::ios::ate);
+Shader::Shader()
+  : id{ 0 }, valid{ false }
+{ }
 
-  if (!shaderStream.is_open())
-  {
-    DEBUG_PRINT("Could not open file stream\n");
-  }
-
-  UI32 len = static_cast<UI32>(shaderStream.tellg());
-  std::vector<char> data;
-  data.resize(len);
-  
-  shaderStream.seekg(0);
-  shaderStream.read(data.data(), len);
-  
-  shaderStream.close();
-
-  return data;
-}
-
-UI32 Shader::checkShaderCompile(UI32 shader, const char* type)
-{
-  I32 success;
-  char infoLog[file::MAX_LINE_SIZE];
-  
-  if(strcmp(type, "PROGRAM") != 0)
-  {
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-      glGetShaderInfoLog(shader, file::MAX_LINE_SIZE, NULL, infoLog);
-      DEBUG_PRINT("ERROR::SHADER_COMPILATION_ERROR of type: %s\n%s\n", type, infoLog);
-      return -1;
-    }
-  }
-  else
-  {
-    glGetProgramiv(shader, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-      glGetProgramInfoLog(shader, file::MAX_LINE_SIZE, NULL, infoLog);
-      DEBUG_PRINT("ERROR::SHADER_COMPILATION_ERROR of type: %s\n%s\n", type, infoLog);
-      return -1;
-    }
-  }
-  return 0;
-}
-
-void Shader::create(const std::string& vs_path, const std::string& fs_path)
+Shader::Shader(const std::string& vs_path, const std::string& fs_path)
+  : id{ 0 }, valid{ false }
 {
   const std::vector<char> vs_data = getShaderCode(vs_path);
   DEBUG_PRINT("%s\n", vs_data.data());
 
   const std::vector<char> fs_data = getShaderCode(fs_path);
   DEBUG_PRINT("%s\n", fs_data.data());
-  
+
   UI32 vs = glCreateShader(GL_VERTEX_SHADER);
   const char* p_vs_data = vs_data.data();
   glShaderSource(vs, 1, &p_vs_data, NULL);
@@ -101,6 +55,11 @@ void Shader::use()
   {
     glUseProgram(id);
   }
+}
+
+bool Shader::isValid() const
+{
+  return valid;
 }
 
 void Shader::setBool(const char* name, bool value) const
@@ -136,4 +95,56 @@ void Shader::setVec4(const char* name, const Vector4& value) const
 void Shader::setMatrix4(const char* name, const Matrix4& value) const
 {
   glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, value[0]);
+}
+
+
+const std::vector<char> Shader::getShaderCode(const std::string& path)
+{
+  std::ifstream shaderStream(path, std::ios::ate);
+
+  std::vector<char> data;
+
+  if (!shaderStream.is_open())
+  {
+    DEBUG_PRINT("Failed to open file stream!\npath provided: %s)", path.c_str());
+    return data;
+  }
+
+  UI32 len = static_cast<UI32>(shaderStream.tellg());
+  data.resize(len);
+
+  shaderStream.seekg(0);
+  shaderStream.read(data.data(), len);
+
+  shaderStream.close();
+
+  return data;
+}
+
+I32 Shader::checkShaderCompile(UI32 shader, const char* type)
+{
+  I32 success;
+  char infoLog[file::MAX_LINE_SIZE];
+
+  if (strcmp(type, "PROGRAM") != 0)
+  {
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+      glGetShaderInfoLog(shader, file::MAX_LINE_SIZE, NULL, infoLog);
+      DEBUG_PRINT("ERROR::SHADER_COMPILATION_ERROR of type: %s\n%s\n", type, infoLog);
+      return -1;
+    }
+  }
+  else
+  {
+    glGetProgramiv(shader, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+      glGetProgramInfoLog(shader, file::MAX_LINE_SIZE, NULL, infoLog);
+      DEBUG_PRINT("ERROR::SHADER_COMPILATION_ERROR of type: %s\n%s\n", type, infoLog);
+      return -1;
+    }
+  }
+  return 0;
 }

@@ -20,18 +20,15 @@ class GLCube
   
   UI32 VAO, VBO;
 
-  GLCube()
+  GLCube() : VAO{ 0 }, VBO{ 0 }
   {
     // generate cube data
   }
 
 public: 
-  static GLCube* get()
+  static GLCube& get()
   {
-    if (!cube)
-    {
-      cube = new GLCube;
-    }
+    static GLCube cube;
     return cube;
   }
 
@@ -62,7 +59,6 @@ public:
     { 1.0f, -1.0f, -1.0f },
     { 1.0f, -1.0f, 1.0f },
   };
-
 
 };
 

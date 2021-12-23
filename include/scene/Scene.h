@@ -11,9 +11,10 @@
 #ifndef SCENE_H
 #define SCENE_H 1
 
-#include <render/Camera.h>
-
 #include <scene/Node.h>
+
+class Ray;
+class Surfel;
 
 class Scene 
 {
@@ -32,8 +33,10 @@ public:
 
   const std::vector<Primitive*>* getPrimitives() const;
 
-  Node* root;
+  bool intersect(const Ray& inRay, Surfel* surfel) const;
+
 private:
+  Node* root;
 
   std::vector<Primitive*> primitives; // container for all primitives
 };

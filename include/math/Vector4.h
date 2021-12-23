@@ -17,7 +17,7 @@
 
 #include <xmmintrin.h>
 
-constexpr UI32 SIZE_OF_VEC4 = 0x10;
+constexpr size_t SIZE_OF_VEC4 = 0x10;
 
 typedef struct Vector4 {
 public:

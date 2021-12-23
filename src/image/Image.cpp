@@ -37,22 +37,22 @@ Image::~Image()
 
 byte* Image::operator[](UI32 index)
 {
-  return data + (index * width);
+  return data + (size_t)(index * width);
 }
 
 const byte* Image::operator[](UI32 index) const
 {
-  return data + (index * width);
+  return data + (size_t)(index * width);
 }
 
 void Image::clear()
 {
-  memset(data, 0, size() * channels);
+  memset(data, 0, (size_t)(size() * channels));
 }
 
 void Image::copy(const byte* inData)
 {
-  memcpy(data, inData, size() * channels);
+  memcpy(data, inData, (size_t)(size() * channels));
 }
 
 bool Image::resize(UI32 w, UI32 h)
@@ -79,7 +79,7 @@ UI32 Image::size() const
 
 void Image::writePixelColour(UI32 u, UI32 v, const F32* colourValues)
 {
-  byte* pixel = data + (v * width + u) * channels;
+  byte* pixel = data + (size_t)(v * width + u) * channels;
   for (UI32 i = 0; i < channels; ++i)
   {
     *(pixel + i) = (byte)(sqrtf(*(colourValues + i)) * 255.0f);
@@ -102,12 +102,6 @@ bool Image::writeToImageFile(const std::string& path) const
         *(pStaging + channel) = data[(col * width + row) * channels + channel];
       }
       pStaging += channels;
-      /*
-      *(pStaging + 0) = data[(col * width + row) * 3 + 0];
-      *(pStaging + 1) = data[(col * width + row) * 3 + 1];
-      *(pStaging + 2) = data[(col * width + row) * 3 + 2];
-      pStaging += 3;
-      */
     }
   }
 
@@ -121,14 +115,13 @@ const byte* Image::getTexel(F32 u, F32 v) const
   return &data[(row * width + col) * channels];
 }
 
-
 void Image::allocate()
 {
   data = (byte*)calloc(size(), channels);
   if (data == nullptr)
   {
     DEBUG_PRINT("Failed to allocate memory for buffer!\n");
-    exit(1);
+    exit(-1);
   }
 }
 

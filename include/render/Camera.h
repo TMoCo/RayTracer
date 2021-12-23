@@ -73,6 +73,11 @@ struct Camera {
     return Matrix4::lookAt(position, position + front, up);
   }
 
+  inline Matrix4 getProjectionViewMatrix() const
+  {
+    return Matrix4::perspective(radians(FOV), aspectRatio, zNear, zFar) * getViewMatrix();
+  }
+
   inline void processInput(kMovement move, F32 speed)
   {
     // move in camera's direction
@@ -104,9 +109,7 @@ struct Camera {
       sinf(radians(pitch)),
       sinf(radians(yaw)) * cosf(radians(pitch)) }.normalize();
     
-    right = pitch > 89.9f && pitch < 269.0f ? 
-      front.cross(DOWN).normalize() :
-      front.cross(UP).normalize();
+    right = pitch > 89.9f && pitch < 269.0f ? front.cross(DOWN).normalize() : front.cross(UP).normalize();
 
     up = right.cross(front).normalize();
   }

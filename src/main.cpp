@@ -10,9 +10,9 @@
 
 #include <app/Application.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-  Application app{};
+  Application app;
 
   return app.run();
 }

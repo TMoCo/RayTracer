@@ -12,7 +12,6 @@
 #define OBJ_LOADER_H 1
 
 #include <render/primitives/Mesh.h>
-
 #include <resource/ResourceManager.h>
 
 #include <string>
@@ -38,7 +37,7 @@ private:
   };
 
 public:
-  static bool loadObj(const std::string& path, ResourceManager& resourceManager, bool singleMesh);
+  static bool loadObj(const std::string& path, const std::string& objectName, bool singleMesh);
 
   static bool loadMtl(const std::string& path);
 };
