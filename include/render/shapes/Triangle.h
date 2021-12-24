@@ -72,7 +72,6 @@ public:
       return true;
     }
     return false;
-
   }
 
   F32 getArea() const override

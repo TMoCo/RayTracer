@@ -11,8 +11,7 @@
 #ifndef MATERIALS_H
 #define MATERIALS_H 1
 
-#include <render/materials/Lambertian.h>
-#include <render/materials/TexturedLambertian.h>
+#include <render/materials/Diffuse.h>
 #include <render/materials/Metal.h>
 #include <render/materials/Dielectric.h>
 #include <render/materials/DiffuseLight.h>

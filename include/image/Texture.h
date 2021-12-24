@@ -24,19 +24,24 @@ class Texture
 public:
   Texture();
 
-  Texture(Image* image);
+  Texture(Image* image, GLenum format);
 
   void bind(I32 unit = -1);
 
   Colour sample(const Vector2& uv) const;
 
-  void generate(I32 w, I32 h, GLenum internalFormat, GLenum format, bool mip,  const void* data);
+  void generate(I32 w, I32 h, GLenum internalFormat, bool mip,  const void* data);
 
-// protected:
+public:
+  static constexpr F32 REC_255 = 0.003921568627450980392157f; // 1 / 255;
+
+protected:
+  GLenum format;
+
   UI32 glId;
 
   Image* image;
-
+  
 };
 
 #endif // !TEXTURE_H

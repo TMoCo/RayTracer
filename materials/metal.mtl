@@ -1,0 +1,3 @@
+type metal
+albedo 0.8 0.8 0.8
+fuzz 0.1

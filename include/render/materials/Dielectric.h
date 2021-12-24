@@ -37,8 +37,6 @@ public:
     return true;
   }
 
-  F32 ior;
-
 private:
   static F32 reflectanceSchlick(F32 cosine, F32 refractionIndex)
   {
@@ -46,6 +44,9 @@ private:
     r0 *= r0;
     return r0 + (1.0f - r0) * powf(1.0f - cosine, 5.0f);
   }
+
+private:
+  F32 ior;
 };
 
 #endif // !DIELECTRIC_H

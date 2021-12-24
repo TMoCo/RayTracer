@@ -48,7 +48,7 @@ namespace file
     return fileName.substr(start, end == std::string::npos ? end : end - start);
   }
 
-  inline static std::string getPath(std::string path)
+  inline static std::string getParentDirectories(std::string path)
   {
     size_t pos = path.rfind(separator); // find last occurence of dir separator
     return path.substr(0, pos == std::string::npos ? 0 : pos + 1);

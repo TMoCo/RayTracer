@@ -12,12 +12,27 @@
 #define MATERIAL_H 1
 
 #include <image/Colour.h>
+#include <image/Texture.h>
+
+#include <memory>
+#include <array>
 
 class Ray;
 class Surfel;
 
+typedef enum : UI16
+{
+  ALBEDO,
+  METALLIC,
+  ROUGHNESS,
+  EMISSIVE,
+  SIZE
+} MAT_MAPS;
+
 class Material
 {
+  friend class MaterialLoader;
+
 public:
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const = 0;
   
@@ -25,6 +40,17 @@ public:
   {
     return colour::Black;
   }
+
+  virtual void setMap(Texture* map, MAT_MAPS mapType)
+  {
+    maps[mapType] = map;
+  }
+
+protected:
+// TODO: use shader for openGL scene
+//  Shader> shader;
+
+  std::array<Texture*, MAT_MAPS::SIZE> maps;
 };
 
 #endif // ! MATERIAL_H

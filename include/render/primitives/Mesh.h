@@ -11,7 +11,7 @@
 
 #include <vector>
 
-class Mesh : protected Primitive
+class Mesh : public Primitive
 {  
   friend class OBJLoader;
   friend class SceneLoader;

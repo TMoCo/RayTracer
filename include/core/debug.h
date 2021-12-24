@@ -20,13 +20,15 @@
 		  std::fprintf(stderr, format, ##__VA_ARGS__)
   #endif
 
-
   // assert
   #define DEBUG_ASSERT(exp, msg) \
 		  __m_assert(#exp, exp, __FILE__, __LINE__, msg)
 
-  inline void __m_assert(const char* exp_str, bool exp, const char* file, int line, const char* msg) {
-	  if (!exp) {
+  inline void __m_assert(const char* exp_str, bool exp, const char* file, int line, const char* msg) 
+  {
+	  if (!exp) 
+    {
+
 		  DEBUG_PRINT("Assertion failed:\t%s\nExpected:\t\t%s\nSource:\t\t\t%s -> line %i\n", msg, exp_str, file, line);
   #ifdef WIN32
 		  __debugbreak();

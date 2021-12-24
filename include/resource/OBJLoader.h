@@ -11,35 +11,35 @@
 #ifndef OBJ_LOADER_H
 #define OBJ_LOADER_H 1
 
-#include <render/primitives/Mesh.h>
-#include <resource/ResourceManager.h>
-
 #include <string>
 #include <unordered_map>
 
+class Mesh;
+
 class OBJLoader 
 {
+public:
+  static bool loadOBJFromFile(const std::string& path, const std::string& objectName, bool singleMesh);
+
 private:
-  // used by the obj loader to construct meshes
   struct MeshBuilder
   {
-    Mesh* mesh;
-
-    std::unordered_map<std::string, UI32> uniqueIndices;
-    
-    MeshBuilder() : mesh{ nullptr } {}
+    MeshBuilder() 
+      : mesh{ nullptr } 
+    { }
 
     inline void reset(Mesh* m = nullptr)
     {
       uniqueIndices.clear();
       mesh = m; // if provided
     }
-  };
 
-public:
-  static bool loadObj(const std::string& path, const std::string& objectName, bool singleMesh);
+    Mesh* mesh;
 
-  static bool loadMtl(const std::string& path);
+    std::unordered_map<std::string, UI32> uniqueIndices;
+
+  };    
+
 };
 
 

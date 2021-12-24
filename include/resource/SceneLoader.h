@@ -9,9 +9,9 @@
 
 #include <render/shapes/Shape.h>
 
-#include <scene/Scene.h>
-
 #include <string>
+
+class Scene;
 
 class SceneLoader
 {

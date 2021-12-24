@@ -4,13 +4,7 @@ scene teapot
   {
     position 0 0 0
     rotation 0 0 0
-    shape mesh C:\Users\Tommy\Documents\Graphics\models\teapot.obj
-  }
-
-  geometry test_sphere
-  {
-    position 0 -502 -20
-    rotation 0 0 0
-    shape sphere 500 -1 1 360
+    material diffuse.mtl
+    shape mesh teapot.obj
   }
 }

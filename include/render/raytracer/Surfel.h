@@ -32,7 +32,6 @@ public:
     this->position += EPSILON * this->normal; // displace for shadow acne
   }
 
-
   Vector3 position;
   
   Vector3 normal;

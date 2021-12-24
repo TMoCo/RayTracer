@@ -8,14 +8,14 @@
 #include <image/Texture.h>
 
 Texture::Texture()
-  : glId{ 0 }, image{ nullptr }
+  : glId{ 0 }, image{ nullptr }, format{ GL_NONE }
 { }
 
-Texture::Texture(Image* image)
-  : glId{ 0 }, image{ image }
+Texture::Texture(Image* image, GLenum format)
+  : glId{ 0 }, image{ image }, format{ format }
 { }
 
-void Texture::generate(I32 w, I32 h, GLenum internalFormat, GLenum format, bool mip,  const void* data)
+void Texture::generate(I32 w, I32 h, GLenum internalFormat, bool mip,  const void* data)
 {
   glGenTextures(1, &glId);
   bind();
@@ -46,6 +46,5 @@ void Texture::bind(I32 unit)
 Colour Texture::sample(const Vector2& uv) const
 {
   const byte* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
-  F32 scale = 1.0f / 255.0F;
-  return Colour(pixel[0] * scale, pixel[1] * scale, pixel[2] * scale);
+  return Colour(pixel[0] * REC_255, pixel[1] * REC_255, pixel[2] * REC_255);
 }

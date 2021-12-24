@@ -8,6 +8,7 @@
 // Image class definition 
 //
 
+#include <core/core.h>
 #include <core/debug.h>
 #include <image/Image.h>
 
@@ -120,7 +121,7 @@ void Image::allocate()
   data = (byte*)calloc(size(), channels);
   if (data == nullptr)
   {
-    DEBUG_PRINT("Failed to allocate memory for buffer!\n");
+    ERROR_MSG("Failed to allocate memory for buffer!\n");
     exit(-1);
   }
 }

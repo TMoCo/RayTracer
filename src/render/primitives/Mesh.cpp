@@ -41,7 +41,7 @@ bool Mesh::intersect(const Ray& ray, Surfel* surfel) const
 
 void Mesh::test()
 {
-  DEBUG_PRINT("Testing\n");
+
 }
 
 const Material* Mesh::getMaterial() const
@@ -217,7 +217,7 @@ void Mesh::generateTriangles()
 void Mesh::generateNormals()
 {
   nor.resize(pos.size());
-  if (indices.size() != 0)
+  if (indices.size() > 0)
   {
     for (size_t i = 0; i < indices.size(); i+=3 )
     {

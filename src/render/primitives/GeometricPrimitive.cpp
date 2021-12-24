@@ -4,7 +4,6 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <core/debug.h>
 #include <render/bounds/AABB.h>
 #include <render/primitives/GeometricPrimitive.h>
 #include <render/raytracer/Surfel.h>
@@ -33,7 +32,7 @@ bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
 
 void GeometricPrimitive::test()
 {
-  DEBUG_PRINT("%s", "Test function...\n");
+  
 }
 
 const Material* GeometricPrimitive::getMaterial() const
