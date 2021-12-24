@@ -4,20 +4,21 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
+#include <core/core.h>
 #include <render/shapes/Sphere.h>
 #include <render/primitives/GeometricPrimitive.h>
 #include <render/primitives/Mesh.h>
 #include <resource/file.h>
 #include <resource/SceneLoader.h>
+#include <resource/ResourceManager.h>
 #include <resource/OBJLoader.h>
-
-#include <cstring>
+#include <scene/Scene.h>
 
 I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 {
   if (!file::isOfType(fileName, ".scene"))
   {
-    DEBUG_PRINT("File provided is not .scene!");
+    ERROR_MSG("File provided is not .scene!\n");
     return -1;
   }
 
@@ -25,7 +26,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
   if (!sceneFileStream.is_open())
   {
-    DEBUG_PRINT("Failed to open file stream for file %s", fileName.c_str());
+    ERROR_MSG("Failed to open file stream for file %s!", fileName.c_str());
     return 1;
   }
 
@@ -69,6 +70,10 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
     if (strcmp(token, "}") == 0)
     {
+      if (node->primitive)
+      {
+        node->primitive->material = ResourceManager::get().getMaterial(node->name);
+      }
       nodeStack.pop_back();
       node = nodeStack.empty() ? nullptr : nodeStack.back();
       continue;
@@ -102,9 +107,12 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
       if (strcmp(token, "mesh") == 0)
       {
-        OBJLoader::loadObj(remainding, node->name, true);
+        Mesh* m = ResourceManager::get().addMeshFromFile(node->name, remainding);
+        if (!m)
+        {
+          ERROR_MSG("Could not load scene! Invalid mesh at: %s", remainding);
+        }
 
-        Mesh* m = ResourceManager::get().getMesh(node->name);
         node->setPrimitive(m);
 
         m->generateBuffers(false);
@@ -116,13 +124,18 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
       }
       else
       {
-        node->setPrimitive(new GeometricPrimitive
-          { createShape(node->getWorldTransform(), token, remainding ? remainding : ""), nullptr });
-          // TODO: add material 
+        node->setPrimitive(
+          new GeometricPrimitive { createShape(node->getWorldTransform(), token, remainding ? remainding : "") });
       }
 
       scene.primitives.push_back(node->primitive);
       continue;
+    }
+
+    if (strcmp(token, "material") == 0)
+    {
+      token = strtok_s(NULL, " ", &remainding); // material path
+      Material* material = ResourceManager::get().addMaterialFromFile(node->name, token);
     }
 
     if (strcmp(token, "position") == 0)
@@ -151,16 +164,6 @@ Shape* SceneLoader::createShape(Transform* toWorld, const char* shape, char* dat
     F32 radius = strtof(data, &data);
     return new Sphere(toWorld, radius);
   }
-  
-  if (std::strcmp(shape, "cylindre") == 0)
-  {
-
-  }
-
-  if (std::strcmp(shape, "disk") == 0)
-  {
-
-  }
-
+  // .. add shapes here ...
   return nullptr;
 }

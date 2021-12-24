@@ -8,33 +8,36 @@
 // OBJLoader class definition
 //
 
+#include <core/core.h>
 #include <render/materials/Material.h>
+#include <render/primitives/Mesh.h>
 #include <resource/file.h>
 #include <resource/OBJLoader.h>
+#include <resource/ResourceManager.h>
 
 #include <fstream>
 #include <regex>
 
-bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectName, bool singleMesh)
+bool OBJLoader::loadOBJFromFile(const std::string& path, const std::string& objectName, bool singleMesh)
 {
   // HARD CODE SINGLE MESH
   singleMesh = true;
 
-  if (!file::isOfType(fileName, ".obj"))
+  if (!file::isOfType(path, ".obj"))
   {
-    DEBUG_PRINT("File provided is not .obj");
+    ERROR_MSG("File provided is not .obj");
     return false;
   }
 
-  std::ifstream objStream(fileName);
+  std::ifstream objStream(path);
 
   if (!objStream.is_open())
   {
-    DEBUG_PRINT("Could not open file stream for file %s", fileName.c_str());
+    ERROR_MSG("Could not open file stream for file %s", path.c_str());
     return false;
   }
 
-  std::string directory = file::getPath(fileName);
+  std::string directory = file::getParentDirectories(path);
 
   // input processing
   std::string line;
@@ -49,7 +52,7 @@ bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectNa
   std::string meshName = objectName;
   if (meshName.empty())
   {
-    meshName = file::getFileName(fileName);
+    meshName = file::getFileName(path);
   }
 
   // create new mesh and associate 
@@ -174,16 +177,6 @@ bool OBJLoader::loadObj(const std::string& fileName, const std::string& objectNa
   return true;
 }  
 
-bool OBJLoader::loadMtl(const std::string& path) 
-{
-  if (!file::isOfType(path, ".mtl")) 
-  {
-    DEBUG_PRINT("file provided is not .mtl");
-    return false;
-  }
-
-  return true;
-}
     /*
     FILE* pFile = std::fopen(path, "r");
     if (pFile == NULL)

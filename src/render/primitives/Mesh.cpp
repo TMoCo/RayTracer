@@ -11,7 +11,7 @@
 #include <scene/Node.h>
 
 Mesh::Mesh()
-  : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }, onGpu{ false }, material{ nullptr }
+  : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }, onGpu{ false }
 { }
 
 AABB Mesh::getBounds() const
@@ -41,12 +41,7 @@ bool Mesh::intersect(const Ray& ray, Surfel* surfel) const
 
 void Mesh::test()
 {
-  DEBUG_PRINT("Testing\n");
-}
 
-const Material* Mesh::getMaterial() const
-{
-  return material;
 }
 
 void Mesh::draw() const
@@ -217,18 +212,18 @@ void Mesh::generateTriangles()
 void Mesh::generateNormals()
 {
   nor.resize(pos.size());
-  if (indices.size() != 0)
+  if (indices.size() > 0)
   {
     for (size_t i = 0; i < indices.size(); i+=3 )
     {
-      nor[i / 3] = (pos[indices[i]] - pos[indices[i + 1]]).cross(pos[indices[i]] - pos[indices[i + 2]]);
+      nor[i / 3] = (pos[indices[i]] - pos[indices[i + 1]]).cross(pos[indices[i]] - pos[indices[i + 2]]).normalize();
     }
   }
   else
   {
     for (size_t i = 0; i < pos.size(); i += 3)
     {
-      nor[i] = (pos[i] - pos[i + 1]).cross(pos[i] - pos[i + 2]);
+      nor[i] = (pos[i] - pos[i + 1]).cross(pos[i] - pos[i + 2]).normalize();
     }
   }
 }

@@ -4,14 +4,13 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <core/debug.h>
 #include <render/bounds/AABB.h>
 #include <render/primitives/GeometricPrimitive.h>
 #include <render/raytracer/Surfel.h>
 #include <render/shapes/Shape.h>
 
-GeometricPrimitive::GeometricPrimitive( Shape* shape, Material* material)
-  : Primitive(), shape{ shape }, material{ material }
+GeometricPrimitive::GeometricPrimitive( Shape* shape)
+  : Primitive(), shape{ shape }
 { }
 
 AABB GeometricPrimitive::getBounds() const
@@ -33,10 +32,5 @@ bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
 
 void GeometricPrimitive::test()
 {
-  DEBUG_PRINT("%s", "Test function...\n");
-}
-
-const Material* GeometricPrimitive::getMaterial() const
-{
-  return material;
+  
 }

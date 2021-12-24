@@ -26,7 +26,7 @@ void Scene::clear()
 void Scene::draw() const
 { }
 
-const std::vector<Primitive*>* Scene::getPrimitives() const 
+const std::vector<Primitive*>* Scene::getPrimitives() const
 {
   return &primitives;
 }

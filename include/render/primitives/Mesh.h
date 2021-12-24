@@ -11,7 +11,7 @@
 
 #include <vector>
 
-class Mesh : protected Primitive
+class Mesh : public Primitive
 {  
   friend class OBJLoader;
   friend class SceneLoader;
@@ -26,11 +26,8 @@ public:
 
   void test() override;
 
-  const Material* getMaterial() const override;
-
   void draw() const;
 
-  Material* material;
 protected:
   void generateBuffers(bool interleave);
 

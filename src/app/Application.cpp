@@ -14,7 +14,7 @@
 #include <render/Shader.h>
 #include <render/shapes/GLShapes.h>
 #include <resource/OBJLoader.h>
-#include <resource/TextureLoader.h>
+#include <resource/MaterialLoader.h>
 #include <resource/SceneLoader.h>
 #include <resource/ResourceManager.h>
 
@@ -71,36 +71,14 @@ I32 Application::run()
 }
 
 void Application::renderLoop(Scene* scene)
-{  
-  // test textures
-  /*
-  Texture containerTexture;
-  TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
-  */
-  Texture earthMapTexture;
-  TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
-
+{
   BVH bvh = BVH(scene);
 
-  //
-  //OBJLoader::loadObj("..\\..\\models\\teapot.obj", "teapot", true);
   Mesh* mesh = ResourceManager::get().getMesh("triangle");
+  Texture* texture = ResourceManager::get().getTexture("earth.jpg");
+  // texture->generate(true);
 
-  // test materials
-  Metal metal = Metal({ 0.8f, 0.8f, 0.8f }, 0.05f);
-  Dielectric glass = Dielectric(1.5f);
-  Lambertian floor = Lambertian({ 0.8f, 0.8f, 0.0f });
-  Lambertian mauve = Lambertian({ 0.3f, 0.1f, 0.6f });
-  TexturedLambertian earthMap = TexturedLambertian(&earthMapTexture);
-  DiffuseLight light = DiffuseLight({ 4.0f, 4.0f, 4.0f });
-  
   // set material
-  auto primitives = *scene->getPrimitives();
-  ((Mesh*)primitives[0])->material = &metal;
-  ((GeometricPrimitive*)primitives[1])->material = &earthMap;
-  ((GeometricPrimitive*)primitives[2])->material = &metal;
-  ((GeometricPrimitive*)primitives[3])->material = &floor;
-
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader testShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
 
@@ -120,6 +98,7 @@ void Application::renderLoop(Scene* scene)
   debug = true;
 
   F32 deltaTime = 0.0f, previous = 0.0f;
+
   while (!glfwWindowShouldClose(window.getWindowPointer()))
   {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -138,15 +117,16 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(scene, rayTracedImage, window.getCamera(), 1);
+      raytracer.raytrace(scene, rayTracedImage, window.getCamera(), 100);
       rayTracedImage.writeToImageFile("..\\screenshots\\out.jpg");
     }
 
     // ... draw a mesh
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // texture->bind(0);
     testShader.use();
     testShader.setMatrix4("transform", PV);
-    mesh->draw();
+    //mesh->draw();
     
     // ... debug
     if (debug)

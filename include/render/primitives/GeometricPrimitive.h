@@ -15,12 +15,12 @@
 
 class Shape;
 
-class GeometricPrimitive : protected Primitive
+class GeometricPrimitive : public Primitive
 {
   friend class SceneLoader;
 
 public:
-  GeometricPrimitive(Shape* shape, Material* material);
+  GeometricPrimitive(Shape* shape);
 
   AABB getBounds() const override;
 
@@ -28,11 +28,7 @@ public:
 
   void test();
 
-  const Material* getMaterial() const override;
-
   Shape* shape;
-
-  Material* material;
 
 };
 
