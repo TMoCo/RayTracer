@@ -70,6 +70,10 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
     if (strcmp(token, "}") == 0)
     {
+      if (node->primitive)
+      {
+        node->primitive->material = ResourceManager::get().getMaterial(node->name);
+      }
       nodeStack.pop_back();
       node = nodeStack.empty() ? nullptr : nodeStack.back();
       continue;
@@ -121,8 +125,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
       else
       {
         node->setPrimitive(
-          new GeometricPrimitive { createShape(node->getWorldTransform(), token, remainding ? remainding : ""), nullptr });
-          // TODO: add material 
+          new GeometricPrimitive { createShape(node->getWorldTransform(), token, remainding ? remainding : "") });
       }
 
       scene.primitives.push_back(node->primitive);
@@ -131,7 +134,8 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
     if (strcmp(token, "material") == 0)
     {
-
+      token = strtok_s(NULL, " ", &remainding); // material path
+      Material* material = ResourceManager::get().addMaterialFromFile(node->name, token);
     }
 
     if (strcmp(token, "position") == 0)

@@ -50,37 +50,38 @@ void ResourceManager::removeTexture(const std::string& textureName)
   textures.erase(textureName);
 }
 
-Mesh* ResourceManager::addMeshFromFile(const std::string& meshName, const std::string& path)
+Mesh* ResourceManager::addMeshFromFile(const std::string& meshName, const std::string& fileName)
 {
   Mesh* m = getMesh(meshName);
   if (m)
   {
-    DEBUG_PRINT("Mesh %s is already loaded!", path.c_str());
+    DEBUG_PRINT("Mesh %s is already loaded!", fileName.c_str());
     return m;
   }
-  OBJLoader::loadOBJFromFile(path, meshName, true);
+  OBJLoader::loadOBJFromFile(MODELS + fileName, meshName, true);
   return getMesh(meshName);
 }
 
-Material* ResourceManager::addMaterialFromFile(const std::string& materialName, const std::string& path)
+Material* ResourceManager::addMaterialFromFile(const std::string& materialName, const std::string& fileName)
 {
   if (materials.count(materialName) != 0)
   {
-    DEBUG_PRINT("Material %s is already loaded!", path.c_str());
+    DEBUG_PRINT("Material %s is already loaded!", fileName.c_str());
     return materials.at(materialName);
   }
-  MaterialLoader::loadMaterialFromFile(path, materialName);
+  MaterialLoader::loadMaterialFromFile(MATERIALS + fileName, materialName);
   return getMaterial(materialName);
 }
 
-Texture* ResourceManager::addTextureFromFile(const std::string& textureName, const std::string& path)
+Texture* ResourceManager::addTextureFromFile(const std::string& textureName, const std::string& fileName)
 {
   if (textures.count(textureName) != 0)
   {
     DEBUG_PRINT("Texture %s is already loaded!", textureName.c_str());
     return textures.at(textureName);
   }
-  MaterialLoader::loadTextureFromImageFile(textureName);
+
+  MaterialLoader::loadTextureFromImageFile(TEXTURES + fileName, textureName);
   return getTexture(textureName);
 }
 

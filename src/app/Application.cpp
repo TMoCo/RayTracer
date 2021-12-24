@@ -61,7 +61,7 @@ I32 Application::run()
 
   Scene scene;
 
-  SceneLoader::loadScene("..\\scenes\\teapot.scene", scene);
+  SceneLoader::loadScene("..\\scenes\\triangle.scene", scene);
 
   renderLoop(&scene);
 
@@ -71,18 +71,12 @@ I32 Application::run()
 }
 
 void Application::renderLoop(Scene* scene)
-{  
-  // test textures
-  /*
-  Texture containerTexture;
-  TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\container.jpg", containerTexture, GL_RGB);
-  // TextureLoader::loadTextureFromImageFile("C:\\Users\\Tommy\\Documents\\Graphics\\Textures\\earthmap.jpg", earthMapTexture, GL_RGB);
-  */
-  Texture earthMapTexture;
-
+{
   BVH bvh = BVH(scene);
 
-  Mesh* mesh = ResourceManager::get().getMesh("teapot");
+  Mesh* mesh = ResourceManager::get().getMesh("triangle");
+  Texture* texture = ResourceManager::get().getTexture("earth.jpg");
+  // texture->generate(true);
 
   // set material
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
@@ -104,6 +98,7 @@ void Application::renderLoop(Scene* scene)
   debug = true;
 
   F32 deltaTime = 0.0f, previous = 0.0f;
+
   while (!glfwWindowShouldClose(window.getWindowPointer()))
   {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -122,15 +117,16 @@ void Application::renderLoop(Scene* scene)
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_R))
     {
       // ... raytrace scene
-      raytracer.raytrace(scene, rayTracedImage, window.getCamera(), 1);
+      raytracer.raytrace(scene, rayTracedImage, window.getCamera(), 100);
       rayTracedImage.writeToImageFile("..\\screenshots\\out.jpg");
     }
 
     // ... draw a mesh
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // texture->bind(0);
     testShader.use();
     testShader.setMatrix4("transform", PV);
-    mesh->draw();
+    //mesh->draw();
     
     // ... debug
     if (debug)

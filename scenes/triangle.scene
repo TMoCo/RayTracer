@@ -4,27 +4,23 @@ scene triangle
   {
     position 0 0 0
     rotation 0 0 0
-    shape mesh C:\Users\Tommy\Documents\Graphics\models\triangle.obj
+    shape sphere 1
+    material glass.mtl
   }
 
-  geometry test_sphere
+  geometry sphere
   {
-    position 0 0 -5
+    position 0 0 -7
     rotation 0 0 0
-    shape sphere 1 -1 1 360
+    shape sphere 1
+    material light.mtl
   }
 
-  geometry test_sphere
-  {
-    position -2 0 -5
-    rotation 0 0 0
-    shape sphere 1 -1 1 360
-  }
-
-  geometry test_sphere
+  geometry floor
   {
     position 0 -502 -20
     rotation 0 0 0
-    shape sphere 500 -1 1 360
+    shape sphere 500
+    material diffuse.mtl
   }
 }

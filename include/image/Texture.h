@@ -30,7 +30,7 @@ public:
 
   Colour sample(const Vector2& uv) const;
 
-  void generate(I32 w, I32 h, GLenum internalFormat, bool mip,  const void* data);
+  void generate(bool mip);
 
 public:
   static constexpr F32 REC_255 = 0.003921568627450980392157f; // 1 / 255;

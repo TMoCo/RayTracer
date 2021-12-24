@@ -22,7 +22,7 @@ class MaterialLoader
 public:
   static bool loadMaterialFromFile(const std::string& path, const std::string& materialName);
 
-  static bool loadTextureFromImageFile(const std::string& path);
+  static bool loadTextureFromImageFile(const std::string& path, const std::string& materialName);
 };
 
 #endif // !TEXTURE_LOADER_H

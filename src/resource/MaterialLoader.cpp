@@ -41,26 +41,65 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
     token = strtok_s(buffer, " ", &remainding);
 
     // analyse token
-    if (strcmp(token, "type"))
+    if (strcmp(token, "type") == 0)
     {
-      token = strtok_s(buffer, " ", &remainding);
+      token = strtok_s(remainding, " ", &remainding);
       // create material of desired type
-      if (strcmp(token, "diffuse"))
+      if (strcmp(token, "diffuse") == 0)
       {
         // extract diffuse colour
-        token = strtok_s(buffer, " ", &remainding);
+        token = strtok_s(remainding, " ", &remainding);
         if (!token)
         {
           material = ResourceManager::get().addMaterial(materialName, new Diffuse{ colour::Red });
         }
         else
         {
-          F32 r = strtof(token, &token), g = strtof(token, &token), b = strtof(token, NULL);
+          F32 r = strtof(token, NULL), g = strtof(remainding, &token), b = strtof(token, NULL);
           material = ResourceManager::get().addMaterial(materialName, new Diffuse{ { r, g, b } });
         }
-
-        continue;
       }
+      else if (strcmp(token, "dielectric") == 0)
+      {
+        token = strtok_s(remainding, " ", &remainding);
+        if (!token)
+        {
+          material = ResourceManager::get().addMaterial(materialName, new Dielectric{ 1.5f });
+        }
+        else
+        {
+          F32 ior = strtof(token, NULL);
+          material = ResourceManager::get().addMaterial(materialName, new Dielectric{ ior });
+        }
+      }
+      else if (strcmp(token, "metal") == 0)
+      {
+        token = strtok_s(remainding, " ", &remainding);
+        if (!token)
+        {
+          material = ResourceManager::get().addMaterial(materialName, new Metal{ 0.0f, { 0.8f, 0.8f, 0.8f } });
+        }
+        else
+        {
+          F32 fuzz = strtof(token, NULL);
+          F32 r = strtof(remainding, &token), g = strtof(token, &token), b = strtof(token, NULL);
+          material = ResourceManager::get().addMaterial(materialName, new Metal{ fuzz, { r, g, b } });
+        }
+      }
+      else if (strcmp(token, "light") == 0)
+      {
+        token = strtok_s(remainding, " ", &remainding);
+        if (!token)
+        {
+          material = ResourceManager::get().addMaterial(materialName, new DiffuseLight{ colour::White });
+        }
+        else
+        {
+          F32 r = strtof(token, NULL), g = strtof(remainding, &token), b = strtof(token, NULL);
+          material = ResourceManager::get().addMaterial(materialName, new DiffuseLight{ { r, g, b } });
+        }
+      }
+      continue;
     }
 
     if (strcmp(token, "albedoMap") == 0)
@@ -72,7 +111,7 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
       }
 
       // texture path
-      token = strtok_s(buffer, " ", &remainding);
+      token = strtok_s(remainding, " ", &remainding);
 
       // load texture
       material->setMap(ResourceManager::get().addTextureFromFile(token, token), MAT_MAPS::ALBEDO);
@@ -84,7 +123,7 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
   return 0;
 }
 
-bool MaterialLoader::loadTextureFromImageFile(const std::string& path)
+bool MaterialLoader::loadTextureFromImageFile(const std::string& path, const std::string& textureName)
 {
   I32 width, height, channels;
   byte* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -112,7 +151,7 @@ bool MaterialLoader::loadTextureFromImageFile(const std::string& path)
     }
 
     ResourceManager::get()
-      .addTexture(path, new Texture{ new Image(width, height, channels, data), format });
+      .addTexture(textureName, new Texture{ new Image(width, height, channels, data), format });
   }
   else
   {

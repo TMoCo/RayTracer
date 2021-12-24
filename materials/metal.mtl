@@ -1,3 +1,2 @@
-type metal
-albedo 0.8 0.8 0.8
-fuzz 0.1
+# type metal fuzz albedo
+type metal 0.1 0.8 0.8 0.8

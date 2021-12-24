@@ -26,11 +26,8 @@ public:
 
   void test() override;
 
-  const Material* getMaterial() const override;
-
   void draw() const;
 
-  Material* material;
 protected:
   void generateBuffers(bool interleave);
 

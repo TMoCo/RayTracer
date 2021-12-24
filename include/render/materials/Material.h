@@ -50,7 +50,7 @@ protected:
 // TODO: use shader for openGL scene
 //  Shader> shader;
 
-  std::array<Texture*, MAT_MAPS::SIZE> maps;
+  std::array<Texture*, MAT_MAPS::SIZE> maps{ nullptr, nullptr, nullptr, nullptr };
 };
 
 #endif // ! MATERIAL_H

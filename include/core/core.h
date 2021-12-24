@@ -28,7 +28,7 @@ __m_error_msg(format, ##__VA_ARGS__);
 
 inline void __m_error_msg(const char* format, ...)
 {
-  fprintf(stderr, "/!\\ ERROR in %s at line %i!\nInfo:\t", __FILE__, __LINE__);
+  fprintf(stderr, "/!\\ ERROR!\nInfo:\t");
   if (format)
   {
     // see stdio.h

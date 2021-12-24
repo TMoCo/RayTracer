@@ -14,6 +14,10 @@
 #include <string>
 #include <unordered_map>
 
+static const std::string MODELS    = "..\\models\\";
+static const std::string TEXTURES  =  "..\\materials\\textures\\";
+static const std::string MATERIALS =  "..\\materials\\";
+
 class Mesh;
 class Material;
 class Texture;
@@ -40,11 +44,11 @@ protected:
 
   void removeTexture(const std::string& textureName);
 
-  Mesh* addMeshFromFile(const std::string& meshName, const std::string& path);
+  Mesh* addMeshFromFile(const std::string& meshName, const std::string& fileName);
 
-  Material* addMaterialFromFile(const std::string& materialName, const std::string& path);
+  Material* addMaterialFromFile(const std::string& materialName, const std::string& fileName);
 
-  Texture* addTextureFromFile(const std::string& textureName, const std::string& path);
+  Texture* addTextureFromFile(const std::string& textureName, const std::string& fileName);
 
   Mesh* addMesh(const std::string& meshName, Mesh* mesh);
 

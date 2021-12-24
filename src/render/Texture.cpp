@@ -15,7 +15,7 @@ Texture::Texture(Image* image, GLenum format)
   : glId{ 0 }, image{ image }, format{ format }
 { }
 
-void Texture::generate(I32 w, I32 h, GLenum internalFormat, bool mip,  const void* data)
+void Texture::generate(bool mip)
 {
   glGenTextures(1, &glId);
   bind();
@@ -25,13 +25,12 @@ void Texture::generate(I32 w, I32 h, GLenum internalFormat, bool mip,  const voi
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, data);
+  glTexImage2D(GL_TEXTURE_2D, 0, format, image->getWidth(), image->getHeight(), 0, format, GL_UNSIGNED_BYTE, (*image)[0]);
   
   if (mip)
   {
     glGenerateMipmap(GL_TEXTURE_2D);
   }
-
 }
 
 void Texture::bind(I32 unit)

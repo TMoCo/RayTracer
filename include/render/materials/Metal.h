@@ -20,18 +20,19 @@
 class Metal : public Material
 {
 public:
-  Metal(const Colour& Colour, F32 fuzz) : albedo{ Colour }, fuzz{ fuzz < 1.0f ? fuzz : 1.0f } {}
+  Metal(F32 fuzz, const Colour& Colour) : fuzz{ fuzz < 1.0f ? fuzz : 1.0f }, albedo{ Colour } {}
 
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
-    attenuation = albedo;
+    attenuation = maps[MAT_MAPS::ALBEDO] ? maps[MAT_MAPS::ALBEDO]->sample(surfel.uv) : albedo;
     Vector3 outDir = Vector3::reflect(inRay.direction, surfel.normal);
     outRay = { surfel.position, outDir + fuzz * UniformSampler::unitSphere(random::uniformUV()), INFINITY };
     return outRay.direction.dot(surfel.normal) > 0.0f;
   }
 
-  Colour albedo;
   F32 fuzz;
+
+  Colour albedo;
 };
 
 #endif // !METAL_H

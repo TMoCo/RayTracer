@@ -1,4 +1,2 @@
-type dielectric
-ior 1.5
-# not the best term name, affects colour of transmitted light
-albedo 
+# type dielectric indexOfRefraction
+type dielectric 1.5

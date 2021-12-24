@@ -9,8 +9,8 @@
 #include <render/raytracer/Surfel.h>
 #include <render/shapes/Shape.h>
 
-GeometricPrimitive::GeometricPrimitive( Shape* shape, Material* material)
-  : Primitive(), shape{ shape }, material{ material }
+GeometricPrimitive::GeometricPrimitive( Shape* shape)
+  : Primitive(), shape{ shape }
 { }
 
 AABB GeometricPrimitive::getBounds() const
@@ -33,9 +33,4 @@ bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
 void GeometricPrimitive::test()
 {
   
-}
-
-const Material* GeometricPrimitive::getMaterial() const
-{
-  return material;
 }
