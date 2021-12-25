@@ -42,33 +42,21 @@ find_package(OpenGL REQUIRED)
 include(FindGLFW3)
 
 # GLAD library
-set(GLAD_SRC_SEARCH_DIR
-  "C:/Libraries/glad/src")
+set(GLAD_SRC_DIR "C:/Libraries/glad/src")
+file(GLOB_RECURSE GLAD_SRC ${GLAD_SRC_DIR}/*.c)
 
-set(GLAD_SRC_FILES
-  "glad.c")
+set(GLAD_INCLUDE_DIR "C:/Libraries/glad/include")
+file(GLOB_RECURSE GLAD_INCLUDE ${GLAD_INCLUDE_DIR}/*.h)
 
-find_path(GLAD_SRC_DIR NAMES ${GLAD_SRC_FILES} PATHS ${GLAD_SRC_SEARCH_DIR})
-if(GLAD_SRC_DIR-NOTFOUND)
-  message(FATAL_ERROR "Could not find ${GLAD_SRC_FILES} in ${GLAD_SRC_SEARCH_DIR}")
-endif()
+add_library(GLAD ${GLAD_SRC})
 
-set(GLAD_INCLUDE_SEARCH_DIR
-  "C:/Libraries/glad/include")
+# ImGui
+set(IMGUI_DIR "C:/Libraries/ImGui")
+file(GLOB_RECURSE IMGUI_SRC ${IMGUI_DIR}/*.cpp)
+file(GLOB_RECURSE IMGUI_INCLUDE ${IMGUI_DIR}/*.h)
 
-set(GLAD_HEADER_FILES
-  "glad/glad.h"
-  "KHR/khrplatform.h")
 
-find_path(GLAD_INCLUDE_DIR 
-  NAMES ${GLAD_HEADER_FILES} 
-  PATHS ${GLAD_INCLUDE_SEARCH_DIR})
-
-if(GLAD_INCLUDE_DIR-NOTFOUND)
-  message(FATAL_ERROR "Could not find ${GLAD_HEADER_FILES} in ${GLAD_INCLUDE_SEARCH_DIR}")
-endif()
-
-add_library(GLAD "${GLAD_SRC_DIR}/${GLAD_SRC_FILES}")
+add_library(ImGui ${IMGUI_SRC})
 
 # stb_image library
 set(STB_IMAGE_INCLUDE_SEARCH_DIR
@@ -85,8 +73,10 @@ if(STB_IMAGE_INCLUDE_DIR-NOTFOUND)
   message(FATAL_ERROR "Could not find ${STB_IMAGE_HEADER_FILES} in ${STB_IMAGE_INCLUDE_SEARCH_DIR}")
 endif()
 
+#
+
 # libraries
-set(LIBS ${GLFW3_LIB} opengl32 GLAD)
+set(LIBS ${GLFW3_LIB} opengl32 GLAD ImGui)
 
 # include directories
 include_directories(
@@ -95,6 +85,7 @@ include_directories(
   "${GLAD_INCLUDE_DIR}"
   "${GLFW3_INCLUDE_DIR}"
   "${STB_IMAGE_INCLUDE_DIR}"
+  "${IMGUI_DIR}"
 )
 
 # link libraries
@@ -121,15 +112,12 @@ if(MSVC_IDE)
   GROUP_SOURCES("include" "h")
   
   if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
-  message("valid version")
-  target_precompile_headers(${PROJECT_NAME} PRIVATE <math/thomath.h>)
+    message("-- Valid CMake version, making precompiled headers...")
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/thomath.h>)
   endif()
 
   # set start up project
   if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.8.0")
     set(VS_STARTUP_PROJECT ${PROJECT_NAME})
   endif()
-  
-  
-
 endif()

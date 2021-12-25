@@ -18,6 +18,10 @@
 #include <resource/SceneLoader.h>
 #include <resource/ResourceManager.h>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 int Application::init()
 {
   if (!glfwInit())
@@ -45,6 +49,16 @@ int Application::init()
     ERROR_MSG("Failed to initialise GLAD!");
     return -1;
   }
+
+  // TODO: move into widgets
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO();
+  ImGui::StyleColorsDark();
+
+  ImGui_ImplGlfw_InitForOpenGL(window.getWindowPointer(), true);
+  ImGui_ImplOpenGL3_Init();
+
 
   window.setViewPort();
 
@@ -102,7 +116,15 @@ void Application::renderLoop(Scene* scene)
   while (!glfwWindowShouldClose(window.getWindowPointer()))
   {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glfwPollEvents();
     
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::ShowDemoWindow(&debug);
+
     F32 current = static_cast<F32>(glfwGetTime());
     deltaTime = current - previous;
     previous = current;
@@ -137,12 +159,20 @@ void Application::renderLoop(Scene* scene)
       bvh.draw();
     }
 
-    glfwPollEvents();
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
     glfwSwapBuffers(window.getWindowPointer());
   }
 }
 
 void Application::terminate()
 {
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+
+  glfwDestroyWindow(window.getWindowPointer());
+
   glfwTerminate();
 }

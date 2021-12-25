@@ -22,7 +22,7 @@ I32 Window::create(UI32 w, UI32 h, const char* name)
     glfwSetFramebufferSizeCallback(pWindow, resizeCallBack);
 
     // cursor + mouse
-    glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(pWindow, mouseCallBack);
     lastX = width / 2.0f;
     lastY = height / 2.0f;
@@ -31,7 +31,7 @@ I32 Window::create(UI32 w, UI32 h, const char* name)
   }
   else
   {
-    DEBUG_PRINT("Could not create window");
+    ERROR_MSG("Could not create window");
     
     glfwTerminate();
 
