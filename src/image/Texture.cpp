@@ -15,6 +15,11 @@ Texture::Texture(Image* image, GLenum format)
   : glId{ 0 }, image{ image }, format{ format }
 { }
 
+Texture::~Texture()
+{
+  glDeleteTextures(1, &glId);
+}
+
 void Texture::generate(bool mip)
 {
   glGenTextures(1, &glId);

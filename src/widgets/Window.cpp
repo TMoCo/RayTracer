@@ -9,14 +9,12 @@
 
 Window::Window()
   : width{ 0 }, height{ 0 }, viewPort{ 0, 0, 0, 0 }, lastX{ 0 }, lastY{ 0 },
-  mainCamera{ nullptr }, pWindow{ nullptr }
-{
-
-}
+  mainCamera{ nullptr }, framebuffer{ nullptr }, pWindow{ nullptr }
+{ }
 
 Window::Window(UI32 width = DEFAULT_WIDTH, UI32 height = DEFAULT_HEIGHT, const char* name = "Window")
   : width{ width }, height{ height }, viewPort{ 0, 0, width, height }, lastX{ width * 0.5f }, lastY{ height * 0.5f },
-  mainCamera{ nullptr }, pWindow{ glfwCreateWindow(width, height, name, NULL, NULL) }
+  mainCamera{ nullptr }, framebuffer{ nullptr }, pWindow{ glfwCreateWindow(width, height, name, NULL, NULL) }
 {
   if (pWindow)
   {
@@ -54,49 +52,6 @@ void Window::resize(UI32 w, UI32 h)
 {
   width = w;
   height = h;
-}
-
-I32 Window::processInput(Window* window, F32 deltaTime, bool pause)
-{
-  if (glfwGetKey(window->pWindow, GLFW_KEY_ESCAPE)) // TODO: ESCAP = TURN CAM MOVE WITH MOUSE OFF
-  {
-    return 0;
-  }
-  // pause
-  if (glfwGetKey(window->pWindow, GLFW_KEY_P))
-  {
-    if (pause)
-    {
-      glfwSetWindowUserPointer(window->pWindow, nullptr);
-    }
-    else
-    {
-      glfwSetWindowUserPointer(window->pWindow, &window);
-      window->firstMouse = true;
-    }
-    return 1;
-  }
-  if (glfwGetKey(window->pWindow, GLFW_KEY_W))
-  {
-    window->mainCamera->processInput(Camera::FORWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  if (glfwGetKey(window->pWindow, GLFW_KEY_S))
-  {
-    window->mainCamera->processInput(Camera::BACKWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  if (glfwGetKey(window->pWindow, GLFW_KEY_Q))
-  {
-    window->mainCamera->processInput(Camera::LEFTWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  if (glfwGetKey(window->pWindow, GLFW_KEY_D))
-  {
-    window->mainCamera->processInput(Camera::RIGHTWARD, deltaTime * 10.0f);
-    return 1;
-  }
-  return 1;
 }
 
 void Window::resizeCallBack(GLFWwindow* p_win, I32 w, I32 h)

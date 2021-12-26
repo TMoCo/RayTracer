@@ -26,6 +26,8 @@ public:
 
   Texture(Image* image, GLenum format);
 
+  ~Texture();
+
   void bind(I32 unit = -1);
 
   Colour sample(const Vector2& uv) const;

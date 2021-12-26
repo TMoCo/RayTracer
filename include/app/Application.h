@@ -16,6 +16,8 @@
 
 class Application 
 {
+  friend class UserInterface;
+
 public:
   I32 run();
 
@@ -26,7 +28,7 @@ private:
 
   void renderLoop(Scene* scene);
 
-private:
+protected:
   Window window;
 
   Framebuffer framebuffer;

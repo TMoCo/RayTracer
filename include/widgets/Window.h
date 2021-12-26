@@ -14,6 +14,7 @@
 
 #include <core/types.h>
 #include <render/Camera.h>
+#include <render/Framebuffer.h>
 
 #include <glad/glad.h>
 #ifdef VULKAN
@@ -53,13 +54,11 @@ public:
     
   void resize(UI32 width, UI32 height);
  
-  static I32 processInput(Window* window, F32 deltaTime, bool pause);
-
   static void resizeCallBack(GLFWwindow* p_win, I32 w, I32 h);
 
   static void mouseCallBack(GLFWwindow* p_win, F64 x, F64 y);
  
-private:
+public:
   UI32 width = 0, height = 0;
 
   ViewPort viewPort = { 0, 0, 0, 0 };
@@ -69,6 +68,8 @@ private:
   GLFWwindow* pWindow;
 
   Camera* mainCamera;
+
+  Framebuffer* framebuffer;
 
   bool firstMouse = true;
 };
