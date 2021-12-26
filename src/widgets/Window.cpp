@@ -20,7 +20,7 @@ Window::Window(UI32 width = DEFAULT_WIDTH, UI32 height = DEFAULT_HEIGHT, const c
   {
     glfwSetFramebufferSizeCallback(pWindow, resizeCallBack);
     // cursor + mouse
-    // glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(pWindow, mouseCallBack);
   }
   else

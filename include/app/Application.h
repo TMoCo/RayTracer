@@ -35,7 +35,7 @@ protected:
 
   RayTracer raytracer;
 
-  bool pause, debug;
+  bool drawBVH;
 
 };
 

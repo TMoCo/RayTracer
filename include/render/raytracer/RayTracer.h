@@ -22,12 +22,19 @@
 
 class RayTracer 
 {
+  friend class UserInterface;
 public:
-  void raytrace(const Scene* scene, Image& image, const Camera* camera, UI32 samples) const;
+  RayTracer();
+
+  void raytrace(const Scene* scene, Image& image, const Camera* camera, bool antiAliasing) const;
  
 private:
   Colour castRay(const Scene* scene, const Ray& ray, UI32 depth) const;
 
+protected:
+  I32 numSamples;
+
+  F32 antiAliasingKernelSize;
 };
 
 #endif 

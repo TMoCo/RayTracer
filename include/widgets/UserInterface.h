@@ -15,10 +15,13 @@
 
 class UserInterface
 {
+  UserInterface();
 public:
   static UserInterface& get();
 
   static I32 processKeyInput(Window* window, F32 deltaTime);
+
+  static void mouseCallBack(GLFWwindow* glfwwindow, F64 x, F64 y);
 
   void init(GLFWwindow* window);
 
@@ -27,6 +30,9 @@ public:
   void draw();
 
   void terminate();
+
+private:
+  bool cursorEnabled, viewBVH, viewNormals, AAenabled;
 };
 
 #endif // !USER_INTERFACE_H

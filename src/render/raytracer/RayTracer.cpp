@@ -16,33 +16,58 @@
 
 #define MAX_DEPTH 4
 
-void RayTracer::raytrace(const Scene* scene, Image& image, const Camera* camera, UI32 samples) const
+RayTracer::RayTracer()
+  : numSamples{ 1 }, antiAliasingKernelSize{ 1.0f }
+{ }
+
+void RayTracer::raytrace(const Scene* scene, Image& image, const Camera* camera, bool antiAliasing) const
 {    
   // scale for aspect ratio
   UI32 width = (UI32)image.getWidth(), height = (UI32)image.getHeight();
   F32 rWidth = 1.0f / (F32)width, rHeight = 1.0f / (F32)height;
-  F32 scale  = 1.0f / (F32)samples;
+  F32 inversNumSamples  = 1.0f / (F32)numSamples;
 
   image.clear(); // reset frame Image
 
   std::cout << "Ray tracing...";
-  // scan pixels from left to right, bottom to top, starting in bottom left corner
+
   auto start = sys_clock::now();
   Colour colour;
-  for (UI32 col = 0; col < height; ++col)
-  { 
-    for (UI32 row = 0; row < width; ++row)
-    {
-      colour = colour::Black;
-      for (UI32 sample = 0; sample < samples; ++sample)
+
+  if (antiAliasing)
+  {
+    for (UI32 col = 0; col < height; ++col)
+    { 
+      for (UI32 row = 0; row < width; ++row)
       {
-        colour += castRay(scene, Ray::generateCameraRay(camera, 
-          { (row + random::uniformF32()) * rWidth, (col + random::uniformF32()) * rHeight }), MAX_DEPTH);
+        colour = colour::Black;
+        for (UI32 sample = 0; sample < (UI32)numSamples; ++sample)
+        {
+          colour += castRay(scene, Ray::generateCameraRay(camera, 
+            { (row + random::uniformF32()) * rWidth, (col + random::uniformF32()) * rHeight }), MAX_DEPTH);
+        }
+        colour *= inversNumSamples;
+        image.writePixelColour(row, col, &colour[0]);
       }
-      colour *= scale;
-      image.writePixelColour(row, col, &colour[0]);
     }
   }
+  else
+  {
+    for (UI32 col = 0; col < height; ++col)
+    {
+      for (UI32 row = 0; row < width; ++row)
+      {
+        colour = colour::Black;
+        for (UI32 sample = 0; sample < (UI32)numSamples; ++sample)
+        {
+          colour += castRay(scene, Ray::generateCameraRay(camera, { row * rWidth, col * rHeight }), MAX_DEPTH);
+        }
+        colour *= inversNumSamples;
+        image.writePixelColour(row, col, &colour[0]);
+      }
+    }
+  }
+
   auto end = sys_clock::now();
   std::cout << "Finished!\nTook: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
 }
