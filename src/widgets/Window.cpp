@@ -7,35 +7,28 @@
 #include <widgets/Window.h>
 #include <core/debug.h>
 
-I32 Window::create(UI32 w, UI32 h, const char* name)
+Window::Window()
+  : width{ 0 }, height{ 0 }, viewPort{ 0, 0, 0, 0 }, lastX{ 0 }, lastY{ 0 },
+  mainCamera{ nullptr }, pWindow{ nullptr }
 {
-  // create window
-  pWindow = glfwCreateWindow(w, h, name, NULL, NULL);
 
+}
+
+Window::Window(UI32 width = DEFAULT_WIDTH, UI32 height = DEFAULT_HEIGHT, const char* name = "Window")
+  : width{ width }, height{ height }, viewPort{ 0, 0, width, height }, lastX{ width * 0.5f }, lastY{ height * 0.5f },
+  mainCamera{ nullptr }, pWindow{ glfwCreateWindow(width, height, name, NULL, NULL) }
+{
   if (pWindow)
   {
-    // window size + viewport
-    viewPort.width  = width  = w;
-    viewPort.height = height = h;
-    viewPort.x = viewPort.y = 0;
-    
     glfwSetFramebufferSizeCallback(pWindow, resizeCallBack);
-
     // cursor + mouse
     // glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(pWindow, mouseCallBack);
-    lastX = width / 2.0f;
-    lastY = height / 2.0f;
-
-    return 0;
   }
   else
   {
     ERROR_MSG("Could not create window");
-    
     glfwTerminate();
-
-    return -1;
   }
 }
 
@@ -47,14 +40,14 @@ void Window::setViewPort()
 void Window::setMainCamera(Camera* camera)
 {
   mainCamera = camera;
-  camera->aspectRatio = width / static_cast<F32>(height);
+  camera->aspectRatio = (F32)width / (F32)height;
   mainCamera->vpHeight = 2.0f * tan(radians(mainCamera->FOV * 0.5f));
   mainCamera->vpWidth = mainCamera->vpHeight * mainCamera->aspectRatio;
 }
 
 F32 Window::getAspectRatio()
 {
-  return static_cast<F32>(width) / static_cast<F32>(height);
+  return (F32)width / (F32)height;
 }
 
 void Window::resize(UI32 w, UI32 h)
@@ -65,13 +58,17 @@ void Window::resize(UI32 w, UI32 h)
 
 I32 Window::processInput(Window* window, F32 deltaTime, bool pause)
 {
-  if (glfwGetKey(window->pWindow, GLFW_KEY_ESCAPE))
+  if (glfwGetKey(window->pWindow, GLFW_KEY_ESCAPE)) // TODO: ESCAP = TURN CAM MOVE WITH MOUSE OFF
+  {
     return 0;
+  }
   // pause
   if (glfwGetKey(window->pWindow, GLFW_KEY_P))
   {
     if (pause)
+    {
       glfwSetWindowUserPointer(window->pWindow, nullptr);
+    }
     else
     {
       glfwSetWindowUserPointer(window->pWindow, &window);
@@ -108,12 +105,12 @@ void Window::resizeCallBack(GLFWwindow* p_win, I32 w, I32 h)
   Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(p_win));
   if (window)
   {
-    window->resize(static_cast<UI32>(w), static_cast<UI32>(h));
+    window->resize((UI32)w, (UI32)h);
     window->viewPort = { 0, 0, window->width, window->height };
     window->setViewPort();
     if (window->mainCamera) // also update camera
     {
-      window->mainCamera->aspectRatio = static_cast<F32>(w) / static_cast<F32>(h);
+      window->mainCamera->aspectRatio = (F32)w / (F32)h;
       window->mainCamera->vpHeight = 2.0f * tan(radians(window->mainCamera->FOV * 0.5f));
       window->mainCamera->vpWidth = window->mainCamera->vpHeight * window->mainCamera->aspectRatio;
     }
@@ -127,16 +124,16 @@ void Window::mouseCallBack(GLFWwindow* p_win, F64 x, F64 y)
   {
     if (window->firstMouse) // initially set to true
     {
-      window->lastX = static_cast<F32>(x);
-      window->lastY = static_cast<F32>(y);
+      window->lastX = (F32)x;
+      window->lastY = (F32)y;
       window->firstMouse = false;
     }
 
-    F32 xoffset = static_cast<F32>(x) - window->lastX;
-    F32 yoffset = window->lastY - static_cast<F32>(y);
+    F32 xoffset = (F32)x - window->lastX;
+    F32 yoffset = window->lastY - (F32)y;
 
-    window->lastX = static_cast<F32>(x);
-    window->lastY = static_cast<F32>(y);
+    window->lastX = (F32)x;
+    window->lastY = (F32)y;
 
     F32 sensitivity = 0.1f;
     window->mainCamera->yaw += xoffset * sensitivity;

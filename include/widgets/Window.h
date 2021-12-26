@@ -33,7 +33,9 @@ typedef struct
 class Window
 {
 public:
-  I32 create(UI32 width = DEFAULT_WIDTH, UI32 height = DEFAULT_HEIGHT, const char* name = "Window");
+  Window();
+
+  Window(UI32 width, UI32 height, const char* name);
 
   void setViewPort();
 
@@ -58,15 +60,15 @@ public:
   static void mouseCallBack(GLFWwindow* p_win, F64 x, F64 y);
  
 private:
-  GLFWwindow* pWindow = nullptr;
-
-  Camera* mainCamera = nullptr;
-
   UI32 width = 0, height = 0;
 
   ViewPort viewPort = { 0, 0, 0, 0 };
 
   F32 lastX = 0, lastY = 0;
+
+  GLFWwindow* pWindow;
+
+  Camera* mainCamera;
 
   bool firstMouse = true;
 };

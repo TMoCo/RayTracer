@@ -1,10 +1,12 @@
 #version 450 core
 in vec2 uv; // the input variable from the vertex shader (same name and same type)  
-in vec3 normal;
 
 out vec4 FragColor;
 
+uniform sampler2D textureSampler;
+
 void main()
 {
-    FragColor = vec4(normal, 1.0f);
+    FragColor = texture(textureSampler, uv);
+    // FragColor = vec4(uv, 0.0f, 1.0f);
 }

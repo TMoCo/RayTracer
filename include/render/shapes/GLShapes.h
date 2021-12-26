@@ -16,8 +16,6 @@
 
 class GLCube
 {
-  static GLCube* cube;
-  
   UI32 VAO, VBO;
 
   GLCube() : VAO{ 0 }, VBO{ 0 }
