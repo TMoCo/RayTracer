@@ -1,0 +1,10 @@
+scene clone
+{
+  geometry clone
+  {
+    position 0 0 0
+    rotation 0 0 0
+    shape mesh clone.obj
+    material clone.mtl
+  }
+}

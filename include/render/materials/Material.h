@@ -23,6 +23,7 @@ class Surfel;
 typedef enum : UI16
 {
   ALBEDO,
+  NORMAL,
   METALLIC,
   ROUGHNESS,
   EMISSIVE,

@@ -60,7 +60,7 @@ I32 Application::run()
 
   Scene scene;
 
-  SceneLoader::loadScene("..\\scenes\\triangle.scene", scene);
+  SceneLoader::loadScene("..\\scenes\\clone.scene", scene);
 
   renderLoop(&scene);
 
@@ -73,7 +73,7 @@ void Application::renderLoop(Scene* scene)
 {
   BVH bvh = BVH(scene);
 
-  Mesh* mesh = ResourceManager::get().getMesh("triangle"); // todo : move into scene->draw()
+  Mesh* mesh = ResourceManager::get().getMesh("clone"); // todo : move into scene->draw()
 
   // set material
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
@@ -130,9 +130,10 @@ void Application::renderLoop(Scene* scene)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     offscreenShader.use();
     offscreenShader.setMatrix4("PV", PV);
-    mesh->draw();
+    mesh->draw(); // TODO: move into scene->draw()
 
     // RENDER GUI ------------
+    
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);

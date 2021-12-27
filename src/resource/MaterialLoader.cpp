@@ -106,15 +106,80 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
     {
       if (!material)
       {
-        ERROR_MSG("Can't change material properties to unspecified material!\nMake sure type is declared first.");
+        ERROR_MSG("Can't change material map properties of unspecified material!\nMake sure type is declared first.");
         return false;
       }
 
-      // texture path
+      // texture name
       token = strtok_s(remainding, " ", &remainding);
 
       // load texture
       material->setMap(ResourceManager::get().addTextureFromFile(token, token), MAT_MAPS::ALBEDO);
+      continue;
+    }
+
+    if (strcmp(token, "metallicMap") == 0)
+    {
+      if (!material)
+      {
+        ERROR_MSG("Can't change material map properties of unspecified material!\nMake sure type is declared first.");
+        return false;
+      }
+
+      // texture name
+      token = strtok_s(remainding, " ", &remainding);
+
+      // load texture
+      material->setMap(ResourceManager::get().addTextureFromFile(token, token), MAT_MAPS::METALLIC);
+      continue;
+    }
+
+    if (strcmp(token, "roughnessMap") == 0)
+    {
+      if (!material)
+      {
+        ERROR_MSG("Can't change material map properties of unspecified material!\nMake sure type is declared first.");
+        return false;
+      }
+
+      // texture name
+      token = strtok_s(remainding, " ", &remainding);
+
+      // load texture
+      material->setMap(ResourceManager::get().addTextureFromFile(token, token), MAT_MAPS::ROUGHNESS);
+      continue;
+    }
+
+    if (strcmp(token, "normalMap") == 0)
+    {
+      if (!material)
+      {
+        ERROR_MSG("Can't change material map properties of unspecified material!\nMake sure type is declared first.");
+        return false;
+      }
+
+      // texture name
+      token = strtok_s(remainding, " ", &remainding);
+
+      // load texture
+      material->setMap(ResourceManager::get().addTextureFromFile(token, token), MAT_MAPS::NORMAL);
+      continue;
+    }
+
+    if (strcmp(token, "emissiveMap") == 0)
+    {
+      if (!material)
+      {
+        ERROR_MSG("Can't change material map properties of unspecified material!\nMake sure type is declared first.");
+        return false;
+      }
+
+      // texture name
+      token = strtok_s(remainding, " ", &remainding);
+
+      // load texture
+      material->setMap(ResourceManager::get().addTextureFromFile(token, token), MAT_MAPS::EMISSIVE);
+      continue;
     }
 
   }
