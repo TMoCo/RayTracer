@@ -29,12 +29,14 @@ public:
     {
       this->normal *= -1.0f;
     }
-    this->position += EPSILON * this->normal; // displace for shadow acne
+    this->position += EPSILON * this->normal;
   }
 
   Vector3 position;
   
   Vector3 normal;
+
+  Vector3 tangent;
 
   Vector3 outDirection;
 

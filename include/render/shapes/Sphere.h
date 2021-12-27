@@ -63,7 +63,9 @@ public:
     pPhi = atan2f(-normal[2], normal[0]) + PI;
     Vector2 uv = { pPhi * REC_TWO_PI, pTheta * REC_PI }; // map from UV range [0,2pi] to [0,1]
     
+
     *surfel = { pHit, normal, uv, -ray.direction, this };
+    surfel->tangent = Vector3{ -sinf(uv[0]), 0.0f, cosf(uv[0]) }.normalize();
     *tHit = t;
 
     return true;

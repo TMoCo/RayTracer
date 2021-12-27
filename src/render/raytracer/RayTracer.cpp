@@ -92,7 +92,8 @@ Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) cons
       return emition + attenuation * castRay(scene, scattered, --depth);
     }
 
-    return emition;
+    // return emition;
+    return attenuation;
   }
 
   // TODO: Add background colour (from image, sample cube)
