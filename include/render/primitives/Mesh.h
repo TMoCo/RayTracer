@@ -20,6 +20,8 @@ class Mesh : public Primitive
 public:
   Mesh();
 
+  ~Mesh();
+
   AABB getBounds() const override;
 
   bool intersect(const Ray& ray, Surfel* surfel) const override;

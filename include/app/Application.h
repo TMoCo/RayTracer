@@ -31,11 +31,9 @@ private:
 protected:
   Window window;
 
-  Framebuffer framebuffer;
-
   RayTracer raytracer;
 
-  bool drawBVH;
+  bool drawBVH, antiAliasingEnabled;
 
 };
 

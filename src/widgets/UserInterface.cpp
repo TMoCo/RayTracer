@@ -9,13 +9,15 @@
 //
 
 #include <widgets/UserInterface.h>
+#include <resource/ResourceManager.h>
+#include <image/Texture.h>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
 UserInterface::UserInterface()
-  : cursorEnabled{ false }
+  : cursorEnabled{ true }, viewNormals{ false }
 { }
 
 UserInterface& UserInterface::get()
@@ -117,7 +119,6 @@ void UserInterface::init(GLFWwindow* window)
   ImGuiIO& io = ImGui::GetIO();
   ImGui::StyleColorsDark();
 
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetCursorPosCallback(window, mouseCallBack);
 
   ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -149,9 +150,10 @@ void UserInterface::set(Application* application)
 
   ImVec2 region = ImGui::GetContentRegionAvail();
   ImGui::BeginChild("Renders", { region.x * 0.5f, region.y });
-  ImGui::Image((void*)(intptr_t)application->framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); // OpenGL scene
-  ImGui::Separator();
-  // render ray traced output here!
+  ImGui::Image((void*)(intptr_t)application->window.framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); // OpenGL scene
+  Texture* t = ResourceManager::get().getTexture("ray traced output");
+  t->bind();
+  ImGui::Image((void*)(intptr_t)t->glId, { region.x * 0.5f, region.y * 0.49f }, { 0,0 }, { 1,-1 }); // ray traced
   ImGui::EndChild();
 
   ImGui::SameLine();
@@ -176,9 +178,8 @@ void UserInterface::set(Application* application)
     ImGui::InputInt("Samples num  ", numSamples, 1, 10);
     *numSamples = *numSamples < 1 ? 1 : *numSamples;
 
-    ImGui::Checkbox("Anti Aliasing", &AAenabled);
+    ImGui::Checkbox("Anti Aliasing", &application->antiAliasingEnabled);
     ImGui::SliderFloat("Amount       ", &application->raytracer.antiAliasingKernelSize, 0.0f, 1.0f);
-  
   }
   ImGui::EndChild();
   

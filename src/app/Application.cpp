@@ -27,7 +27,7 @@ int Application::init()
     return -1;
   }
 
-  drawBVH = false;
+  drawBVH = false, antiAliasingEnabled = false;
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -43,11 +43,9 @@ int Application::init()
     return -1;
   }
 
-  framebuffer = Framebuffer{ window.getWidth(), window.getHeight() };
+  window.updateFramebuffer();
 
   UserInterface::get().init(window.getWindowPointer());
-
-  window.setViewPort();
 
   return 0;
 }
@@ -75,23 +73,21 @@ void Application::renderLoop(Scene* scene)
 {
   BVH bvh = BVH(scene);
 
-  Mesh* mesh = ResourceManager::get().getMesh("triangle");
+  Mesh* mesh = ResourceManager::get().getMesh("triangle"); // todo : move into scene->draw()
 
   // set material
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader offscreenShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
   Shader compositionShader{ "..\\shaders\\composition.vert", "..\\shaders\\composition.frag" };
-
-  Texture* rayTracedTexture;
+      
   Image rayTracedData{ window.getWidth(), window.getHeight(), 3 };
-  
+  Texture* rayTracedTexture = ResourceManager::get().addTexture("ray traced output", new Texture{ &rayTracedData, GL_RGB });
+
   Camera camera{ { 0.0f, 0.0f, 0.0f }, 1.0f, 45.0f, 0.1f, 2000.0f };
   window.setMainCamera(&camera);
 
   Matrix4 PV; // projection * view
   
-  glEnable(GL_DEPTH_TEST);
-
   glfwSetWindowUserPointer(window.getWindowPointer(), &window);
 
   F32 deltaTime = 0.0f, previous = 0.0f;
@@ -102,24 +98,26 @@ void Application::renderLoop(Scene* scene)
     deltaTime = current - previous;
     previous = current;
 
-    UserInterface::get().set(this);
+    // INPUT ------------
 
     if (UserInterface::processKeyInput(&window, deltaTime) == 0)
     {
       raytracer.raytrace(scene, rayTracedData, window.getCamera(), false);
       rayTracedData.writeToImageFile("..\\screenshots\\out.jpg");
       // also load image as a texture
-      rayTracedTexture = new Texture{ &rayTracedData, GL_RGB };
+      rayTracedTexture->generate(true);
     }
 
-    PV = camera.getProjectionViewMatrix();
+    UserInterface::get().set(this);
 
-    // render scene to frame buffer
-    framebuffer.bind();
-    glClearColor(0.1f, 0.6f, 0.8f, 1.0f);
+    // RENDER SCENE ------------
 
+    window.framebuffer.bind();
     glEnable(GL_DEPTH_TEST);
+    glClearColor(0.1f, 0.6f, 0.8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    PV = camera.getProjectionViewMatrix();
     
     if (drawBVH)
     {
@@ -134,7 +132,7 @@ void Application::renderLoop(Scene* scene)
     offscreenShader.setMatrix4("PV", PV);
     mesh->draw();
 
-    // GUI
+    // RENDER GUI ------------
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);

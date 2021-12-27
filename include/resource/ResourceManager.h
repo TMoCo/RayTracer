@@ -27,6 +27,7 @@ class ResourceManager
   friend class MaterialLoader;
   friend class OBJLoader;
   friend class SceneLoader;
+  friend class Application;
 
 public:
   static ResourceManager& get();

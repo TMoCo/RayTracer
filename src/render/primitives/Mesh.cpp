@@ -14,6 +14,13 @@ Mesh::Mesh()
   : Primitive(), VAO{ 0 }, VBO{ 0 }, EBO{ 0 }, onGpu{ false }
 { }
 
+Mesh::~Mesh()
+{
+  //glDeleteBuffers(1, &VBO);
+  //glDeleteBuffers(1, &EBO);
+  glDeleteVertexArrays(1, &VAO);
+}
+
 AABB Mesh::getBounds() const
 {
   return AABB::getAABB(pos);

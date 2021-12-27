@@ -15,6 +15,8 @@
 
 class Framebuffer
 {
+  friend class Window;
+
   enum OutBuffers : UI32
   {
     COLOUR,
@@ -28,11 +30,17 @@ public:
 
   Framebuffer(UI32 width, UI32 height);
 
+  ~Framebuffer();
+
   void bind();
 
   void bindBuffers();
 
-//private:
+protected:
+  void build(UI32 width, UI32 height);
+
+  void destroy();
+
 public:
   UI32 FBO;
   std::array<UI32, OutBuffers::SIZE> buffers;

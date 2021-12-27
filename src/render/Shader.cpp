@@ -49,6 +49,11 @@ Shader::Shader(const std::string& vs_path, const std::string& fs_path)
   glDeleteShader(fs);
 }
 
+Shader::~Shader()
+{
+  glDeleteProgram(id);
+}
+
 void Shader::use()
 {
   if (valid)

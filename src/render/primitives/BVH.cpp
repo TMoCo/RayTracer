@@ -10,9 +10,16 @@
 #include <scene/Scene.h>
 #include <render/shapes/GLShapes.h>
 
-BVH::BVH()
-{
 
+BVH::BVH()
+  :VAO{ 0 }, VBO{ 0 }, IBO{ 0 }
+{ }
+
+BVH::~BVH()
+{
+  //glDeleteBuffers(1, &VBO);
+  //glDeleteBuffers(1, &IBO);
+  glDeleteVertexArrays(1, &VAO);
 }
 
 BVH::BVH(const Scene* scene)

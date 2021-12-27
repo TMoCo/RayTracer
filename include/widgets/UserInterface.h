@@ -32,7 +32,7 @@ public:
   void terminate();
 
 private:
-  bool cursorEnabled, viewBVH, viewNormals, AAenabled;
+  bool cursorEnabled, viewNormals;
 };
 
 #endif // !USER_INTERFACE_H

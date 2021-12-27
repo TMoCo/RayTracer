@@ -19,6 +19,8 @@ public:
 
   Shader(const std::string& vs_path, const std::string& fs_path);
 
+  ~Shader();
+
   void use();
 
   bool isValid() const;

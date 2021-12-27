@@ -26,6 +26,8 @@ public:
 
   BVH(const Scene* scene);
 
+  ~BVH();
+
   void draw() const;
 
 private:

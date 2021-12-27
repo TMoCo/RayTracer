@@ -21,6 +21,7 @@ class Vector2;
 class Texture
 {
   friend class TextureLoader;
+  friend class UserInterface;
 public:
   Texture();
 

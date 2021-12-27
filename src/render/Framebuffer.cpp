@@ -18,6 +18,26 @@ Framebuffer::Framebuffer()
 Framebuffer::Framebuffer(UI32 width, UI32 height)
   : FBO{ 0 }, buffers{ {} }
 {
+  build(width, height);
+}
+
+Framebuffer::~Framebuffer()
+{
+  destroy();
+}
+
+void Framebuffer::bind()
+{
+  glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+}
+
+void Framebuffer::bindBuffers()
+{
+  glBindTexture(GL_TEXTURE_2D, buffers[OutBuffers::COLOUR]);
+}
+
+void Framebuffer::build(UI32 width, UI32 height)
+{
   glGenFramebuffers(1, &FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
   // colour buffer
@@ -43,12 +63,9 @@ Framebuffer::Framebuffer(UI32 width, UI32 height)
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Framebuffer::bind()
+void Framebuffer::destroy()
 {
-  glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-}
-
-void Framebuffer::bindBuffers()
-{
-  glBindTexture(GL_TEXTURE_2D, buffers[OutBuffers::COLOUR]);
+  if (buffers[OutBuffers::DEPTH]) glDeleteRenderbuffers(1, &buffers[OutBuffers::DEPTH]);
+  if (buffers[OutBuffers::COLOUR]) glDeleteTextures(1, &buffers[OutBuffers::COLOUR]);
+  if (FBO) glDeleteFramebuffers(1, &FBO);
 }

@@ -38,8 +38,6 @@ public:
 
   Window(UI32 width, UI32 height, const char* name);
 
-  void setViewPort();
-
   void setMainCamera(Camera* camera);
 
   inline UI32 getWidth() { return width; }
@@ -51,13 +49,11 @@ public:
   inline GLFWwindow* getWindowPointer() { return pWindow; }
 
   F32 getAspectRatio();
+
+  void updateFramebuffer();
     
-  void resize(UI32 width, UI32 height);
- 
   static void resizeCallBack(GLFWwindow* p_win, I32 w, I32 h);
 
-  static void mouseCallBack(GLFWwindow* p_win, F64 x, F64 y);
- 
 public:
   UI32 width = 0, height = 0;
 
@@ -69,7 +65,7 @@ public:
 
   Camera* mainCamera;
 
-  Framebuffer* framebuffer;
+  Framebuffer framebuffer;
 
   bool firstMouse = true;
 };
