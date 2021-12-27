@@ -37,7 +37,7 @@ class Material
 public:
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const = 0;
   
-  virtual Colour emit(const Vector2& UV) const
+  virtual Colour emit(const Vector2& uv) const
   {
     return colour::Black;
   }
@@ -48,9 +48,6 @@ public:
   }
 
 protected:
-// TODO: use shader for openGL scene
-//  Shader> shader;
-
   std::array<Texture*, MAT_MAPS::SIZE> maps{ nullptr, nullptr, nullptr, nullptr };
 };
 

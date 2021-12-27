@@ -59,4 +59,14 @@ constexpr inline F32 inverseSquareRoot(F32 x)
   return x * (1.5f - 0.5f * x * x * x);
 }
 
+constexpr inline F32 lerp(const F32& a, const F32& b, F32 t)
+{
+  return a * (1.0f - t) + b * t;
+}
+
+inline Vector3 lerp(const Vector3& a, const Vector3& b, F32 t)
+{
+  return a * (1.0f - t) + b * t;
+}
+
 #endif // !ROUTINES_H

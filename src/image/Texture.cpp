@@ -52,3 +52,9 @@ Colour Texture::sample(const Vector2& uv) const
   const byte* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
   return Colour(pixel[0] * REC_255, pixel[1] * REC_255, pixel[2] * REC_255);
 }
+
+F32 Texture::sampleChannel(const Vector2& uv, const UI32& channel) const
+{
+  const byte* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
+  return pixel[channel] * REC_255;
+}

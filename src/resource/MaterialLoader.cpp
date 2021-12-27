@@ -99,6 +99,10 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
           material = ResourceManager::get().addMaterial(materialName, new DiffuseLight{ { r, g, b } });
         }
       }
+      else if (strcmp(token, "mixture") == 0)
+      {
+        material = ResourceManager::get().addMaterial(materialName, new Mixture);
+      }
       continue;
     }
 

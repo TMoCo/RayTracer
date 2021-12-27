@@ -15,5 +15,6 @@
 #include <render/materials/Metal.h>
 #include <render/materials/Dielectric.h>
 #include <render/materials/DiffuseLight.h>
+#include <render/materials/Mixture.h>
 
 #endif // ! MATERIAL_H

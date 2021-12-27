@@ -33,6 +33,8 @@ public:
 
   Colour sample(const Vector2& uv) const;
 
+  F32 sampleChannel(const Vector2& uv, const UI32& channel) const;
+
   void generate(bool mip);
 
 public:

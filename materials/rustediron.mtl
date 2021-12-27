@@ -1,0 +1,5 @@
+type mixture
+albedoMap rustedironAlbedo.png
+metallicMap rustedironMetallic.png
+roughnessMap rustedironRoughness.png
+normalMap rustedironNormal.png

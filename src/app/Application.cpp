@@ -60,7 +60,7 @@ I32 Application::run()
 
   Scene scene;
 
-  SceneLoader::loadScene("..\\scenes\\clone.scene", scene);
+  SceneLoader::loadScene("..\\scenes\\test_sphere.scene", scene);
 
   renderLoop(&scene);
 
@@ -75,7 +75,6 @@ void Application::renderLoop(Scene* scene)
 
   Mesh* mesh = ResourceManager::get().getMesh("clone"); // todo : move into scene->draw()
 
-  // set material
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader offscreenShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
   Shader compositionShader{ "..\\shaders\\composition.vert", "..\\shaders\\composition.frag" };
@@ -102,7 +101,7 @@ void Application::renderLoop(Scene* scene)
 
     if (UserInterface::processKeyInput(&window, deltaTime) == 0)
     {
-      raytracer.raytrace(scene, rayTracedData, window.getCamera(), false);
+      raytracer.raytrace(scene, rayTracedData, window.getCamera(), antiAliasingEnabled);
       rayTracedData.writeToImageFile("..\\screenshots\\out.jpg");
       // also load image as a texture
       rayTracedTexture->generate(true);
@@ -130,7 +129,7 @@ void Application::renderLoop(Scene* scene)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     offscreenShader.use();
     offscreenShader.setMatrix4("PV", PV);
-    mesh->draw(); // TODO: move into scene->draw()
+    if (mesh) mesh->draw(); // TODO: move into scene->draw()
 
     // RENDER GUI ------------
     
