@@ -83,22 +83,23 @@ Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) cons
   
   if (scene->intersect(inRay, &surfel))
   {
+    return inRay.tMax;
+
     Ray scattered;
     Colour attenuation;
     Colour emition = surfel.material->emit(surfel.uv);
-  
+      
     if (surfel.material->scatter(inRay, surfel, attenuation, scattered))
     {
       return emition + attenuation * castRay(scene, scattered, --depth);
     }
 
-    // return emition;
-    return attenuation;
+    return emition;
   }
 
   // TODO: Add background colour (from image, sample cube)
   //
-  return colour::White;
+  return colour::Blue;
   /*
   F32 t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
   return (1.0f - t) * colour::White + t * Colour{ 0.5f, 0.7f, 1.0f };

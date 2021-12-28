@@ -11,7 +11,8 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H 1
 
-class AABB;
+#include <render/bounds/AABB.h>
+
 class Material;
 class Surfel;
 class Ray;
@@ -20,8 +21,6 @@ class Node;
 class Primitive
 {
 public:
-  virtual AABB getBounds() const = 0;
-
   virtual bool intersect(const Ray& ray, Surfel* surfel) const = 0;
   
   virtual void test() = 0;
@@ -34,6 +33,8 @@ public:
   Node* parent;
 
   Material* material;
+
+  AABB bounds;
 };
 
 #endif // !PRIMITIVE_H

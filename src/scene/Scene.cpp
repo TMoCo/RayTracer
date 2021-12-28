@@ -6,8 +6,8 @@
 
 #include <scene/Scene.h>
 
-Scene::Scene() 
-  : root(nullptr)
+Scene::Scene()
+  : root(nullptr), bvh{ nullptr }
 { }
 
 Scene::~Scene()
@@ -26,16 +26,25 @@ void Scene::clear()
 void Scene::draw() const
 { }
 
-const std::vector<Primitive*>* Scene::getPrimitives() const
+BVH* Scene::buildBVH()
 {
-  return &primitives;
+  if (bvh)
+  {
+    delete bvh;
+  }
+  bvh = new BVH{ this };
+  return bvh;
 }
 
 bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
 {
+  // if bvh on:
+  return bvh->intersect(inRay, surfel);
+
   for (auto& primitive : primitives)
   {
     primitive->intersect(inRay, surfel);
   }
+
   return inRay.tMax < INFINITY;
 }

@@ -84,8 +84,8 @@ void Image::writePixelColour(UI32 u, UI32 v, const F32* colourValues)
   for (UI32 i = 0; i < channels; ++i)
   {
     F32 colourValue = *(colourValues + i);
-    //*(pixel + i) = (byte)(sqrtf(colourValue / (colourValue + 1.0f)) * 255.0f); // tone mapping + gamma correction
-    *(pixel + i) = (byte)(sqrtf(colourValue) * 255.0f); // gamma correction
+    *(pixel + i) = (byte)(sqrtf(colourValue / (colourValue + 1.0f)) * 255.0f); // tone mapping + gamma correction
+    //*(pixel + i) = (byte)(sqrtf(colourValue) * 255.0f); // gamma correction
   }
 }
 
@@ -113,8 +113,8 @@ bool Image::writeToImageFile(const std::string& path) const
 
 const byte* Image::getTexel(F32 u, F32 v) const
 {
-  I32 col = (I32)(u * width);
-  I32 row = (I32)(v * height);
+  I32 col = (I32)(u * (width - 1));
+  I32 row = (I32)(v * (height - 1));
   return &data[(row * width + col) * channels];
 }
 

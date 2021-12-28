@@ -22,8 +22,6 @@ public:
 
   ~Mesh();
 
-  AABB getBounds() const override;
-
   bool intersect(const Ray& ray, Surfel* surfel) const override;
 
   void test() override;
@@ -48,7 +46,6 @@ protected:
   std::vector<Vector3> pos;
   std::vector<Vector3> nor;
   std::vector<Vector2> tex;
-
 
   bool onGpu;
 };

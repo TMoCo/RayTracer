@@ -33,9 +33,7 @@ public:
 
   F32 surfaceArea() const;
 
-  AXIS maxExtent() const;
-
-  bool intersect(const Ray& ray, const Vector3& invDir, const I32 negDir[3]) const;
+  bool intersect(const Ray& ray, F32* tMax) const;
 
   static AABB mergeAABB(const AABB& left, const AABB& right);
 
@@ -46,8 +44,7 @@ public:
   static AABB getAABB(const std::vector<Vector3>& positions);
 
 public:
-  Vector3 min;
-  Vector3 max;
+  Vector3 bounds[2];
 
 };
 

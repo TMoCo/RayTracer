@@ -16,14 +16,22 @@
 
 constexpr F32 tMin = 0.001f;
 
-class Ray {
+class Ray
+{
 public:
-  Ray() : tMax{ 0.0f } 
-  { }
+  Ray() : tMax{ 0.0f }
+  {}
 
-  Ray(const Vector3& origin, const Vector3& direction, F32 tMax) 
-    : origin{ origin }, direction{ direction.normalize() }, tMax{ tMax }
-  { }
+  Ray(const Vector3& origin, const Vector3& direction, F32 tMax)
+    : origin{ origin }, direction{ direction.normalize() }, tMax{ tMax },
+    inverseDir{ 1.0f / direction }, negDir{ inverseDir[0] < 0.0f, inverseDir[1] < 0.0f, inverseDir[2] < 0.0f }
+  { 
+    /*
+    negDir[0] = inverseDir[0] < 0.0f;
+    negDir[1] = inverseDir[1] < 0.0f;
+    negDir[2] = inverseDir[2] < 0.0f;
+    */
+  }
 
   inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC)
   {
@@ -41,7 +49,11 @@ public:
   Vector3 origin;
 
   Vector3 direction;
+
+  Vector3 inverseDir;
   
+  I32 negDir[3];
+
   mutable F32 tMax;
 
 };

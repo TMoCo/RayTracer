@@ -60,7 +60,7 @@ I32 Application::run()
 
   Scene scene;
 
-  SceneLoader::loadScene("..\\scenes\\test_sphere.scene", scene);
+  SceneLoader::loadScene("..\\scenes\\cornellbox.scene", scene);
 
   renderLoop(&scene);
 
@@ -71,9 +71,10 @@ I32 Application::run()
 
 void Application::renderLoop(Scene* scene)
 {
-  BVH bvh = BVH(scene);
+  Mesh* mesh = ResourceManager::get().getMesh("box"); // todo : move into scene->draw()
 
-  Mesh* mesh = ResourceManager::get().getMesh("clone"); // todo : move into scene->draw()
+  // BVH bvh = BVH(scene);
+  scene->buildBVH();
 
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader offscreenShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
@@ -113,7 +114,7 @@ void Application::renderLoop(Scene* scene)
 
     window.framebuffer.bind();
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.1f, 0.6f, 0.8f, 1.0f);
+    glClearColor(0.1f, 0.6f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     PV = camera.getProjectionViewMatrix();
@@ -123,7 +124,7 @@ void Application::renderLoop(Scene* scene)
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
       debugShader.setMatrix4("PV", PV);
-      bvh.draw();
+      scene->bvh->draw();
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

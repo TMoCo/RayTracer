@@ -1,0 +1,42 @@
+scene cornell_box
+{
+  geometry box
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material cornellbox.mtl
+    shape mesh cornellbox.obj
+  }
+
+  geometry light
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material light.mtl
+    shape mesh cornellboxlight.obj
+  }
+
+  geometry sphere
+  {
+    position 0.65 -0.65 0.75
+    rotation 0 0 0
+    material glass.mtl
+    shape sphere 0.25 
+  }
+
+  geometry smallcube
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material metal.mtl
+    shape mesh smallcube.obj
+  }
+
+  geometry bigcube
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material metal.mtl
+    shape mesh bigcube.obj
+  }
+}

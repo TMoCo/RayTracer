@@ -11,21 +11,21 @@
 #include <render/bounds/AABB.h>
 
 AABB::AABB() 
-  : min{ std::numeric_limits<F32>::max() }, max{ std::numeric_limits<F32>::lowest() }
+  : bounds{ std::numeric_limits<F32>::max(), std::numeric_limits<F32>::lowest() }
 { }
 
 AABB::AABB(const Vector3& min, const Vector3& max) 
-  : min{ min }, max{ max }
+  : bounds{ min, max }
 { }
 
 Vector3 AABB::getCentroid() const
 {
-  return (min + max) * 0.5f;
+  return (bounds[0] + bounds[1]) * 0.5f;
 }
 
 Vector3 AABB::diagonal() const
 {
-  return max - min;
+  return bounds[1] - bounds[0];
 }
 
 F32 AABB::surfaceArea() const
@@ -34,45 +34,49 @@ F32 AABB::surfaceArea() const
   return 2.0f * (d[0] * d[1] + d[0] * d[2] + d[1] * d[2]);
 }
 
-AXIS AABB::maxExtent() const
-{
-  Vector3 d = diagonal();
-  if (d[0] > d[1] && d[0] > d[2])
-  {
-    return AXIS::X;
-  }
-  else if (d[1] > d[2])
-  {
-    return AXIS::Y;
-  }
-  else
-  {
-    return AXIS::Z;
-  }
-}
-
 // optional hit arguments updated for positive intersections
-bool AABB::intersect(const Ray& ray, const Vector3& invDir, const I32 negDir[3]) const
+bool AABB::intersect(const Ray& ray, F32* tMax) const
 {
-  return false;
+  F32 t0 = 0.0f, t1 = ray.tMax, tNear, tFar;
+  // x
+  tNear = (bounds[ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
+  tFar = (bounds[1 - ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
+  t0 = tNear > t0 ? tNear : t0;
+  t1 = tFar < t1 ? tFar : t1;
+  if (t0 > t1) return false;
+  // y
+  tNear = (bounds[ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
+  tFar = (bounds[1 - ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
+  t0 = tNear > t0 ? tNear : t0;
+  t1 = tFar < t1 ? tFar : t1;
+  if (t0 > t1) return false;
+  // z
+  tNear = (bounds[ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
+  tFar = (bounds[1 - ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
+  t0 = tNear > t0 ? tNear : t0;
+  t1 = tFar < t1 ? tFar : t1;
+  if (t0 > t1) return false;
+  // update
+  *tMax = t1;
+  return true;
 }
 
 AABB AABB::mergeAABB(const AABB& left, const AABB& right)
 {
   AABB bbox{};
   
-  bbox.min = 
+  bbox.bounds[0] = 
   {
-    left.min[0] < right.min[0] ? left.min[0] : right.min[0],
-    left.min[1] < right.min[1] ? left.min[1] : right.min[1] ,
-    left.min[2] < right.min[2] ? left.min[2] : right.min[2] 
+    left.bounds[0][0] < right.bounds[0][0] ? left.bounds[0][0] : right.bounds[0][0],
+    left.bounds[0][1] < right.bounds[0][1] ? left.bounds[0][1] : right.bounds[0][1] ,
+    left.bounds[0][2] < right.bounds[0][2] ? left.bounds[0][2] : right.bounds[0][2] 
   };
   
-  bbox.max = 
+  bbox.bounds[1] = 
   {
-    left.max[0] > right.max[0] ? left.max[0] : right.max[0],
-    left.max[1] > right.max[1] ? left.max[1] : right.max[1] ,
-    left.max[2] > right.max[2] ? left.max[2] : right.max[2] 
+    left.bounds[1][0] > right.bounds[1][0] ? left.bounds[1][0] : right.bounds[1][0],
+    left.bounds[1][1] > right.bounds[1][1] ? left.bounds[1][1] : right.bounds[1][1] ,
+    left.bounds[1][2] > right.bounds[1][2] ? left.bounds[1][2] : right.bounds[1][2] 
   };
 
   return bbox;
@@ -82,18 +86,18 @@ AABB AABB::mergeAABB(const AABB& box, const Vector3& point)
 {
   AABB bbox{};
 
-  bbox.min = 
+  bbox.bounds[0] = 
   {
-    box.min[0] < point[0] ? box.min[0] : point[0],
-    box.min[1] < point[1] ? box.min[1] : point[1] ,
-    box.min[2] < point[2] ? box.min[2] : point[2] 
+    box.bounds[0][0] < point[0] ? box.bounds[0][0] : point[0],
+    box.bounds[0][1] < point[1] ? box.bounds[0][1] : point[1] ,
+    box.bounds[0][2] < point[2] ? box.bounds[0][2] : point[2] 
   };
   
-  bbox.max = 
+  bbox.bounds[1] = 
   {
-    box.max[0] > point[0] ? box.max[0] : point[0],
-    box.max[1] > point[1] ? box.max[1] : point[1],
-    box.max[2] > point[2] ? box.max[2] : point[2]
+    box.bounds[1][0] > point[0] ? box.bounds[1][0] : point[0],
+    box.bounds[1][1] > point[1] ? box.bounds[1][1] : point[1],
+    box.bounds[1][2] > point[2] ? box.bounds[1][2] : point[2]
   };
   
   return bbox;

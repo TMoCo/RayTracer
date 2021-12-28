@@ -21,11 +21,6 @@ Mesh::~Mesh()
   glDeleteVertexArrays(1, &VAO);
 }
 
-AABB Mesh::getBounds() const
-{
-  return AABB::getAABB(pos);
-}
-
 bool Mesh::intersect(const Ray& ray, Surfel* surfel) const 
 {
   F32 tHit = ray.tMax;

@@ -12,6 +12,7 @@
 #define BVH_H 1
 
 #include <core/types.h>
+#include <render/primitives/Primitive.h>
 
 #include <vector>
 
@@ -19,7 +20,7 @@ class AABB;
 class Scene;
 class Primitive;
 
-class BVH
+class BVH : public Primitive
 {
 public:
   BVH();
@@ -28,16 +29,19 @@ public:
 
   ~BVH();
 
+  virtual bool intersect(const Ray& ray, Surfel* surfel) const override;
+
+  virtual void test() override;
+
   void draw() const;
 
 private:
-  void generateOpenGLData();
 
   UI32 VAO, VBO, IBO;
 
-  const std::vector<Primitive*>* scenePrimitives;
-
   std::vector<Matrix4> AABBTransforms;
+
+  const Scene* scene;
 };
 
 #endif // !BVH_H
