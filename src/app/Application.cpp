@@ -73,7 +73,6 @@ void Application::renderLoop(Scene* scene)
 {
   Mesh* mesh = ResourceManager::get().getMesh("box"); // todo : move into scene->draw()
 
-  // BVH bvh = BVH(scene);
   scene->buildBVH();
 
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
@@ -104,8 +103,7 @@ void Application::renderLoop(Scene* scene)
     {
       raytracer.raytrace(scene, rayTracedData, window.getCamera(), antiAliasingEnabled);
       rayTracedData.writeToImageFile("..\\screenshots\\out.jpg");
-      // also load image as a texture
-      rayTracedTexture->generate(true);
+      rayTracedTexture->generate(true); // also load image as a texture and display
     }
 
     UserInterface::get().set(this);

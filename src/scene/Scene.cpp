@@ -21,6 +21,11 @@ void Scene::clear()
   {
     delete root;
   }
+
+  if (bvh) 
+  {
+    delete bvh;
+  }
 }
 
 void Scene::draw() const
@@ -32,6 +37,7 @@ BVH* Scene::buildBVH()
   {
     delete bvh;
   }
+
   bvh = new BVH{ this };
   return bvh;
 }
@@ -39,7 +45,7 @@ BVH* Scene::buildBVH()
 bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
 {
   // if bvh on:
-  return bvh->intersect(inRay, surfel);
+  // return bvh->intersect(inRay, surfel);
 
   for (auto& primitive : primitives)
   {

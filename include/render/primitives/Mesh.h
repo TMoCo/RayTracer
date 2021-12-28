@@ -22,6 +22,8 @@ public:
 
   ~Mesh();
 
+  const AABB* getBounds() override;
+
   bool intersect(const Ray& ray, Surfel* surfel) const override;
 
   void test() override;

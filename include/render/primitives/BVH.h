@@ -29,6 +29,8 @@ public:
 
   ~BVH();
 
+  virtual const AABB* getBounds() override;
+
   virtual bool intersect(const Ray& ray, Surfel* surfel) const override;
 
   virtual void test() override;

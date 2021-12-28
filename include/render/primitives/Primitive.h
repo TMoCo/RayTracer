@@ -21,6 +21,20 @@ class Node;
 class Primitive
 {
 public:
+  Primitive() 
+    : parent{ nullptr }, material{ nullptr }, bounds { nullptr }
+  { }
+
+  ~Primitive()
+  {
+    if (bounds)
+    {
+      delete bounds;
+    }
+  }
+
+  virtual const AABB* getBounds() = 0;
+
   virtual bool intersect(const Ray& ray, Surfel* surfel) const = 0;
   
   virtual void test() = 0;
@@ -34,7 +48,7 @@ public:
 
   Material* material;
 
-  AABB bounds;
+  AABB* bounds;
 };
 
 #endif // !PRIMITIVE_H

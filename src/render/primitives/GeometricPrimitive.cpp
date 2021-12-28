@@ -12,7 +12,12 @@
 GeometricPrimitive::GeometricPrimitive(Shape* shape)
   : Primitive(), shape{ shape }
 { 
-  bounds = shape->getAABB();
+  bounds = new AABB{ shape->getAABB() };
+}
+
+const AABB* GeometricPrimitive::getBounds()
+{
+  return bounds;
 }
 
 bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
