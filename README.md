@@ -12,9 +12,9 @@ The initial plan for the project is to address the issues present in the previou
 
 ## Moving forward
 After generating some images, the next steps of the project are:
-- [ ] Integrate triangle meshes into the scene file format
-- [ ] Render a debug scene in OpenGl (view BVH and help position camera)
-- [ ] A material file format for PBR 
+- [x] Integrate triangle meshes into the scene file format
+- [x] Render a debug scene in OpenGl (view BVH and help position camera)
+- [x] A material file format for PBR 
 - [ ] More accurate Monte Carlo sampling/scattering
 - [ ] Volumetric rendering
 - [ ] Bounding volume hierarchies
@@ -40,10 +40,73 @@ Planet earth
 
 A glass ball illuminated by a ball of light, look at those caustics!
 
+![PBRv1](https://user-images.githubusercontent.com/56483943/147643686-be8e6e69-d115-48a2-9b7a-7d7aaff051ad.jpg)
+
+Material data stored in textures. Creating complex materials based on textures is as easy as:
+```
+type mixture
+albedoMap rustedironAlbedo.png
+metallicMap rustedironMetallic.png
+roughnessMap rustedironRoughness.png
+normalMap rustedironNormal.png
+```
+![cornell2](https://user-images.githubusercontent.com/56483943/147644223-00bb1979-d53b-4a92-a7a9-fc56f0b8113d.jpg)
+
+Triangle meshes loaded from .obj files can also be rendered. Using Blender, I make my own models or export royalty free models from other formats such as .gltf. Here is the scene file used:
+
+```
+scene cornell_box
+{
+  geometry box
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material cornellbox.mtl
+    shape mesh cornellbox.obj
+  }
+
+  geometry light
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material light.mtl
+    shape mesh cornellboxlight.obj
+  }
+
+  geometry sphere
+  {
+    position 0.65 -0.65 0.75
+    rotation 0 0 0
+    material glass.mtl
+    shape sphere 0.25 
+  }
+  
+  geometry smallcube
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material metal.mtl
+    shape mesh smallcube.obj
+  }
+
+  geometry bigcube
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material metal.mtl
+    shape mesh bigcube.obj
+  }
+}
+```
+
+![GUIiteration3](https://user-images.githubusercontent.com/56483943/147644651-ff1f112e-f89e-4c89-b3af-e10043060dc6.png)
+
+Using the user interface, you can change render options and get a debug preview of the scene in opengl, as well as a view of the rendered output.
+
 ## Desirable features
 - [ ] acceleration data structures
 - [ ] threading
-- [ ] refractive materials
+- [x] refractive materials
 - [ ] subsurface scattering / volumetric rendering
 - [ ] instanced geometry
 - [ ] atmospheric effects (fog, clouds)
