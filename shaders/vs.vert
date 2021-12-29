@@ -6,11 +6,11 @@ layout (location = 2) in vec2 aTex;
 out vec2 uv; // specify a color output to the fragment shader
 out vec3 normal;
 
-uniform mat4 PV;
+uniform mat4 PVM;
 
 void main()
 {
-    gl_Position = PV * vec4(aPos, 1.0f);
+    gl_Position = PVM * vec4(aPos, 1.0f);
     normal = aNor;
     uv = aTex;
 }

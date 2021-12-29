@@ -29,7 +29,6 @@ public:
     {
       this->normal *= -1.0f;
     }
-    this->position += EPSILON * this->normal;
   }
 
   Vector3 position;

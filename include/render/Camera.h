@@ -73,9 +73,9 @@ struct Camera {
     return Matrix4::lookAt(position, position + front, up);
   }
 
-  inline Matrix4 getProjectionViewMatrix() const
+  inline Matrix4 getProjectionMatrix() const
   {
-    return Matrix4::perspective(radians(FOV), aspectRatio, zNear, zFar) * getViewMatrix();
+    return Matrix4::perspective(radians(FOV), aspectRatio, zNear, zFar);
   }
 
   inline void processInput(kMovement move, F32 speed)

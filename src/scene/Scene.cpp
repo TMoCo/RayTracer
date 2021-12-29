@@ -45,7 +45,7 @@ BVH* Scene::buildBVH()
 bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
 {
   // if bvh on:
-  // return bvh->intersect(inRay, surfel);
+  return bvh->intersect(inRay, surfel);
 
   for (auto& primitive : primitives)
   {

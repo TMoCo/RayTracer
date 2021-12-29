@@ -29,6 +29,7 @@ public:
 
   bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const override
   {
+    Ray toObjRay = toWorld->applyInverseToRay(ray);
     // TODO: perform moller trumbore algorithm here
     Vector3 edge1, edge2, h, s, q;
     F32 k;
@@ -36,7 +37,7 @@ public:
     edge1 = mesh->pos[*(index + 1)] - mesh->pos[*index];
     edge2 = mesh->pos[*(index + 2)] - mesh->pos[*index];
 
-    h = ray.direction.cross(edge2);
+    h = toObjRay.direction.cross(edge2);
     k = edge1.dot(h);
 
     // if cross prod of ray and edge2 is perpendicular to egde1, then 
@@ -49,13 +50,13 @@ public:
     k = 1.0f / k; // reuse k
 
     // s = origin - v0
-    s = ray.origin - mesh->pos[*index];
+    s = toObjRay.origin - mesh->pos[*index];
     q = s.cross(edge1);
 
     F32 a, b;
 
     a = k * s.dot(h);
-    b = k * ray.direction.dot(q); // barycentric uv
+    b = k * toObjRay.direction.dot(q); // barycentric uv
     if (b < 0.0f || a < 0.0f || a + b > 1.0f)
     {
       return false;

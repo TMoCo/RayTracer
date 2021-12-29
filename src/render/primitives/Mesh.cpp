@@ -25,7 +25,11 @@ const AABB* Mesh::getBounds()
 {
   if (!bounds)
   {
-    bounds = new AABB{ AABB::getAABB(pos) };
+    bounds = new AABB{};
+    for (auto& p : pos)
+    {
+      bounds->mergeWithPoint(parent->getWorldTransform()->applyToPoint(p));
+    }
   }
 
   return bounds;

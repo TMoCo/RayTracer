@@ -35,13 +35,9 @@ public:
 
   bool intersect(const Ray& ray, F32* tMax) const;
 
-  static AABB mergeAABB(const AABB& left, const AABB& right);
+  AABB& mergeWithAABB(const AABB& other);
 
-  static AABB mergeAABB(const AABB& box, const Vector3& point);
-
-  static AABB mergeAABB(const Vector3& point, const AABB& box);
-
-  static AABB getAABB(const std::vector<Vector3>& positions);
+  AABB& mergeWithPoint(const Vector3& point);
 
 public:
   Vector3 bounds[2];

@@ -14,7 +14,7 @@
 #include <render/raytracer/RayTracer.h>
 #include <render/raytracer/UniformSampler.h>
 
-#define MAX_DEPTH 4
+#define MAX_DEPTH 10
 
 RayTracer::RayTracer()
   : numSamples{ 1 }, antiAliasingKernelSize{ 1.0f }
@@ -83,8 +83,6 @@ Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) cons
   
   if (scene->intersect(inRay, &surfel))
   {
-    return inRay.tMax;
-
     Ray scattered;
     Colour attenuation;
     Colour emition = surfel.material->emit(surfel.uv);
@@ -99,9 +97,9 @@ Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) cons
 
   // TODO: Add background colour (from image, sample cube)
   //
-  return colour::Blue;
-  /*
   F32 t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
   return (1.0f - t) * colour::White + t * Colour{ 0.5f, 0.7f, 1.0f };
+  return colour::Black;
+  /*
   */
 }

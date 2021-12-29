@@ -15,6 +15,12 @@ GeometricPrimitive::GeometricPrimitive(Shape* shape)
   bounds = new AABB{ shape->getAABB() };
 }
 
+GeometricPrimitive::~GeometricPrimitive()
+{
+  if (bounds)
+    delete bounds;
+}
+
 const AABB* GeometricPrimitive::getBounds()
 {
   return bounds;

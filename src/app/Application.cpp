@@ -60,7 +60,7 @@ I32 Application::run()
 
   Scene scene;
 
-  SceneLoader::loadScene("..\\scenes\\cornellbox.scene", scene);
+  SceneLoader::loadScene("..\\scenes\\triangle.scene", scene);
 
   renderLoop(&scene);
 
@@ -71,7 +71,7 @@ I32 Application::run()
 
 void Application::renderLoop(Scene* scene)
 {
-  Mesh* mesh = ResourceManager::get().getMesh("box"); // todo : move into scene->draw()
+  Mesh* mesh = ResourceManager::get().getMesh("triangle"); // todo : move into scene->draw()
 
   scene->buildBVH();
 
@@ -85,7 +85,8 @@ void Application::renderLoop(Scene* scene)
   Camera camera{ { 0.0f, 0.0f, 0.0f }, 1.0f, 45.0f, 0.1f, 2000.0f };
   window.setMainCamera(&camera);
 
-  Matrix4 PV; // projection * view
+  Matrix4 P; // projection
+  Matrix4 V; // view
   
   glfwSetWindowUserPointer(window.getWindowPointer(), &window);
 
@@ -115,20 +116,24 @@ void Application::renderLoop(Scene* scene)
     glClearColor(0.1f, 0.6f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    PV = camera.getProjectionViewMatrix();
+    P = camera.getProjectionMatrix();
+    V = camera.getViewMatrix();
     
     if (drawBVH)
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
-      debugShader.setMatrix4("PV", PV);
+      debugShader.setMatrix4("PV", P * V);
       scene->bvh->draw();
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     offscreenShader.use();
-    offscreenShader.setMatrix4("PV", PV);
-    if (mesh) mesh->draw(); // TODO: move into scene->draw()
+    if (mesh)
+    {
+      mesh->draw(); // TODO: move into scene->draw()
+      offscreenShader.setMatrix4("PVM", P * V * mesh->parent->getWorldTransform()->getMatrix());
+    }
 
     // RENDER GUI ------------
     

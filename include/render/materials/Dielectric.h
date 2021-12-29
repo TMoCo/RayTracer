@@ -23,17 +23,21 @@ public:
 
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
-    attenuation = colour::White;    
+    attenuation = colour::White;
     F32 refractionRatio = surfel.isFrontFace ? 1.0f / ior : ior;
     
     F32 cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
     F32 sinTheta = sqrtf(1.0f - cosTheta * cosTheta);
 
-    Vector3 direction = (refractionRatio * sinTheta > 1.0f) || (reflectanceSchlick(cosTheta, refractionRatio) > random::uniformF32())
-      ? Vector3::reflect(inRay.direction, surfel.normal)
-      : Vector3::refract(inRay.direction, surfel.normal, refractionRatio);
+    if ((refractionRatio * sinTheta > 1.0f) || (reflectanceSchlick(cosTheta, refractionRatio) > random::uniformF32()))
+    {
+      outRay = { surfel.position + 0.001f * surfel.normal, Vector3::reflect(inRay.direction, surfel.normal), INFINITY };
+    }
+    else
+    {
+      outRay = { surfel.position - 0.001f * surfel.normal, Vector3::refract(inRay.direction, surfel.normal, refractionRatio), INFINITY };
+    }
 
-    outRay = { surfel.position, direction, INFINITY };
     return true;
   }
 

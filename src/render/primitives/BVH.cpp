@@ -82,7 +82,7 @@ const AABB* BVH::getBounds()
     bounds = new AABB{};
     for (auto& p : scene->primitives)
     {
-      AABB::mergeAABB(*bounds, *p->getBounds());
+      bounds->mergeWithAABB(*p->getBounds());
     }
   }
 

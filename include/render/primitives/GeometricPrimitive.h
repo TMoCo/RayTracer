@@ -22,6 +22,8 @@ class GeometricPrimitive : public Primitive
 public:
   GeometricPrimitive(Shape* shape);
 
+  ~GeometricPrimitive();
+
   virtual const AABB* getBounds() override;
 
   bool intersect(const Ray& ray, Surfel* surfel) const override;

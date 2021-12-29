@@ -31,6 +31,7 @@ Transform* Node::getWorldTransform()
       world = parentNode->local.applyToTransform(world);
       parentNode = parent->parent;
     }
+    outOfDate = false;
   }
 
   return &world;

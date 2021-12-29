@@ -24,9 +24,9 @@ public:
 
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
-    attenuation = maps[MAT_MAPS::ALBEDO] ? maps[MAT_MAPS::ALBEDO]->sample(surfel.uv) : albedo;
+    attenuation = colour::White;
     Vector3 outDir = Vector3::reflect(inRay.direction, surfel.normal);
-    outRay = { surfel.position, outDir + fuzz * UniformSampler::unitSphere(random::uniformUV()), INFINITY };
+    outRay = { surfel.position + 0.001f * surfel.normal, outDir + fuzz * UniformSampler::unitSphere(random::uniformUV()), INFINITY };
     return outRay.direction.dot(surfel.normal) > 0.0f;
   }
 

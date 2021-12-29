@@ -38,83 +38,81 @@ F32 AABB::surfaceArea() const
 bool AABB::intersect(const Ray& ray, F32* tMax) const
 {
   F32 t0 = 0.0f, t1 = ray.tMax, tNear, tFar;
+
   // x
   tNear = (bounds[ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
   tFar = (bounds[1 - ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
+  
   t0 = tNear > t0 ? tNear : t0;
   t1 = tFar < t1 ? tFar : t1;
-  if (t0 > t1) return false;
+  
+  if (t0 > t1)
+  {
+    return false;
+  }
+
   // y
   tNear = (bounds[ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
   tFar = (bounds[1 - ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
+  
   t0 = tNear > t0 ? tNear : t0;
   t1 = tFar < t1 ? tFar : t1;
-  if (t0 > t1) return false;
+  
+  if (t0 > t1)
+  {
+    return false;
+  }
+
   // z
   tNear = (bounds[ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
   tFar = (bounds[1 - ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
+  
   t0 = tNear > t0 ? tNear : t0;
   t1 = tFar < t1 ? tFar : t1;
-  if (t0 > t1) return false;
-  // update
+  
+  if (t0 > t1) 
+  {
+    return false;
+  }
+
   *tMax = t1;
   return true;
 }
 
-AABB AABB::mergeAABB(const AABB& left, const AABB& right)
+AABB& AABB::mergeWithAABB(const AABB& other)
 {
-  AABB bbox{};
-  
-  bbox.bounds[0] = 
+  bounds[0] =
   {
-    left.bounds[0][0] < right.bounds[0][0] ? left.bounds[0][0] : right.bounds[0][0],
-    left.bounds[0][1] < right.bounds[0][1] ? left.bounds[0][1] : right.bounds[0][1] ,
-    left.bounds[0][2] < right.bounds[0][2] ? left.bounds[0][2] : right.bounds[0][2] 
-  };
-  
-  bbox.bounds[1] = 
-  {
-    left.bounds[1][0] > right.bounds[1][0] ? left.bounds[1][0] : right.bounds[1][0],
-    left.bounds[1][1] > right.bounds[1][1] ? left.bounds[1][1] : right.bounds[1][1] ,
-    left.bounds[1][2] > right.bounds[1][2] ? left.bounds[1][2] : right.bounds[1][2] 
+    bounds[0][0] < other.bounds[0][0] ? bounds[0][0] : other.bounds[0][0],
+    bounds[0][1] < other.bounds[0][1] ? bounds[0][1] : other.bounds[0][1],
+    bounds[0][2] < other.bounds[0][2] ? bounds[0][2] : other.bounds[0][2]
   };
 
-  return bbox;
+  bounds[1] =
+  {
+    bounds[1][0] > other.bounds[1][0] ? bounds[1][0] : other.bounds[1][0],
+    bounds[1][1] > other.bounds[1][1] ? bounds[1][1] : other.bounds[1][1],
+    bounds[1][2] > other.bounds[1][2] ? bounds[1][2] : other.bounds[1][2]
+  };
+
+  return *this;
 }
 
-AABB AABB::mergeAABB(const AABB& box, const Vector3& point)
+AABB& AABB::mergeWithPoint(const Vector3& point)
 {
-  AABB bbox{};
-
-  bbox.bounds[0] = 
+  bounds[0] =
   {
-    box.bounds[0][0] < point[0] ? box.bounds[0][0] : point[0],
-    box.bounds[0][1] < point[1] ? box.bounds[0][1] : point[1] ,
-    box.bounds[0][2] < point[2] ? box.bounds[0][2] : point[2] 
+    bounds[0][0] < point[0] ? bounds[0][0] : point[0],
+    bounds[0][1] < point[1] ? bounds[0][1] : point[1] ,
+    bounds[0][2] < point[2] ? bounds[0][2] : point[2]
   };
-  
-  bbox.bounds[1] = 
+
+  bounds[1] =
   {
-    box.bounds[1][0] > point[0] ? box.bounds[1][0] : point[0],
-    box.bounds[1][1] > point[1] ? box.bounds[1][1] : point[1],
-    box.bounds[1][2] > point[2] ? box.bounds[1][2] : point[2]
+    bounds[1][0] > point[0] ? bounds[1][0] : point[0],
+    bounds[1][1] > point[1] ? bounds[1][1] : point[1],
+    bounds[1][2] > point[2] ? bounds[1][2] : point[2]
   };
-  
-  return bbox;
-}
 
-AABB AABB::mergeAABB(const Vector3& point, const AABB& box)
-{
-  return mergeAABB(box, point);
-}
-
-AABB AABB::getAABB(const std::vector<Vector3>& positions)
-{
-  AABB aabb{};
-
-  for (const Vector3& position : positions)
-  {
-    aabb = mergeAABB(aabb, position);
-  }
-  return aabb;
+  return *this;
 }
