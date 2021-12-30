@@ -33,9 +33,7 @@ public:
 
   virtual bool intersect(const Ray& ray, Surfel* surfel) const override;
 
-  virtual void test() override;
-
-  void draw() const;
+  virtual void draw(Shader* shader) const override;
 
 private:
 

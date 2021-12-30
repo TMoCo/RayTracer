@@ -20,6 +20,7 @@
 class Node
 {
   friend class SceneLoader;
+  friend class Scene;
 
 public:
   std::string name;
@@ -47,6 +48,8 @@ public:
   void addChildNode(Node* node);
 
   const Primitive* setPrimitive(Primitive* p);
+
+  void draw(Shader* shader) const;
 
   void clear();
 

@@ -55,13 +55,9 @@ bool Mesh::intersect(const Ray& ray, Surfel* surfel) const
   }
 }
 
-void Mesh::test()
+void Mesh::draw(Shader* shader) const
 {
-
-}
-
-void Mesh::draw() const
-{
+  shader->setMatrix4("M", parent->getWorldTransform()->getMatrix());
   if (onGpu)
   {
     glBindVertexArray(VAO);

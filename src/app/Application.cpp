@@ -50,7 +50,7 @@ int Application::init()
   return 0;
 }
 
-I32 Application::run()
+I32 Application::run(char* sceneName)
 {
   if (init() != 0)
   {
@@ -59,8 +59,7 @@ I32 Application::run()
   }
 
   Scene scene;
-
-  SceneLoader::loadScene("..\\scenes\\triangle.scene", scene);
+  SceneLoader::loadScene(SCENES + "cornellteapot.scene", scene);
 
   renderLoop(&scene);
 
@@ -71,22 +70,16 @@ I32 Application::run()
 
 void Application::renderLoop(Scene* scene)
 {
-  Mesh* mesh = ResourceManager::get().getMesh("triangle"); // todo : move into scene->draw()
-
   scene->buildBVH();
 
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader offscreenShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
   Shader compositionShader{ "..\\shaders\\composition.vert", "..\\shaders\\composition.frag" };
-      
-  Image rayTracedData{ window.getWidth(), window.getHeight(), 3 };
-  Texture* rayTracedTexture = ResourceManager::get().addTexture("ray traced output", new Texture{ &rayTracedData, GL_RGB });
 
   Camera camera{ { 0.0f, 0.0f, 0.0f }, 1.0f, 45.0f, 0.1f, 2000.0f };
   window.setMainCamera(&camera);
 
-  Matrix4 P; // projection
-  Matrix4 V; // view
+  Matrix4 PV; // projection * view
   
   glfwSetWindowUserPointer(window.getWindowPointer(), &window);
 
@@ -102,9 +95,7 @@ void Application::renderLoop(Scene* scene)
 
     if (UserInterface::processKeyInput(&window, deltaTime) == 0)
     {
-      raytracer.raytrace(scene, rayTracedData, window.getCamera(), antiAliasingEnabled);
-      rayTracedData.writeToImageFile("..\\screenshots\\out.jpg");
-      rayTracedTexture->generate(true); // also load image as a texture and display
+      raytracer.rayTrace(scene, window.getCamera(), antiAliasingEnabled);
     }
 
     UserInterface::get().set(this);
@@ -116,24 +107,20 @@ void Application::renderLoop(Scene* scene)
     glClearColor(0.1f, 0.6f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    P = camera.getProjectionMatrix();
-    V = camera.getViewMatrix();
+    PV = camera.getProjectionMatrix() * camera.getViewMatrix();
     
     if (drawBVH)
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
-      debugShader.setMatrix4("PV", P * V);
-      scene->bvh->draw();
+      debugShader.setMatrix4("PV", PV);
+      scene->bvh->draw(&debugShader);
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     offscreenShader.use();
-    if (mesh)
-    {
-      mesh->draw(); // TODO: move into scene->draw()
-      offscreenShader.setMatrix4("PVM", P * V * mesh->parent->getWorldTransform()->getMatrix());
-    }
+    offscreenShader.setMatrix4("PV", PV);
+    scene->draw(&offscreenShader);
 
     // RENDER GUI ------------
     

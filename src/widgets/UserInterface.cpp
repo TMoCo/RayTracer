@@ -150,10 +150,11 @@ void UserInterface::set(Application* application)
 
   ImVec2 region = ImGui::GetContentRegionAvail();
   ImGui::BeginChild("Renders", { region.x * 0.5f, region.y });
-  ImGui::Image((void*)(intptr_t)application->window.framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); // OpenGL scene
-  Texture* t = ResourceManager::get().getTexture("ray traced output");
-  t->bind();
-  ImGui::Image((void*)(intptr_t)t->glId, { region.x * 0.5f, region.y * 0.49f }, { 0,0 }, { 1,-1 }); // ray traced
+  // OpenGL scene
+  ImGui::Image((void*)(intptr_t)application->window.framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); 
+  
+  // ray traced image
+  ImGui::Image((void*)(intptr_t)ResourceManager::get().getTexture("ray traced output")->glId, { region.x * 0.5f, region.y * 0.49f }, { 0,0 }, { 1,-1 });
   ImGui::EndChild();
 
   ImGui::SameLine();
@@ -197,17 +198,22 @@ void UserInterface::set(Application* application)
 
   ImGui::Separator();
   
-  ImGui::BeginChild("Output Options", { region.x * 0.5f, 70.0f });
+  ImGui::BeginChild("Output Options", { region.x * 0.5f, 90.0f });
   ImGui::Text("Output Options:");
-  static char buffer[100] = {};
-  ImGui::InputText("File Name", buffer, 100);
-  static Vector2 dim;
-  ImGui::SliderFloat2("Image Size  ", &dim[0], 500.0f, 4000.0f);
+  
+  ImGui::InputText(".jpg", application->raytracer.outputName, 100);
+
+  I32* dim = application->raytracer.dimensions; // must be multiple of 4 (GL_RGB format of raytraced image)
+  ImGui::InputInt("Width", dim, 4, 4);
+  *dim = clamp(*dim, 500, (I32)MAX_IMAGE_SIZE);
+  ImGui::InputInt("Height", dim + 1, 4, 4);
+  *(dim + 1) = clamp(*(dim + 1), 500, (I32)MAX_IMAGE_SIZE);
+  
   ImGui::EndChild();
 
   ImGui::EndChild();
-
-  // ImGui::ShowDemoWindow(&application->debug);
+  // static bool t = true;
+  // ImGui::ShowDemoWindow(&t);
 
   ImGui::End();
 }

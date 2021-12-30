@@ -28,8 +28,13 @@ void Scene::clear()
   }
 }
 
-void Scene::draw() const
-{ }
+void Scene::draw(Shader* shader) const
+{ 
+  for (UI32 node = 0; node < root->children.size(); node++)
+  {
+    root->children[node]->draw(shader); // special case no calling root->draw as root has no primitives associated
+  }
+}
 
 BVH* Scene::buildBVH()
 {

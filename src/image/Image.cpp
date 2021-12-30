@@ -58,13 +58,13 @@ void Image::copy(const byte* inData)
 
 bool Image::resize(UI32 w, UI32 h)
 {
-  width = w < MAX_IMAGE_SIZE ? w : MAX_IMAGE_SIZE;
-  height = h < MAX_IMAGE_SIZE ? h : MAX_IMAGE_SIZE;
-
   if ((width == 0) || (height == 0) || (channels == 0))
   {
     return false;
   }
+
+  width = std::min(w, MAX_IMAGE_SIZE);
+  height = std::min(h, MAX_IMAGE_SIZE);
 
   release(); // guarantees that pixels == nullptr
 
@@ -85,7 +85,6 @@ void Image::writePixelColour(UI32 u, UI32 v, const F32* colourValues)
   {
     F32 colourValue = *(colourValues + i);
     *(pixel + i) = (byte)(sqrtf(colourValue / (colourValue + 1.0f)) * 255.0f); // tone mapping + gamma correction
-    //*(pixel + i) = (byte)(sqrtf(colourValue) * 255.0f); // gamma correction
   }
 }
 
@@ -121,7 +120,7 @@ const byte* Image::getTexel(F32 u, F32 v) const
 void Image::allocate()
 {
   data = (byte*)calloc(size(), channels);
-  if (data == nullptr)
+  if (!data)
   {
     ERROR_MSG("Failed to allocate memory for buffer!\n");
     exit(-1);

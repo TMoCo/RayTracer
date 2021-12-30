@@ -28,6 +28,26 @@ Vector3 AABB::diagonal() const
   return bounds[1] - bounds[0];
 }
 
+Vector3 AABB::getOffset(const Vector3& point) const
+{
+  Vector3 offset = point - bounds[0];
+  if (bounds[1][0] > bounds[0][0])
+  {
+    offset[0] /= bounds[1][0] - bounds[0][0];
+  }
+
+  if (bounds[1][1] > bounds[0][1])
+  {
+    offset[1] /= bounds[1][1] - bounds[0][1];
+  }
+
+  if (bounds[1][2] > bounds[0][2])
+  {
+    offset[2] /= bounds[1][2] - bounds[0][2];
+  }
+  return offset;
+}
+
 F32 AABB::surfaceArea() const
 {
   Vector3 d = diagonal();

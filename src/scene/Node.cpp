@@ -94,6 +94,15 @@ const Primitive* Node::setPrimitive(Primitive* p)
   return primitive;
 }
 
+void Node::draw(Shader* shader) const
+{
+  primitive->draw(shader);
+  for (UI32 node = 0; node < children.size(); node++)
+  {
+    children[node]->draw(shader);
+  }
+}
+
 void Node::clear()
 {
   for (auto& child : children)

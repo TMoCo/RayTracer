@@ -12,6 +12,7 @@
 #define SCENE_H 1
 
 #include <scene/Node.h>
+#include <render/shapes/Shape.h>
 #include <render/primitives/BVH.h>
 
 class Ray;
@@ -31,7 +32,7 @@ public:
   
   void clear(); // dfs delete nodes
 
-  void draw() const;
+  void draw(Shader* shader) const;
 
   BVH* buildBVH();
 
@@ -43,6 +44,8 @@ protected:
   Node* root;
 
   std::vector<Primitive*> primitives; // container for all primitives
+
+  std::vector<Shape*> shapes;
 };
 
 #endif // !SCENE_H

@@ -22,13 +22,11 @@ public:
 
   ~Mesh();
 
-  const AABB* getBounds() override;
+  virtual const AABB* getBounds() override;
 
-  bool intersect(const Ray& ray, Surfel* surfel) const override;
+  virtual bool intersect(const Ray& ray, Surfel* surfel) const override;
 
-  void test() override;
-
-  void draw() const;
+  virtual void draw(Shader* shader) const override;
 
 protected:
   void generateBuffers(bool interleave);

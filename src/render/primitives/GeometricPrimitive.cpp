@@ -38,7 +38,7 @@ bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
   return true;
 }
 
-void GeometricPrimitive::test()
+void GeometricPrimitive::draw(Shader* shader) const
 {
-  
+  // todo: render primitive
 }

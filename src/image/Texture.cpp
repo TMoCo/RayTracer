@@ -22,6 +22,8 @@ Texture::~Texture()
 
 void Texture::generate(bool mip)
 {
+  glDeleteTextures(1, &glId);
+
   glGenTextures(1, &glId);
   bind();
 
@@ -29,13 +31,14 @@ void Texture::generate(bool mip)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  glTexImage2D(GL_TEXTURE_2D, 0, format, image->getWidth(), image->getHeight(), 0, format, GL_UNSIGNED_BYTE, (*image)[0]);
+  glTexImage2D(GL_TEXTURE_2D, 0, format, image->getWidth(), image->getHeight(), 0, format, GL_UNSIGNED_BYTE, (void*)(*image)[0]);
   
   if (mip)
   {
     glGenerateMipmap(GL_TEXTURE_2D);
   }
+
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture::bind(I32 unit)

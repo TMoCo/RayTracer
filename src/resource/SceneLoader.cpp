@@ -116,16 +116,28 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
         node->setPrimitive(m);
 
         m->generateBuffers(false);
+
         if (m->nor.size() == 0)
         {
           m->generateNormals();
         }
+
         m->generateTriangles();
+
+        scene.shapes.reserve(scene.shapes.size() + m->triangles.size());
+        for (Triangle* triangle : m->triangles)
+        {
+          scene.shapes.push_back((Shape*)triangle);
+        }
       }
       else
       {
         node->setPrimitive(
           new GeometricPrimitive { createShape(node->getWorldTransform(), token, remainding ? remainding : "") });
+        
+        GeometricPrimitive* p = (GeometricPrimitive*)node->primitive;
+
+        scene.shapes.push_back(p->shape);
       }
 
       scene.primitives.push_back(node->primitive);

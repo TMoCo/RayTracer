@@ -31,6 +31,8 @@ public:
 
   Vector3 diagonal() const;
 
+  Vector3 getOffset(const Vector3& point) const;
+
   F32 surfaceArea() const;
 
   bool intersect(const Ray& ray, F32* tMax) const;

@@ -19,7 +19,7 @@ class Application
   friend class UserInterface;
 
 public:
-  I32 run();
+  I32 run(char* sceneName);
 
 private:
   int init();

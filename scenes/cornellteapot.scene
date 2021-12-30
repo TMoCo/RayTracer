@@ -1,0 +1,26 @@
+scene cornell_box
+{
+  geometry box
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material cornellbox.mtl
+    shape mesh cornellbox.obj
+  }
+
+  geometry light
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material light.mtl
+    shape mesh cornellboxlight.obj
+  }
+
+  geometry teapot
+  {
+    position 0 -0.7 0
+    rotation 0 0 0
+    material metal.mtl
+    shape mesh teapot.obj
+  }
+}

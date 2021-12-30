@@ -16,9 +16,17 @@ scene cornell_box
     shape mesh cornellboxlight.obj
   }
 
-  geometry sphere
+  geometry sphere1
   {
-    position 0.65 -0.65 0.75
+    position 0.35 0.5 -0.65
+    rotation 0 0 0
+    material rustediron.mtl
+    shape sphere 0.25 
+  }
+
+  geometry sphere2
+  {
+    position -0.55 -0.3 0.5
     rotation 0 0 0
     material glass.mtl
     shape sphere 0.25 
@@ -26,15 +34,15 @@ scene cornell_box
 
   geometry smallcube
   {
-    position 0 0 0
+    position 0 0.2 0.7
     rotation 0 0 0
-    material metal.mtl
+    material glass.mtl
     shape mesh smallcube.obj
   }
 
   geometry bigcube
   {
-    position 0 0 0
+    position -0.3 0 -0.7
     rotation 0 0 0
     material metal.mtl
     shape mesh bigcube.obj

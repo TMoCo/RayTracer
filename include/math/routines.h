@@ -23,7 +23,8 @@ constexpr inline F32 radians(F32 x)
 }
 
 
-constexpr inline F32 clamp(F32 val, F32 min, F32 max)
+template<class T>
+constexpr inline T clamp(T val, T min, T max)
 {
   assert(min < max);
   return (val > max ? max : val) < min ? min : val;

@@ -103,12 +103,7 @@ bool BVH::intersect(const Ray& inRay, Surfel* surfel) const
   return inRay.tMax < INFINITY;
 }
 
-void BVH::test()
-{
-
-}
-
-void BVH::draw() const
+void BVH::draw(Shader* shader) const
 {
   glBindVertexArray(VAO);
   glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, GLCube::indices, (GLsizei)scene->primitives.size());

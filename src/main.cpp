@@ -14,5 +14,12 @@ int main(int argc, char* argv[])
 {
   Application app;
 
-  return app.run();
+  if (argc > 1)
+  {
+    return app.run(argv[1]);
+  }
+  else
+  {
+    return app.run("");
+  }
 }

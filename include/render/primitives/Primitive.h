@@ -12,6 +12,7 @@
 #define PRIMITIVE_H 1
 
 #include <render/bounds/AABB.h>
+#include <render/Shader.h>
 
 class Material;
 class Surfel;
@@ -37,12 +38,12 @@ public:
 
   virtual bool intersect(const Ray& ray, Surfel* surfel) const = 0;
   
-  virtual void test() = 0;
-  
   virtual const Material* getMaterial() const
   {
     return material;
   }
+
+  virtual void draw(Shader* shader) const = 0;
 
   Node* parent;
 

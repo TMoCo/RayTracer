@@ -14,9 +14,11 @@
 #include <string>
 #include <unordered_map>
 
-static const std::string MODELS    = "..\\models\\";
-static const std::string TEXTURES  =  "..\\materials\\textures\\";
-static const std::string MATERIALS =  "..\\materials\\";
+static const std::string MODELS      = "..\\models\\";
+static const std::string TEXTURES    = "..\\materials\\textures\\";
+static const std::string MATERIALS   = "..\\materials\\";
+static const std::string SCENES      = "..\\scenes\\";
+static const std::string SCREENSHOTS = "..\\screenshots\\";
 
 class Mesh;
 class Material;
@@ -28,6 +30,7 @@ class ResourceManager
   friend class OBJLoader;
   friend class SceneLoader;
   friend class Application;
+  friend class RayTracer;
 
 public:
   static ResourceManager& get();
