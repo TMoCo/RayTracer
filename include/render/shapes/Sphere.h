@@ -33,7 +33,7 @@ public:
     };
   }
 
-  inline bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const override
+  inline bool intersect(const Ray& ray, Surfel* surfel) const override
   {
     F32 t;
     {
@@ -66,7 +66,7 @@ public:
 
     *surfel = { pHit, normal, uv, -ray.direction, this };
     surfel->tangent = Vector3{ -sinf(uv[0]), 0.0f, cosf(uv[0]) }.normalize();
-    *tHit = t;
+    ray.tMax = t;
 
     return true;
   }

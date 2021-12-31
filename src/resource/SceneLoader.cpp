@@ -132,11 +132,9 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
       }
       else
       {
-        node->setPrimitive(
+        const GeometricPrimitive* p = (GeometricPrimitive*)node->setPrimitive(
           new GeometricPrimitive { createShape(node->getWorldTransform(), token, remainding ? remainding : "") });
         
-        GeometricPrimitive* p = (GeometricPrimitive*)node->primitive;
-
         scene.shapes.push_back(p->shape);
       }
 
@@ -165,7 +163,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
   }
 
   sceneFileStream.close();
-  // TODO: generate BVH when scene data is loaded
+
   return 0;
 }
 

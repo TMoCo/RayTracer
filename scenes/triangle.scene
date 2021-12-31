@@ -1,18 +1,18 @@
 scene triangle
-{
-  geometry triangle
-  {
-    position 1 2 1
-    rotation 90 45 0
-    shape mesh triangle.obj
-    material container.mtl
-  }
-
+{  
   geometry floor
   {
     position 0 -502 -20
     rotation 0 0 0
     shape sphere 500
     material diffuse.mtl
+  }
+  
+  geometry triangle
+  {
+    position 1 2 1
+    rotation 90 45 0
+    shape mesh triangle.obj
+    material container.mtl
   }
 }

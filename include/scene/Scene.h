@@ -14,6 +14,7 @@
 #include <scene/Node.h>
 #include <render/shapes/Shape.h>
 #include <render/primitives/BVH.h>
+#include <render/bounds/LinearBVH.h>
 
 class Ray;
 class Surfel;
@@ -39,8 +40,10 @@ public:
   bool intersect(const Ray& inRay, Surfel* surfel) const;
 
   BVH* bvh;
-protected:
 
+  LinearBVH* linearBVH;
+
+protected:
   Node* root;
 
   std::vector<Primitive*> primitives; // container for all primitives

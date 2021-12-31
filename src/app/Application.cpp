@@ -59,7 +59,7 @@ I32 Application::run(char* sceneName)
   }
 
   Scene scene;
-  SceneLoader::loadScene(SCENES + "cornellteapot.scene", scene);
+  SceneLoader::loadScene(SCENES + sceneName, scene);
 
   renderLoop(&scene);
 
@@ -114,7 +114,7 @@ void Application::renderLoop(Scene* scene)
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
       debugShader.setMatrix4("PV", PV);
-      scene->bvh->draw(&debugShader);
+      scene->linearBVH->draw(&debugShader);
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

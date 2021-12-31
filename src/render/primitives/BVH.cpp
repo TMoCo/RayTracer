@@ -25,7 +25,7 @@ BVH::BVH(const Scene* scene)
   {
     const AABB* bounds = primitive->getBounds();
     Vector3 position = bounds->getCentroid();
-    Vector3 scale = bounds->diagonal() * 0.5f;
+    Vector3 scale = bounds->getDiagonal() * 0.5f;
     AABBTransforms.push_back(Matrix4::translation(position) * Matrix4::scale(scale));
   }
 
@@ -94,7 +94,7 @@ bool BVH::intersect(const Ray& inRay, Surfel* surfel) const
   F32 tMax = inRay.tMax;
   for (auto& primitive : scene->primitives)
   {
-    if (primitive->bounds->intersect(inRay, &tMax)) // bounds guaranteed != nullptr in constructor
+    if (primitive->bounds->intersect(inRay)) // bounds guaranteed != nullptr in constructor
     {
       primitive->intersect(inRay, surfel);
     }

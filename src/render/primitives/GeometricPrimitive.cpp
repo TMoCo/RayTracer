@@ -9,6 +9,11 @@
 #include <render/raytracer/Surfel.h>
 #include <render/shapes/Shape.h>
 
+GeometricPrimitive::GeometricPrimitive()
+  : Primitive(), shape{ nullptr }
+{ }
+
+
 GeometricPrimitive::GeometricPrimitive(Shape* shape)
   : Primitive(), shape{ shape }
 { 
@@ -28,13 +33,10 @@ const AABB* GeometricPrimitive::getBounds()
 
 bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
 {
-  F32 tHit = ray.tMax;
-  if (!shape->intersect(ray, &tHit, surfel))
+  if (!shape->intersect(ray, surfel))
   {
     return false;
   }
-  ray.tMax = tHit;
-  surfel->material = material;
   return true;
 }
 

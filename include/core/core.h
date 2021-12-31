@@ -11,7 +11,47 @@
 #ifndef CORE_H
 #define CORE_H 1
 
+#ifdef _WIN32
+#define WINDOWS 1
+#endif // WIN32
+
+#ifdef __APPLE__
+#define APPLE 1
+#endif
+
+#ifdef __unix__
+#define UNIX 1
+#endif
+
 // #define HARD_EXIT
+
+#define CACHE_LINE 64
+
+inline void* allocAligned(size_t size)
+{
+#if WINDOWS
+  return _aligned_malloc(size, CACHE_LINE);
+#elif defined(__APPLE__) || defined(__unix__)
+  ERROR_MSG("OS not supported!")
+    exit(-1);
+#endif
+}
+
+template <typename T> 
+inline T* allocAligned(size_t count)
+{
+  return (T*)allocAligned(count * sizeof(T));
+}
+
+inline void freeAligned(void* block)
+{
+#if WINDOWS
+  _aligned_free(block);
+#elif defined(__APPLE__) || defined(__unix__)
+  ERROR_MSG("OS not supported!")
+    exit(-1);
+#endif
+}
 
 #include <chrono>
 typedef  std::chrono::system_clock sys_clock;

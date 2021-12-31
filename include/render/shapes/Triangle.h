@@ -24,10 +24,14 @@ public:
 
   AABB getAABB() const override
   {
-    return {};
+    AABB bounds{};
+    bounds.mergeWithPoint(toWorld->applyToPoint(mesh->pos[*index]));
+    bounds.mergeWithPoint(toWorld->applyToPoint(mesh->pos[*(index + 1)]));
+    bounds.mergeWithPoint(toWorld->applyToPoint(mesh->pos[*(index + 2)]));
+    return bounds;
   }
 
-  bool intersect(const Ray& ray, F32* tHit, Surfel* surfel) const override
+  bool intersect(const Ray& ray, Surfel* surfel) const override
   {
     Ray toObjRay = toWorld->applyInverseToRay(ray);
     // TODO: perform moller trumbore algorithm here
@@ -63,13 +67,13 @@ public:
     }
 
     F32 t = k * edge2.dot(q);
-    if (t > EPSILON && t < *tHit)
+    if (t > EPSILON && t < ray.tMax)
     {
       Vector3 pHit = ray.At(t);
       Vector3 normal = mesh->nor[*index] * a + mesh->nor[*(index + 1)] * b + mesh->nor[*(index + 2)] * (1.0f - a - b);
       Vector2 uv = mesh->tex[*index] * a + mesh->tex[*(index + 1)] * b + mesh->tex[*(index + 2)] * (1.0f - a - b);
       *surfel = { pHit, normal, uv, -ray.direction, this };
-      *tHit = t;
+      ray.tMax = t;
       return true;
     }
     return false;
