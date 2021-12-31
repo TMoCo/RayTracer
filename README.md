@@ -98,15 +98,14 @@ scene cornell_box
   }
 }
 ```
-
-![GUIiteration3](https://user-images.githubusercontent.com/56483943/147644651-ff1f112e-f89e-4c89-b3af-e10043060dc6.png)
-
-Using the user interface, you can change render options and get a debug preview of the scene in opengl, as well as a view of the rendered output.
-
 ![horizontalBVH](https://user-images.githubusercontent.com/56483943/147832855-2aebf834-9f70-4e89-a28e-b687dd7b0ef1.png)
 ![midPointBVH](https://user-images.githubusercontent.com/56483943/147832860-fcd4f428-f13a-4626-82b1-f63fa561f858.png)
 
 The app now has some acceleration data structures in the form of Horizontal BVH with SAH (top) and a more basic axis midpoint separation (bottom). Notice that the density of bounding volumes is smaller and that they embrace the shape of the mesh more. They currently follow the implementation of the PBRT book, but I would like to add further optimisations to them when I can. 
+
+![guiiteration4](https://user-images.githubusercontent.com/56483943/147833846-74ea9341-f0df-44fc-abca-3fe598163584.png)
+
+Using the user interface, you can change render options and get a debug preview of the scene in opengl, as well as a view of the rendered output.
 
 ## Desirable features
 - [x] acceleration data structures
