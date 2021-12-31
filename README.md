@@ -50,7 +50,8 @@ metallicMap rustedironMetallic.png
 roughnessMap rustedironRoughness.png
 normalMap rustedironNormal.png
 ```
-![cornell2](https://user-images.githubusercontent.com/56483943/147644223-00bb1979-d53b-4a92-a7a9-fc56f0b8113d.jpg)
+
+![twok](https://user-images.githubusercontent.com/56483943/147838780-5f8cdf2b-24ad-4c17-849e-bac956a7be7d.jpg)
 
 Triangle meshes loaded from .obj files can also be rendered. Using Blender, I make my own models or export royalty free models from other formats such as .gltf. Here is the scene file used:
 
