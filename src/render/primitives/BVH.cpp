@@ -91,7 +91,6 @@ const AABB* BVH::getBounds()
 
 bool BVH::intersect(const Ray& inRay, Surfel* surfel) const
 {
-  F32 tMax = inRay.tMax;
   for (auto& primitive : scene->primitives)
   {
     if (primitive->bounds->intersect(inRay)) // bounds guaranteed != nullptr in constructor
@@ -99,7 +98,6 @@ bool BVH::intersect(const Ray& inRay, Surfel* surfel) const
       primitive->intersect(inRay, surfel);
     }
   }
-
   return inRay.tMax < INFINITY;
 }
 

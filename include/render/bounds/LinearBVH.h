@@ -31,11 +31,11 @@ class LinearBVH
       : num{ 0 }
     { }
 
-    ShapePrimitiveInfo(UI32 num, const AABB& bounds)
+    ShapePrimitiveInfo(I32 num, const AABB& bounds)
       : num{ num }, bounds{ bounds }, centroid{ bounds.getCentroid() }
     { }
 
-    UI32 num;
+    I32 num;
     AABB bounds;
     Vector3 centroid;
   };
@@ -48,9 +48,9 @@ class LinearBVH
 
   struct BVHNode
   {
-    void makeLeafNode(I32 o, I32 n, const AABB& b)
+    void makeLeafNode(I32 offset, I32 n, const AABB& b)
     {
-      offset = o;
+      shapeOffset = offset;
       nShapes = n;
       bounds = b;
       children[0] = children[1] = nullptr;
@@ -68,7 +68,7 @@ class LinearBVH
 
     AABB bounds;
     BVHNode* children[2];
-    I32 axisSplit, offset, nShapes; // index into ordered shapes vector
+    I32 axisSplit, shapeOffset, nShapes; // index into ordered shapes vector
   };
 
   struct LBVHTreelet
@@ -102,8 +102,11 @@ public:
   bool intersect(const Ray& ray, Surfel* surfel);
 
 private:
+  BVHNode* buildTree(MemoryArena& arena, std::vector<ShapePrimitiveInfo>& shapeInfo, I32 start, I32 end, 
+    I32* totalNodes, std::vector<Shape*>& orderedShapes);
+
   BVHNode* buildHorizontalLinearBVH(MemoryArena& arena, const std::vector<ShapePrimitiveInfo>& shapeInfo,
-    UI32* totalNodes, std::vector<Shape*>& orderedShapes);
+    I32* totalNodes, std::vector<Shape*>& orderedShapes);
 
   UI32 apply3DMortonEncoding(const Vector3& point);
 
@@ -115,9 +118,9 @@ private:
     MortonPrimitive* mortonPrims, I32 nShapes, I32* totalNodes, std::vector<Shape*>& orderedShapes,
     I32* orderedShapeOffset, I32 bitIndex);
 
-  BVHNode* buildUpperSAH(MemoryArena& arena, std::vector<BVHNode*>& treeletRoots, UI32 start, UI32 end, UI32* totalNodes);
+  BVHNode* buildUpperSAH(MemoryArena& arena, std::vector<BVHNode*>& treeletRoots, I32 start, I32 end, I32* totalNodes);
 
-  UI32 flattenBVHTree(BVHNode* node, UI32* offset);
+  I32 flattenBVHTree(BVHNode* node, I32* offset);
 
   void getGlData();
 

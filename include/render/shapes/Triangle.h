@@ -73,6 +73,7 @@ public:
       Vector3 normal = mesh->nor[*index] * a + mesh->nor[*(index + 1)] * b + mesh->nor[*(index + 2)] * (1.0f - a - b);
       Vector2 uv = mesh->tex[*index] * a + mesh->tex[*(index + 1)] * b + mesh->tex[*(index + 2)] * (1.0f - a - b);
       *surfel = { pHit, normal, uv, -ray.direction, this };
+      surfel->material = mesh->material;
       ray.tMax = t;
       return true;
     }

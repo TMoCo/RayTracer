@@ -132,9 +132,11 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
       }
       else
       {
-        const GeometricPrimitive* p = (GeometricPrimitive*)node->setPrimitive(
+        GeometricPrimitive* p = (GeometricPrimitive*)node->setPrimitive(
           new GeometricPrimitive { createShape(node->getWorldTransform(), token, remainding ? remainding : "") });
         
+        p->shape->primitive = p; // YUCK! Todo: change geometric shape constructor
+
         scene.shapes.push_back(p->shape);
       }
 

@@ -1,3 +1,4 @@
+#include <core/debug.h>
 #include <render/bounds/LinearBVH.h>
 #include <render/shapes/GLShapes.h>
 
@@ -13,8 +14,8 @@ LinearBVH::~LinearBVH()
   freeAligned(linearBVH);
 }
 
-LinearBVH::LinearBVH(std::vector<Shape*> sceneShapes)
-  : VAO{ 0 }, VBO{ 0 }, IBO{ 0 }, totalNodes{ 0 }, sceneShapes{ sceneShapes }, linearBVH{ nullptr }
+LinearBVH::LinearBVH(std::vector<Shape*> inSceneShapes)
+  : VAO{ 0 }, VBO{ 0 }, IBO{ 0 }, totalNodes{ 0 }, sceneShapes{ inSceneShapes }, linearBVH{ nullptr }
 {
   if (sceneShapes.empty())
   {
@@ -22,7 +23,7 @@ LinearBVH::LinearBVH(std::vector<Shape*> sceneShapes)
   }
 
   std::vector<ShapePrimitiveInfo> shapeInfo(sceneShapes.size());
-  for (UI32 p = 0; p < shapeInfo.size(); ++p)
+  for (I32 p = 0; p < shapeInfo.size(); ++p)
   {
     shapeInfo[p] = { p, sceneShapes[p]->getAABB() };
   }
@@ -34,6 +35,7 @@ LinearBVH::LinearBVH(std::vector<Shape*> sceneShapes)
 
   BVHNode* root;
 
+  //root = buildTree(arena, shapeInfo, 0, (I32)sceneShapes.size(), &totalNodes, orderedSceneShapes);
   root = buildHorizontalLinearBVH(arena, shapeInfo, &totalNodes, orderedSceneShapes);
 
   sceneShapes.swap(orderedSceneShapes); // swap with ordered scene shapes
@@ -41,7 +43,7 @@ LinearBVH::LinearBVH(std::vector<Shape*> sceneShapes)
 
   linearBVH = allocAligned<LinearBVHNode>(totalNodes); // allocate linearNodes 
 
-  UI32 offset = 0;
+  I32 offset = 0;
   flattenBVHTree(root, &offset);
 
   getGlData();
@@ -105,8 +107,77 @@ bool LinearBVH::intersect(const Ray& ray, Surfel* surfel)
   return ray.tMax < INFINITY;
 }
 
+LinearBVH::BVHNode* LinearBVH::buildTree(MemoryArena& arena, std::vector<ShapePrimitiveInfo>& shapeInfo, 
+  I32 start, I32 end, I32* totalNodes, std::vector<Shape*>& orderedShapes)
+{
+  BVHNode* node = arena.alloc<BVHNode>();
+  (*totalNodes)++;
+
+  AABB nodeBounds;
+  for (I32 i = start; i < end; ++i)
+  {
+    nodeBounds.mergeWithAABB(shapeInfo[i].bounds);
+  }
+
+  I32 nShapes = end - start;
+  if (nShapes == 1)
+  {
+    // leaf node
+    I32 firstShapeOffset = (I32)orderedShapes.size();
+    for (I32 i = start; i < end; ++i)
+    {
+      I32 shapeNum = shapeInfo[i].num;
+      orderedShapes.push_back(sceneShapes[shapeNum]);
+    }
+
+    node->makeLeafNode(firstShapeOffset, nShapes, nodeBounds);
+  }
+  else
+  {
+    // interior node
+    AABB centroidBounds;
+    for (I32 i = start; i < end; ++i)
+    {
+      centroidBounds.mergeWithPoint(shapeInfo[i].centroid);
+    }
+
+    I32 axis = centroidBounds.getMaximumExtent();
+    I32 mid = (end - start) / 2;
+
+    if (centroidBounds.bounds[0][axis] == centroidBounds.bounds[1][axis])
+    {
+      // leaf node if all centroid points are the same in split axis dimension
+      I32 firstShapeOffset = (I32)orderedShapes.size();
+      for (I32 i = start; i < end; ++i)
+      {
+        I32 shapeNum = shapeInfo[i].num;
+        orderedShapes.push_back(sceneShapes[shapeNum]);
+      }
+      node->makeLeafNode(firstShapeOffset, nShapes, nodeBounds);
+    }
+    else
+    {
+      // split axis in middle
+      F32 axisMidPoint = (centroidBounds.bounds[0][axis] + centroidBounds.bounds[1][axis]) * 0.5f;
+      ShapePrimitiveInfo* midShape = std::partition(&shapeInfo[start], &shapeInfo[end - 1] + 1, 
+        [axis, axisMidPoint](ShapePrimitiveInfo& spi)
+      {
+        return spi.centroid[axis] < axisMidPoint;
+      });
+      mid = (I32)(midShape - &shapeInfo[0]);
+      // if (mid != start && mid != end)
+
+      node->makeInteriorNode(axis,
+        buildTree(arena, shapeInfo, start, mid, totalNodes, orderedShapes),
+        buildTree(arena, shapeInfo, mid, end, totalNodes, orderedShapes));
+    }
+  }
+
+  return node;
+}
+
 LinearBVH::BVHNode* LinearBVH::buildHorizontalLinearBVH(MemoryArena& arena, const std::vector<ShapePrimitiveInfo>& shapeInfo,
-  UI32* totalNodes, std::vector<Shape*>& orderedShapes)
+  I32* totalNodes, std::vector<Shape*>& orderedShapes)
 {
 
   AABB bounds; // bounds of all shape centroids
@@ -144,14 +215,14 @@ LinearBVH::BVHNode* LinearBVH::buildHorizontalLinearBVH(MemoryArena& arena, cons
     }
   }
 
-  UI32 orderedShapesOffset = 0;
+  I32 orderedShapesOffset = 0;
   orderedShapes.resize(sceneShapes.size());
 
   // build treelets into nodes
   for (UI32 t = 0; t < treeletsToBuild.size(); ++t)
   {
-    UI32 nodesCreated = 0;
-    UI32 firstBitIndex = 29 - 12;
+    I32 nodesCreated = 0;
+    I32 firstBitIndex = 29 - 12;
     LBVHTreelet& treelet = treeletsToBuild[t];
     treelet.nodes = buildTreelet(treelet.nodes, shapeInfo, &mortonPrimitives[treelet.startIndex], treelet.nShapes,
       &nodesCreated, orderedShapes, &orderedShapesOffset, firstBitIndex);
@@ -250,10 +321,10 @@ LinearBVH::BVHNode* LinearBVH::buildTreelet(BVHNode*& buildNodes, const std::vec
     (*totalNodes)++;
     BVHNode* node = buildNodes++; // advance current node
     AABB bounds;
-    UI32 firstShapeOffset = *orderedShapeOffset;
+    I32 firstShapeOffset = *orderedShapeOffset;
     *orderedShapeOffset += nShapes;
 
-    for (UI32 i = 0; i < nShapes; ++i)
+    for (I32 i = 0; i < nShapes; ++i)
     {
       UI32 shapeIndex = mortonPrimitives[i].shapeIndex;
       orderedShapes[firstShapeOffset + i] = sceneShapes[shapeIndex];
@@ -269,14 +340,15 @@ LinearBVH::BVHNode* LinearBVH::buildTreelet(BVHNode*& buildNodes, const std::vec
     if ((mortonPrimitives[0].mortonCode & mask) == (mortonPrimitives[nShapes - 1].mortonCode & mask))
     {
       // no split for this bit index, advance to next index
-      return buildTreelet(buildNodes, shapeInfo, mortonPrimitives, nShapes, totalNodes, orderedShapes, orderedShapeOffset, bitIndex - 1);
+      return buildTreelet(buildNodes, shapeInfo, mortonPrimitives, nShapes, totalNodes, orderedShapes, 
+        orderedShapeOffset, bitIndex - 1);
     }
     
     // valid split, find split point with binary search
-    UI32 searchStart = 0, searchEnd = nShapes - 1, mid;
+    I32 searchStart = 0, searchEnd = nShapes - 1;
     while (searchStart + 1 != searchEnd)
     {
-      mid = (searchStart + searchEnd) / 2; // >> 1
+      I32 mid = (searchStart + searchEnd) / 2; // >> 1
 
       if ((mortonPrimitives[searchStart].mortonCode & mask) == (mortonPrimitives[mid].mortonCode & mask))
       {
@@ -287,7 +359,8 @@ LinearBVH::BVHNode* LinearBVH::buildTreelet(BVHNode*& buildNodes, const std::vec
         searchEnd = mid;
       }
     }
-    UI32 splitOffset = searchEnd; // build an interior node from this offset, recurse on left and right spans
+
+    I32 splitOffset = searchEnd; // build an interior node from this offset, recurse on left and right spans
 
     (*totalNodes)++;
     BVHNode* node = buildNodes++;
@@ -308,9 +381,9 @@ LinearBVH::BVHNode* LinearBVH::buildTreelet(BVHNode*& buildNodes, const std::vec
   }
 }
 
-LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVHNode*>& treeletRoots, UI32 start, UI32 end, UI32* totalNodes)
+LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVHNode*>& treeletRoots, I32 start, I32 end, I32* totalNodes)
 {
-  UI32 nNodes = end - start;
+  I32 nNodes = end - start;
   if (nNodes == 1)
   {
     return treeletRoots[start];
@@ -321,7 +394,7 @@ LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVH
 
   AABB bounds; // bounds of all child nodes
   AABB centroidBounds; // LBVH bounds of node centroids
-  for (UI32 i = start; i < end; ++i) 
+  for (I32 i = start; i < end; ++i)
   {
     bounds.mergeWithAABB(treeletRoots[i]->bounds);
     centroidBounds.mergeWithPoint(treeletRoots[i]->bounds.getCentroid());
@@ -338,11 +411,11 @@ LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVH
 
   BucketInfo buckets[nBuckets]; // buckets centroid of child nodes lie in
 
-  for (UI32 i = start; i < end; ++i)
+  for (I32 i = start; i < end; ++i)
   {
     // centroid along split axis
     F32 axisCentroid = (treeletRoots[i]->bounds.bounds[0][axis] + treeletRoots[i]->bounds.bounds[1][axis]) * 0.5f;
-    UI32 bucketIndex = (UI32)(nBuckets * ((axisCentroid - centroidBounds.bounds[0][axis]) /
+    I32 bucketIndex = (I32)(nBuckets * ((axisCentroid - centroidBounds.bounds[0][axis]) /
       (centroidBounds.bounds[1][axis] - centroidBounds.bounds[0][axis])));
     
     if (bucketIndex == nBuckets)
@@ -357,16 +430,16 @@ LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVH
   // TODO: attempt linear complexity (first pass store count and boxes, second pass compute costs)
   // estimate traveral costs for each bucket based on surface area, number of nodes in bucket and a scalar for intersect overhead (eg is function virtual)
   F32 costs[nBuckets - 1];
-  for (UI32 i = 0; i < nBuckets - 1; ++i)
+  for (I32 i = 0; i < nBuckets - 1; ++i)
   {
     AABB b0, b1;
     I32 count0 = 0, count1 = 0;
-    for (UI32 j = 0; j <= i; ++j)
+    for (I32 j = 0; j <= i; ++j)
     {
       b0.mergeWithAABB(buckets[j].bounds);
       count0 += buckets[j].count;
     }
-    for (UI32 j = i + 1; j < nBuckets; ++j)
+    for (I32 j = i + 1; j < nBuckets; ++j)
     {
       b1.mergeWithAABB(buckets[j].bounds);
       count1 += buckets[j].count;
@@ -376,8 +449,8 @@ LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVH
   }
 
   F32 minCost = costs[0];
-  UI32 minCostBucketIndex = 0; // find bucket with minimum cost
-  for (UI32 i = 1; i < nBuckets - 1; ++i)
+  I32 minCostBucketIndex = 0; // find bucket with minimum cost
+  for (I32 i = 1; i < nBuckets - 1; ++i)
   {
     if (costs[i] < minCost)
     {
@@ -391,7 +464,7 @@ LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVH
     [=](const BVHNode* node) // lambda expression as predicate comparing bucket indices
   {
     F32 axisCentroid = (node->bounds.bounds[0][axis] + node->bounds.bounds[1][axis]) * 0.5f;
-    UI32 bucketIndex = (UI32) (nBuckets * ((axisCentroid - centroidBounds.bounds[0][axis]) /
+    I32 bucketIndex = (I32) (nBuckets * ((axisCentroid - centroidBounds.bounds[0][axis]) /
       (centroidBounds.bounds[1][axis] - centroidBounds.bounds[0][axis])));
     
     if (bucketIndex == nBuckets)
@@ -411,16 +484,16 @@ LinearBVH::BVHNode* LinearBVH::buildUpperSAH(MemoryArena& arena, std::vector<BVH
   return node;
 }
 
-UI32 LinearBVH::flattenBVHTree(BVHNode* node, UI32* offset)
+I32 LinearBVH::flattenBVHTree(BVHNode* node, I32* offset)
 {
   LinearBVHNode* linearNode = &linearBVH[*offset];
   
   linearNode->bounds = node->bounds;
-  UI32 newOffset = (*offset)++;
+  I32 newOffset = (*offset)++;
   
   if (node->nShapes > 0) // leaf
   {
-    linearNode->shapeOffset = node->offset;
+    linearNode->shapeOffset = node->shapeOffset;
     linearNode->nShapes = node->nShapes;
   }
   else // interior
@@ -439,7 +512,7 @@ void LinearBVH::getGlData()
   std::vector<Matrix4> AABBTransforms;
   AABBTransforms.reserve(totalNodes);
 
-  for (UI32 i = 0; i < totalNodes; ++i)
+  for (I32 i = 0; i < totalNodes; ++i)
   {
     AABB* bounds = &linearBVH[i].bounds;
     Vector3 position = bounds->getCentroid();

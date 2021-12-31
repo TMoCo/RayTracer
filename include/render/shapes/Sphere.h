@@ -52,7 +52,7 @@ public:
 
       if (t1 <= tMin || t0 > ray.tMax || t > ray.tMax)
       {
-        return false;
+        return false; // invalid intersection
       }
     }
 
@@ -66,6 +66,7 @@ public:
 
     *surfel = { pHit, normal, uv, -ray.direction, this };
     surfel->tangent = Vector3{ -sinf(uv[0]), 0.0f, cosf(uv[0]) }.normalize();
+    surfel->material = primitive->material;
     ray.tMax = t;
 
     return true;

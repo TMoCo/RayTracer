@@ -5,20 +5,21 @@ scene sphere
   {
     position 0 1 -9
     rotation 0 0 0
-    shape sphere 1 -1 1 360
-  }
-
-  geometry test_sphere
-  {
-    position 0 0 -6
-    rotation 0 0 0
-    shape sphere 1 -1 1 360
+    shape sphere 1
   }
 
   geometry test_sphere
   {
     position 0 -502 -20
     rotation 0 0 0
-    shape sphere 500 -1 1 360
+    shape sphere 500
   }
+  
+  geometry test_sphere
+  {
+    position 0 0 -6
+    rotation 0 0 0
+    shape sphere 1
+  }
+
 }
