@@ -37,22 +37,11 @@ const AABB* Mesh::getBounds()
 
 bool Mesh::intersect(const Ray& ray, Surfel* surfel) const 
 {
-  F32 tHit = ray.tMax;
   for (Triangle* triangle : triangles)
   {
-    triangle->intersect(ray, &tHit, surfel);
+    triangle->intersect(ray, surfel);
   }
-  
-  if (tHit < ray.tMax)
-  {
-    ray.tMax = tHit;
-    surfel->material = material;
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return ray.tMax < INFINITY;
 }
 
 void Mesh::draw(Shader* shader) const

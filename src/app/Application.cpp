@@ -59,7 +59,7 @@ I32 Application::run(char* sceneName)
   }
 
   Scene scene;
-  SceneLoader::loadScene(SCENES + "cornellteapot.scene", scene);
+  SceneLoader::loadScene(SCENES + sceneName, scene);
 
   renderLoop(&scene);
 
@@ -104,7 +104,7 @@ void Application::renderLoop(Scene* scene)
 
     window.framebuffer.bind();
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.1f, 0.6f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     PV = camera.getProjectionMatrix() * camera.getViewMatrix();
@@ -114,7 +114,7 @@ void Application::renderLoop(Scene* scene)
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       debugShader.use();
       debugShader.setMatrix4("PV", PV);
-      scene->bvh->draw(&debugShader);
+      scene->linearBVH->draw(&debugShader);
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

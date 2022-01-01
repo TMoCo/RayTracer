@@ -29,13 +29,15 @@ public:
 
   Vector3 getCentroid() const;
 
-  Vector3 diagonal() const;
+  Vector3 getDiagonal() const;
 
   Vector3 getOffset(const Vector3& point) const;
 
-  F32 surfaceArea() const;
+  I32 getMaximumExtent() const;
 
-  bool intersect(const Ray& ray, F32* tMax) const;
+  F32 getSurfaceArea() const;
+
+  bool intersect(const Ray& ray) const;
 
   AABB& mergeWithAABB(const AABB& other);
 

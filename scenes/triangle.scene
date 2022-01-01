@@ -1,5 +1,5 @@
 scene triangle
-{
+{  
   geometry triangle
   {
     position 1 2 1

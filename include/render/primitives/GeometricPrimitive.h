@@ -20,6 +20,8 @@ class GeometricPrimitive : public Primitive
   friend class SceneLoader;
 
 public:
+  GeometricPrimitive();
+
   GeometricPrimitive(Shape* shape);
 
   ~GeometricPrimitive();

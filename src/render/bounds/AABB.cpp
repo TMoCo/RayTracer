@@ -23,7 +23,7 @@ Vector3 AABB::getCentroid() const
   return (bounds[0] + bounds[1]) * 0.5f;
 }
 
-Vector3 AABB::diagonal() const
+Vector3 AABB::getDiagonal() const
 {
   return bounds[1] - bounds[0];
 }
@@ -48,55 +48,74 @@ Vector3 AABB::getOffset(const Vector3& point) const
   return offset;
 }
 
-F32 AABB::surfaceArea() const
+I32 AABB::getMaximumExtent() const
 {
-  Vector3 d = diagonal();
+  Vector3 diagonal = getDiagonal();
+  if (diagonal[0] > diagonal[1] && diagonal[0] > diagonal[2])
+  {
+    return 0;
+  }
+  else if (diagonal[1] > diagonal[2])
+  {
+    return 1;
+  }
+  else
+  {
+    return 2;
+  }
+
+}
+
+F32 AABB::getSurfaceArea() const
+{
+  Vector3 d = getDiagonal();
   return 2.0f * (d[0] * d[1] + d[0] * d[2] + d[1] * d[2]);
 }
 
 // optional hit arguments updated for positive intersections
-bool AABB::intersect(const Ray& ray, F32* tMax) const
+bool AABB::intersect(const Ray& ray) const
 {
-  F32 t0 = 0.0f, t1 = ray.tMax, tNear, tFar;
-
   // x
-  tNear = (bounds[ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
-  tFar = (bounds[1 - ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
+  F32 tMin = (bounds[ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
+  F32 tMax = (bounds[1 - ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];
+  F32 tMinY = (bounds[ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
+  F32 tMaxY = (bounds[1 - ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
   
-  t0 = tNear > t0 ? tNear : t0;
-  t1 = tFar < t1 ? tFar : t1;
-  
-  if (t0 > t1)
+  if (tMin > tMaxY || tMinY > tMax)
   {
     return false;
   }
 
-  // y
-  tNear = (bounds[ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
-  tFar = (bounds[1 - ray.negDir[1]][1] - ray.origin[1]) * ray.inverseDir[1];
-  
-  t0 = tNear > t0 ? tNear : t0;
-  t1 = tFar < t1 ? tFar : t1;
-  
-  if (t0 > t1)
+  if (tMinY > tMin)
   {
-    return false;
+    tMin = tMinY;
+  }
+
+  if (tMaxY < tMax)
+  {
+    tMax = tMaxY;
   }
 
   // z
-  tNear = (bounds[ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
-  tFar = (bounds[1 - ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
+  F32 tMinZ = (bounds[ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
+  F32 tMaxZ = (bounds[1 - ray.negDir[2]][2] - ray.origin[2]) * ray.inverseDir[2];
   
-  t0 = tNear > t0 ? tNear : t0;
-  t1 = tFar < t1 ? tFar : t1;
-  
-  if (t0 > t1) 
+  if (tMin > tMaxZ || tMinZ > tMax)
   {
     return false;
   }
 
-  *tMax = t1;
-  return true;
+  if (tMinZ > tMin)
+  {
+    tMin = tMinZ;
+  }
+
+  if (tMaxZ < tMax)
+  {
+    tMax = tMaxZ;
+  }
+
+  return (tMin < ray.tMax) && (tMax > 0);
 }
 
 AABB& AABB::mergeWithAABB(const AABB& other)

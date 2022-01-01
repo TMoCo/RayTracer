@@ -90,6 +90,8 @@ void Image::writePixelColour(UI32 u, UI32 v, const F32* colourValues)
 
 bool Image::writeToImageFile(const std::string& path) const
 {
+  DEBUG_PRINT("Writing to path: %s. Flipping image... ", path.c_str());
+
   Image staging{ width, height, channels };
 
   byte* pStaging = staging.data;
@@ -107,7 +109,14 @@ bool Image::writeToImageFile(const std::string& path) const
     }
   }
 
-  return stbi_write_jpg(path.c_str(), width, height, channels, staging.data, 90) != 0;
+  DEBUG_PRINT("Image flipped.\n");
+
+  bool  ret = stbi_write_jpg(path.c_str(), width, height, channels, staging.data, 90) != 0;
+  if (!ret)
+  {
+    ERROR_MSG("stbi failed to write image!\n");
+  }
+  return ret;
 }
 
 const byte* Image::getTexel(F32 u, F32 v) const

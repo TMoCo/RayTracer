@@ -44,18 +44,24 @@ BVH* Scene::buildBVH()
   }
 
   bvh = new BVH{ this };
+
+  linearBVH = new LinearBVH{ shapes };
   return bvh;
 }
 
 bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
 {
   // if bvh on:
+
+  return linearBVH->intersect(inRay, surfel);
+
   return bvh->intersect(inRay, surfel);
 
   for (auto& primitive : primitives)
   {
     primitive->intersect(inRay, surfel);
   }
-
   return inRay.tMax < INFINITY;
+
+
 }
