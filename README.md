@@ -1,14 +1,13 @@
 # Raytracing application
 
 ## Motivation
-After writing a simple raytracer for my 4th year rendering module, I've decided to revisit raytracing and learn more about this rendering paradigm. My previous application, although sufficient to get a good mark, could have gone a lot further. With this project, I want to improve on the aspects of the coursework I found lacking. 
-The main issues with the coursework was speed: rendering an image was a slow, painful and soul crushing experience, even for a small number of primitives. Another issue was sampling and scattering which generated bad random light bounce reflections. Finally, building scene was too complicated as scene geometry and material information had to be merged into a complicated file extending the wavefront OBJ format; Needless to say, it wasn't pretty. This project aims to adress these issues whilst exploring ray tracing further in the hope to render some impressive scenes and experiment with more advanced concepts such as acceleration data structures and volumetric rendering.
+After writing a simple raytracer for my 4th year rendering module, I have decided to revisit raytracing and learn more about this beautiful rendering paradigm. My previous application, although sufficient to get a good mark, could have gone a **lot** further. The main issue with the coursework was speed: rendering an image was a slow, painful and soul crushing experience, even for a small amount of geometry. Another issue was sampling and scattering which generated inacurrate ray directions. Finally, building a scene was too very clunky as scene geometry and material information had to be merged into a complicated file extending the wavefront OBJ format; Needless to say, it wasn't pretty. This project aims to adress these issues whilst exploring ray tracing further in the hope of rendering some impressive scenes and experimenting with more advanced ray tracing concepts.
 
 ## The Initial plan
 The initial plan for the project is to address the issues present in the previous application. This requires:
-- [x] faster mathematics
-- [x] a better material system for PBR materials (ie textures)
-- [x] a simpler scene file format 
+- [x] faster and correct mathematics
+- [x] a better material system (ie texture management)
+- [x] a simpler scene file format
 
 ## Moving forward
 After generating some images, the next steps of the project are:
@@ -50,17 +49,16 @@ metallicMap rustedironMetallic.png
 roughnessMap rustedironRoughness.png
 normalMap rustedironNormal.png
 ```
+![cornell box](https://user-images.githubusercontent.com/56483943/147835143-d451e774-b6c6-4b10-967d-b5cee0c00345.jpg)
 
-![twok](https://user-images.githubusercontent.com/56483943/147838780-5f8cdf2b-24ad-4c17-849e-bac956a7be7d.jpg)
-
-Triangle meshes loaded from .obj files can also be rendered. Using Blender, I make my own models or export royalty free models from other formats such as .gltf. Here is the scene file used:
+Triangle meshes loaded from .obj files can also be rendered. Using Blender, I make my own models or export royalty free models from other formats such as .gltf to .obj. Scene files resemble the JSON format, for instance the cornell box scene:
 
 ```
 scene cornell_box
 {
   geometry box
   {
-    position 0 0 0
+    position 0 0 -3
     rotation 0 0 0
     material cornellbox.mtl
     shape mesh cornellbox.obj
@@ -68,31 +66,39 @@ scene cornell_box
 
   geometry light
   {
-    position 0 0 0
+    position 0 0 -3
     rotation 0 0 0
     material light.mtl
     shape mesh cornellboxlight.obj
   }
 
-  geometry sphere
+  geometry sphere1
   {
-    position 0.65 -0.65 0.75
+    position 0.35 0.5 -3.65
+    rotation 0 0 0
+    material rustediron.mtl
+    shape sphere 0.25 
+  }
+
+  geometry sphere2
+  {
+    position -0.55 -0.3 -3.5
     rotation 0 0 0
     material glass.mtl
     shape sphere 0.25 
   }
-  
+
   geometry smallcube
   {
-    position 0 0 0
+    position 0 0.2 -2.3
     rotation 0 0 0
-    material metal.mtl
+    material glass.mtl
     shape mesh smallcube.obj
   }
 
   geometry bigcube
   {
-    position 0 0 0
+    position -0.3 0 -3.7
     rotation 0 0 0
     material metal.mtl
     shape mesh bigcube.obj
@@ -102,7 +108,7 @@ scene cornell_box
 ![horizontalBVH](https://user-images.githubusercontent.com/56483943/147832855-2aebf834-9f70-4e89-a28e-b687dd7b0ef1.png)
 ![midPointBVH](https://user-images.githubusercontent.com/56483943/147832860-fcd4f428-f13a-4626-82b1-f63fa561f858.png)
 
-The app now has some acceleration data structures in the form of Horizontal BVH with SAH (top) and a more basic axis midpoint separation (bottom). Notice that the density of bounding volumes is smaller and that they embrace the shape of the mesh more. They currently follow the implementation of the PBRT book, but I would like to add further optimisations to them when I can. 
+The app now has some acceleration data structures in the form of a Horizontal BVH with SAH (top) and a more basic axis midpoint separation (bottom). Notice that the density of bounding volumes is smaller and that they embrace the shape of the mesh more with the HBVH. They currently follow the implementation of the PBRT book, but I would like to add further optimisations to them when I can. 
 
 ![guiiteration4](https://user-images.githubusercontent.com/56483943/147833846-74ea9341-f0df-44fc-abca-3fe598163584.png)
 
