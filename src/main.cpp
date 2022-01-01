@@ -21,11 +21,11 @@ int main(int argc, char* argv[])
   else
   {
 #ifdef NDEBUG
-    //return app.run("cornellteapot.scene"); // comment out for release proper
+    return app.run("clone.scene"); // comment out for release proper
     ERROR_MSG("To use app:\n>RAYTRACER.exe scene\nMake sure .scene file is in the scenes folder");
     return -1;
 #else
-    return app.run("cornellbox.scene");
+    return app.run("clone.scene");
 #endif // !NDEBUG
 
   }

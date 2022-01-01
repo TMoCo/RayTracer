@@ -35,8 +35,8 @@ LinearBVH::LinearBVH(std::vector<Shape*> inSceneShapes)
 
   BVHNode* root;
 
-  //root = buildTree(arena, shapeInfo, 0, (I32)sceneShapes.size(), &totalNodes, orderedSceneShapes);
-  root = buildHorizontalLinearBVH(arena, shapeInfo, &totalNodes, orderedSceneShapes);
+  root = buildTree(arena, shapeInfo, 0, (I32)sceneShapes.size(), &totalNodes, orderedSceneShapes);
+  // root = buildHorizontalLinearBVH(arena, shapeInfo, &totalNodes, orderedSceneShapes);
 
   sceneShapes.swap(orderedSceneShapes); // swap with ordered scene shapes
   shapeInfo.resize(0);
