@@ -16,45 +16,39 @@
 #include <random>
 
 namespace random {
-  typedef std::uniform_real_distribution<float> uniform_f;
-  typedef std::uniform_int_distribution<int>  uniform_i;
-  typedef std::uniform_int_distribution<uint32_t> uniform_ui;
+  typedef std::uniform_int_distribution<int> udi_t;
+  typedef std::uniform_real_distribution<float> udf_t;
+  typedef std::uniform_int_distribution<uint32_t> udui_t;
 
   static std::random_device device;
   static std::mt19937 generator(device());
-  static uniform_f distribution01(0.0f, 1.0f);
 
-  inline float uniformfloat() 
-  {
-    return distribution01(generator);
-  }
+  // uniform float in range [0,1]
+  static udf_t udf_0_1(0.0f, 1.0f);
+  // uniform float in range [-1,1]
+  static udf_t udf_m1_1(-1.0f, 1.0f);
 
-  inline float uniformfloat(float min, float max) 
+  inline float uniform_float(float min, float max) 
   {
-    static uniform_f distribution(min, max);
+    static udf_t distribution(min, max);
     return distribution(generator);
   }
 
-  inline int uniformint(int min, int max) 
+  inline int uniform_int(int min, int max) 
   {
-    static uniform_i distribution(min, max);
+    static udi_t distribution(min, max);
     return distribution(generator);
   }
 
-  inline uint32_t uniformuint32_t(uint32_t min, uint32_t max)
+  inline uint32_t uniform_uint32_t(uint32_t min, uint32_t max)
   {
-    static uniform_ui distribution(min, max);
+    static udui_t distribution(min, max);
     return distribution(generator);
   }
 
   inline Vector2 uniformUV() 
   {
-    return { distribution01(generator), distribution01(generator) };
-  }
-
-  inline Vector3 uniformVector3(float min, float max)
-  {
-    return { uniformfloat(min, max), uniformfloat(min, max), uniformfloat(min, max) };
+    return { udf_0_1(generator), udf_0_1(generator) };
   }
 };
 

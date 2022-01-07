@@ -54,7 +54,7 @@ Vector3 UniformSampler::unitSphere()
   Vector3 vector;
   while (true)
   {
-    vector = random::uniformVector3(-1.0f, 1.0f);
+    vector = { random::udf_m1_1(random::generator), random::udf_m1_1(random::generator), random::udf_m1_1(random::generator) };
     if (vector.lengthSquared() >= 1.0f)
     {
       continue;

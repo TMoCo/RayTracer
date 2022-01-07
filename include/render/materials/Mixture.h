@@ -19,7 +19,7 @@ public:
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
     float metallicity = maps[MAT_MAPS::METALLIC]->sampleChannel(surfel.uv, 0);
-    if (random::uniformfloat() < metallicity)
+    if (random::udf_0_1(random::generator) < metallicity)
     {
       // specular
       float cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);

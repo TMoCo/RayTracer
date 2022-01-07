@@ -49,6 +49,15 @@ Application::Application()
   status = 0; // all is well
 }
 
+Application::~Application()
+{
+  UserInterface::get().terminate();
+
+  glfwDestroyWindow(window.getWindowPointer());
+
+  glfwTerminate();
+}
+
 int Application::run(char* sceneName)
 {
   if (status != 0)
@@ -64,8 +73,6 @@ int Application::run(char* sceneName)
   scene.buildBVH();
 
   renderLoop(&scene);
-
-  terminate();
 
   return 0;
 }
@@ -134,13 +141,4 @@ void Application::renderLoop(Scene* scene)
     glfwSwapBuffers(window.getWindowPointer());
     glfwPollEvents();
   }
-}
-
-void Application::terminate()
-{
-  UserInterface::get().terminate();
-
-  glfwDestroyWindow(window.getWindowPointer());
-
-  glfwTerminate();
 }

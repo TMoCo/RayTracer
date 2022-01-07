@@ -20,11 +20,11 @@ class Application
 public:
   Application();
 
+  ~Application();
+
   int run(char* sceneName);
 
 private:
-  void terminate();
-
   void renderLoop(Scene* scene);
 
 protected:

@@ -56,7 +56,7 @@ void RayTracer::rayTrace(const Scene* scene, const Camera* camera)
         for (uint32_t sample = 0; sample < (uint32_t)numSamples; ++sample)
         {
           colour += castRay(scene, Ray::generateCameraRay(camera, 
-            { (row + random::uniformfloat()) * rWidth, (col + random::uniformfloat()) * rHeight }), MAX_DEPTH);
+            { (row + random::udf_0_1(random::generator)) * rWidth, (col + random::udf_0_1(random::generator)) * rHeight }), MAX_DEPTH);
         }
         colour *= inversNumSamples;
         rayTracedData.writePixelColour(row, col, &colour[0]);
