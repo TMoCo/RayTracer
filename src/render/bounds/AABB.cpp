@@ -48,7 +48,7 @@ Vector3 AABB::getOffset(const Vector3& point) const
   return offset;
 }
 
-int32_t AABB::getMaximumExtent() const
+int AABB::getMaximumExtent() const
 {
   Vector3 diagonal = getDiagonal();
   if (diagonal[0] > diagonal[1] && diagonal[0] > diagonal[2])

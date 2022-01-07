@@ -20,7 +20,7 @@
 class Ray;
 class Surfel;
 
-typedef enum : uint16_t
+typedef enum : uint32_t
 {
   ALBEDO,
   NORMAL,

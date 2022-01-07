@@ -29,11 +29,11 @@ public:
 
   ~Texture();
 
-  void bind(int32_t unit = -1);
+  void bind(int unit = -1);
 
   Colour sample(const Vector2& uv) const;
 
-  float sampleChannel(const Vector2& uv, const uint32_t& channel) const;
+  float sampleChannel(const Vector2& uv, int channel) const;
 
   void generate(bool mip);
 

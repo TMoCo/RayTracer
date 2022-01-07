@@ -23,8 +23,6 @@
 #define UNIX 1
 #endif
 
-// #define HARD_EXIT
-
 typedef unsigned char byte_t;
 
 #include <stdio.h>

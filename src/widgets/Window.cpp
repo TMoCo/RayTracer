@@ -47,7 +47,7 @@ void Window::updateFramebuffer()
   glViewport(0, 0, width, height);
 }
 
-void Window::resizeCallBack(GLFWwindow* p_win, int32_t w, int32_t h)
+void Window::resizeCallBack(GLFWwindow* p_win, int w, int h)
 {
   // get window 
   Window* window = (Window*)(glfwGetWindowUserPointer(p_win));

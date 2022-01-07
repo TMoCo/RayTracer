@@ -14,36 +14,36 @@
 #include <core/core.h>
 #include <string>
 
-#define MAX_IMAGE_SIZE 4000U // max 4k image
+#define MAX_IMAGE_SIZE 4000 // max 4k image
 
 class Image 
 {
 public:
   Image();
 
-  Image(uint32_t width, uint32_t height, uint32_t channels, const byte_t* initData = nullptr);
+  Image(int width, int height, int channels, const byte_t* initData = nullptr);
   
   ~Image();
 
-  inline const uint32_t getWidth() const { return width; }
+  inline const int getWidth() const { return width; }
   
-  inline const uint32_t getHeight() const { return height; }
+  inline const int getHeight() const { return height; }
 
-  inline const uint32_t getChannels() const { return channels; }
+  inline const int getChannels() const { return channels; }
 
-  byte_t* operator[](uint32_t index);
+  byte_t* operator[](int index);
   
-  const byte_t* operator[](uint32_t index) const;
+  const byte_t* operator[](int index) const;
 
   void clear();
 
   void copy(const byte_t* data);
 
-  bool resize(uint32_t w, uint32_t h);
+  bool resize(int w, int h);
 
-  uint32_t size() const;
+  size_t size() const;
 
-  void writePixelColour(uint32_t u, uint32_t v, const float* colourValues);
+  void writePixelColour(int u, int v, const float* colourValues);
 
   bool writeToImageFile(const std::string& path) const;
 
@@ -52,7 +52,7 @@ public:
 private:
   byte_t* data;
 
-  uint32_t width, height, channels;
+  int width, height, channels;
 
   void allocate();
 

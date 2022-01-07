@@ -26,7 +26,7 @@ UserInterface& UserInterface::get()
   return ui;
 }
 
-int32_t UserInterface::processKeyInput(Window* window, float deltaTime)
+int UserInterface::processKeyInput(Window* window, float deltaTime)
 {
   GLFWwindow* w = window->getWindowPointer();
   
@@ -175,7 +175,7 @@ void UserInterface::set(Application* application)
   {
     ImGui::Text("Ray Tracer Options:");
   
-    int32_t* numSamples = &application->raytracer.numSamples;
+    int* numSamples = &application->raytracer.numSamples;
     ImGui::InputInt("Samples num  ", numSamples, 1, 10);
     *numSamples = *numSamples < 1 ? 1 : *numSamples;
 
@@ -203,11 +203,11 @@ void UserInterface::set(Application* application)
   
   ImGui::InputText(".jpg", application->raytracer.outputName, 100);
 
-  int32_t* dim = application->raytracer.dimensions; // must be multiple of 4 (GL_RGB format of raytraced image)
+  int* dim = application->raytracer.dimensions; // must be multiple of 4 (GL_RGB format of raytraced image)
   ImGui::InputInt("Width", dim, 4, 4);
-  *dim = clamp(*dim, 500, (int32_t)MAX_IMAGE_SIZE);
+  *dim = clamp(*dim, 500, (int)MAX_IMAGE_SIZE);
   ImGui::InputInt("Height", dim + 1, 4, 4);
-  *(dim + 1) = clamp(*(dim + 1), 500, (int32_t)MAX_IMAGE_SIZE);
+  *(dim + 1) = clamp(*(dim + 1), 500, (int)MAX_IMAGE_SIZE);
   
   ImGui::EndChild();
 

@@ -29,7 +29,7 @@ public:
 
   void setBool(const char* name, bool value) const;
 
-  void setInt(const char* name, int32_t value) const; 
+  void setInt(const char* name, int value) const; 
 
   void setFloat(const char* name, float value) const;
 
@@ -44,7 +44,7 @@ public:
 private:
   const std::vector<char> getShaderCode(const std::string& path);
 
-  int32_t checkShaderCompile(uint32_t shader, const char* type);
+  int checkShaderCompile(uint32_t shader, const char* type);
 
   uint32_t id;
 

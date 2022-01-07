@@ -33,7 +33,7 @@ public:
 
   Vector3 getOffset(const Vector3& point) const;
 
-  int32_t getMaximumExtent() const;
+  int getMaximumExtent() const;
 
   float getSurfaceArea() const;
 

@@ -14,7 +14,7 @@
 #include <resource/OBJLoader.h>
 #include <scene/Scene.h>
 
-int32_t SceneLoader::loadScene(const std::string& fileName, Scene& scene)
+int SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 {
   if (!file::isOfType(fileName, ".scene"))
   {

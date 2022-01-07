@@ -27,7 +27,7 @@
 
 typedef struct
 {
-  int32_t x, y;
+  int x, y;
   uint32_t width, height;
 } ViewPort;
 
@@ -52,7 +52,7 @@ public:
 
   void updateFramebuffer();
     
-  static void resizeCallBack(GLFWwindow* p_win, int32_t w, int32_t h);
+  static void resizeCallBack(GLFWwindow* p_win, int w, int h);
 
 public:
   uint32_t width = 0, height = 0;

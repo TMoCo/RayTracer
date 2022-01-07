@@ -31,24 +31,24 @@ class LinearBVH
       : num{ 0 }
     { }
 
-    ShapePrimitiveInfo(int32_t num, const AABB& bounds)
+    ShapePrimitiveInfo(int num, const AABB& bounds)
       : num{ num }, bounds{ bounds }, centroid{ bounds.getCentroid() }
     { }
 
-    int32_t num;
+    int num;
     AABB bounds;
     Vector3 centroid;
   };
 
   struct MortonPrimitive
   {
-    int32_t shapeIndex;
+    int shapeIndex;
     uint32_t mortonCode;
   };
 
   struct BVHNode
   {
-    void makeLeafNode(int32_t offset, int32_t n, const AABB& b)
+    void makeLeafNode(int offset, int n, const AABB& b)
     {
       shapeOffset = offset;
       nShapes = n;
@@ -56,7 +56,7 @@ class LinearBVH
       children[0] = children[1] = nullptr;
     }
 
-    void makeInteriorNode(int32_t axis, BVHNode* firstChild, BVHNode* secondChild)
+    void makeInteriorNode(int axis, BVHNode* firstChild, BVHNode* secondChild)
     {
       children[0] = firstChild;
       children[1] = secondChild;
@@ -68,12 +68,12 @@ class LinearBVH
 
     AABB bounds;
     BVHNode* children[2];
-    int32_t axisSplit, shapeOffset, nShapes; // index into ordered shapes vector
+    int axisSplit, shapeOffset, nShapes; // index into ordered shapes vector
   };
 
   struct LBVHTreelet
   {
-    int32_t startIndex, nShapes;
+    int startIndex, nShapes;
     BVHNode* nodes;
   };
 
@@ -82,8 +82,8 @@ class LinearBVH
     AABB bounds;
     union // interpret int differently if leaf or interior node
     {
-      int32_t shapeOffset;
-      int32_t secondChildOffset;
+      int shapeOffset;
+      int secondChildOffset;
     };
     int16_t nShapes; // 0 for interior nodes
     int8_t axis; 
@@ -102,11 +102,11 @@ public:
   bool intersect(const Ray& ray, Surfel* surfel);
 
 private:
-  BVHNode* buildTree(MemoryArena& arena, std::vector<ShapePrimitiveInfo>& shapeInfo, int32_t start, int32_t end, 
-    int32_t* totalNodes, std::vector<Shape*>& orderedShapes);
+  BVHNode* buildTree(MemoryArena& arena, std::vector<ShapePrimitiveInfo>& shapeInfo, int start, int end, 
+    int* totalNodes, std::vector<Shape*>& orderedShapes);
 
   BVHNode* buildHorizontalLinearBVH(MemoryArena& arena, const std::vector<ShapePrimitiveInfo>& shapeInfo,
-    int32_t* totalNodes, std::vector<Shape*>& orderedShapes);
+    int* totalNodes, std::vector<Shape*>& orderedShapes);
 
   uint32_t apply3DMortonEncoding(const Vector3& point);
 
@@ -115,12 +115,12 @@ private:
   void radixSortMortonPrimitives(std::vector<MortonPrimitive>* mortonPrimitives);
 
   BVHNode* buildTreelet(BVHNode*& buildNodes, const std::vector<ShapePrimitiveInfo>& primitiveInfo,
-    MortonPrimitive* mortonPrims, int32_t nShapes, int32_t* totalNodes, std::vector<Shape*>& orderedShapes,
-    int32_t* orderedShapeOffset, int32_t bitIndex);
+    MortonPrimitive* mortonPrims, int nShapes, int* totalNodes, std::vector<Shape*>& orderedShapes,
+    int* orderedShapeOffset, int bitIndex);
 
-  BVHNode* buildUpperSAH(MemoryArena& arena, std::vector<BVHNode*>& treeletRoots, int32_t start, int32_t end, int32_t* totalNodes);
+  BVHNode* buildUpperSAH(MemoryArena& arena, std::vector<BVHNode*>& treeletRoots, int start, int end, int* totalNodes);
 
-  int32_t flattenBVHTree(BVHNode* node, int32_t* offset);
+  int flattenBVHTree(BVHNode* node, int* offset);
 
   void getGlData();
 
@@ -129,7 +129,7 @@ private:
 
   LinearBVHNode* linearBVH;
 
-  int32_t totalNodes;
+  int totalNodes;
 
   std::vector<Shape*> sceneShapes;
 };

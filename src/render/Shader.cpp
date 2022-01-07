@@ -69,10 +69,10 @@ bool Shader::isValid() const
 
 void Shader::setBool(const char* name, bool value) const
 {
-  glUniform1i(glGetUniformLocation(id, name), (int32_t)value);
+  glUniform1i(glGetUniformLocation(id, name), (int)value);
 }
 
-void Shader::setInt(const char* name, int32_t value) const
+void Shader::setInt(const char* name, int value) const
 {
   glUniform1i(glGetUniformLocation(id, name), value);
 }
@@ -126,9 +126,9 @@ const std::vector<char> Shader::getShaderCode(const std::string& path)
   return data;
 }
 
-int32_t Shader::checkShaderCompile(uint32_t shader, const char* type)
+int Shader::checkShaderCompile(uint32_t shader, const char* type)
 {
-  int32_t success;
+  int success;
   char infoLog[file::MAX_LINE_SIZE];
 
   if (strcmp(type, "PROGRAM") != 0)

@@ -102,7 +102,7 @@ struct Camera {
   {
     float intPart;
     pitch = modf(pitch, &intPart);
-    pitch += (int32_t)intPart % 360;
+    pitch += (int)intPart % 360;
 
     front = Vector3{
       cosf(radians(yaw)) * cosf(radians(pitch)),

@@ -11,17 +11,17 @@
 #ifndef RANDOM_H
 #define RANDOM_H 1
 
-#include <core/types.h>
 #include <Vector3.h>
 #include <Vector2.h>
 #include <random>
 
 namespace random {
   typedef std::uniform_real_distribution<float> uniform_f;
-  typedef std::uniform_int_distribution<int32_t>  uniform_i;
+  typedef std::uniform_int_distribution<int>  uniform_i;
   typedef std::uniform_int_distribution<uint32_t> uniform_ui;
 
-  static std::mt19937 generator;
+  static std::random_device device;
+  static std::mt19937 generator(device());
   static uniform_f distribution01(0.0f, 1.0f);
 
   inline float uniformfloat() 
@@ -35,7 +35,7 @@ namespace random {
     return distribution(generator);
   }
 
-  inline int32_t uniformint32_t(int32_t min, int32_t max) 
+  inline int uniformint(int min, int max) 
   {
     static uniform_i distribution(min, max);
     return distribution(generator);

@@ -56,7 +56,7 @@ Colour Texture::sample(const Vector2& uv) const
   return Colour(pixel[0] * REC_255, pixel[1] * REC_255, pixel[2] * REC_255);
 }
 
-float Texture::sampleChannel(const Vector2& uv, const uint32_t& channel) const
+float Texture::sampleChannel(const Vector2& uv, int channel) const
 {
   const byte_t* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
   return pixel[channel] * REC_255;

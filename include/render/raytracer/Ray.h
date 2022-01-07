@@ -47,7 +47,7 @@ public:
 
   Vector3 inverseDir;
   
-  int32_t negDir[3];
+  int negDir[3];
 
   mutable float tMax;
 

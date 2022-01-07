@@ -19,7 +19,7 @@ class UserInterface
 public:
   static UserInterface& get();
 
-  static int32_t processKeyInput(Window* window, float deltaTime);
+  static int processKeyInput(Window* window, float deltaTime);
 
   static void mouseCallBack(GLFWwindow* glfwwindow, double x, double y);
 

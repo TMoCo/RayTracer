@@ -34,11 +34,11 @@ private:
 protected:
   char outputName[100];
 
-  int32_t dimensions[2];
+  int dimensions[2];
 
   Image rayTracedData;
 
-  int32_t numSamples;
+  int numSamples;
 
   float antiAliasingKernelSize;
 
