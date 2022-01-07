@@ -12,7 +12,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H 1
 
-#include <core/types.h>
+
 #include <render/Camera.h>
 #include <render/Framebuffer.h>
 
@@ -36,7 +36,7 @@ class Window
 public:
   Window();
 
-  Window(uint32_t width, uint32_t height, const char* name);
+  Window(uint32_t width, uint32_t height, const char* name = "Window");
 
   void setMainCamera(Camera* camera);
 

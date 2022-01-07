@@ -26,7 +26,7 @@ public:
   Ray(const Vector3& origin, const Vector3& direction, float tMax)
     : origin{ origin }, direction{ direction.normalize() }, tMax{ tMax },
     inverseDir{ 1.0f / direction }, negDir{ inverseDir[0] < 0.0f, inverseDir[1] < 0.0f, inverseDir[2] < 0.0f }
-  { }
+  {}
 
   inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC)
   {

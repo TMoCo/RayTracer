@@ -11,7 +11,7 @@
 #ifndef BVH_H
 #define BVH_H 1
 
-#include <core/types.h>
+
 #include <render/primitives/Primitive.h>
 
 #include <vector>

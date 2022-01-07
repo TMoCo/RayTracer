@@ -12,6 +12,7 @@
 #define SCENE_H 1
 
 #include <scene/Node.h>
+#include <render/Camera.h>
 #include <render/shapes/Shape.h>
 #include <render/primitives/BVH.h>
 #include <render/bounds/LinearBVH.h>
@@ -21,9 +22,6 @@ class Surfel;
 
 class Scene 
 {
-  friend class SceneLoader;
-  friend class BVH;
-
 public:
   std::string name;
 
@@ -39,11 +37,12 @@ public:
 
   bool intersect(const Ray& inRay, Surfel* surfel) const;
 
+  Camera mainCamera;
+
   BVH* bvh;
 
   LinearBVH* linearBVH;
 
-protected:
   Node* root;
 
   std::vector<Primitive*> primitives; // container for all primitives

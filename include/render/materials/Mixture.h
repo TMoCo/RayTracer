@@ -33,9 +33,9 @@ public:
       
       Vector3 outDir = Vector3::reflect(inRay.direction, N);
 
-      outRay = { surfel.position, 
+      outRay = { surfel.position,
         // roughness affects fuzziness
-        outDir + maps[MAT_MAPS::ROUGHNESS]->sampleChannel(surfel.uv, 0) * UniformSampler::unitSphere(random::uniformUV()), 
+        outDir + maps[MAT_MAPS::ROUGHNESS]->sampleChannel(surfel.uv, 0) * sample::uniform_unitSphere(random::uniform_uv()),
         INFINITY };
 
       return true;
@@ -44,7 +44,7 @@ public:
     {
       // lambertian
       attenuation = maps[MAT_MAPS::ALBEDO]->sample(surfel.uv);
-      outRay = { surfel.position, UniformSampler::hemisphere(surfel.normal), INFINITY };
+      outRay = { surfel.position, sample::uniform_hemisphere(surfel.normal), INFINITY };
       return true;
     }
     

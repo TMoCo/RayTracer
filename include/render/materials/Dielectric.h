@@ -12,7 +12,7 @@
 #define DIELECTRIC_H 1
 
 #include <render/materials/Material.h>
-#include <render/raytracer/UniformSampler.h>
+#include <render/raytracer/sample.h>
 #include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
 

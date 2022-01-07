@@ -1,28 +1,23 @@
-# depbug sphere
 scene sphere
 {
+  # camera aspectRatio fov near far
+  camera 1.2 75 0.1 1000
+  # lookat eye target
+  lookat 0 3 -5 0 0 0
+
   geometry test_sphere
   {
-    position 0 0 -3
+    position 0.0 0.0 0 
     rotation 0 0 0
     shape sphere 1
-    material metal.mtl
-  }
-
-  geometry test_sphere1
-  {
-    position 0 0 0
-    rotation 0 0 0
-    shape sphere 1
-    material glass.mtl
+    material rustediron.mtl
   }
 
   geometry test_sphere2
   {
-    position 0 -502 0
+    position 0 510 0
     rotation 0 0 0
     shape sphere 500
-    material diffuse.mtl
+    material light.mtl
   }
-
 }

@@ -11,7 +11,7 @@
 #ifndef GL_SHAPES_H
 #define GL_SHAPES_H 1
 
-#include <core/types.h>
+
 #include <Vector3.h>
 
 class GLCube

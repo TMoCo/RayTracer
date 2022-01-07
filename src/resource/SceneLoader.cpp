@@ -148,6 +148,7 @@ int SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     {
       token = strtok_s(NULL, " ", &remainding); // material path
       Material* material = ResourceManager::get().addMaterialFromFile(node->name, token);
+      continue;
     }
 
     if (strcmp(token, "position") == 0)
@@ -160,6 +161,25 @@ int SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     {
       float x = strtof(remainding, &token), y = strtof(token, &token), z = strtof(token, NULL);
       node->local.rotateBy(Quaternion::eulerAngles(x, y, z));
+      continue;
+    }
+
+    if (strcmp(token, "camera") == 0)
+    {
+      scene.mainCamera.ar = strtof(remainding, &token);
+      scene.mainCamera.fov = strtof(token, &token);
+      scene.mainCamera.n = strtof(token, &token);
+      scene.mainCamera.f = strtof(token, NULL);
+      continue;
+    }
+
+    if (strcmp(token, "lookat") == 0)
+    {
+      scene.mainCamera.position = { strtof(remainding, &token), strtof(token, &token), strtof(token, &token) };
+      Vector3 target = { strtof(token, &token), strtof(token, &token), strtof(token, NULL) };
+      scene.mainCamera.front = target == scene.mainCamera.position ? FRONT : (target - scene.mainCamera.position).normalize();
+      scene.mainCamera.right = scene.mainCamera.front.cross(UP);
+      scene.mainCamera.up = scene.mainCamera.right.cross(scene.mainCamera.front);
       continue;
     }
   }

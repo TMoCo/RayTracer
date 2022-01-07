@@ -13,7 +13,7 @@
 
 #include <core/random.h>
 #include <render/materials/Material.h>
-#include <render/raytracer/UniformSampler.h>
+#include <render/raytracer/sample.h>
 #include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
 
@@ -26,7 +26,8 @@ public:
   {
     attenuation = colour::White;
     Vector3 outDir = Vector3::reflect(inRay.direction, surfel.normal);
-    outRay = { surfel.position + 0.001f * surfel.normal, outDir + fuzz * UniformSampler::unitSphere(random::uniformUV()), INFINITY };
+    outRay = { surfel.position + 0.001f * surfel.normal, 
+      outDir + fuzz * sample::uniform_unitSphere(random::uniform_uv()), INFINITY };
     return outRay.direction.dot(surfel.normal) > 0.0f;
   }
 

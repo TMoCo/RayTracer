@@ -58,22 +58,22 @@ int UserInterface::processKeyInput(Window* window, float deltaTime)
   {
     if (glfwGetKey(w, GLFW_KEY_W))
     {
-      window->mainCamera->processInput(Camera::FORWARD, deltaTime * 10.0f);
+      window->mainCamera->processInput(kCamMove::FORWARD, deltaTime * 10.0f);
       return 1;
     }
     if (glfwGetKey(w, GLFW_KEY_S))
     {
-      window->mainCamera->processInput(Camera::BACKWARD, deltaTime * 10.0f);
+      window->mainCamera->processInput(kCamMove::BACKWARD, deltaTime * 10.0f);
       return 1;
     }
     if (glfwGetKey(w, GLFW_KEY_Q))
     {
-      window->mainCamera->processInput(Camera::LEFTWARD, deltaTime * 10.0f);
+      window->mainCamera->processInput(kCamMove::LEFTWARD, deltaTime * 10.0f);
       return 1;
     }
     if (glfwGetKey(w, GLFW_KEY_D))
     {
-      window->mainCamera->processInput(Camera::RIGHTWARD, deltaTime * 10.0f);
+      window->mainCamera->processInput(kCamMove::RIGHTWARD, deltaTime * 10.0f);
       return 1;
     }
   }
@@ -125,7 +125,7 @@ void UserInterface::init(GLFWwindow* window)
   ImGui_ImplOpenGL3_Init();
 }
 
-void UserInterface::set(Application* application)
+void UserInterface::set(Application* application, Camera* camera)
 {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
@@ -189,10 +189,8 @@ void UserInterface::set(Application* application)
   ImGui::BeginChild("Camera Options", { region.x * 0.5f, 70.0f });
   {
     ImGui::Text("Camera Options:");
-    static float ar = 1.0f;
-    ImGui::SliderFloat("Aspect ratio ", &ar, 0.0f, 2.0f);
-    static float FOV = 45.0f;
-    ImGui::SliderFloat("FOV          ", &FOV, 0.0f, 90.0f);
+    ImGui::SliderFloat("Aspect ratio ", &camera->ar, 0.0f, 2.0f);
+    ImGui::SliderFloat("FOV          ", &camera->fov, 0.0f, 90.0f);
   }
   ImGui::EndChild();
 

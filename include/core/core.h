@@ -11,6 +11,10 @@
 #ifndef CORE_H
 #define CORE_H 1
 
+#include <stdio.h>
+#include <malloc.h>
+#include <chrono>
+
 #ifdef _WIN32
 #define WINDOWS 1
 #endif // WIN32
@@ -23,12 +27,18 @@
 #define UNIX 1
 #endif
 
-typedef unsigned char byte_t;
-
-#include <stdio.h>
-#include <malloc.h>
+#if (__cplusplus >= 202002L)
+#define ERROR_MSG(format, ...) \
+__m_error_msg(format __VA__OPT__(, ) __VA_ARGS__)
+#else
+#define ERROR_MSG(format, ...) \
+__m_error_msg(__FILE__, __LINE__, format, ##__VA_ARGS__);
+#endif
 
 #define CACHE_LINE 64
+
+typedef unsigned char byte_t;
+typedef  std::chrono::system_clock sys_clock;
 
 inline void* allocAligned(size_t size)
 {
@@ -56,25 +66,11 @@ inline void freeAligned(void* block)
 #endif
 }
 
-#include <chrono>
-typedef  std::chrono::system_clock sys_clock;
-
-#include <iostream>
-
-#if (__cplusplus >= 202002L)
-#define ERROR_MSG(format, ...) \
-__m_error_msg(format __VA__OPT__(, ) __VA_ARGS__)
-#else
-#define ERROR_MSG(format, ...) \
-__m_error_msg(format, ##__VA_ARGS__);
-#endif
-
-inline void __m_error_msg(const char* format, ...)
+inline void __m_error_msg(const char* file, int line, const char* format, ...)
 {
-  fprintf(stderr, "/!\\ ERROR!\n");
+  fprintf(stderr, "/!\\ ~~ ERROR ~~ /!\\\nFILE: %s\nLINE: %i\nINFO: ", file, line);
   if (format)
   {
-    // see stdio.h
     va_list args;
     __crt_va_start(args, format);
     _vfprintf_p(stderr, format, args); 

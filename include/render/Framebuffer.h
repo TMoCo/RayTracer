@@ -9,7 +9,7 @@
 #ifndef FRAME_BUFFER_H
 #define FRAME_BUFFER_H 1
 
-#include <core/types.h>
+
 
 #include <array>
 

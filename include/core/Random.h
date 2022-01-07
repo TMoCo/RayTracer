@@ -46,7 +46,7 @@ namespace random {
     return distribution(generator);
   }
 
-  inline Vector2 uniformUV() 
+  inline Vector2 uniform_uv() 
   {
     return { udf_0_1(generator), udf_0_1(generator) };
   }

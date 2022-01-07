@@ -11,7 +11,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H 1
 
-#include <core/types.h>
+
 #include <glad/glad.h>
 #include <image/Image.h>
 #include <image/Colour.h>

@@ -19,8 +19,8 @@
 #include <resource/ResourceManager.h>
 #include <widgets/UserInterface.h>
 
-Application::Application()
-  : status{ 0 }, drawBVH{ false }
+Application::Application() 
+  : status{ 0 }, drawBVH{ false } 
 {
   if (!glfwInit())
   {
@@ -33,8 +33,7 @@ Application::Application()
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window = { DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window" };
-
-  glfwMakeContextCurrent(window.getWindowPointer());
+  glfwSetWindowUserPointer(window.getWindowPointer(), &window);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
@@ -84,13 +83,10 @@ void Application::renderLoop(Scene* scene)
   Shader offscreenShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
   Shader compositionShader{ "..\\shaders\\composition.vert", "..\\shaders\\composition.frag" };
 
-  Camera camera{ { 0.0f, 0.0f, 0.0f }, 1.0f, 45.0f, 0.1f, 2000.0f };
-  window.setMainCamera(&camera);
+  window.setMainCamera(&scene->mainCamera);
 
   Matrix4 PV; // projection * view
   
-  glfwSetWindowUserPointer(window.getWindowPointer(), &window);
-
   float deltaTime = 0.0f, previous = 0.0f;
 
   while (!glfwWindowShouldClose(window.getWindowPointer()))
@@ -103,19 +99,20 @@ void Application::renderLoop(Scene* scene)
 
     if (UserInterface::processKeyInput(&window, deltaTime) == 0)
     {
-      raytracer.rayTrace(scene, window.getCamera());
+      scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
+      scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
+      raytracer.rayTrace(scene, &scene->mainCamera);
     }
 
-    UserInterface::get().set(this);
+    UserInterface::get().set(this, &scene->mainCamera);
 
     // RENDER SCENE ------------
-
     window.framebuffer.bind();
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    PV = camera.getProjectionMatrix() * camera.getViewMatrix();
+    PV = scene->mainCamera.getProjectionMatrix() * scene->mainCamera.getViewMatrix();
     
     if (drawBVH)
     {

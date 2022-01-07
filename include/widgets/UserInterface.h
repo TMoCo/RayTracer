@@ -25,7 +25,7 @@ public:
 
   void init(GLFWwindow* window);
 
-  void set(Application* application);
+  void set(Application* application, Camera* camera);
 
   void draw();
 

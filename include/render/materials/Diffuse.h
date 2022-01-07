@@ -13,7 +13,7 @@
 
 #include <core/random.h>
 #include <render/materials/Material.h>
-#include <render/raytracer/UniformSampler.h>
+#include <render/raytracer/sample.h>
 #include <render/raytracer/Ray.h>
 #include <render/raytracer/Surfel.h>
 
@@ -26,7 +26,7 @@ public:
 
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
-    outRay = { surfel.position + 0.001f * surfel.normal, UniformSampler::hemisphere(surfel.normal), INFINITY };
+    outRay = { surfel.position + 0.001f * surfel.normal, sample::uniform_hemisphere(surfel.normal), INFINITY };
     attenuation = maps[MAT_MAPS::ALBEDO] ? maps[MAT_MAPS::ALBEDO]->sample(surfel.uv) : albedo;
     return true;
   }

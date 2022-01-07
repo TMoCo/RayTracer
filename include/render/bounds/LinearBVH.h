@@ -13,7 +13,7 @@
 #ifndef LINEAR_BVH_H
 #define LINEAR_BVH_H 1
 
-#include <core/types.h>
+
 
 #include <render/bounds/AABB.h>
 #include <render/raytracer/Surfel.h>

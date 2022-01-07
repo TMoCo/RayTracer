@@ -13,7 +13,7 @@
 #include <core/random.h>
 #include <render/materials/Material.h>
 #include <render/raytracer/RayTracer.h>
-#include <render/raytracer/UniformSampler.h>
+#include <render/raytracer/sample.h>
 #include <resource/ResourceManager.h>
 
 #define MAX_DEPTH 10
