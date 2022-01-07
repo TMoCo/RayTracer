@@ -15,7 +15,7 @@ Framebuffer::Framebuffer()
   : FBO{ 0 }, buffers{ {} }
 { }
 
-Framebuffer::Framebuffer(UI32 width, UI32 height)
+Framebuffer::Framebuffer(uint32_t width, uint32_t height)
   : FBO{ 0 }, buffers{ {} }
 {
   build(width, height);
@@ -36,7 +36,7 @@ void Framebuffer::bindBuffers()
   glBindTexture(GL_TEXTURE_2D, buffers[OutBuffers::COLOUR]);
 }
 
-void Framebuffer::build(UI32 width, UI32 height)
+void Framebuffer::build(uint32_t width, uint32_t height)
 {
   glGenFramebuffers(1, &FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);

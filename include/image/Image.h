@@ -11,10 +11,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H 1
 
-#include <core/types.h>
+#include <core/core.h>
 #include <string>
-#include <math.h>
-#include <stdlib.h>
 
 #define MAX_IMAGE_SIZE 4000U // max 4k image
 
@@ -23,38 +21,38 @@ class Image
 public:
   Image();
 
-  Image(UI32 width, UI32 height, UI32 channels, const byte* initData = nullptr);
+  Image(uint32_t width, uint32_t height, uint32_t channels, const byte_t* initData = nullptr);
   
   ~Image();
 
-  inline const UI32 getWidth() const { return width; }
+  inline const uint32_t getWidth() const { return width; }
   
-  inline const UI32 getHeight() const { return height; }
+  inline const uint32_t getHeight() const { return height; }
 
-  inline const UI32 getChannels() const { return channels; }
+  inline const uint32_t getChannels() const { return channels; }
 
-  byte* operator[](UI32 index);
+  byte_t* operator[](uint32_t index);
   
-  const byte* operator[](UI32 index) const;
+  const byte_t* operator[](uint32_t index) const;
 
   void clear();
 
-  void copy(const byte* data);
+  void copy(const byte_t* data);
 
-  bool resize(UI32 w, UI32 h);
+  bool resize(uint32_t w, uint32_t h);
 
-  UI32 size() const;
+  uint32_t size() const;
 
-  void writePixelColour(UI32 u, UI32 v, const F32* colourValues);
+  void writePixelColour(uint32_t u, uint32_t v, const float* colourValues);
 
   bool writeToImageFile(const std::string& path) const;
 
-  const byte* getTexel(F32 u, F32 v) const;
+  const byte_t* getTexel(float u, float v) const;
 
 private:
-  byte* data;
+  byte_t* data;
 
-  UI32 width, height, channels;
+  uint32_t width, height, channels;
 
   void allocate();
 

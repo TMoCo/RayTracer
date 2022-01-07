@@ -20,7 +20,7 @@
 struct Camera {
 
   // platform agnostic camera movement
-  typedef enum : UI32
+  typedef enum : uint32_t
   {
     LEFTWARD,
     RIGHTWARD,
@@ -29,27 +29,27 @@ struct Camera {
   } kMovement;
 
   // camera data
-  F32 aspectRatio;
-  F32 FOV;
-  F32 zNear;
-  F32 zFar;
+  float aspectRatio;
+  float FOV;
+  float zNear;
+  float zFar;
 
   // camera position
   Vector3 position;
 
   // updated by window resize
-  F32 vpHeight = 0.0f;
-  F32 vpWidth  = 0.0f;
+  float vpHeight = 0.0f;
+  float vpWidth  = 0.0f;
 
   // updated by mouse movement
-  F32 pitch = 0.0f;
-  F32 yaw = 270.0f;
+  float pitch = 0.0f;
+  float yaw = 270.0f;
 
   Vector3 front = FRONT;
   Vector3 right = RIGHT;
   Vector3 up = UP;
 
-  Camera(const Vector3& pos, F32 aspect = 1.0f, F32 fov = 45.0f, F32 near = 0.1f, F32 far = 10.0f) 
+  Camera(const Vector3& pos, float aspect = 1.0f, float fov = 45.0f, float near = 0.1f, float far = 10.0f) 
     : position(pos),
       aspectRatio(aspect),
       FOV(fov), 
@@ -58,7 +58,7 @@ struct Camera {
 
   inline Vector3 getCameraVector(const Vector2& PNDC) const {
     // fov
-    F32 tanHalfFOV = std::tan(radians(FOV * 0.5f));
+    float tanHalfFOV = std::tan(radians(FOV * 0.5f));
     // given pixel normalised device coordinates, return a vector in camera's direction
     return {
         (2.0f * PNDC[0] - 1.0f) * aspectRatio * tanHalfFOV,
@@ -78,7 +78,7 @@ struct Camera {
     return Matrix4::perspective(radians(FOV), aspectRatio, zNear, zFar);
   }
 
-  inline void processInput(kMovement move, F32 speed)
+  inline void processInput(kMovement move, float speed)
   {
     // move in camera's direction
     switch (move)
@@ -100,9 +100,9 @@ struct Camera {
 
   inline void update()
   {
-    F32 intPart;
+    float intPart;
     pitch = modf(pitch, &intPart);
-    pitch += (I32)intPart % 360;
+    pitch += (int32_t)intPart % 360;
 
     front = Vector3{
       cosf(radians(yaw)) * cosf(radians(pitch)),

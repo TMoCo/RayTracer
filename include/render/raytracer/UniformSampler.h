@@ -29,7 +29,7 @@ public:
 
   static Vector3 unitSphere(const Vector2& uv);
 
-  static Vector3 triangleBasuOwen(const F32& u); // slower but has better variance
+  static Vector3 triangleBasuOwen(const float& u); // slower but has better variance
 
   static Vector3 triangle(const Vector2& uv);
 

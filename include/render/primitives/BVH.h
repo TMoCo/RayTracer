@@ -37,7 +37,7 @@ public:
 
 private:
 
-  UI32 VAO, VBO, IBO;
+  uint32_t VAO, VBO, IBO;
 
   std::vector<Matrix4> AABBTransforms;
 

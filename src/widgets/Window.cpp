@@ -12,7 +12,7 @@ Window::Window()
   mainCamera{ nullptr }, pWindow{ nullptr }
 { }
 
-Window::Window(UI32 width = DEFAULT_WIDTH, UI32 height = DEFAULT_HEIGHT, const char* name = "Window")
+Window::Window(uint32_t width = DEFAULT_WIDTH, uint32_t height = DEFAULT_HEIGHT, const char* name = "Window")
   : width{ width }, height{ height }, viewPort{ 0, 0, width, height }, lastX{ width * 0.5f }, lastY{ height * 0.5f },
   mainCamera{ nullptr }, pWindow{ glfwCreateWindow(width, height, name, NULL, NULL) }
 {
@@ -30,14 +30,14 @@ Window::Window(UI32 width = DEFAULT_WIDTH, UI32 height = DEFAULT_HEIGHT, const c
 void Window::setMainCamera(Camera* camera)
 {
   mainCamera = camera;
-  camera->aspectRatio = (F32)width / (F32)height;
+  camera->aspectRatio = (float)width / (float)height;
   mainCamera->vpHeight = 2.0f * tan(radians(mainCamera->FOV * 0.5f));
   mainCamera->vpWidth = mainCamera->vpHeight * mainCamera->aspectRatio;
 }
 
-F32 Window::getAspectRatio()
+float Window::getAspectRatio()
 {
-  return (F32)width / (F32)height;
+  return (float)width / (float)height;
 }
 
 void Window::updateFramebuffer()
@@ -47,7 +47,7 @@ void Window::updateFramebuffer()
   glViewport(0, 0, width, height);
 }
 
-void Window::resizeCallBack(GLFWwindow* p_win, I32 w, I32 h)
+void Window::resizeCallBack(GLFWwindow* p_win, int32_t w, int32_t h)
 {
   // get window 
   Window* window = (Window*)(glfwGetWindowUserPointer(p_win));
@@ -59,7 +59,7 @@ void Window::resizeCallBack(GLFWwindow* p_win, I32 w, I32 h)
 
     if (window->mainCamera) // also update camera
     {
-      window->mainCamera->aspectRatio = (F32)w / (F32)h;
+      window->mainCamera->aspectRatio = (float)w / (float)h;
       window->mainCamera->vpHeight = 2.0f * tan(radians(window->mainCamera->FOV * 0.5f));
       window->mainCamera->vpWidth = window->mainCamera->vpHeight * window->mainCamera->aspectRatio;
     }

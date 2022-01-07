@@ -12,8 +12,6 @@
 #ifndef MEMORY_ARENA_H
 #define MEMORY_ARENA_H 1
 
-#include <core/types.h>
-
 #include <list>
 
 class MemoryArena
@@ -37,9 +35,9 @@ private:
 
   size_t currentBlockPos = 0, currentAllocSize = 0;
 
-  byte* currentBlock = nullptr;
+  byte_t* currentBlock = nullptr;
 
-  std::list<std::pair<size_t, byte*>> usedBlocks, availableBlocks;
+  std::list<std::pair<size_t, byte_t*>> usedBlocks, availableBlocks;
 };
 
 

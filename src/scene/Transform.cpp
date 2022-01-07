@@ -90,7 +90,7 @@ Vector3 Transform::applyInverseToPoint(const Vector3& point) const
 
 Vector3 Transform::applyToNormal(const Vector3& normal) const
 {
-  F32 x = normal[0], y = normal[1], z = normal[2];
+  float x = normal[0], y = normal[1], z = normal[2];
   return Vector3
   {
     matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * z,
@@ -101,7 +101,7 @@ Vector3 Transform::applyToNormal(const Vector3& normal) const
 
 Vector3 Transform::applyInverseToNormal(const Vector3& normal) const
 {
-  F32 x = normal[0], y = normal[1], z = normal[2];
+  float x = normal[0], y = normal[1], z = normal[2];
   return Vector3
   {
     inverseMatrix[0][0] * x + inverseMatrix[0][1] * y + inverseMatrix[0][2] * z,
@@ -112,7 +112,7 @@ Vector3 Transform::applyInverseToNormal(const Vector3& normal) const
 
 Vector3 Transform::applyToVector3(const Vector3& vector) const
 {
-  F32 x = vector[0], y = vector[1], z = vector[2];
+  float x = vector[0], y = vector[1], z = vector[2];
   return
   {
     matrix[0][0] * x + matrix[1][0] * y + matrix[2][0] * z,
@@ -123,7 +123,7 @@ Vector3 Transform::applyToVector3(const Vector3& vector) const
 
 Vector3 Transform::applyInverseToVector3(const Vector3& vector) const
 {
-  F32 x = vector[0], y = vector[1], z = vector[2];
+  float x = vector[0], y = vector[1], z = vector[2];
   return
   {
     inverseMatrix[0][0] * x + inverseMatrix[1][0] * y + inverseMatrix[2][0] * z,

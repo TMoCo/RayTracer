@@ -26,7 +26,7 @@ public:
 	static const std::vector<Vector3> cornersAxes;
 
 	// enum for constructing k-dop
-	typedef enum : UI32
+	typedef enum : uint32_t
 	{
 		BOX = 0x1,
 		EGDES = 0x2,
@@ -36,15 +36,15 @@ public:
 	struct Slab
 	{
 		Vector3 normal;
-		F32 dmin, dmax;
+		float dmin, dmax;
 	};
 
-	UI32 vao, vbo;
+	uint32_t vao, vbo;
 
   std::vector<Slab> slabs; // union of slabs defifne a volume
 	Vector3 centre;
 
-	inline static KDOP getKDOP(const Mesh& mesh, UI32 axesMask)
+	inline static KDOP getKDOP(const Mesh& mesh, uint32_t axesMask)
 	{
 		KDOP kdop{};
 
@@ -58,18 +58,18 @@ public:
 			axes.insert(axes.end(), cornersAxes.begin(), cornersAxes.end());
 
 		kdop.slabs.resize(axes.size(), {}); // initialise with empty slabs
-		for (UI32 i = 0; i < kdop.slabs.size(); ++i)
+		for (uint32_t i = 0; i < kdop.slabs.size(); ++i)
 			kdop.slabs[i].normal = axes[i].normalize(); // set normals
 
 		/*
-		F32 project;
+		float project;
 		for (auto& position : mesh.positions)
 			kdop.centre += position;
-		kdop.centre /= static_cast<F32>(mesh.positions.size());
+		kdop.centre /= static_cast<float>(mesh.positions.size());
 
 		for (auto& position : mesh.positions)
 		{
-			for (UI32 i = 0; i < kdop.slabs.size(); ++i)
+			for (uint32_t i = 0; i < kdop.slabs.size(); ++i)
 			{
 				// project position onto slab normal and test if largest or smallest 
 				project = position.dot(kdop.slabs[i].normal);

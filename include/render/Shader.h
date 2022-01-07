@@ -29,9 +29,9 @@ public:
 
   void setBool(const char* name, bool value) const;
 
-  void setInt(const char* name, I32 value) const; 
+  void setInt(const char* name, int32_t value) const; 
 
-  void setFloat(const char* name, F32 value) const;
+  void setFloat(const char* name, float value) const;
 
   void setVec2(const char* name, const Vector2& value) const;
   
@@ -44,9 +44,9 @@ public:
 private:
   const std::vector<char> getShaderCode(const std::string& path);
 
-  I32 checkShaderCompile(UI32 shader, const char* type);
+  int32_t checkShaderCompile(uint32_t shader, const char* type);
 
-  UI32 id;
+  uint32_t id;
 
   bool valid;
 };

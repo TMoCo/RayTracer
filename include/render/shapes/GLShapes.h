@@ -16,7 +16,7 @@
 
 class GLCube
 {
-  UI32 VAO, VBO;
+  uint32_t VAO, VBO;
 
   GLCube() : VAO{ 0 }, VBO{ 0 }
   {
@@ -30,7 +30,7 @@ public:
     return cube;
   }
 
-  static constexpr const UI32 indices[36] =
+  static constexpr const uint32_t indices[36] =
   {
     0, 2, 3,
     1, 2, 0,

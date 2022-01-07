@@ -14,7 +14,7 @@
 #include <resource/OBJLoader.h>
 #include <scene/Scene.h>
 
-I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
+int32_t SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 {
   if (!file::isOfType(fileName, ".scene"))
   {
@@ -158,7 +158,7 @@ I32 SceneLoader::loadScene(const std::string& fileName, Scene& scene)
     
     if (strcmp(token, "rotation") == 0)
     {
-      F32 x = strtof(remainding, &token), y = strtof(token, &token), z = strtof(token, NULL);
+      float x = strtof(remainding, &token), y = strtof(token, &token), z = strtof(token, NULL);
       node->local.rotateBy(Quaternion::eulerAngles(x, y, z));
       continue;
     }
@@ -173,7 +173,7 @@ Shape* SceneLoader::createShape(Transform* toWorld, const char* shape, char* dat
 {
   if (std::strcmp(shape, "sphere") == 0)
   {
-    F32 radius = strtof(data, &data);
+    float radius = strtof(data, &data);
     return new Sphere(toWorld, radius);
   }
   // .. add shapes here ...

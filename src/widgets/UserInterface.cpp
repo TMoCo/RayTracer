@@ -26,7 +26,7 @@ UserInterface& UserInterface::get()
   return ui;
 }
 
-I32 UserInterface::processKeyInput(Window* window, F32 deltaTime)
+int32_t UserInterface::processKeyInput(Window* window, float deltaTime)
 {
   GLFWwindow* w = window->getWindowPointer();
   
@@ -81,27 +81,27 @@ I32 UserInterface::processKeyInput(Window* window, F32 deltaTime)
   return 1;
 }
 
-void UserInterface::mouseCallBack(GLFWwindow* glfwwindow, F64 x, F64 y)
+void UserInterface::mouseCallBack(GLFWwindow* glfwwindow, double x, double y)
 {
   Window* window = (Window*)glfwGetWindowUserPointer(glfwwindow);
   if (window)
   {
     if (window->firstMouse) // initially set to true
     {
-      window->lastX = (F32)x;
-      window->lastY = (F32)y;
+      window->lastX = (float)x;
+      window->lastY = (float)y;
       window->firstMouse = false;
     }
 
-    F32 xoffset = (F32)x - window->lastX;
-    F32 yoffset = window->lastY - (F32)y;
+    float xoffset = (float)x - window->lastX;
+    float yoffset = window->lastY - (float)y;
 
-    window->lastX = (F32)x;
-    window->lastY = (F32)y;
+    window->lastX = (float)x;
+    window->lastY = (float)y;
 
     if (!get().cursorEnabled)
     {
-      F32 sensitivity = 0.1f;
+      float sensitivity = 0.1f;
       window->mainCamera->yaw += xoffset * sensitivity;
       window->mainCamera->pitch += yoffset * sensitivity;
 
@@ -132,7 +132,7 @@ void UserInterface::set(Application* application)
   ImGui::NewFrame();
 
   // gui design here
-  ImGui::SetNextWindowSize({ (F32)application->window.getWidth(), (F32)application->window.getHeight() });
+  ImGui::SetNextWindowSize({ (float)application->window.getWidth(), (float)application->window.getHeight() });
   ImGui::SetNextWindowPos({ 0.0f, 0.0f });
   ImGui::Begin("Main", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
   if (ImGui::BeginMenuBar())
@@ -175,11 +175,11 @@ void UserInterface::set(Application* application)
   {
     ImGui::Text("Ray Tracer Options:");
   
-    I32* numSamples = &application->raytracer.numSamples;
+    int32_t* numSamples = &application->raytracer.numSamples;
     ImGui::InputInt("Samples num  ", numSamples, 1, 10);
     *numSamples = *numSamples < 1 ? 1 : *numSamples;
 
-    ImGui::Checkbox("Anti Aliasing", &application->antiAliasingEnabled);
+    ImGui::Checkbox("Anti Aliasing", &application->raytracer.antiAliasing);
     ImGui::SliderFloat("Amount       ", &application->raytracer.antiAliasingKernelSize, 0.0f, 1.0f);
   }
   ImGui::EndChild();
@@ -189,9 +189,9 @@ void UserInterface::set(Application* application)
   ImGui::BeginChild("Camera Options", { region.x * 0.5f, 70.0f });
   {
     ImGui::Text("Camera Options:");
-    static F32 ar = 1.0f;
+    static float ar = 1.0f;
     ImGui::SliderFloat("Aspect ratio ", &ar, 0.0f, 2.0f);
-    static F32 FOV = 45.0f;
+    static float FOV = 45.0f;
     ImGui::SliderFloat("FOV          ", &FOV, 0.0f, 90.0f);
   }
   ImGui::EndChild();
@@ -203,11 +203,11 @@ void UserInterface::set(Application* application)
   
   ImGui::InputText(".jpg", application->raytracer.outputName, 100);
 
-  I32* dim = application->raytracer.dimensions; // must be multiple of 4 (GL_RGB format of raytraced image)
+  int32_t* dim = application->raytracer.dimensions; // must be multiple of 4 (GL_RGB format of raytraced image)
   ImGui::InputInt("Width", dim, 4, 4);
-  *dim = clamp(*dim, 500, (I32)MAX_IMAGE_SIZE);
+  *dim = clamp(*dim, 500, (int32_t)MAX_IMAGE_SIZE);
   ImGui::InputInt("Height", dim + 1, 4, 4);
-  *(dim + 1) = clamp(*(dim + 1), 500, (I32)MAX_IMAGE_SIZE);
+  *(dim + 1) = clamp(*(dim + 1), 500, (int32_t)MAX_IMAGE_SIZE);
   
   ImGui::EndChild();
 

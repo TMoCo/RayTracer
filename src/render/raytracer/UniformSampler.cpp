@@ -18,7 +18,7 @@ Vector2 UniformSampler::disk(const Vector2& uv)
   }
 
   // generate a random point on a unit disk
-  F32 r, theta;
+  float r, theta;
   if (abs(p[0]) > abs(p[1]))
   {
     r = p[0];
@@ -37,9 +37,9 @@ Vector2 UniformSampler::disk(const Vector2& uv)
 Vector3 UniformSampler::hemisphere(const Vector2& uv)
 {
   // generate a random vector on the unit hemisphere
-  F32 z = uv[0];
-  F32 r = sqrtf(fmax(0.0f, 1.0f - z * z));
-  F32 phi = TWO_PI * uv[1];
+  float z = uv[0];
+  float r = sqrtf(fmax(0.0f, 1.0f - z * z));
+  float phi = TWO_PI * uv[1];
   return { r * cosf(phi), r * sinf(phi), z };
 }
 
@@ -65,19 +65,19 @@ Vector3 UniformSampler::unitSphere()
 
 Vector3 UniformSampler::unitSphere(const Vector2& uv)
 {
-  F32 z = 1.0f - 2.0f * uv[0];
-  F32 r = sqrtf(fmax(0.0f, 1.0f - z * z));
-  F32 phi = TWO_PI * uv[1];
+  float z = 1.0f - 2.0f * uv[0];
+  float r = sqrtf(fmax(0.0f, 1.0f - z * z));
+  float phi = TWO_PI * uv[1];
   return { r * cosf(phi), r * sinf(phi), z };
 }
 
-Vector3 UniformSampler::triangleBasuOwen(const F32& u) // slower but has better variance
+Vector3 UniformSampler::triangleBasuOwen(const float& u) // slower but has better variance
 {
-  UI32 uFixedPoint = static_cast<UI32>(u * (1ULL << 32)); // u in range [0,1], 1 << 32 = 2^32 so ULL
+  uint32_t uFixedPoint = static_cast<uint32_t>(u * (1ULL << 32)); // u in range [0,1], 1 << 32 = 2^32 so ULL
   Vector2 A{ 1.0f, 0.0f }, B{ 0.0f, 1.0f }, C{ 0.0f, 0.0f };
-  UI32 digit;
+  uint32_t digit;
   Vector2 An, Bn, Cn;
-  for (UI32 i = 0; i < 16; ++i)
+  for (uint32_t i = 0; i < 16; ++i)
   {
     // extract base4 digit
     digit = (uFixedPoint >> (2 * (15 - i))) & 3; // == (u / (15 - i)) % 4
@@ -115,8 +115,8 @@ Vector3 UniformSampler::triangleBasuOwen(const F32& u) // slower but has better 
 
 Vector3 UniformSampler::triangle(const Vector2& uv)
 {
-  F32 su0 = sqrtf(uv[0]);
-  F32 b0 = 1.0f - su0;
-  F32 b1 = uv[1] - su0;
+  float su0 = sqrtf(uv[0]);
+  float b0 = 1.0f - su0;
+  float b1 = uv[1] - su0;
   return { b0, b1, 1.0f - b0 - b1 };
 }

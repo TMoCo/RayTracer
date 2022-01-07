@@ -18,7 +18,7 @@
 class Triangle : public Shape
 {
 public:
-  Triangle(Transform* toWorld, const Mesh* mesh, const UI32* index)
+  Triangle(Transform* toWorld, const Mesh* mesh, const uint32_t* index)
     : Shape(toWorld), mesh{ mesh }, index{ index }
   { }
 
@@ -36,7 +36,7 @@ public:
     Ray toObjRay = toWorld->applyInverseToRay(ray);
     // TODO: perform moller trumbore algorithm here
     Vector3 edge1, edge2, h, s, q;
-    F32 k;
+    float k;
 
     edge1 = mesh->pos[*(index + 1)] - mesh->pos[*index];
     edge2 = mesh->pos[*(index + 2)] - mesh->pos[*index];
@@ -57,7 +57,7 @@ public:
     s = toObjRay.origin - mesh->pos[*index];
     q = s.cross(edge1);
 
-    F32 a, b;
+    float a, b;
 
     a = k * s.dot(h);
     b = k * toObjRay.direction.dot(q); // barycentric uv
@@ -66,7 +66,7 @@ public:
       return false;
     }
 
-    F32 t = k * edge2.dot(q);
+    float t = k * edge2.dot(q);
     if (t > EPSILON && t < ray.tMax)
     {
       Vector3 pHit = ray.At(t);
@@ -80,7 +80,7 @@ public:
     return false;
   }
 
-  F32 getArea() const override
+  float getArea() const override
   {
     const Vector3& p0 = mesh->pos[*index];
     const Vector3& p1 = mesh->pos[*(index + 1)];
@@ -91,7 +91,7 @@ public:
 private:
   const Mesh* mesh;
 
-  const UI32* index;
+  const uint32_t* index;
 };
 
 #endif // !TRIANGLE_H

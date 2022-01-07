@@ -25,6 +25,8 @@
 
 // #define HARD_EXIT
 
+typedef unsigned char byte_t;
+
 #include <stdio.h>
 #include <malloc.h>
 
@@ -34,9 +36,9 @@ inline void* allocAligned(size_t size)
 {
 #if WINDOWS
   return _aligned_malloc(size, CACHE_LINE);
-#elif defined(__APPLE__) || defined(__unix__)
+#elif defined(APPLE) || defined(UNIX)
   ERROR_MSG("OS not supported!")
-    exit(-1);
+  exit(-1);
 #endif
 }
 
@@ -50,9 +52,9 @@ inline void freeAligned(void* block)
 {
 #if WINDOWS
   _aligned_free(block);
-#elif defined(__APPLE__) || defined(__unix__)
+#elif defined(APPLE) || defined(UNIX)
   ERROR_MSG("OS not supported!")
-    exit(-1);
+  exit(-1);
 #endif
 }
 
@@ -71,7 +73,7 @@ __m_error_msg(format, ##__VA_ARGS__);
 
 inline void __m_error_msg(const char* format, ...)
 {
-  fprintf(stderr, "/!\\ ERROR!\nInfo:\t");
+  fprintf(stderr, "/!\\ ERROR!\n");
   if (format)
   {
     // see stdio.h
@@ -80,18 +82,10 @@ inline void __m_error_msg(const char* format, ...)
     _vfprintf_p(stderr, format, args); 
     __crt_va_end(args);
   }
+  fflush(stderr);
 #ifdef WIN32
   __debugbreak();
 #endif
-#ifdef HARD_EXIT
-  abort();
-#endif // HARD_EXIT
 }
-
-#define NO_COPY(Type) \
-  Type(const Type& T) = delete; \
-  Type& operator=(const Type& T) = delete;
-
-#define MAX_NAME_LENGTH 0x80 // todo: remove
 
 #endif // CORE_H

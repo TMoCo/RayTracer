@@ -23,13 +23,13 @@ Shader::Shader(const std::string& vs_path, const std::string& fs_path)
   const std::vector<char> fs_data = getShaderCode(fs_path);
   DEBUG_PRINT("%s\n", fs_data.data());
 
-  UI32 vs = glCreateShader(GL_VERTEX_SHADER);
+  uint32_t vs = glCreateShader(GL_VERTEX_SHADER);
   const char* p_vs_data = vs_data.data();
   glShaderSource(vs, 1, &p_vs_data, NULL);
   glCompileShader(vs);
   checkShaderCompile(vs, "VERTEX");
 
-  UI32 fs = glCreateShader(GL_FRAGMENT_SHADER);
+  uint32_t fs = glCreateShader(GL_FRAGMENT_SHADER);
   const char* p_fs_data = fs_data.data();
   glShaderSource(fs, 1, &p_fs_data, NULL);
   glCompileShader(fs);
@@ -69,15 +69,15 @@ bool Shader::isValid() const
 
 void Shader::setBool(const char* name, bool value) const
 {
-  glUniform1i(glGetUniformLocation(id, name), (I32)value);
+  glUniform1i(glGetUniformLocation(id, name), (int32_t)value);
 }
 
-void Shader::setInt(const char* name, I32 value) const
+void Shader::setInt(const char* name, int32_t value) const
 {
   glUniform1i(glGetUniformLocation(id, name), value);
 }
 
-void Shader::setFloat(const char* name, F32 value) const
+void Shader::setFloat(const char* name, float value) const
 {
   glUniform1f(glGetUniformLocation(id, name), value);
 }
@@ -115,7 +115,7 @@ const std::vector<char> Shader::getShaderCode(const std::string& path)
     return data;
   }
 
-  UI32 len = static_cast<UI32>(shaderStream.tellg());
+  uint32_t len = static_cast<uint32_t>(shaderStream.tellg());
   data.resize(len);
 
   shaderStream.seekg(0);
@@ -126,9 +126,9 @@ const std::vector<char> Shader::getShaderCode(const std::string& path)
   return data;
 }
 
-I32 Shader::checkShaderCompile(UI32 shader, const char* type)
+int32_t Shader::checkShaderCompile(uint32_t shader, const char* type)
 {
-  I32 success;
+  int32_t success;
   char infoLog[file::MAX_LINE_SIZE];
 
   if (strcmp(type, "PROGRAM") != 0)

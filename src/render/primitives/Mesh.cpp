@@ -62,7 +62,7 @@ void Mesh::generateBuffers(bool interleave)
   glGenBuffers(1, &VBO);
   glGenBuffers(1, &EBO);
 
-  std::vector<F32> data; // prepare mesh data to send to GPU
+  std::vector<float> data; // prepare mesh data to send to GPU
   size_t nVertices = pos.size(); // assumes at least positions
   data.reserve(nVertices * 3);
   if (nor.size() > 0)
@@ -77,7 +77,7 @@ void Mesh::generateBuffers(bool interleave)
   if (interleave)
   {
     // todo: find better way to interleave data
-    for (UI32 i = 0; i < nVertices; ++i)
+    for (uint32_t i = 0; i < nVertices; ++i)
     {
       data.push_back(pos[i][0]);
       data.push_back(pos[i][1]);
@@ -99,7 +99,7 @@ void Mesh::generateBuffers(bool interleave)
   }
   else
   {
-    for (UI32 i = 0; i < nVertices; ++i)
+    for (uint32_t i = 0; i < nVertices; ++i)
     {
       data.push_back(pos[i][0]);
       data.push_back(pos[i][1]);
@@ -108,7 +108,7 @@ void Mesh::generateBuffers(bool interleave)
 
     if (nor.size() > 0)
     {
-      for (UI32 i = 0; i < nVertices; ++i)
+      for (uint32_t i = 0; i < nVertices; ++i)
       {
         data.push_back(nor[i][0]);
         data.push_back(nor[i][1]);
@@ -118,7 +118,7 @@ void Mesh::generateBuffers(bool interleave)
 
     if (tex.size() > 0)
     {
-      for (UI32 i = 0; i < nVertices; ++i)
+      for (uint32_t i = 0; i < nVertices; ++i)
       {
         data.push_back(tex[i][0]);
         data.push_back(tex[i][1]);
@@ -128,12 +128,12 @@ void Mesh::generateBuffers(bool interleave)
 
   glBindVertexArray(VAO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(F32), data.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
 
   if (indices.size() > 0) // indices
   {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(UI32), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
   }
 
   if (interleave)
@@ -204,7 +204,7 @@ void Mesh::generateTriangles()
 
   triangles.reserve(numTriangles);
 
-  for (UI32 i = 0; i < indices.size(); i+=3)
+  for (uint32_t i = 0; i < indices.size(); i+=3)
   {
     triangles.push_back(new Triangle(parent->getWorldTransform(), this, &indices[i]));    
   }

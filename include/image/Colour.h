@@ -26,14 +26,14 @@ namespace colour
   static Colour Green{ 0.0f, 1.0f, 0.0f };
   static Colour Blue{ 0.0f, 0.0f, 1.0f };
 
-  inline F32 luminance(Colour c)
+  inline float luminance(Colour c)
   {
     return c.dot(LUMINANCE);
   }
 
-  inline Colour gammaCorrection(Colour c, F32 gamma)
+  inline Colour gammaCorrection(Colour c, float gamma)
   {
-    F32 invGamma = 1.0f / gamma;
+    float invGamma = 1.0f / gamma;
     return { powf(c[0], invGamma), powf(c[1], invGamma), powf(c[2], invGamma) };
   }
 
@@ -43,7 +43,7 @@ namespace colour
     return c / (White + c);
   }
 
-  inline Colour reinhardExtendedTMO(Colour c, F32 maxWhite)
+  inline Colour reinhardExtendedTMO(Colour c, float maxWhite)
   {
     return (c * (White + (c / Colour{ maxWhite * maxWhite }))) / (White + c);
   }

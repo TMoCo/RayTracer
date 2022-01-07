@@ -21,7 +21,7 @@ Image::Image()
   : data{ nullptr }, width{ 0 }, height{ 0 }, channels{ 0 }
 { }
 
-Image::Image(UI32 width, UI32 height, UI32 channels, const byte* initData)
+Image::Image(uint32_t width, uint32_t height, uint32_t channels, const byte_t* initData)
   : data{ nullptr }, width{ width }, height{ height }, channels{ channels }
 {
   resize(width, height);
@@ -36,12 +36,12 @@ Image::~Image()
   release();
 }
 
-byte* Image::operator[](UI32 index)
+byte_t* Image::operator[](uint32_t index)
 {
   return data + (size_t)(index * width);
 }
 
-const byte* Image::operator[](UI32 index) const
+const byte_t* Image::operator[](uint32_t index) const
 {
   return data + (size_t)(index * width);
 }
@@ -51,12 +51,12 @@ void Image::clear()
   memset(data, 0, (size_t)(size() * channels));
 }
 
-void Image::copy(const byte* inData)
+void Image::copy(const byte_t* inData)
 {
   memcpy(data, inData, (size_t)(size() * channels));
 }
 
-bool Image::resize(UI32 w, UI32 h)
+bool Image::resize(uint32_t w, uint32_t h)
 {
   if ((width == 0) || (height == 0) || (channels == 0))
   {
@@ -73,18 +73,18 @@ bool Image::resize(UI32 w, UI32 h)
   return true;
 }
 
-UI32 Image::size() const
+uint32_t Image::size() const
 {
   return width * height;
 }
 
-void Image::writePixelColour(UI32 u, UI32 v, const F32* colourValues)
+void Image::writePixelColour(uint32_t u, uint32_t v, const float* colourValues)
 {
-  byte* pixel = data + (size_t)(v * width + u) * channels;
-  for (UI32 i = 0; i < channels; ++i)
+  byte_t* pixel = data + (size_t)(v * width + u) * channels;
+  for (uint32_t i = 0; i < channels; ++i)
   {
-    F32 colourValue = *(colourValues + i);
-    *(pixel + i) = (byte)(sqrtf(colourValue / (colourValue + 1.0f)) * 255.0f); // tone mapping + gamma correction
+    float colourValue = *(colourValues + i);
+    *(pixel + i) = (byte_t)(sqrtf(colourValue / (colourValue + 1.0f)) * 255.0f); // tone mapping + gamma correction
   }
 }
 
@@ -94,14 +94,14 @@ bool Image::writeToImageFile(const std::string& path) const
 
   Image staging{ width, height, channels };
 
-  byte* pStaging = staging.data;
+  byte_t* pStaging = staging.data;
   // flip image horizontally:
   // stb expects image pixels stored from top to bottom, left to right
-  for (I32 col = height - 1; col >= 0; --col)
+  for (int32_t col = height - 1; col >= 0; --col)
   {
-    for (I32 row = 0; row < (I32)width; row++)
+    for (int32_t row = 0; row < (int32_t)width; row++)
     {
-      for (UI32 channel = 0; channel < channels; channel++)
+      for (uint32_t channel = 0; channel < channels; channel++)
       {
         *(pStaging + channel) = data[(col * width + row) * channels + channel];
       }
@@ -119,20 +119,20 @@ bool Image::writeToImageFile(const std::string& path) const
   return ret;
 }
 
-const byte* Image::getTexel(F32 u, F32 v) const
+const byte_t* Image::getTexel(float u, float v) const
 {
-  I32 col = (I32)(u * (width - 1));
-  I32 row = (I32)(v * (height - 1));
+  int32_t col = (int32_t)(u * (width - 1));
+  int32_t row = (int32_t)(v * (height - 1));
   return &data[(row * width + col) * channels];
 }
 
 void Image::allocate()
 {
-  data = (byte*)calloc(size(), channels);
+  data = allocAligned<byte_t>((size_t)(width * height * channels));
   if (!data)
   {
     ERROR_MSG("Failed to allocate memory for buffer!\n");
-    exit(-1);
+    exit(-1); // big bad error
   }
 }
 
@@ -140,7 +140,7 @@ void Image::release()
 {
   if (data)
   {
-    free(data);
+    freeAligned(data);
     data = nullptr;
   }
 }

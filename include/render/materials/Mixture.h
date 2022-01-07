@@ -18,11 +18,11 @@ class Mixture : public Material
 public:
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
-    F32 metallicity = maps[MAT_MAPS::METALLIC]->sampleChannel(surfel.uv, 0);
-    if (random::uniformF32() < metallicity)
+    float metallicity = maps[MAT_MAPS::METALLIC]->sampleChannel(surfel.uv, 0);
+    if (random::uniformfloat() < metallicity)
     {
       // specular
-      F32 cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
+      float cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
       attenuation = fresnelSchlick(cosTheta, lerp(F0, maps[MAT_MAPS::ALBEDO]->sample(surfel.uv), metallicity));
 
       Vector3 B = surfel.normal.cross(surfel.tangent).normalize();
@@ -55,7 +55,7 @@ public:
     return colour::Black;
   }
 
-  static Colour fresnelSchlick(F32 cosTheta, Colour f0)
+  static Colour fresnelSchlick(float cosTheta, Colour f0)
   {
     return f0 + (1.0f - f0) * powf(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
   }

@@ -47,7 +47,7 @@ bool OBJLoader::loadOBJFromFile(const std::string& path, const std::string& obje
 
   // mesh data
   MeshBuilder meshBuilder;
-  UI32 meshNum = 0;
+  uint32_t meshNum = 0;
 
   std::string meshName = objectName;
   if (meshName.empty())
@@ -62,9 +62,9 @@ bool OBJLoader::loadOBJFromFile(const std::string& path, const std::string& obje
   }
 
   // file data
-  std::vector<F32> fPos;
-  std::vector<F32> fNor;
-  std::vector<F32> fTex;
+  std::vector<float> fPos;
+  std::vector<float> fNor;
+  std::vector<float> fTex;
 
   // while there are lines available
   while (!objStream.eof())
@@ -118,7 +118,7 @@ bool OBJLoader::loadOBJFromFile(const std::string& path, const std::string& obje
         // if vertex does not exit already parse string
         if (!meshBuilder.uniqueIndices.count(vertex))
         {
-          meshBuilder.uniqueIndices[vertex] = (UI32)(meshBuilder.uniqueIndices.size());
+          meshBuilder.uniqueIndices[vertex] = (uint32_t)(meshBuilder.uniqueIndices.size());
           
           std::vector<std::string> vertexData{ 
             std::sregex_token_iterator{ vertex.begin(), vertex.end(), backslash, -1 }, {} };

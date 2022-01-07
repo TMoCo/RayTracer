@@ -26,21 +26,23 @@ class RayTracer
 public:
   RayTracer();
 
-  void rayTrace(const Scene* scene, const Camera* camera, bool antiAliasing);
+  void rayTrace(const Scene* scene, const Camera* camera);
  
 private:
-  Colour castRay(const Scene* scene, const Ray& ray, UI32 depth) const;
+  Colour castRay(const Scene* scene, const Ray& ray, uint32_t depth) const;
 
 protected:
   char outputName[100];
 
-  I32 dimensions[2];
+  int32_t dimensions[2];
 
   Image rayTracedData;
 
-  I32 numSamples;
+  int32_t numSamples;
 
-  F32 antiAliasingKernelSize;
+  float antiAliasingKernelSize;
+
+  bool antiAliasing;
 };
 
 #endif 

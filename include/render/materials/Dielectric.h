@@ -19,17 +19,17 @@
 class Dielectric : public Material
 {
 public:
-  Dielectric(F32 ior) : ior{ ior } {}
+  Dielectric(float ior) : ior{ ior } {}
 
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
     attenuation = colour::White;
-    F32 refractionRatio = surfel.isFrontFace ? 1.0f / ior : ior;
+    float refractionRatio = surfel.isFrontFace ? 1.0f / ior : ior;
     
-    F32 cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
-    F32 sinTheta = sqrtf(1.0f - cosTheta * cosTheta);
+    float cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
+    float sinTheta = sqrtf(1.0f - cosTheta * cosTheta);
 
-    if ((refractionRatio * sinTheta > 1.0f) || (reflectanceSchlick(cosTheta, refractionRatio) > random::uniformF32()))
+    if ((refractionRatio * sinTheta > 1.0f) || (reflectanceSchlick(cosTheta, refractionRatio) > random::uniformfloat()))
     {
       outRay = { surfel.position + 0.001f * surfel.normal, Vector3::reflect(inRay.direction, surfel.normal), INFINITY };
     }
@@ -42,15 +42,15 @@ public:
   }
 
 private:
-  static F32 reflectanceSchlick(F32 cosine, F32 refractionIndex)
+  static float reflectanceSchlick(float cosine, float refractionIndex)
   {
-    F32 r0 = (1.0f - refractionIndex) / (1.0f + refractionIndex);
+    float r0 = (1.0f - refractionIndex) / (1.0f + refractionIndex);
     r0 *= r0;
     return r0 + (1.0f - r0) * powf(1.0f - cosine, 5.0f);
   }
 
 private:
-  F32 ior;
+  float ior;
 };
 
 #endif // !DIELECTRIC_H

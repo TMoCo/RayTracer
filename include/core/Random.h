@@ -17,31 +17,31 @@
 #include <random>
 
 namespace random {
-  typedef std::uniform_real_distribution<F32> uniform_f;
-  typedef std::uniform_int_distribution<I32>  uniform_i;
-  typedef std::uniform_int_distribution<UI32> uniform_ui;
+  typedef std::uniform_real_distribution<float> uniform_f;
+  typedef std::uniform_int_distribution<int32_t>  uniform_i;
+  typedef std::uniform_int_distribution<uint32_t> uniform_ui;
 
   static std::mt19937 generator;
   static uniform_f distribution01(0.0f, 1.0f);
 
-  inline F32 uniformF32() 
+  inline float uniformfloat() 
   {
     return distribution01(generator);
   }
 
-  inline F32 uniformF32(F32 min, F32 max) 
+  inline float uniformfloat(float min, float max) 
   {
     static uniform_f distribution(min, max);
     return distribution(generator);
   }
 
-  inline I32 uniformI32(I32 min, I32 max) 
+  inline int32_t uniformint32_t(int32_t min, int32_t max) 
   {
     static uniform_i distribution(min, max);
     return distribution(generator);
   }
 
-  inline UI32 uniformUI32(UI32 min, UI32 max)
+  inline uint32_t uniformuint32_t(uint32_t min, uint32_t max)
   {
     static uniform_ui distribution(min, max);
     return distribution(generator);
@@ -52,9 +52,9 @@ namespace random {
     return { distribution01(generator), distribution01(generator) };
   }
 
-  inline Vector3 uniformVector3(F32 min, F32 max)
+  inline Vector3 uniformVector3(float min, float max)
   {
-    return { uniformF32(min, max), uniformF32(min, max), uniformF32(min, max) };
+    return { uniformfloat(min, max), uniformfloat(min, max), uniformfloat(min, max) };
   }
 };
 

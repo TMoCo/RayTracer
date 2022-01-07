@@ -27,9 +27,9 @@ public:
 
   virtual AABB getAABB() const = 0;
 
-  virtual F32 getArea() const = 0;
+  virtual float getArea() const = 0;
 
-  virtual F32 getPdf() const { return 1.0f / getArea(); }
+  virtual float getPdf() const { return 1.0f / getArea(); }
 
   virtual bool intersect(const Ray& ray, Surfel* surfel) const = 0;
 

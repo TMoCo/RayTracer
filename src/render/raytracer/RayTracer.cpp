@@ -19,13 +19,13 @@
 #define MAX_DEPTH 10
 
 RayTracer::RayTracer()
-  : outputName{ "out" }, numSamples { 1 }, antiAliasingKernelSize{ 1.0f }, dimensions{ 500, 500 },
-  rayTracedData{ 500, 500, 3 }
+  : outputName{ "out" }, numSamples{ 1 }, antiAliasingKernelSize{ 1.0f }, dimensions{ 500, 500 },
+  rayTracedData{ 500, 500, 3 }, antiAliasing{ false }
 { 
   ResourceManager::get().addTexture("ray traced output", new Texture{ &rayTracedData, GL_RGB });
 }
 
-void RayTracer::rayTrace(const Scene* scene, const Camera* camera, bool antiAliasing)
+void RayTracer::rayTrace(const Scene* scene, const Camera* camera)
 {
   // account for resizing
   if ((dimensions[0] != rayTracedData.getWidth()) || (dimensions[1] != rayTracedData.getHeight()))
@@ -34,9 +34,9 @@ void RayTracer::rayTrace(const Scene* scene, const Camera* camera, bool antiAlia
   }
 
   // scale for aspect ratio
-  UI32 width = rayTracedData.getWidth(), height = rayTracedData.getHeight();
-  F32 rWidth = 1.0f / (F32)width, rHeight = 1.0f / (F32)height;
-  F32 inversNumSamples  = 1.0f / (F32)numSamples;
+  uint32_t width = rayTracedData.getWidth(), height = rayTracedData.getHeight();
+  float rWidth = 1.0f / (float)width, rHeight = 1.0f / (float)height;
+  float inversNumSamples  = 1.0f / (float)numSamples;
 
   rayTracedData.clear(); // reset frame Image
 
@@ -48,15 +48,15 @@ void RayTracer::rayTrace(const Scene* scene, const Camera* camera, bool antiAlia
   
   if (antiAliasing)
   {
-    for (UI32 col = 0; col < height; ++col)
+    for (uint32_t col = 0; col < height; ++col)
     { 
-      for (UI32 row = 0; row < width; ++row)
+      for (uint32_t row = 0; row < width; ++row)
       {
         colour = colour::Black;
-        for (UI32 sample = 0; sample < (UI32)numSamples; ++sample)
+        for (uint32_t sample = 0; sample < (uint32_t)numSamples; ++sample)
         {
           colour += castRay(scene, Ray::generateCameraRay(camera, 
-            { (row + random::uniformF32()) * rWidth, (col + random::uniformF32()) * rHeight }), MAX_DEPTH);
+            { (row + random::uniformfloat()) * rWidth, (col + random::uniformfloat()) * rHeight }), MAX_DEPTH);
         }
         colour *= inversNumSamples;
         rayTracedData.writePixelColour(row, col, &colour[0]);
@@ -65,12 +65,12 @@ void RayTracer::rayTrace(const Scene* scene, const Camera* camera, bool antiAlia
   }
   else
   {
-    for (UI32 col = 0; col < height; ++col)
+    for (uint32_t col = 0; col < height; ++col)
     {
-      for (UI32 row = 0; row < width; ++row)
+      for (uint32_t row = 0; row < width; ++row)
       {
         colour = colour::Black;
-        for (UI32 sample = 0; sample < (UI32)numSamples; ++sample)
+        for (uint32_t sample = 0; sample < (uint32_t)numSamples; ++sample)
         {
           colour += castRay(scene, Ray::generateCameraRay(camera, { row * rWidth, col * rHeight }), MAX_DEPTH);
         }
@@ -87,7 +87,7 @@ void RayTracer::rayTrace(const Scene* scene, const Camera* camera, bool antiAlia
   rayTracedData.writeToImageFile( SCREENSHOTS + outputName + ".jpg");
 }
 
-Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) const
+Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, uint32_t depth) const
 {
   if (depth == 0) // stop recursion 
   {
@@ -113,7 +113,7 @@ Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) cons
 
   // TODO: Add background colour (from image, sample cube)
   /*
-  F32 t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
+  float t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
   return (1.0f - t) * colour::White + t * Colour{ 0.5f, 0.7f, 1.0f };
   */
   return colour::Black;

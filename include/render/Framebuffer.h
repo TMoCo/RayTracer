@@ -17,7 +17,7 @@ class Framebuffer
 {
   friend class Window;
 
-  enum OutBuffers : UI32
+  enum OutBuffers : uint32_t
   {
     COLOUR,
     DEPTH,
@@ -28,7 +28,7 @@ class Framebuffer
 public:
   Framebuffer();
 
-  Framebuffer(UI32 width, UI32 height);
+  Framebuffer(uint32_t width, uint32_t height);
 
   ~Framebuffer();
 
@@ -37,13 +37,13 @@ public:
   void bindBuffers();
 
 protected:
-  void build(UI32 width, UI32 height);
+  void build(uint32_t width, uint32_t height);
 
   void destroy();
 
 public:
-  UI32 FBO;
-  std::array<UI32, OutBuffers::SIZE> buffers;
+  uint32_t FBO;
+  std::array<uint32_t, OutBuffers::SIZE> buffers;
 };
 
 #endif // !FRAME_BUFFER_H

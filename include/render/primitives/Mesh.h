@@ -38,11 +38,11 @@ protected:
   void generateTangents(); // todo: add tangents for normal mapping
 
 protected:
-  UI32 VAO, VBO, EBO;
+  uint32_t VAO, VBO, EBO;
 
   std::vector<Triangle*> triangles;
 
-  std::vector<UI32> indices;
+  std::vector<uint32_t> indices;
   std::vector<Vector3> pos;
   std::vector<Vector3> nor;
   std::vector<Vector2> tex;

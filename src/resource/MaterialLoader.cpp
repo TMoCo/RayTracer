@@ -55,7 +55,7 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
         }
         else
         {
-          F32 r = strtof(token, NULL), g = strtof(remainding, &token), b = strtof(token, NULL);
+          float r = strtof(token, NULL), g = strtof(remainding, &token), b = strtof(token, NULL);
           material = ResourceManager::get().addMaterial(materialName, new Diffuse{ { r, g, b } });
         }
       }
@@ -68,7 +68,7 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
         }
         else
         {
-          F32 ior = strtof(token, NULL);
+          float ior = strtof(token, NULL);
           material = ResourceManager::get().addMaterial(materialName, new Dielectric{ ior });
         }
       }
@@ -81,8 +81,8 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
         }
         else
         {
-          F32 fuzz = strtof(token, NULL);
-          F32 r = strtof(remainding, &token), g = strtof(token, &token), b = strtof(token, NULL);
+          float fuzz = strtof(token, NULL);
+          float r = strtof(remainding, &token), g = strtof(token, &token), b = strtof(token, NULL);
           material = ResourceManager::get().addMaterial(materialName, new Metal{ fuzz, { r, g, b } });
         }
       }
@@ -95,7 +95,7 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
         }
         else
         {
-          F32 r = strtof(token, NULL), g = strtof(remainding, &token), b = strtof(token, NULL);
+          float r = strtof(token, NULL), g = strtof(remainding, &token), b = strtof(token, NULL);
           material = ResourceManager::get().addMaterial(materialName, new DiffuseLight{ { r, g, b } });
         }
       }
@@ -194,8 +194,8 @@ bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::st
 
 bool MaterialLoader::loadTextureFromImageFile(const std::string& path, const std::string& textureName)
 {
-  I32 width, height, channels;
-  byte* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+  int32_t width, height, channels;
+  byte_t* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
   if (data)
   {

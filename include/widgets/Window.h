@@ -27,8 +27,8 @@
 
 typedef struct
 {
-  I32 x, y;
-  UI32 width, height;
+  int32_t x, y;
+  uint32_t width, height;
 } ViewPort;
 
 class Window
@@ -36,30 +36,30 @@ class Window
 public:
   Window();
 
-  Window(UI32 width, UI32 height, const char* name);
+  Window(uint32_t width, uint32_t height, const char* name);
 
   void setMainCamera(Camera* camera);
 
-  inline UI32 getWidth() { return width; }
+  inline uint32_t getWidth() { return width; }
 
-  inline UI32 getHeight() { return height; }
+  inline uint32_t getHeight() { return height; }
 
   inline const Camera* getCamera() { return mainCamera; }
 
   inline GLFWwindow* getWindowPointer() { return pWindow; }
 
-  F32 getAspectRatio();
+  float getAspectRatio();
 
   void updateFramebuffer();
     
-  static void resizeCallBack(GLFWwindow* p_win, I32 w, I32 h);
+  static void resizeCallBack(GLFWwindow* p_win, int32_t w, int32_t h);
 
 public:
-  UI32 width = 0, height = 0;
+  uint32_t width = 0, height = 0;
 
   ViewPort viewPort = { 0, 0, 0, 0 };
 
-  F32 lastX = 0, lastY = 0;
+  float lastX = 0, lastY = 0;
 
   GLFWwindow* pWindow;
 

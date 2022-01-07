@@ -19,15 +19,14 @@
 #include <resource/ResourceManager.h>
 #include <widgets/UserInterface.h>
 
-int Application::init()
+Application::Application()
+  : status{ 0 }, drawBVH{ false }
 {
   if (!glfwInit())
   {
     ERROR_MSG("Failed to initialize GLFW!\n");
-    return -1;
+    status = -1;
   }
-
-  drawBVH = false, antiAliasingEnabled = false;
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -40,26 +39,29 @@ int Application::init()
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
     ERROR_MSG("Failed to initialise GLAD!");
-    return -1;
+    status = -1;
   }
 
   window.updateFramebuffer();
 
   UserInterface::get().init(window.getWindowPointer());
 
-  return 0;
+  status = 0; // all is well
 }
 
-I32 Application::run(char* sceneName)
+int Application::run(char* sceneName)
 {
-  if (init() != 0)
+  if (status != 0)
   {
     ERROR_MSG("Failed to initialise app!");
     return -1;
   }
 
   Scene scene;
+
   SceneLoader::loadScene(SCENES + sceneName, scene);
+
+  scene.buildBVH();
 
   renderLoop(&scene);
 
@@ -70,8 +72,7 @@ I32 Application::run(char* sceneName)
 
 void Application::renderLoop(Scene* scene)
 {
-  scene->buildBVH();
-
+  // move into a renderer
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader offscreenShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
   Shader compositionShader{ "..\\shaders\\composition.vert", "..\\shaders\\composition.frag" };
@@ -83,11 +84,11 @@ void Application::renderLoop(Scene* scene)
   
   glfwSetWindowUserPointer(window.getWindowPointer(), &window);
 
-  F32 deltaTime = 0.0f, previous = 0.0f;
+  float deltaTime = 0.0f, previous = 0.0f;
 
   while (!glfwWindowShouldClose(window.getWindowPointer()))
   {
-    F32 current = (F32)glfwGetTime();
+    float current = (float)glfwGetTime();
     deltaTime = current - previous;
     previous = current;
 
@@ -95,7 +96,7 @@ void Application::renderLoop(Scene* scene)
 
     if (UserInterface::processKeyInput(&window, deltaTime) == 0)
     {
-      raytracer.rayTrace(scene, window.getCamera(), antiAliasingEnabled);
+      raytracer.rayTrace(scene, window.getCamera());
     }
 
     UserInterface::get().set(this);

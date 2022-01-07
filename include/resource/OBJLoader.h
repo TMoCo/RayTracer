@@ -36,7 +36,7 @@ private:
 
     Mesh* mesh;
 
-    std::unordered_map<std::string, UI32> uniqueIndices;
+    std::unordered_map<std::string, uint32_t> uniqueIndices;
 
   };    
 

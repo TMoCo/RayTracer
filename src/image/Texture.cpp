@@ -41,7 +41,7 @@ void Texture::generate(bool mip)
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::bind(I32 unit)
+void Texture::bind(int32_t unit)
 {
   if (unit >= 0)
   {
@@ -52,12 +52,12 @@ void Texture::bind(I32 unit)
 
 Colour Texture::sample(const Vector2& uv) const
 {
-  const byte* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
+  const byte_t* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
   return Colour(pixel[0] * REC_255, pixel[1] * REC_255, pixel[2] * REC_255);
 }
 
-F32 Texture::sampleChannel(const Vector2& uv, const UI32& channel) const
+float Texture::sampleChannel(const Vector2& uv, const uint32_t& channel) const
 {
-  const byte* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
+  const byte_t* pixel = image->getTexel(uv[0], 1.0f - uv[1]);
   return pixel[channel] * REC_255;
 }

@@ -19,7 +19,7 @@
 
 namespace file
 {
-  constexpr UI32 MAX_LINE_SIZE = 1024U;
+  constexpr uint32_t MAX_LINE_SIZE = 1024U;
 
 #ifdef _WIN32
   constexpr char separator = '\\';

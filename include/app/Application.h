@@ -18,11 +18,11 @@ class Application
   friend class UserInterface;
 
 public:
-  I32 run(char* sceneName);
+  Application();
+
+  int run(char* sceneName);
 
 private:
-  int init();
-
   void terminate();
 
   void renderLoop(Scene* scene);
@@ -32,8 +32,9 @@ protected:
 
   RayTracer raytracer;
 
-  bool drawBVH, antiAliasingEnabled;
+  int status;
 
+  bool drawBVH;
 };
 
 #endif // !APP_H

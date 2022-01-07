@@ -29,21 +29,21 @@ public:
 
   ~Texture();
 
-  void bind(I32 unit = -1);
+  void bind(int32_t unit = -1);
 
   Colour sample(const Vector2& uv) const;
 
-  F32 sampleChannel(const Vector2& uv, const UI32& channel) const;
+  float sampleChannel(const Vector2& uv, const uint32_t& channel) const;
 
   void generate(bool mip);
 
 public:
-  static constexpr F32 REC_255 = 0.003921568627450980392157f; // 1 / 255;
+  static constexpr float REC_255 = 0.003921568627450980392157f; // 1 / 255;
 
 protected:
   GLenum format;
 
-  UI32 glId;
+  uint32_t glId;
 
   Image* image;
   

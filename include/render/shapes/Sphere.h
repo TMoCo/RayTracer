@@ -20,7 +20,7 @@
 class Sphere : public Shape
 {
 public:
-  Sphere(Transform* toWorld, F32 radius)
+  Sphere(Transform* toWorld, float radius)
     : Shape(toWorld), radius(radius)
   { }
 
@@ -35,14 +35,14 @@ public:
 
   inline bool intersect(const Ray& ray, Surfel* surfel) const override
   {
-    F32 t;
+    float t;
     {
       Vector3 originCentre = ray.origin - toWorld->getTranslation();
-      F32 a = ray.direction.lengthSquared();
-      F32 b = 2.0f * (originCentre.dot(ray.direction));
-      F32 c = originCentre.lengthSquared() - radius * radius;
+      float a = ray.direction.lengthSquared();
+      float b = 2.0f * (originCentre.dot(ray.direction));
+      float c = originCentre.lengthSquared() - radius * radius;
 
-      F32 t0, t1;
+      float t0, t1;
       if (!quadratic(a, b, c, &t0, &t1))
       {
         return false; // no intersection
@@ -58,7 +58,7 @@ public:
 
     Vector3 pHit = ray.At(t);
     Vector3 normal = (pHit - toWorld->getTranslation()) / radius;
-    F32 pPhi, pTheta;
+    float pPhi, pTheta;
     pTheta = acosf(-normal[1]);
     pPhi = atan2f(-normal[2], normal[0]) + PI;
     Vector2 uv = { pPhi * REC_TWO_PI, pTheta * REC_PI }; // map from UV range [0,2pi] to [0,1]
@@ -72,13 +72,13 @@ public:
     return true;
   }
 
-  inline F32 getArea() const override
+  inline float getArea() const override
   {
     return (radius * radius) * FOUR_PI;
   }
 
 private:
-  F32 radius;
+  float radius;
 };
 
 #endif // !SPHERE_H

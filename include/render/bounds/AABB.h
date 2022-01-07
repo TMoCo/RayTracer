@@ -33,9 +33,9 @@ public:
 
   Vector3 getOffset(const Vector3& point) const;
 
-  I32 getMaximumExtent() const;
+  int32_t getMaximumExtent() const;
 
-  F32 getSurfaceArea() const;
+  float getSurfaceArea() const;
 
   bool intersect(const Ray& ray) const;
 

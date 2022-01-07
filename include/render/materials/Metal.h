@@ -20,7 +20,7 @@
 class Metal : public Material
 {
 public:
-  Metal(F32 fuzz, const Colour& Colour) : fuzz{ fuzz < 1.0f ? fuzz : 1.0f }, albedo{ Colour } {}
+  Metal(float fuzz, const Colour& Colour) : fuzz{ fuzz < 1.0f ? fuzz : 1.0f }, albedo{ Colour } {}
 
   virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
   {
@@ -30,7 +30,7 @@ public:
     return outRay.direction.dot(surfel.normal) > 0.0f;
   }
 
-  F32 fuzz;
+  float fuzz;
 
   Colour albedo;
 };

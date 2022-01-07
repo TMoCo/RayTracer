@@ -55,7 +55,7 @@ void* MemoryArena::alloc(size_t nBytes)
     if (!currentBlock) // no valid block, allocate new one
     {
       currentAllocSize = std::max(nBytes, blockSize);
-      currentBlock = allocAligned<byte>(currentAllocSize);
+      currentBlock = allocAligned<byte_t>(currentAllocSize);
     }
 
     currentBlockPos = 0;
