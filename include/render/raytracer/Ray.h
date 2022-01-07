@@ -4,42 +4,24 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-//
-// Ray struct declaration
-//
-
 #ifndef RAY_H
 #define RAY_H 1
 
-#include <Vector3.h>
-#include <render/Camera.h>
-
 constexpr float tMin = 0.001f;
+
+class Camera;
+class Vector3;
 
 class Ray
 {
 public:
-  Ray() 
-    : tMax{ 0.0f }, negDir{}
-  {}
+  Ray();
 
-  Ray(const Vector3& origin, const Vector3& direction, float tMax)
-    : origin{ origin }, direction{ direction.normalize() }, tMax{ tMax },
-    inverseDir{ 1.0f / direction }, negDir{ inverseDir[0] < 0.0f, inverseDir[1] < 0.0f, inverseDir[2] < 0.0f }
-  {}
+  Ray(const Vector3& origin, const Vector3& direction, float tMax);
 
-  inline static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC)
-  {
-    Vector3 h = camera->right * camera->vpWidth;
-    Vector3 v = camera->vpHeight * camera->up;
-    Vector3 lowerLeftOrigin = camera->position - h * 0.5f - v * 0.5f + camera->front;
-    return { camera->position, lowerLeftOrigin + PNDC[0] * h + PNDC[1] * v - camera->position, INFINITY };
-  }
+  static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC);
 
-  inline Vector3 At(float t) const 
-  {
-    return origin + t * direction;
-  }
+  Vector3 At(float t) const;
   
   Vector3 origin;
 
