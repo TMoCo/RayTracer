@@ -1,0 +1,10 @@
+scene retroDesktop
+{
+  geometry desktop
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material diffuse.mtl
+    shape mesh desktop.obj
+  }
+}

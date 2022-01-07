@@ -11,7 +11,7 @@
 #ifndef RAY_H
 #define RAY_H 1
 
-#include <math/thomath.h>
+#include <Vector3.h>
 #include <render/Camera.h>
 
 constexpr F32 tMin = 0.001f;

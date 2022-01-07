@@ -5,6 +5,7 @@
 */
 
 #include <core/random.h>
+#include <constants.h>
 #include <render/raytracer/UniformSampler.h>
 
 Vector2 UniformSampler::disk(const Vector2& uv)

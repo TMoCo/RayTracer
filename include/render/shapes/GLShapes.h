@@ -12,7 +12,7 @@
 #define GL_SHAPES_H 1
 
 #include <core/types.h>
-#include <math/thomath.h>
+#include <Vector3.h>
 
 class GLCube
 {

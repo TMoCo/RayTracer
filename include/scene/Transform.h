@@ -11,7 +11,9 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H 1
 
-#include <math/thomath.h>
+#include <Vector3.h>
+#include <Matrix4.h>
+#include <Quaternion.h>
 
 #include <render/raytracer/Ray.h>
 

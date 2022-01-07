@@ -12,9 +12,8 @@
 #define IMAGE_H 1
 
 #include <core/types.h>
-
+#include <string>
 #include <math.h>
-#include <string.h>
 #include <stdlib.h>
 
 #define MAX_IMAGE_SIZE 4000U // max 4k image

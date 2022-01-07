@@ -4,7 +4,7 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <math/thomath.h>
+#include <Vector2.h>
 #include <image/Texture.h>
 
 Texture::Texture()

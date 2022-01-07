@@ -1,0 +1,18 @@
+scene cloneHelmet
+{
+  geometry helmet
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material clone.mtl
+    geometry mesh clone.obj
+  }
+
+  geometry light
+  {
+    position 0 20 0
+    rotation 0 0 0
+    material light.mtl
+    geometry mesh bigsquarelight.obj
+  }
+}

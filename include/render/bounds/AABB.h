@@ -11,7 +11,7 @@
 #ifndef AABB_H
 #define AABB_H 1
 
-#include <math/thomath.h>
+#include <Vector3.h>
 #include <render/raytracer/Ray.h>
 
 #include <glad/glad.h>

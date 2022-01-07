@@ -11,7 +11,8 @@
 #ifndef SURFEL_H
 #define SURFEL_H
 
-#include <math/thomath.h>
+#include <Vector3.h>
+#include <Vector2.h>
 
 class Shape;
 class Material;

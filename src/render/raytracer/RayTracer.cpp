@@ -83,14 +83,8 @@ void RayTracer::rayTrace(const Scene* scene, const Camera* camera, bool antiAlia
   auto end = sys_clock::now();
   std::cout << "Finished!\nTook: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
 
-  DEBUG_PRINT("Generating OpenGL texture of dimensions w:%u h:%u.\n", rayTracedData.getWidth(), rayTracedData.getHeight());
   ResourceManager::get().getTexture("ray traced output")->generate(true); // load image texture for display
-  DEBUG_PRINT("Success!\n");
-
-  // save to disk
-  DEBUG_PRINT("Writing %s in location %s.\n", SCREENSHOTS.c_str(), outputName);
   rayTracedData.writeToImageFile( SCREENSHOTS + outputName + ".jpg");
-  DEBUG_PRINT("Success!\n");
 }
 
 Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) const
@@ -118,9 +112,9 @@ Colour RayTracer::castRay(const Scene* scene, const Ray& inRay, UI32 depth) cons
   }
 
   // TODO: Add background colour (from image, sample cube)
+  /*
   F32 t = 0.5f * (inRay.direction.normalize()[1] + 1.0f);
   return (1.0f - t) * colour::White + t * Colour{ 0.5f, 0.7f, 1.0f };
-  /*
-  return colour::Black;
   */
+  return colour::Black;
 }

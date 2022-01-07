@@ -11,7 +11,7 @@
 #ifndef K_DOP_H
 #define K_DOP_H
 
-#include <math/thomath.h>
+#include <Vector3.h>
 #include <render/primitives/Mesh.h>
 
 #include <glad/glad.h>

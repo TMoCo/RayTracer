@@ -12,7 +12,7 @@
 #include <core/types.h>
 #include <core/core.h>
 
-#include <math/thomath.h>
+#include <thomath.h>
 
 #include <cmath>
 

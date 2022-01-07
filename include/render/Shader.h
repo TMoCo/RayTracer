@@ -8,7 +8,9 @@
 #define SHADER_H 1
 
 #include <core/types.h>
-#include <math/thomath.h>
+#include <Vector3.h>
+#include <Vector2.h>
+#include <Matrix4.h>
 
 #include <vector>
 

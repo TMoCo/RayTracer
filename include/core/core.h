@@ -25,6 +25,9 @@
 
 // #define HARD_EXIT
 
+#include <stdio.h>
+#include <malloc.h>
+
 #define CACHE_LINE 64
 
 inline void* allocAligned(size_t size)

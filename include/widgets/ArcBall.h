@@ -11,8 +11,8 @@
 #ifndef ARCBALL_H
 #define ARCBALL_H 1
 
-#include <math/Quaternion.h>
-#include <math/Vector2.h>
+#include <Quaternion.h>
+#include <Vector2.h>
 
 class ArcBall {
 public:

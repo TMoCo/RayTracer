@@ -11,7 +11,6 @@
 
 #include <widgets/Window.h> 
 #include <render/raytracer/RayTracer.h>
-#include <render/Framebuffer.h>
 #include <scene/Scene.h>
 
 class Application 

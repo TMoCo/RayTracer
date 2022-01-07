@@ -33,7 +33,7 @@ int Application::init()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  window = Window{ DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window" };
+  window = { DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window" };
 
   glfwMakeContextCurrent(window.getWindowPointer());
 

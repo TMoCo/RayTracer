@@ -55,8 +55,14 @@ set(IMGUI_DIR "C:/Libraries/ImGui")
 file(GLOB_RECURSE IMGUI_SRC ${IMGUI_DIR}/*.cpp)
 file(GLOB_RECURSE IMGUI_INCLUDE ${IMGUI_DIR}/*.h)
 
-
 add_library(ImGui ${IMGUI_SRC})
+
+# THOMATH
+set(THOMATH_DIR "C:/Libraries/thomath")
+file(GLOB_RECURSE THOMATH_SRC ${THOMATH_DIR}/*.cpp)
+file(GLOB_RECURSE THOMATH_INCLUDE ${THOMATH_DIR}/*.h)
+
+add_library(THOMATH ${THOMATH_SRC})
 
 # stb_image library
 set(STB_IMAGE_INCLUDE_SEARCH_DIR
@@ -76,7 +82,7 @@ endif()
 #
 
 # libraries
-set(LIBS ${GLFW3_LIB} opengl32 GLAD ImGui)
+set(LIBS ${GLFW3_LIB} opengl32 GLAD ImGui THOMATH)
 
 # include directories
 include_directories(
@@ -86,6 +92,7 @@ include_directories(
   "${GLFW3_INCLUDE_DIR}"
   "${STB_IMAGE_INCLUDE_DIR}"
   "${IMGUI_DIR}"
+  "${THOMATH_DIR}"
 )
 
 # link libraries
@@ -111,10 +118,10 @@ if(MSVC_IDE)
   # run macro for headers
   GROUP_SOURCES("include" "h")
   
-  if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
-    message("-- Valid CMake version, making precompiled headers...")
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/thomath.h>)
-  endif()
+  #if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+  #  message("-- Valid CMake version, making precompiled headers...")
+  #  target_precompile_headers(${PROJECT_NAME} PRIVATE <math/thomath.h>)
+  #endif()
 
   # set start up project
   if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.8.0")

@@ -11,7 +11,8 @@
 #ifndef COLOUR_H
 #define COLOUR_H 1
 
-#include <math/thomath.h>
+#include <Vector3.h>
+#include <core/types.h>
 
 #define LUMINANCE { 0.2126f, 0.7152f, 0.0722f }
 
