@@ -22,17 +22,15 @@ public:
 
   ~Application();
 
-  int run(char* sceneName);
+  int run(int argc, char* argv[]);
 
 private:
-  void renderLoop(Scene* scene);
+  void main_loop(Scene* scene);
 
 protected:
-  Window window;
-
   RayTracer raytracer;
 
-  int status;
+  Window window;
 
   bool drawBVH;
 };

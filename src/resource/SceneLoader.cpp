@@ -14,7 +14,7 @@
 #include <resource/OBJLoader.h>
 #include <scene/Scene.h>
 
-int SceneLoader::loadScene(const std::string& fileName, Scene& scene)
+int SceneLoader::loadScene(const std::string& fileName, Scene& scene, bool loadGLdata)
 {
   if (!file::isOfType(fileName, ".scene"))
   {
@@ -115,7 +115,10 @@ int SceneLoader::loadScene(const std::string& fileName, Scene& scene)
 
         node->setPrimitive(m);
 
-        m->generateBuffers(false);
+        if (loadGLdata)
+        {
+          m->generateBuffers(false);
+        }
 
         if (m->nor.size() == 0)
         {

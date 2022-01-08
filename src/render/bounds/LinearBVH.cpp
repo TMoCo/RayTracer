@@ -45,8 +45,6 @@ LinearBVH::LinearBVH(std::vector<Shape*> inSceneShapes)
 
   int offset = 0;
   flattenBVHTree(root, &offset);
-
-  getGlData();
 }
 
 void LinearBVH::draw(Shader* shader) const

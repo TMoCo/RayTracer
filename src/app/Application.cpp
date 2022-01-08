@@ -9,7 +9,6 @@
 #include <render/bounds/AABB.h>
 #include <render/bounds/KDOP.h>
 #include <render/materials/materials.h>
-#include <render/primitives/BVH.h>
 #include <render/primitives/GeometricPrimitive.h>
 #include <render/Shader.h>
 #include <render/shapes/GLShapes.h>
@@ -19,64 +18,105 @@
 #include <resource/ResourceManager.h>
 #include <widgets/UserInterface.h>
 
-Application::Application() 
-  : status{ 0 }, drawBVH{ false } 
-{
-  if (!glfwInit())
-  {
-    ERROR_MSG("Failed to initialize GLFW!\n");
-    status = -1;
-  }
-
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-  window = { DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window" };
-  glfwSetWindowUserPointer(window.getWindowPointer(), &window);
-
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
-    ERROR_MSG("Failed to initialise GLAD!");
-    status = -1;
-  }
-
-  window.updateFramebuffer();
-
-  UserInterface::get().init(window.getWindowPointer());
-
-  status = 0; // all is well
-}
+Application::Application() : drawBVH{ false } 
+{ }
 
 Application::~Application()
+{ }
+
+int Application::run(int argc, char* argv[])
 {
-  UserInterface::get().terminate();
-
-  glfwDestroyWindow(window.getWindowPointer());
-
-  glfwTerminate();
-}
-
-int Application::run(char* sceneName)
-{
-  if (status != 0)
+  if (argc == 3 && (strcmp(argv[1], "gui") == 0))
   {
-    ERROR_MSG("Failed to initialise app!");
+    if (!glfwInit())
+    {
+      ERROR_MSG("Failed to initialize GLFW!\n");
+      return -1;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    window = { DEFAULT_WIDTH, DEFAULT_HEIGHT, "Ray Tracer Window" };
+    glfwSetWindowUserPointer(window.getWindowPointer(), &window);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+      ERROR_MSG("Failed to initialise GLAD!");
+      return -1;
+    }
+
+    window.updateFramebuffer();
+
+    UserInterface::get().init(window.getWindowPointer());
+
+    Scene scene;
+    if (SceneLoader::loadScene(SCENES + argv[2], scene) != 0)
+    {
+      ERROR_MSG("Failed to load scene!");
+      return -1;
+    }
+
+    scene.buildLinearBVH();
+    scene.linearBVH->getGlData();
+
+    main_loop(&scene);
+
+    UserInterface::get().terminate();
+
+    glfwDestroyWindow(window.getWindowPointer());
+
+    glfwTerminate();
+
+    return 0;
+  }
+  else if (argc == 5)
+  {
+    int width = atoi(argv[2]);
+    int height = atoi(argv[3]);
+    int samples = atoi(argv[4]);
+
+    if (width < 500 || width > MAX_IMAGE_SIZE || width % 4 ||
+      height < 500 || height > MAX_IMAGE_SIZE || height % 4)
+    {
+      ERROR_MSG("Invalid image dimensions!\nMust be: greater than 500, smaller than 4000 and a multiple of 4.");
+    }
+
+    raytracer.dimensions[0] = width; 
+    raytracer.dimensions[1] = height;
+
+    if (samples < 1 || samples > 10000)
+    {
+      ERROR_MSG("Invalid samples number!\nSamples must be: 1 < samples < 10000.");
+    }
+
+    raytracer.numSamples = samples;
+
+    Scene scene;
+    if (SceneLoader::loadScene(SCENES + argv[1], scene, false) != 0)
+    {
+      ERROR_MSG("Failed to load scene!");
+      return -1;
+    }
+
+    scene.buildLinearBVH();
+
+    raytracer.antiAliasing = true;
+    scene.mainCamera.vpHeight = 2.0f * tanf(radians(scene.mainCamera.fov * 0.5f));
+    scene.mainCamera.vpWidth = scene.mainCamera.vpHeight * scene.mainCamera.ar;
+    raytracer.rayTrace(&scene, &scene.mainCamera, false);
+
+    return 0;
+  }
+  else
+  {
+    ERROR_MSG("Invalid arguments! To use app:\nC:\\RAYTRACER.exe gui scene\n*OR*\nRAYTRACER.exe scene width height samples");
     return -1;
   }
-
-  Scene scene;
-
-  SceneLoader::loadScene(SCENES + sceneName, scene);
-
-  scene.buildBVH();
-
-  renderLoop(&scene);
-
-  return 0;
 }
 
-void Application::renderLoop(Scene* scene)
+void Application::main_loop(Scene* scene)
 {
   // move into a renderer
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };

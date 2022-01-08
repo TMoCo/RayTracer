@@ -101,6 +101,8 @@ public:
 
   bool intersect(const Ray& ray, Surfel* surfel);
 
+  void getGlData();
+
 private:
   BVHNode* buildTree(MemoryArena& arena, std::vector<ShapePrimitiveInfo>& shapeInfo, int start, int end, 
     int* totalNodes, std::vector<Shape*>& orderedShapes);
@@ -121,8 +123,6 @@ private:
   BVHNode* buildUpperSAH(MemoryArena& arena, std::vector<BVHNode*>& treeletRoots, int start, int end, int* totalNodes);
 
   int flattenBVHTree(BVHNode* node, int* offset);
-
-  void getGlData();
 
 private:
   uint32_t VAO, VBO, IBO;

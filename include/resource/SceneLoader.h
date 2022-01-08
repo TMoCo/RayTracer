@@ -16,7 +16,7 @@ class Scene;
 class SceneLoader
 {
 public:
-  static int loadScene(const std::string& fileName, Scene& scene);
+  static int loadScene(const std::string& fileName, Scene& scene, bool loadGLdata = true);
 
 private:
   static Shape* createShape(Transform* toWorld, const char* shape, char* data);

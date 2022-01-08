@@ -25,7 +25,7 @@ RayTracer::RayTracer()
   ResourceManager::get().addTexture("ray traced output", new Texture{ &rayTracedData, GL_RGB });
 }
 
-void RayTracer::rayTrace(const Scene* scene, const Camera* camera)
+void RayTracer::rayTrace(const Scene* scene, const Camera* camera, bool toGlTexture)
 {
   // account for resizing
   if ((dimensions[0] != rayTracedData.getWidth()) || (dimensions[1] != rayTracedData.getHeight()))
@@ -82,8 +82,10 @@ void RayTracer::rayTrace(const Scene* scene, const Camera* camera)
 
   auto end = sys_clock::now();
   std::cout << "Finished!\nTook: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
-
-  ResourceManager::get().getTexture("ray traced output")->generate(true); // load image texture for display
+  if (toGlTexture)
+  {
+    ResourceManager::get().getTexture("ray traced output")->generate(true); // load image texture for display
+  }
   rayTracedData.writeToImageFile( SCREENSHOTS + outputName + ".jpg");
 }
 

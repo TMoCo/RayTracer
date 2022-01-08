@@ -12,6 +12,7 @@
 #ifndef MEMORY_ARENA_H
 #define MEMORY_ARENA_H 1
 
+#include <core/core.h>
 #include <list>
 
 class MemoryArena

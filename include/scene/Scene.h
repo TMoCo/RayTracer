@@ -14,7 +14,6 @@
 #include <scene/Node.h>
 #include <render/Camera.h>
 #include <render/shapes/Shape.h>
-#include <render/primitives/BVH.h>
 #include <render/bounds/LinearBVH.h>
 
 class Ray;
@@ -33,13 +32,11 @@ public:
 
   void draw(Shader* shader) const;
 
-  BVH* buildBVH();
+  LinearBVH* buildLinearBVH();
 
   bool intersect(const Ray& inRay, Surfel* surfel) const;
 
   Camera mainCamera;
-
-  BVH* bvh;
 
   LinearBVH* linearBVH;
 

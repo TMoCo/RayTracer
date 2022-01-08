@@ -7,7 +7,7 @@
 #include <scene/Scene.h>
 
 Scene::Scene()
-  : root(nullptr), bvh{ nullptr }
+  : root(nullptr), linearBVH{ nullptr }
 { }
 
 Scene::~Scene()
@@ -22,9 +22,9 @@ void Scene::clear()
     delete root;
   }
 
-  if (bvh) 
+  if (linearBVH) 
   {
-    delete bvh;
+    delete linearBVH;
   }
 }
 
@@ -36,17 +36,10 @@ void Scene::draw(Shader* shader) const
   }
 }
 
-BVH* Scene::buildBVH()
+LinearBVH* Scene::buildLinearBVH()
 {
-  if (bvh)
-  {
-    delete bvh;
-  }
-
-  bvh = new BVH{ this };
-
   linearBVH = new LinearBVH{ shapes };
-  return bvh;
+  return linearBVH;
 }
 
 bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
@@ -55,13 +48,11 @@ bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
 
   return linearBVH->intersect(inRay, surfel);
 
-  return bvh->intersect(inRay, surfel);
-
+  /*
   for (auto& primitive : primitives)
   {
     primitive->intersect(inRay, surfel);
   }
   return inRay.tMax < INFINITY;
-
-
+  */
 }

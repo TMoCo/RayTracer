@@ -7,10 +7,11 @@
 #ifndef RAY_H
 #define RAY_H 1
 
+#include <thomath.h>
+
 constexpr float tMin = 0.001f;
 
 class Camera;
-class Vector3;
 
 class Ray
 {
