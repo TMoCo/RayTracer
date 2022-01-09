@@ -20,13 +20,31 @@
 #include <scene/Scene.h>
 #include <widgets/Window.h>
 
+namespace rt
+{
+  struct RayTracerSettings
+  {
+    char imageName[128];
+    int imgDim[2];
+    int nSamples;
+    float aaKernel;
+    int aaOn;
+  };
+
+  void rayTrace(const Scene* scene, RayTracerSettings settings, Image& outImage);
+
+  Colour castRay(const Scene* scene, const Ray& ray, uint32_t depth);
+}
+
+
+
 class RayTracer 
 {
   friend class UserInterface;
 public:
   RayTracer();
 
-  void rayTrace(const Scene* scene, const Camera* camera, bool toGlTexture = true);
+  void rayTrace(const Scene* scene, bool toGlTexture = true);
  
   char outputName[100];
 
@@ -41,7 +59,6 @@ public:
   bool antiAliasing;
 
 private:
-  Colour castRay(const Scene* scene, const Ray& ray, uint32_t depth) const;
 
 };
 

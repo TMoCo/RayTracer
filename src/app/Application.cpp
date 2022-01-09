@@ -71,7 +71,7 @@ int Application::run(int argc, char* argv[])
 
     return 0;
   }
-  else if (argc == 5)
+  else if (argc == 6)
   {
     int width = atoi(argv[2]);
     int height = atoi(argv[3]);
@@ -83,15 +83,17 @@ int Application::run(int argc, char* argv[])
       ERROR_MSG("Invalid image dimensions!\nMust be: greater than 500, smaller than 4000 and a multiple of 4.");
     }
 
-    raytracer.dimensions[0] = width; 
-    raytracer.dimensions[1] = height;
+    rt::RayTracerSettings settings{};
+
+    settings.imgDim[0] = width;
+    settings.imgDim[1] = height;
 
     if (samples < 1 || samples > 10000)
     {
       ERROR_MSG("Invalid samples number!\nSamples must be: 1 < samples < 10000.");
     }
 
-    raytracer.numSamples = samples;
+    settings.nSamples = samples;
 
     Scene scene;
     if (SceneLoader::loadScene(SCENES + argv[1], scene, false) != 0)
@@ -102,10 +104,15 @@ int Application::run(int argc, char* argv[])
 
     scene.buildLinearBVH();
 
-    raytracer.antiAliasing = true;
+    settings.aaOn = 0;
+
+    strcpy_s(settings.imageName, 128, argv[5]);
+
     scene.mainCamera.vpHeight = 2.0f * tanf(radians(scene.mainCamera.fov * 0.5f));
     scene.mainCamera.vpWidth = scene.mainCamera.vpHeight * scene.mainCamera.ar;
-    raytracer.rayTrace(&scene, &scene.mainCamera, false);
+
+    Image out{ 0, 0, 3 };
+    rt::rayTrace(&scene, settings, out);
 
     return 0;
   }

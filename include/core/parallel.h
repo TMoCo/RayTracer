@@ -18,6 +18,8 @@
 
 namespace parallel
 {
+  static constexpr size_t threadSleepDuration = 100;
+
   // thread safe data structures
   template <typename T>
   class Queue
@@ -82,7 +84,7 @@ namespace parallel
     queue.pop(); // remove empty
     return true;
   }
-  
+
   class ThreadPool
   {
   public:
@@ -103,12 +105,14 @@ namespace parallel
     void pushTask(const F& task, const A& ...args);
 
     template<typename T, typename F>
-    void parallelFor(const T& start, const T& end, const F& loop, uint32_t blocks = 0);
+    void parallelFor(const T& start, const T& finish, const F& loop, size_t numBlocks = 0);
 
     void waitForTasks();
 
   private:
     void worker();
+
+    void threadSleep();
 
     const size_t threadCount;
 
@@ -174,9 +178,44 @@ namespace parallel
   }
 
   template<typename T, typename F>
-  void ThreadPool::parallelFor(const T& start, const T& end, const F& loop, uint32_t blocks)
+  void ThreadPool::parallelFor(const T& start, const T& finish, const F& forLoop, size_t numBlocks)
   {
-    ERROR_MSG("Parallelise for loop into tasks not yet implemented"); // todo: parrallel for
+    if (start == finish)
+    {
+      return;
+    }
+
+    if (numBlocks == 0)
+    {
+      numBlocks = threadCount;
+    }
+
+    size_t total = (size_t)(finish - start);
+    size_t blockSize = (size_t)(total / numBlocks);
+
+    if (blockSize == 0) // more blocks than elements
+    {
+      blockSize = 1;
+      numBlocks = total > 1 ? total : 1;
+    }
+
+    std::atomic<int> blocksRunning = 0;
+    for (size_t i = 0; i < numBlocks; ++i)
+    {
+      T begin = (T)(i * blockSize) + start;
+      T end = i == (numBlocks - 1) ? finish : (T)((i + 1) * blockSize) + start;
+      blocksRunning++;
+      pushTask([begin, end, &forLoop, &blocksRunning]
+      {
+        forLoop(begin, end);
+        blocksRunning--;
+      });
+    }
+
+    while (blocksRunning != 0)
+    {
+      threadSleep();
+    }
   }
 
   void ThreadPool::waitForTasks()
@@ -187,15 +226,16 @@ namespace parallel
       {
         break;
       }
-      std::this_thread::yield();
+      threadSleep();
+      // std::this_thread::yield();
     }
   }
 
   void ThreadPool::worker()
   {
+    std::function<void()> task; // move task from queue to this handle
     while (running)
     {
-      std::function<void()> task; // move task from queue to this handle
       if (tasks.pop(task))
       {
         task();
@@ -203,6 +243,13 @@ namespace parallel
       }
     }
   }
+  
+  void ThreadPool::threadSleep()
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(threadSleepDuration));
+  }
+  
+  static ThreadPool pool{};
 }
 
 #endif // !PARALLEL_H

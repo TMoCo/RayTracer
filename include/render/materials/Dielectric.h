@@ -29,7 +29,7 @@ public:
     float cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
     float sinTheta = sqrtf(1.0f - cosTheta * cosTheta);
 
-    if ((refractionRatio * sinTheta > 1.0f) || (reflectanceSchlick(cosTheta, refractionRatio) > random::udf_0_1(random::generator)))
+    if ((refractionRatio * sinTheta > 1.0f) || (reflectanceSchlick(cosTheta, refractionRatio) > random::ud_float_0_1(random::generator)))
     {
       outRay = { surfel.position + 0.001f * surfel.normal, Vector3::reflect(inRay.direction, surfel.normal), INFINITY };
     }

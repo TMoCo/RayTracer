@@ -44,8 +44,6 @@ LinearBVH* Scene::buildLinearBVH()
 
 bool Scene::intersect(const Ray& inRay, Surfel* surfel) const
 {
-  // if bvh on:
-
   return linearBVH->intersect(inRay, surfel);
 
   /*

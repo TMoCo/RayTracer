@@ -8,8 +8,11 @@
 // main
 //
 
+// #define RUN_TEST
+
 #include <app/Application.h>
-#ifndef NDEBUG
+
+#ifdef RUN_TEST
 #include <test.h>
 #endif // !NDEBUG
 
@@ -18,7 +21,7 @@ int main(int argc, char* argv[])
 {
   Application app;
 
-#ifndef NDEBUG
+#ifdef RUN_TEST
   return test::launch(0);
 #else
   return app.run(argc, argv);

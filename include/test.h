@@ -15,8 +15,6 @@ namespace test
 {
   inline void testParallel()
   {
-    parallel::ThreadPool pool;
-
     parallel::Queue<int> queue;
 
     if (queue.isEmpty())
@@ -38,9 +36,9 @@ namespace test
       fprintf_s(stdout, "queue is empty\n");
     }
 
-    fprintf_s(stdout, "Current tasks %llu\n", pool.numTasks());
+    fprintf_s(stdout, "Current tasks %llu\n", parallel::pool.numTasks());
     // parallel loops that push to the queue
-    pool.pushTask([&queue] 
+    parallel::pool.pushTask([&queue]
     {
       for (int i = 0; i < 50; ++i)
       {
@@ -48,7 +46,7 @@ namespace test
       }
     });
     fprintf_s(stdout, "Submitted task 1\n");
-    pool.pushTask([&queue]
+    parallel::pool.pushTask([&queue]
     {
       for (int i = 50; i < 100; ++i)
       {
@@ -57,14 +55,42 @@ namespace test
     });
     fprintf_s(stdout, "Submitted task 2\n");
 
-    pool.waitForTasks();
+    parallel::pool.waitForTasks();
 
-    fprintf_s(stdout, "Queue size after: %llu\n", queue.size());
+    fprintf_s(stdout, "Queue size after tasks complete: %llu\n", queue.size());
     
-    while(queue.pop(a))
+    fprintf_s(stdout, "Num threads: %llu\n", parallel::pool.numThreads());
+    auto t0 = sys_clock::now();
+    
+    parallel::pool.parallelFor(0ULL, 10000000000U, [](const size_t& i, const size_t& j)
     {
-      fprintf_s(stdout, "%i\n", a);
+      for (size_t k = i; k < j; ++k)
+      {
+        k * k;
+      }
+    });
+    fprintf_s(stdout, "Num tasks %llu\n", parallel::pool.numTasks());
+    
+    parallel::pool.waitForTasks();
+    
+    auto t1 = sys_clock::now();
+    fprintf_s(stdout, "Parallel took %llu\n", std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count());
+    
+    
+    t0 = sys_clock::now();
+    
+    for (size_t k = 0; k < 10000000000; ++k)
+    {
+      k * k;
     }
+    t1 = sys_clock::now();
+
+    fprintf_s(stdout, "Serial took %llu\n", std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count());
+    
+    /*
+    fprintf_s(stdout, "square of %i is %i square of %i is %i square of %i is %i\n", 
+      2, squares[2], 20, squares[20], 50, squares[50]);
+    */
   }
 
   inline int launch(int id)

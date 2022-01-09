@@ -43,7 +43,13 @@ public:
 
   size_t size() const;
 
-  void writePixelColour(int u, int v, const float* colourValues);
+  void writePixelAt(size_t offset, const float* colour);
+
+  void writePixelAt(int u, int v, const float* colourValues);
+
+  void writeBlockAt(size_t blockSize, void* inData, int startU = 0, int startV = 0);
+
+  void writeBlockAt(size_t blockSize, void* inData, size_t offset = 0);
 
   bool writeToImageFile(const std::string& path) const;
 
