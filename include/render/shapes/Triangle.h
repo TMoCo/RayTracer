@@ -69,7 +69,7 @@ public:
     float t = k * edge2.dot(q);
     if (t > EPSILON && t < ray.tMax)
     {
-      Vector3 pHit = ray.At(t);
+      Vector3 pHit = ray.at(t);
       Vector3 normal = mesh->nor[*index] * a + mesh->nor[*(index + 1)] * b + mesh->nor[*(index + 2)] * (1.0f - a - b);
       Vector2 uv = mesh->tex[*index] * a + mesh->tex[*(index + 1)] * b + mesh->tex[*(index + 2)] * (1.0f - a - b);
       *surfel = { pHit, normal, uv, -ray.direction, this };

@@ -8,65 +8,79 @@
 #define DEBUG_H 1
 
 #ifndef NDEBUG
-  #include <iostream>
-  // debug print
-  #if (__cplusplus >= 202002L)
-  #define DEBUG_PRINT(format, ...) \
-      if (format) \
-		  std::fprintf(stderr, format __VA__OPT__(,) __VA_ARGS__)
-  #else
-  #define DEBUG_PRINT(format, ...) \
-      if (format) \
-		  std::fprintf(stderr, format, ##__VA_ARGS__)
-  #endif
+#include <iostream>
+  
+// debug print
+#if (__cplusplus >= 202002L)
+#define DEBUG_PRINT(format, ...) \
+  if (format) \
+	  fprintf(stderr, format __VA__OPT__(,) __VA_ARGS__)
+#else
+#define DEBUG_PRINT(format, ...) \
+  if (format) \
+	  fprintf(stderr, format, ##__VA_ARGS__)
+#endif
 
   // assert
-  #define DEBUG_ASSERT(exp, msg) \
-		  __m_assert(#exp, exp, __FILE__, __LINE__, msg)
+#define DEBUG_ASSERT(exp, msg) \
+  __assert(#exp, exp, __FILE__, __LINE__, msg)
 
-  inline void __m_assert(const char* exp_str, bool exp, const char* file, int line, const char* msg) 
+inline void __assert(const char* exp_str, bool exp, const char* file, int line, const char* msg) 
+{
+	if (!exp) 
   {
-	  if (!exp) 
-    {
+		DEBUG_PRINT("Assertion failed:\t%s\nExpected:\t\t%s\nSource:\t\t\t%s -> line %i\n", msg, exp_str, file, line);
+#ifdef WIN32
+		__debugbreak();
+#endif
+		abort();
+	}
+}
 
-		  DEBUG_PRINT("Assertion failed:\t%s\nExpected:\t\t%s\nSource:\t\t\t%s -> line %i\n", msg, exp_str, file, line);
-  #ifdef WIN32
-		  __debugbreak();
-  #endif
-		  abort();
-	  }
-  }
+#include <glad/glad.h>
+#include <core/core.h>
 
-  #include <glad/glad.h>
+#define GL_CHECK_ERROR() __glCheckError(__FILE__, __LINE__) 
 
-  #define glCheckError() glCheckError_(__FILE__, __LINE__) 
-
-  inline GLenum glCheckError_(const char* file, int line)
+inline GLenum __glCheckError_(const char* file, int line)
+{
+  GLenum errorCode;
+  while ((errorCode = glGetError()) != GL_NO_ERROR)
   {
-    GLenum errorCode;
-    while ((errorCode = glGetError()) != GL_NO_ERROR)
+    char error[32];
+    switch (errorCode)
     {
-      std::string error;
-      switch (errorCode)
-      {
-      case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
-      case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
-      case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
-      case GL_STACK_OVERFLOW:                error = "STACK_OVERFLOW"; break;
-      case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
-      case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
-      case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
-      }
-      std::cout << error << " | " << file << " (" << line << ")" << std::endl;
+    case GL_INVALID_ENUM:
+      strcpy_s(error, sizeof(error), "INVALID_ENUM");
+      break;
+    case GL_INVALID_VALUE:
+      strcpy_s(error, sizeof(error), "INVALID_VAL");
+      break;
+    case GL_INVALID_OPERATION:
+      strcpy_s(error, sizeof(error), "INVALID_OP");
+      break;
+    case GL_STACK_OVERFLOW:
+      strcpy_s(error, sizeof(error), "STACK_OVERFLOW");
+      break;
+    case GL_STACK_UNDERFLOW:
+      strcpy_s(error, sizeof(error), "STACK_UNDERFLOW");
+      break;
+    case GL_OUT_OF_MEMORY:
+      strcpy_s(error, sizeof(error), "OUT_OF_MEMORY");
+      break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION: 
+      strcpy_s(error, sizeof(error), "INVALID_FRAMEBUFFER_OP");
+      break;
     }
-    return errorCode;
+    __error_msg(file, line, "OPENGL ERROR: %s\n", error);
   }
+  return errorCode;
+}
 
 #else
-  #include <assert.h>
-  // catch debug statement and do nothing with them
-  #define DEBUG_PRINT(...)
-  #define DEBUG_ASSERT(exp, ...) assert(exp);
+// catch certain debug statements and do nothing with them
+#define DEBUG_PRINT(...)
+#define DEBUG_ASSERT(...)
 #endif
 
 #endif // !DEBUG_H

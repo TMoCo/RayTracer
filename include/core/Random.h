@@ -23,9 +23,7 @@ namespace random {
   static std::random_device device;
   static std::mt19937 generator(device());
 
-  // uniform float in range [0,1]
   static ud_float_t ud_float_0_1(0.0f, 1.0f);
-  // uniform float in range [-1,1]
   static ud_float_t ud_float_m1_1(-1.0f, 1.0f);
 
   inline float uniform_float(float min, float max) 

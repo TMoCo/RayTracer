@@ -20,9 +20,9 @@ public:
 
   Ray(const Vector3& origin, const Vector3& direction, float tMax);
 
-  static Ray generateCameraRay(const Camera* camera, const Vector2& PNDC);
+  static Ray getCameraRay(const Camera* camera, const Vector2& PNDC);
 
-  Vector3 At(float t) const;
+  Vector3 at(float t) const;
   
   Vector3 origin;
 

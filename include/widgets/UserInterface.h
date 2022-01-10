@@ -12,6 +12,7 @@
 #define USER_INTERFACE_H
 
 #include <app/Application.h>
+#include <render/raytracer/RayTracer.h>
 
 class UserInterface
 {
@@ -25,7 +26,7 @@ public:
 
   void init(GLFWwindow* window);
 
-  void set(Application* application, Camera* camera);
+  void set(Application* application, Scene* scene, rt::RayTracerSettings* settings, Image& rayTraced);
 
   void draw();
 

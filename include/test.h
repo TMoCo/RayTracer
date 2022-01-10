@@ -9,8 +9,6 @@
 
 #include <core/parallel.h>
 
-// namespace for testing various app features
-
 namespace test
 {
   inline void testParallel()
@@ -21,9 +19,8 @@ namespace test
     {
       fprintf_s(stdout, "queue is empty\n");
     }
-    int a = 2;
+    int a = 2, b = 3;
     queue.push(a);
-    int b = 3;
     queue.push(b);
     fprintf_s(stdout, "queue size: %llu, expected 2.\n", queue.size());
     int popped;
@@ -61,36 +58,31 @@ namespace test
     
     fprintf_s(stdout, "Num threads: %llu\n", parallel::pool.numThreads());
     auto t0 = sys_clock::now();
-    
     parallel::pool.parallelFor(0ULL, 10000000000U, [](const size_t& i, const size_t& j)
     {
       for (size_t k = i; k < j; ++k)
       {
-        k * k;
+        int m = k * k;
       }
     });
     fprintf_s(stdout, "Num tasks %llu\n", parallel::pool.numTasks());
-    
     parallel::pool.waitForTasks();
-    
     auto t1 = sys_clock::now();
     fprintf_s(stdout, "Parallel took %llu\n", std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count());
-    
-    
-    t0 = sys_clock::now();
-    
+    t0 = sys_clock::now();    
     for (size_t k = 0; k < 10000000000; ++k)
     {
-      k * k;
+      int m = k * k;
     }
     t1 = sys_clock::now();
-
     fprintf_s(stdout, "Serial took %llu\n", std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count());
     
     /*
     fprintf_s(stdout, "square of %i is %i square of %i is %i square of %i is %i\n", 
       2, squares[2], 20, squares[20], 50, squares[50]);
     */
+
+    fflush(stdout);
   }
 
   inline int launch(int id)

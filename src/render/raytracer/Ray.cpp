@@ -17,7 +17,7 @@ Ray::Ray(const Vector3& origin, const Vector3& direction, float tMax)
   inverseDir{ 1.0f / direction }, negDir{ inverseDir[0] < 0.0f, inverseDir[1] < 0.0f, inverseDir[2] < 0.0f }
 {}
 
-Ray Ray::generateCameraRay(const Camera* camera, const Vector2& PNDC)
+Ray Ray::getCameraRay(const Camera* camera, const Vector2& PNDC)
 {
   Vector3 h = camera->right * camera->vpWidth;
   Vector3 v = camera->vpHeight * camera->up;
@@ -25,7 +25,7 @@ Ray Ray::generateCameraRay(const Camera* camera, const Vector2& PNDC)
   return { camera->position, lowerLeftOrigin + PNDC[0] * h + PNDC[1] * v - camera->position, INFINITY };
 }
 
-Vector3 Ray::At(float t) const
+Vector3 Ray::at(float t) const
 {
   return origin + t * direction;
 }

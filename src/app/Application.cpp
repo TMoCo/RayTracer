@@ -58,9 +58,6 @@ int Application::run(int argc, char* argv[])
       return -1;
     }
 
-    scene.buildLinearBVH();
-    scene.linearBVH->getGlData();
-
     main_loop(&scene);
 
     UserInterface::get().terminate();
@@ -71,13 +68,11 @@ int Application::run(int argc, char* argv[])
 
     return 0;
   }
-  else if (argc == 6)
+  else if (argc > 5)
   {
-    int width = atoi(argv[2]);
-    int height = atoi(argv[3]);
-    int samples = atoi(argv[4]);
+    int width = atoi(argv[2]), height = atoi(argv[3]), samples = atoi(argv[4]);
 
-    if (width < 500 || width > MAX_IMAGE_SIZE || width % 4 ||
+    if (width < 500 || width > MAX_IMAGE_SIZE || width % 4 || 
       height < 500 || height > MAX_IMAGE_SIZE || height % 4)
     {
       ERROR_MSG("Invalid image dimensions!\nMust be: greater than 500, smaller than 4000 and a multiple of 4.");
@@ -104,15 +99,15 @@ int Application::run(int argc, char* argv[])
 
     scene.buildLinearBVH();
 
-    settings.aaOn = 0;
+    settings.aaKernel = 0.0f;
 
-    strcpy_s(settings.imageName, 128, argv[5]);
+    strcpy_s(settings.imageName, 128, argc == 6 ? argv[5] : "out");
 
     scene.mainCamera.vpHeight = 2.0f * tanf(radians(scene.mainCamera.fov * 0.5f));
     scene.mainCamera.vpWidth = scene.mainCamera.vpHeight * scene.mainCamera.ar;
 
     Image out{ 0, 0, 3 };
-    rt::rayTrace(&scene, settings, out);
+    rt::rayTrace(&scene, settings, &out);
 
     return 0;
   }
@@ -125,6 +120,9 @@ int Application::run(int argc, char* argv[])
 
 void Application::main_loop(Scene* scene)
 {
+  scene->buildLinearBVH();
+  scene->linearBVH->getGlData();
+
   // move into a renderer
   Shader debugShader{ "..\\shaders\\debug.vert", "..\\shaders\\debug.frag" };
   Shader offscreenShader{ "..\\shaders\\vs.vert", "..\\shaders\\fs.frag" };
@@ -133,6 +131,9 @@ void Application::main_loop(Scene* scene)
   window.setMainCamera(&scene->mainCamera);
 
   Matrix4 PV; // projection * view
+
+  rt::RayTracerSettings settings { "out", { 500, 500 }, 1, 1.0f };
+  Image rayTracedImage{ 0, 0, 3 };
   
   float deltaTime = 0.0f, previous = 0.0f;
 
@@ -144,16 +145,15 @@ void Application::main_loop(Scene* scene)
 
     // INPUT ------------
 
-    if (UserInterface::processKeyInput(&window, deltaTime) == 0)
+    if (!UserInterface::processKeyInput(&window, deltaTime))
     {
-      scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
-      scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
-      raytracer.rayTrace(scene, &scene->mainCamera);
+      break;
     }
 
-    UserInterface::get().set(this, &scene->mainCamera);
+    UserInterface::get().set(this, scene, &settings, rayTracedImage);
 
     // RENDER SCENE ------------
+
     window.framebuffer.bind();
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

@@ -8,6 +8,7 @@
 // UserInterface class definition
 //
 
+#include <core/debug.h>
 #include <widgets/UserInterface.h>
 #include <resource/ResourceManager.h>
 #include <image/Texture.h>
@@ -30,7 +31,7 @@ int UserInterface::processKeyInput(Window* window, float deltaTime)
 {
   GLFWwindow* w = window->getWindowPointer();
   
-  if (glfwGetKey(w, GLFW_KEY_R))
+  if (glfwGetKey(w, GLFW_KEY_ESCAPE))
   {
     // ... raytrace scene
     return 0;
@@ -125,7 +126,7 @@ void UserInterface::init(GLFWwindow* window)
   ImGui_ImplOpenGL3_Init();
 }
 
-void UserInterface::set(Application* application, Camera* camera)
+void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSettings* settings, Image& rayTraced)
 {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
@@ -154,7 +155,7 @@ void UserInterface::set(Application* application, Camera* camera)
   ImGui::Image((void*)(intptr_t)application->window.framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); 
   
   // ray traced image
-  ImGui::Image((void*)(intptr_t)ResourceManager::get().getTexture("ray traced output")->glId, { region.x * 0.5f, region.y * 0.49f }, { 0,0 }, { 1,-1 });
+  // ImGui::Image((void*)(intptr_t)ResourceManager::get().getTexture("ray traced output")->glId, { region.x * 0.5f, region.y * 0.49f }, { 0,0 }, { 1,-1 });
   ImGui::EndChild();
 
   ImGui::SameLine();
@@ -167,6 +168,7 @@ void UserInterface::set(Application* application, Camera* camera)
     ImGui::Checkbox("View BVH", &application->drawBVH);
     ImGui::Checkbox("View normals", &viewNormals);
   }
+
   ImGui::EndChild();
   
   ImGui::Separator();
@@ -175,12 +177,20 @@ void UserInterface::set(Application* application, Camera* camera)
   {
     ImGui::Text("Ray Tracer Options:");
   
-    int* numSamples = &application->raytracer.numSamples;
+    int* numSamples = &settings->nSamples;
     ImGui::InputInt("Samples num  ", numSamples, 1, 10);
     *numSamples = *numSamples < 1 ? 1 : *numSamples;
+    ImGui::SliderFloat("Amount       ", &settings->aaKernel, 0.0f, 1.0f);
 
-    ImGui::Checkbox("Anti Aliasing", &application->raytracer.antiAliasing);
-    ImGui::SliderFloat("Amount       ", &application->raytracer.antiAliasingKernelSize, 0.0f, 1.0f);
+    if (ImGui::Button("Ray trace image"))
+    {
+      scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
+      scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
+      DEBUG_PRINT("%s, %i, %i, %i, %f\n", settings->imageName, settings->imgDim[0],
+        settings->imgDim[1], settings->nSamples, settings->aaKernel);
+      // launch ray trace
+      rt::rayTrace(scene, *settings, &rayTraced);
+    }
   }
   ImGui::EndChild();
   
@@ -189,8 +199,8 @@ void UserInterface::set(Application* application, Camera* camera)
   ImGui::BeginChild("Camera Options", { region.x * 0.5f, 70.0f });
   {
     ImGui::Text("Camera Options:");
-    ImGui::SliderFloat("Aspect ratio ", &camera->ar, 0.0f, 2.0f);
-    ImGui::SliderFloat("FOV          ", &camera->fov, 0.0f, 90.0f);
+    ImGui::SliderFloat("Aspect ratio ", &scene->mainCamera.ar, 0.0f, 2.0f);
+    ImGui::SliderFloat("FOV          ", &scene->mainCamera.fov, 0.0f, 90.0f);
   }
   ImGui::EndChild();
 
@@ -199,9 +209,9 @@ void UserInterface::set(Application* application, Camera* camera)
   ImGui::BeginChild("Output Options", { region.x * 0.5f, 90.0f });
   ImGui::Text("Output Options:");
   
-  ImGui::InputText(".jpg", application->raytracer.outputName, 100);
+  ImGui::InputText(".jpg", settings->imageName, sizeof(settings->imageName));
 
-  int* dim = application->raytracer.dimensions; // must be multiple of 4 (GL_RGB format of raytraced image)
+  int* dim = settings->imgDim; // must be multiple of 4 (GL_RGB format of raytraced image)
   ImGui::InputInt("Width", dim, 4, 4);
   *dim = clamp(*dim, 500, (int)MAX_IMAGE_SIZE);
   ImGui::InputInt("Height", dim + 1, 4, 4);

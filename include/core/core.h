@@ -32,7 +32,7 @@
 __m_error_msg(format __VA__OPT__(, ) __VA_ARGS__)
 #else
 #define ERROR_MSG(format, ...) \
-__m_error_msg(__FILE__, __LINE__, format, ##__VA_ARGS__);
+__error_msg(__FILE__, __LINE__, format, ##__VA_ARGS__);
 #endif
 
 #define CACHE_LINE 64
@@ -66,7 +66,7 @@ inline void freeAligned(void* block)
 #endif
 }
 
-inline void __m_error_msg(const char* file, int line, const char* format, ...)
+inline void __error_msg(const char* file, int line, const char* format, ...)
 {
   fprintf(stderr, "/!\\ ~~ ERROR ~~ /!\\\nFILE: %s\nLINE: %i\nINFO: ", file, line);
   if (format)

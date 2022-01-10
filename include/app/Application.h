@@ -10,7 +10,6 @@
 #include <glad/glad.h>
 
 #include <widgets/Window.h> 
-#include <render/raytracer/RayTracer.h>
 #include <scene/Scene.h>
 
 class Application 
@@ -28,8 +27,6 @@ private:
   void main_loop(Scene* scene);
 
 protected:
-  RayTracer raytracer;
-
   Window window;
 
   bool drawBVH;

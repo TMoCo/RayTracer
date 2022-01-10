@@ -130,7 +130,8 @@ bool Image::writeToImageFile(const std::string& path) const
     }
   }
 
-  return stbi_write_jpg(path.c_str(), width, height, channels, staging.data, 90) == 0 ? false : true; // could just return value
+  return stbi_write_jpg(path.c_str(), width, height, channels, staging.data, 90);
+
 }
 
 const byte_t* Image::getTexel(float u, float v) const

@@ -56,7 +56,7 @@ public:
       }
     }
 
-    Vector3 pHit = ray.At(t);
+    Vector3 pHit = ray.at(t);
     Vector3 normal = (pHit - toWorld->getTranslation()) / radius;
     float pPhi, pTheta;
     pTheta = acosf(-normal[1]);

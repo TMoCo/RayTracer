@@ -18,7 +18,7 @@
 
 namespace parallel
 {
-  static constexpr size_t threadSleepDuration = 100;
+  static constexpr size_t threadSleepDuration = 500;
 
   // thread safe data structures
   template <typename T>
@@ -164,6 +164,7 @@ namespace parallel
   template<typename F>
   void ThreadPool::pushTask(const F& task)
   {
+    fprintf_s(stdout, "New tasked pushed!\t");
     tasksCount++;
     tasks.push(std::function<void()>(task));
   }
@@ -208,14 +209,18 @@ namespace parallel
       pushTask([begin, end, &forLoop, &blocksRunning]
       {
         forLoop(begin, end);
-        blocksRunning--;
+        blocksRunning.fetch_sub(1);
       });
     }
 
-    while (blocksRunning != 0)
+    fprintf(stdout, "Waiting...\n");
+    while (blocksRunning.load() != 0)
     {
+      fprintf(stdout, "%i\n", blocksRunning.load());
       threadSleep();
     }
+    fprintf(stdout, "Blocks left %i\n", blocksRunning.load());
+    fprintf(stdout, "Finished waiting\n");
   }
 
   void ThreadPool::waitForTasks()
@@ -249,7 +254,7 @@ namespace parallel
     std::this_thread::sleep_for(std::chrono::milliseconds(threadSleepDuration));
   }
   
-  static ThreadPool pool{};
+  static ThreadPool pool{ };
 }
 
 #endif // !PARALLEL_H
