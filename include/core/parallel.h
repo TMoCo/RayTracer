@@ -8,6 +8,7 @@
 #define PARALLEL_H 1
 
 #include <core/core.h>
+#include <core/Profiler.h>
 #include <cstdint>
 #include <mutex>
 #include <thread>
@@ -88,31 +89,31 @@ namespace parallel
   class ThreadPool
   {
   public:
-    ThreadPool(const size_t& threadCount = std::thread::hardware_concurrency());
+    inline ThreadPool(const size_t& threadCount = std::thread::hardware_concurrency());
 
-    ~ThreadPool();
+    inline ~ThreadPool();
 
-    size_t numThreads() const;
+    inline size_t numThreads() const;
 
-    size_t numTasks() const;
+    inline size_t numTasks() const;
 
-    size_t numTasksRunning();
+    inline size_t numTasksRunning();
 
     template<typename F>
-    void pushTask(const F& task);
+    inline void pushTask(const F& task);
 
     template<typename F, typename... A>
-    void pushTask(const F& task, const A& ...args);
+    inline void pushTask(const F& task, const A& ...args);
 
     template<typename T, typename F>
-    void parallelFor(const T& start, const T& finish, const F& loop, size_t numBlocks = 0);
+    inline void parallelFor(const T& start, const T& finish, const F& loop, size_t numBlocks = 0);
 
-    void waitForTasks();
+    inline void waitForTasks();
 
   private:
-    void worker();
+    inline void worker();
 
-    void threadSleep();
+    inline void threadSleep();
 
     const size_t threadCount;
 
@@ -238,6 +239,8 @@ namespace parallel
     {
       if (tasks.pop(task))
       {
+        std::cout << "in loop thread " << std::this_thread::get_id() << "\n";
+
         task();
         tasksCount--;
       }

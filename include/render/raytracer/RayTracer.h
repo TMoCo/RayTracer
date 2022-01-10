@@ -16,6 +16,8 @@
 #include <render/raytracer/Ray.h>
 #include <scene/Scene.h>
 
+class Profiler;
+
 namespace rt
 {
   struct RayTracerSettings
@@ -26,9 +28,11 @@ namespace rt
     float aaKernel;
   };
 
-  void rayTrace(const Scene* scene, RayTracerSettings settings, Image* outImage);
+  void rayTrace(const Scene* scene, RayTracerSettings settings, Image* outImage, Profiler* profiler = nullptr);
 
   Colour castRay(const Scene* scene, const Ray& ray, uint32_t depth);
+
+  uint32_t castProfilerRay(const Scene* scene, const Ray& inRay, uint32_t depth);
 }
 
 #endif 

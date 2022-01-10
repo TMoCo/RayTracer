@@ -8,7 +8,6 @@
 #define APP_H 1
 
 #include <glad/glad.h>
-
 #include <widgets/Window.h> 
 #include <scene/Scene.h>
 

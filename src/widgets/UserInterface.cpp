@@ -8,6 +8,8 @@
 // UserInterface class definition
 //
 
+
+#include <core/Profiler.h>
 #include <core/debug.h>
 #include <widgets/UserInterface.h>
 #include <resource/ResourceManager.h>
@@ -126,7 +128,8 @@ void UserInterface::init(GLFWwindow* window)
   ImGui_ImplOpenGL3_Init();
 }
 
-void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSettings* settings, Image& rayTraced)
+void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSettings* settings, Image& rayTracedImg,
+  Profiler& profiler)
 {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
@@ -162,67 +165,69 @@ void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSet
 
   ImGui::BeginChild("Options", { region.x * 0.5f, region.y }, true);
   
-  ImGui::BeginChild("Scene Preview", { region.x * 0.5f, 70.0f });
-  {
-    ImGui::Text("Scene preview:");
-    ImGui::Checkbox("View BVH", &application->drawBVH);
-    ImGui::Checkbox("View normals", &viewNormals);
-  }
+  region = ImGui::GetContentRegionAvail();
 
-  ImGui::EndChild();
+  ImGui::BeginGroup();
+  ImGui::Text("Scene preview:");
+  ImGui::Checkbox("View BVH", &application->drawBVH); 
+  ImGui::SameLine();
+  ImGui::Checkbox("View normals", &viewNormals);
+  ImGui::EndGroup();
   
   ImGui::Separator();
-
-  ImGui::BeginChild("Ray Tracer Options", { region.x * 0.5f, 100.0f });
-  {
-    ImGui::Text("Ray Tracer Options:");
   
-    int* numSamples = &settings->nSamples;
-    ImGui::InputInt("Samples num  ", numSamples, 1, 10);
-    *numSamples = *numSamples < 1 ? 1 : *numSamples;
-    ImGui::SliderFloat("Amount       ", &settings->aaKernel, 0.0f, 1.0f);
-
-    if (ImGui::Button("Ray trace image"))
-    {
-      scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
-      scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
-      DEBUG_PRINT("%s, %i, %i, %i, %f\n", settings->imageName, settings->imgDim[0],
-        settings->imgDim[1], settings->nSamples, settings->aaKernel);
-      // launch ray trace
-      rt::rayTrace(scene, *settings, &rayTraced);
-    }
-  }
-  ImGui::EndChild();
-  
-  ImGui::Separator();
-
-  ImGui::BeginChild("Camera Options", { region.x * 0.5f, 70.0f });
-  {
-    ImGui::Text("Camera Options:");
-    ImGui::SliderFloat("Aspect ratio ", &scene->mainCamera.ar, 0.0f, 2.0f);
-    ImGui::SliderFloat("FOV          ", &scene->mainCamera.fov, 0.0f, 90.0f);
-  }
-  ImGui::EndChild();
-
-  ImGui::Separator();
-  
-  ImGui::BeginChild("Output Options", { region.x * 0.5f, 90.0f });
-  ImGui::Text("Output Options:");
-  
+  ImGui::BeginGroup();
+  ImGui::Text("Ray Tracer Options:");
   ImGui::InputText(".jpg", settings->imageName, sizeof(settings->imageName));
-
+  ImGui::PushItemWidth(region.x * 0.37f);
   int* dim = settings->imgDim; // must be multiple of 4 (GL_RGB format of raytraced image)
   ImGui::InputInt("Width", dim, 4, 4);
   *dim = clamp(*dim, MIN_IMG_SIZE, MAX_IMG_SIZE);
+  ImGui::SameLine();
   ImGui::InputInt("Height", dim + 1, 4, 4);
   *(dim + 1) = clamp(*(dim + 1), MIN_IMG_SIZE, MAX_IMG_SIZE);
+  ImGui::PopItemWidth();
+  int* numSamples = &settings->nSamples;
+  ImGui::InputInt("Samples num", numSamples, 1, 10);
+  *numSamples = *numSamples < 1 ? 1 : *numSamples;
+  ImGui::SliderFloat("Anti-Aliasing kernel", &settings->aaKernel, 0.0f, 1.0f);
+  if (ImGui::Button("Ray trace image", { region.x, 0 }))
+  {
+    scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
+    scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
+    // launch ray trace
+    rt::rayTrace(scene, *settings, &rayTracedImg);
+  }
+  ImGui::EndGroup();
+
+  ImGui::Separator();
+
+  ImGui::BeginGroup();
+  ImGui::Text("Camera Options:");
+  ImGui::SliderFloat("Aspect ratio", &scene->mainCamera.ar, 0.0f, 2.0f);
+  ImGui::SliderFloat("Field of view", &scene->mainCamera.fov, 0.0f, 90.0f);
+  ImGui::EndGroup();
+
+  ImGui::Separator();
   
+  if (ImGui::Button("Run profiler", { region.x, 0 }))
+  {
+    rt::rayTrace(scene, *settings, &rayTracedImg, &profiler);
+  }
+  ImGui::BeginChild("Profiler");
+  profiler.drawGui();
+  if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+  {
+    ImGui::SetScrollHereY(1.0f);
+  }
   ImGui::EndChild();
 
   ImGui::EndChild();
-  // static bool t = true;
-  // ImGui::ShowDemoWindow(&t);
-
+  
+#ifndef NDEBUG
+    static bool t = true;
+    ImGui::ShowDemoWindow(&t);
+#endif // !NDEBUG
   ImGui::End();
 }
 

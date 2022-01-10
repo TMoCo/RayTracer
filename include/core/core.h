@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <chrono>
+#include <error.h>
 
 #ifdef _WIN32
 #define WINDOWS 1
@@ -25,14 +26,6 @@
 
 #ifdef __unix__
 #define UNIX 1
-#endif
-
-#if (__cplusplus >= 202002L)
-#define ERROR_MSG(format, ...) \
-__m_error_msg(format __VA__OPT__(, ) __VA_ARGS__)
-#else
-#define ERROR_MSG(format, ...) \
-__error_msg(__FILE__, __LINE__, format, ##__VA_ARGS__);
 #endif
 
 #define CACHE_LINE 64
@@ -66,20 +59,5 @@ inline void freeAligned(void* block)
 #endif
 }
 
-inline void __error_msg(const char* file, int line, const char* format, ...)
-{
-  fprintf(stderr, "/!\\ ~~ ERROR ~~ /!\\\nFILE: %s\nLINE: %i\nINFO: ", file, line);
-  if (format)
-  {
-    va_list args;
-    __crt_va_start(args, format);
-    _vfprintf_p(stderr, format, args); 
-    __crt_va_end(args);
-  }
-  fflush(stderr);
-#ifdef WIN32
-  __debugbreak();
-#endif
-}
 
 #endif // CORE_H

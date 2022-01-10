@@ -26,7 +26,8 @@ public:
 
   void init(GLFWwindow* window);
 
-  void set(Application* application, Scene* scene, rt::RayTracerSettings* settings, Image& rayTraced);
+  void set(Application* application, Scene* scene, rt::RayTracerSettings* settings, Image& rayTraced, 
+    Profiler& profiler);
 
   void draw();
 

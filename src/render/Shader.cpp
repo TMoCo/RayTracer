@@ -18,10 +18,8 @@ Shader::Shader(const std::string& vs_path, const std::string& fs_path)
   : id{ 0 }, valid{ false }
 {
   const std::vector<char> vs_data = getShaderCode(vs_path);
-  DEBUG_PRINT("%s\n", vs_data.data());
 
   const std::vector<char> fs_data = getShaderCode(fs_path);
-  DEBUG_PRINT("%s\n", fs_data.data());
 
   uint32_t vs = glCreateShader(GL_VERTEX_SHADER);
   const char* p_vs_data = vs_data.data();

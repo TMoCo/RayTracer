@@ -4,25 +4,22 @@
 * COPYRIGHT UNDER THE MIT LICENSE
 */
 
-#include <app/Application.h>
+#include <error.h>
 #include <core/debug.h>
-#include <render/bounds/AABB.h>
-#include <render/bounds/KDOP.h>
-#include <render/materials/materials.h>
-#include <render/primitives/GeometricPrimitive.h>
+#include <core/parallel.h>
+#include <core/Profiler.h>
+#include <app/Application.h>
 #include <render/Shader.h>
-#include <render/shapes/GLShapes.h>
-#include <resource/OBJLoader.h>
-#include <resource/MaterialLoader.h>
 #include <resource/SceneLoader.h>
 #include <resource/ResourceManager.h>
 #include <widgets/UserInterface.h>
 
-Application::Application() : drawBVH{ false } 
-{ }
+Application::Application() 
+  : drawBVH{ false } 
+{}
 
 Application::~Application()
-{ }
+{}
 
 int Application::run(int argc, char* argv[])
 {
@@ -132,6 +129,8 @@ void Application::loop(Scene* scene)
 
   Matrix4 PV; // projection * view
 
+  Profiler profiler;
+
   rt::RayTracerSettings settings { "out", { 500, 500 }, 1, 1.0f };
   Image rayTracedImage{ 0, 0, 3 };
   
@@ -150,7 +149,7 @@ void Application::loop(Scene* scene)
       break;
     }
 
-    UserInterface::get().set(this, scene, &settings, rayTracedImage);
+    UserInterface::get().set(this, scene, &settings, rayTracedImage, profiler);
 
     // RENDER SCENE ------------
 
