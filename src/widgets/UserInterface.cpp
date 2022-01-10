@@ -213,9 +213,9 @@ void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSet
 
   int* dim = settings->imgDim; // must be multiple of 4 (GL_RGB format of raytraced image)
   ImGui::InputInt("Width", dim, 4, 4);
-  *dim = clamp(*dim, 500, (int)MAX_IMAGE_SIZE);
+  *dim = clamp(*dim, MIN_IMG_SIZE, MAX_IMG_SIZE);
   ImGui::InputInt("Height", dim + 1, 4, 4);
-  *(dim + 1) = clamp(*(dim + 1), 500, (int)MAX_IMAGE_SIZE);
+  *(dim + 1) = clamp(*(dim + 1), MIN_IMG_SIZE, MAX_IMG_SIZE);
   
   ImGui::EndChild();
 

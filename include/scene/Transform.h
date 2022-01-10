@@ -14,7 +14,6 @@
 #include <Vector3.h>
 #include <Matrix4.h>
 #include <Quaternion.h>
-
 #include <render/raytracer/Ray.h>
 
 class Surfel;
@@ -38,9 +37,9 @@ public:
   
   Surfel applyInverseToSurfel(const Surfel& surfel) const;
 
-  Ray applyToRay(const Ray& ray) const;
+  rt::Ray applyToRay(const rt::Ray& ray) const;
 
-  Ray applyInverseToRay(const Ray& ray) const;
+  rt::Ray applyInverseToRay(const rt::Ray& ray) const;
 
   Vector3 applyToPoint(const Vector3& point) const;
 

@@ -24,7 +24,7 @@ public:
   int run(int argc, char* argv[]);
 
 private:
-  void main_loop(Scene* scene);
+  void loop(Scene* scene);
 
 protected:
   Window window;

@@ -53,7 +53,7 @@ void LinearBVH::draw(Shader* shader) const
   glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, GLCube::indices, (GLsizei)totalNodes);
 }
 
-bool LinearBVH::intersect(const Ray& ray, Surfel* surfel)
+bool LinearBVH::intersect(const rt::Ray& ray, Surfel* surfel)
 {
   bool hit = false;
   uint32_t toVisitOffset = 0, currentNodeIndex = 0;

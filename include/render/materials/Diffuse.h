@@ -24,7 +24,7 @@ public:
     : albedo{ Colour } 
   { }
 
-  virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
+  virtual bool scatter(const rt::Ray& inRay, const Surfel& surfel, Colour& attenuation, rt::Ray& outRay) const override
   {
     outRay = { surfel.position + 0.001f * surfel.normal, sample::uniform_hemisphere(surfel.normal), INFINITY };
     attenuation = maps[MAT_MAPS::ALBEDO] ? maps[MAT_MAPS::ALBEDO]->sample(surfel.uv) : albedo;

@@ -31,7 +31,7 @@ const AABB* GeometricPrimitive::getBounds()
   return bounds;
 }
 
-bool GeometricPrimitive::intersect(const Ray& ray, Surfel* surfel) const
+bool GeometricPrimitive::intersect(const rt::Ray& ray, Surfel* surfel) const
 {
   if (!shape->intersect(ray, surfel))
   {

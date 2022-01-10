@@ -13,8 +13,6 @@
 #ifndef LINEAR_BVH_H
 #define LINEAR_BVH_H 1
 
-
-
 #include <render/bounds/AABB.h>
 #include <render/raytracer/Surfel.h>
 #include <render/Shader.h>
@@ -99,7 +97,7 @@ public:
 
   void draw(Shader* shader) const;
 
-  bool intersect(const Ray& ray, Surfel* surfel);
+  bool intersect(const rt::Ray& ray, Surfel* surfel);
 
   void getGlData();
 

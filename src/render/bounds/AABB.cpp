@@ -73,7 +73,7 @@ float AABB::getSurfaceArea() const
 }
 
 // optional hit arguments updated for positive intersections
-bool AABB::intersect(const Ray& ray) const
+bool AABB::intersect(const rt::Ray& ray) const
 {
   // x
   float tMin = (bounds[ray.negDir[0]][0] - ray.origin[0]) * ray.inverseDir[0];

@@ -16,7 +16,7 @@
 class Mixture : public Material
 {
 public:
-  virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
+  virtual bool scatter(const rt::Ray& inRay, const Surfel& surfel, Colour& attenuation, rt::Ray& outRay) const override
   {
     float metallicity = maps[MAT_MAPS::METALLIC]->sampleChannel(surfel.uv, 0);
     if (random::ud_float_0_1(random::generator) < metallicity)

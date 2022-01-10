@@ -33,7 +33,7 @@ public:
     };
   }
 
-  inline bool intersect(const Ray& ray, Surfel* surfel) const override
+  inline bool intersect(const rt::Ray& ray, Surfel* surfel) const override
   {
     float t;
     {
@@ -48,9 +48,9 @@ public:
         return false; // no intersection
       }
 
-      t = t0 <= tMin ? t1 : t0; // smallest 
+      t = t0 <= rt::RAY_T_MIN ? t1 : t0; // smallest 
 
-      if (t1 <= tMin || t0 > ray.tMax || t > ray.tMax)
+      if (t1 <= rt::RAY_T_MIN || t0 > ray.tMax || t > ray.tMax)
       {
         return false; // invalid intersection
       }

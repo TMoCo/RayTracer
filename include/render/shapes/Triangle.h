@@ -31,9 +31,9 @@ public:
     return bounds;
   }
 
-  bool intersect(const Ray& ray, Surfel* surfel) const override
+  bool intersect(const rt::Ray& ray, Surfel* surfel) const override
   {
-    Ray toObjRay = toWorld->applyInverseToRay(ray);
+    rt::Ray toObjRay = toWorld->applyInverseToRay(ray);
     // TODO: perform moller trumbore algorithm here
     Vector3 edge1, edge2, h, s, q;
     float k;

@@ -21,7 +21,7 @@ class DiffuseLight : public Material
 public:
   DiffuseLight(const Colour& Colour) : emitted{ Colour } {}
 
-  virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
+  virtual bool scatter(const rt::Ray& inRay, const Surfel& surfel, Colour& attenuation, rt::Ray& outRay) const override
   {
     return false;
   }

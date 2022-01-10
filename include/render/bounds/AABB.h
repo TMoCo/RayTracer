@@ -37,7 +37,7 @@ public:
 
   float getSurfaceArea() const;
 
-  bool intersect(const Ray& ray) const;
+  bool intersect(const rt::Ray& ray) const;
 
   AABB& mergeWithAABB(const AABB& other);
 

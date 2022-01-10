@@ -12,12 +12,12 @@
 #define MATERIAL_H 1
 
 #include <image/Colour.h>
+#include <render/raytracer/Ray.h>
 #include <image/Texture.h>
 
 #include <memory>
 #include <array>
 
-class Ray;
 class Surfel;
 
 typedef enum : uint32_t
@@ -35,7 +35,7 @@ class Material
   friend class MaterialLoader;
 
 public:
-  virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const = 0;
+  virtual bool scatter(const rt::Ray& inRay, const Surfel& surfel, Colour& attenuation, rt::Ray& outRay) const = 0;
   
   virtual Colour emit(const Vector2& uv) const
   {

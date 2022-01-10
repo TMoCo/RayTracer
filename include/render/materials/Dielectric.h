@@ -21,7 +21,7 @@ class Dielectric : public Material
 public:
   Dielectric(float ior) : ior{ ior } {}
 
-  virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
+  virtual bool scatter(const rt::Ray& inRay, const Surfel& surfel, Colour& attenuation, rt::Ray& outRay) const override
   {
     attenuation = colour::White;
     float refractionRatio = surfel.isFrontFace ? 1.0f / ior : ior;

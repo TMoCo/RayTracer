@@ -58,7 +58,7 @@ int Application::run(int argc, char* argv[])
       return -1;
     }
 
-    main_loop(&scene);
+    loop(&scene);
 
     UserInterface::get().terminate();
 
@@ -72,8 +72,8 @@ int Application::run(int argc, char* argv[])
   {
     int width = atoi(argv[2]), height = atoi(argv[3]), samples = atoi(argv[4]);
 
-    if (width < 500 || width > MAX_IMAGE_SIZE || width % 4 || 
-      height < 500 || height > MAX_IMAGE_SIZE || height % 4)
+    if (width < MIN_IMG_SIZE || width > MAX_IMG_SIZE || width % 4 || 
+      height < MIN_IMG_SIZE || height > MAX_IMG_SIZE || height % 4)
     {
       ERROR_MSG("Invalid image dimensions!\nMust be: greater than 500, smaller than 4000 and a multiple of 4.");
     }
@@ -99,9 +99,9 @@ int Application::run(int argc, char* argv[])
 
     scene.buildLinearBVH();
 
-    settings.aaKernel = 0.0f;
+    settings.aaKernel = strtof(argv[5], NULL);
 
-    strcpy_s(settings.imageName, 128, argc == 6 ? argv[5] : "out");
+    strcpy_s(settings.imageName, 128, argc == 7 ? argv[6] : "out");
 
     scene.mainCamera.vpHeight = 2.0f * tanf(radians(scene.mainCamera.fov * 0.5f));
     scene.mainCamera.vpWidth = scene.mainCamera.vpHeight * scene.mainCamera.ar;
@@ -118,7 +118,7 @@ int Application::run(int argc, char* argv[])
   }
 }
 
-void Application::main_loop(Scene* scene)
+void Application::loop(Scene* scene)
 {
   scene->buildLinearBVH();
   scene->linearBVH->getGlData();

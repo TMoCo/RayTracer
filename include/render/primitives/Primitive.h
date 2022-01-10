@@ -13,6 +13,7 @@
 
 #include <render/bounds/AABB.h>
 #include <render/Shader.h>
+#include <render/raytracer/Ray.h>
 
 class Material;
 class Surfel;
@@ -36,7 +37,7 @@ public:
 
   virtual const AABB* getBounds() = 0;
 
-  virtual bool intersect(const Ray& ray, Surfel* surfel) const = 0;
+  virtual bool intersect(const rt::Ray& ray, Surfel* surfel) const = 0;
   
   virtual const Material* getMaterial() const
   {

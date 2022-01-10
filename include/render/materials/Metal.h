@@ -22,7 +22,7 @@ class Metal : public Material
 public:
   Metal(float fuzz, const Colour& Colour) : fuzz{ fuzz < 1.0f ? fuzz : 1.0f }, albedo{ Colour } {}
 
-  virtual bool scatter(const Ray& inRay, const Surfel& surfel, Colour& attenuation, Ray& outRay) const override
+  virtual bool scatter(const rt::Ray& inRay, const Surfel& surfel, Colour& attenuation, rt::Ray& outRay) const override
   {
     attenuation = colour::White;
     Vector3 outDir = Vector3::reflect(inRay.direction, surfel.normal);

@@ -9,31 +9,34 @@
 
 #include <thomath.h>
 
-constexpr float tMin = 0.001f;
-
 class Camera;
 
-class Ray
+namespace rt
 {
-public:
-  Ray();
+  constexpr float RAY_T_MIN = 0.001f;
 
-  Ray(const Vector3& origin, const Vector3& direction, float tMax);
+  class Ray
+  {
+  public:
+    Ray();
 
-  static Ray getCameraRay(const Camera* camera, const Vector2& PNDC);
+    Ray(const Vector3& origin, const Vector3& direction, float tMax);
 
-  Vector3 at(float t) const;
+    static Ray getCameraRay(const Camera* camera, const Vector2& PNDC);
+
+    Vector3 at(float t) const;
   
-  Vector3 origin;
+    Vector3 origin;
 
-  Vector3 direction;
+    Vector3 direction;
 
-  Vector3 inverseDir;
+    Vector3 inverseDir;
   
-  int negDir[3];
+    int negDir[3];
 
-  mutable float tMax;
+    mutable float tMax;
 
-};
+  };
+}
 
 #endif // !RAY_H

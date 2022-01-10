@@ -28,7 +28,7 @@ public:
 
   virtual const AABB* getBounds() override;
 
-  virtual bool intersect(const Ray& ray, Surfel* surfel) const override;
+  virtual bool intersect(const rt::Ray& ray, Surfel* surfel) const override;
 
   virtual void draw(Shader* shader) const override;
 

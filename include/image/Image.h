@@ -14,7 +14,8 @@
 #include <core/core.h>
 #include <string>
 
-#define MAX_IMAGE_SIZE 4000 // max 4k image
+#define MAX_IMG_SIZE 4000 // max 4k image
+#define MIN_IMG_SIZE 50
 
 class Image 
 {

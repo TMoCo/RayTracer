@@ -68,12 +68,12 @@ Surfel Transform::applyInverseToSurfel(const Surfel& surfel) const
   return result;
 }
 
-Ray Transform::applyToRay(const Ray& ray) const
+rt::Ray Transform::applyToRay(const rt::Ray& ray) const
 {
   return { applyToPoint(ray.origin), applyToVector3(ray.direction), ray.tMax};
 }
 
-Ray Transform::applyInverseToRay(const Ray& ray) const
+rt::Ray Transform::applyInverseToRay(const rt::Ray& ray) const
 {
   return { applyInverseToPoint(ray.origin), applyInverseToVector3(ray.direction), ray.tMax };
 }

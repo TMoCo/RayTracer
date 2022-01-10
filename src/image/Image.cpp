@@ -48,23 +48,23 @@ const byte_t* Image::operator[](int index) const
 
 void Image::clear()
 {
-  memset(data, 0, size() * (size_t)channels);
+  memset(data, 0, size());
 }
 
 void Image::copy(const byte_t* inData)
 {
-  memcpy(data, inData, size() * channels);
+  memcpy(data, inData, size());
 }
 
 bool Image::resize(int w, int h)
 {
-  if ((w == 0) || (h == 0) || (channels == 0))
+  if (w < 1 || h < 1 || channels < 1)
   {
     return false;
   }
 
-  width = std::min(w, MAX_IMAGE_SIZE);
-  height = std::min(h, MAX_IMAGE_SIZE);
+  width = w;
+  height = h;
 
   release(); // guarantees that pixels == nullptr
 
@@ -75,7 +75,7 @@ bool Image::resize(int w, int h)
 
 size_t Image::size() const
 {
-  return (size_t)width * height;
+  return (size_t)width * height * channels;
 }
 
 void Image::writePixelAt(size_t offset, const float* colour)
@@ -88,28 +88,27 @@ void Image::writePixelAt(size_t offset, const float* colour)
   }
 }
 
-void Image::writePixelAt(int u, int v, const float* colourValues)
+void Image::writePixelAt(int u, int v, const float* colour)
 {
   byte_t* pixel = data + ((size_t)v * width + u) * channels;
   for (int i = 0; i < channels; ++i)
   {
-    float colourValue = *(colourValues + i);
-    *(pixel + i) = (byte_t)(sqrtf(colourValue / (colourValue + 1.0f)) * 255.0f); // tone mapping + gamma correction
+    float c = *(colour + i);
+    *(pixel + i) = (byte_t)(sqrtf(c / (c + 1.0f)) * 255.0f); // tone mapping + gamma correction
   }
 }
 
 void Image::writeBlockAt(size_t blockSize, void* indata, int startU, int startV)
 {
-  size_t offset = (startV * height + startU + blockSize) * channels;
-  DEBUG_ASSERT(offset <= size() * channels, "Trying to write more than image size");
-  memcpy(data + offset, indata, blockSize * channels);
+  size_t offset = (startV * height + startU) * channels;
+  DEBUG_ASSERT(offset + blockSize <= size(), "Trying to write more than image size");
+  memcpy(data + offset, indata, blockSize);
 }
 void Image::writeBlockAt(size_t blockSize, void* inData, size_t offset)
 {
-  DEBUG_ASSERT((offset + blockSize) * channels <= size() * channels, "Trying to write more than image size");
-  memcpy(data + offset * channels, inData, blockSize * channels);
+  DEBUG_ASSERT(offset + blockSize <= size(), "Trying to write more than image size");
+  memcpy(data + offset, inData, blockSize);
 }
-
 
 bool Image::writeToImageFile(const std::string& path) const
 {

@@ -15,8 +15,8 @@
 #include <render/Camera.h>
 #include <render/shapes/Shape.h>
 #include <render/bounds/LinearBVH.h>
+#include <render/raytracer/Ray.h>
 
-class Ray;
 class Surfel;
 
 class Scene 
@@ -34,7 +34,7 @@ public:
 
   LinearBVH* buildLinearBVH();
 
-  bool intersect(const Ray& inRay, Surfel* surfel) const;
+  bool intersect(const rt::Ray& inRay, Surfel* surfel) const;
 
   Camera mainCamera;
 

@@ -35,7 +35,7 @@ const AABB* Mesh::getBounds()
   return bounds;
 }
 
-bool Mesh::intersect(const Ray& ray, Surfel* surfel) const 
+bool Mesh::intersect(const rt::Ray& ray, Surfel* surfel) const 
 {
   for (Triangle* triangle : triangles)
   {

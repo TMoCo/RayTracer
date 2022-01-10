@@ -39,7 +39,9 @@ namespace rt
       size_t pixelOffset = 0;
 
       // local image buffer TODO: test for different image heights
-      Image local = { settings.imgDim[0] / ((settings.imgDim[0] * settings.imgDim[1]) / (int)(end - begin)), settings.imgDim[1], outImage->getChannels() };
+      // make the image large enough to hold the entire range 
+      Image local = { (int)(end - begin), 1, 3 };
+      DEBUG_PRINT("itertation range: %i, local image size: %llu\t", end - begin, local.size());
 
       if (settings.aaKernel)
       {
@@ -74,7 +76,11 @@ namespace rt
           local.writePixelAt(pixelOffset++, &colour[0]);
         }
       }
-      outImage->writeBlockAt(local.size(), local[0], (size_t)begin); // copy into whole image for now
+      DEBUG_PRINT("Pixel offset is %llu, local should accomodate %llu bytes", pixelOffset, pixelOffset * 3);
+      DEBUG_PRINT("\nDim: %i, %i\n", local.getWidth(), local.getHeight());
+      DEBUG_PRINT("\nWriting to out image: Bytes to write: %llu\tByte offset: %u\n", local.size(), begin * 3);
+      outImage->writeBlockAt(local.size(), local[0], (size_t)begin * 3); // copy into whole image for now
+      DEBUG_PRINT("Finished writing.\n");
     };
   
     uint32_t size = (uint32_t)(settings.imgDim[0] * settings.imgDim[1]);
@@ -85,7 +91,6 @@ namespace rt
 #ifdef PARALLEL
     // use all cores up
     parallel::pool.parallelFor(0u, size, rayTraceLoop);
-
     /*
     // todo split image better
     parallel::pool.pushTask(rayTraceLoop, 0, size / 2u);
@@ -93,8 +98,6 @@ namespace rt
     parallel::pool.waitForTasks(); // update on each task end when waiting here...
     */
 
-    parallel::pool.waitForTasks(); // update on each task end when waiting here...
-    DEBUG_PRINT("Waiting...");
     outImage->writeToImageFile(SCREENSHOTS + settings.imageName + ".jpg");
 #else
     rayTraceLoop(0u, size);
