@@ -11,6 +11,7 @@
 #include <imgui.h>
 #include <render/raytracer/RayTracer.h>
 #include <thread>
+#include <mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -18,22 +19,24 @@
 class Profiler
 {
 public:
-  Profiler();
-
-  void drawGui();
-
-  void addLogEntry(const char* format, ...);
-
-  rt::RayTracerSettings settings;
-
   struct ThreadInfo
   {
-    size_t id;
+    uint32_t id;
     uint32_t pixels;
     uint32_t runtime;
   };
 
-  std::unordered_map<std::thread::id, ThreadInfo> threads;
+  Profiler();
+
+  void drawGui(bool viewPlot = false);
+
+  void addLogEntry(const char* format, ...);
+
+  ThreadInfo& initThreadInfo(uint32_t threadIndex, uint32_t taskSize);
+
+  rt::RayTracerSettings settings;
+
+  std::unordered_map<uint32_t, ThreadInfo> threads;
 
 private:
   void clearLog();
@@ -43,6 +46,8 @@ private:
   ImGuiTextBuffer buffer;
 
   std::vector<uint32_t> offsets;
+
+  std::mutex mutex;
 };
 
 #endif // !PROFILER_H 

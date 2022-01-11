@@ -10,17 +10,18 @@
 
 
 #include <core/Profiler.h>
+#include <core/parallel.h>
 #include <core/debug.h>
 #include <widgets/UserInterface.h>
 #include <resource/ResourceManager.h>
-#include <image/Texture.h>
 
 #include <imgui.h>
+#include <implot.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
 UserInterface::UserInterface()
-  : cursorEnabled{ true }, viewNormals{ false }
+  : cursorEnabled{ true }, viewNormals{ false }, shouldGenerate{ false }, tasksCount{ 0 }
 { }
 
 UserInterface& UserInterface::get()
@@ -119,6 +120,8 @@ void UserInterface::init(GLFWwindow* window)
   // TODO: move into widgets
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
+  ImPlot::CreateContext();
+
   ImGuiIO& io = ImGui::GetIO();
   ImGui::StyleColorsDark();
 
@@ -128,8 +131,7 @@ void UserInterface::init(GLFWwindow* window)
   ImGui_ImplOpenGL3_Init();
 }
 
-void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSettings* settings, Image& rayTracedImg,
-  Profiler& profiler)
+void UserInterface::set(Application* application, Scene* scene, Texture* rayTraced, Profiler& profiler)
 {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
@@ -158,7 +160,14 @@ void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSet
   ImGui::Image((void*)(intptr_t)application->window.framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); 
   
   // ray traced image
-  // ImGui::Image((void*)(intptr_t)ResourceManager::get().getTexture("ray traced output")->glId, { region.x * 0.5f, region.y * 0.49f }, { 0,0 }, { 1,-1 });
+  const static size_t threadCount = parallel::pool.numThreads();
+  if (shouldGenerate)
+  {
+    rayTraced->generate(true);
+    shouldGenerate = false;
+  }
+  
+  ImGui::Image((void*)(intptr_t)rayTraced->glId, { region.x * 0.5f, region.y * 0.49f }, { 0,0 }, { 1,-1 });
   ImGui::EndChild();
 
   ImGui::SameLine();
@@ -176,27 +185,29 @@ void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSet
   
   ImGui::Separator();
   
+  static rt::RayTracerSettings settings{ "out", { 500, 500 }, 1, 1.0f };
+
   ImGui::BeginGroup();
   ImGui::Text("Ray Tracer Options:");
-  ImGui::InputText(".jpg", settings->imageName, sizeof(settings->imageName));
+  ImGui::InputText(".jpg", settings.imageName, sizeof(settings.imageName));
   ImGui::PushItemWidth(region.x * 0.37f);
-  int* dim = settings->imgDim; // must be multiple of 4 (GL_RGB format of raytraced image)
+  int* dim = settings.imgDim; // must be multiple of 4 (GL_RGB format of raytraced image)
   ImGui::InputInt("Width", dim, 4, 4);
   *dim = clamp(*dim, MIN_IMG_SIZE, MAX_IMG_SIZE);
   ImGui::SameLine();
   ImGui::InputInt("Height", dim + 1, 4, 4);
   *(dim + 1) = clamp(*(dim + 1), MIN_IMG_SIZE, MAX_IMG_SIZE);
   ImGui::PopItemWidth();
-  int* numSamples = &settings->nSamples;
+  int* numSamples = &settings.nSamples;
   ImGui::InputInt("Samples num", numSamples, 1, 10);
   *numSamples = *numSamples < 1 ? 1 : *numSamples;
-  ImGui::SliderFloat("Anti-Aliasing kernel", &settings->aaKernel, 0.0f, 1.0f);
+  ImGui::SliderFloat("Anti-aliasing", &settings.aaKernel, 0.0f, 1.0f);
   if (ImGui::Button("Ray trace image", { region.x, 0 }))
   {
     scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
     scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
     // launch ray trace
-    rt::rayTrace(scene, *settings, &rayTracedImg);
+    rt::rayTrace(scene, settings, rayTraced->image, shouldGenerate, tasksCount);
   }
   ImGui::EndGroup();
 
@@ -210,12 +221,15 @@ void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSet
 
   ImGui::Separator();
   
-  if (ImGui::Button("Run profiler", { region.x, 0 }))
+  if (ImGui::Button("Run profiler", { region.x * 0.5f, 0 }))
   {
-    rt::rayTrace(scene, *settings, &rayTracedImg, &profiler);
+    rt::rayTrace(scene, settings, rayTraced->image, shouldGenerate, tasksCount, &profiler);
   }
+  ImGui::SameLine();
+  static bool viewPlot = false;
+  ImGui::Checkbox("View plot", &viewPlot);
   ImGui::BeginChild("Profiler");
-  profiler.drawGui();
+  profiler.drawGui(viewPlot);
   if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
   {
     ImGui::SetScrollHereY(1.0f);
@@ -223,6 +237,12 @@ void UserInterface::set(Application* application, Scene* scene, rt::RayTracerSet
   ImGui::EndChild();
 
   ImGui::EndChild();
+
+  if (tasksCount == threadCount)
+  {
+    rayTraced->image->writeToImageFile(SCREENSHOTS + settings.imageName + ".jpg");
+    tasksCount = 0;
+  }
   
 #ifndef NDEBUG
     static bool t = true;
@@ -241,5 +261,6 @@ void UserInterface::terminate()
 {
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
+  ImPlot::DestroyContext();
   ImGui::DestroyContext();
 }

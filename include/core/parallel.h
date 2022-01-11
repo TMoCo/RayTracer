@@ -19,7 +19,7 @@
 
 namespace parallel
 {
-  static constexpr size_t threadSleepDuration = 500;
+  static constexpr size_t threadSleepDuration = 100;
 
   // thread safe data structures
   template <typename T>
@@ -239,8 +239,6 @@ namespace parallel
     {
       if (tasks.pop(task))
       {
-        std::cout << "in loop thread " << std::this_thread::get_id() << "\n";
-
         task();
         tasksCount--;
       }
@@ -252,7 +250,7 @@ namespace parallel
     std::this_thread::sleep_for(std::chrono::milliseconds(threadSleepDuration));
   }
   
-  static ThreadPool pool{ };
+  static ThreadPool pool{ std::thread::hardware_concurrency() > 2 ? std::thread::hardware_concurrency() - 2 : 2 };
 }
 
 #endif // !PARALLEL_H

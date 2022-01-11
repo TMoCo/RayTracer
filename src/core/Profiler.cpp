@@ -6,31 +6,45 @@
 
 #include <core/debug.h>
 #include <core/Profiler.h>
+#include <implot.h>
 
 Profiler::Profiler()
   : settings{ "profiler_output", { 500, 500 }, 5, 1.0f }, threads{}, buffer{}, offsets{ 0 } // TODO: change in UI
 {}
 
-void Profiler::drawGui()
+void Profiler::drawGui(bool viewPlot)
 {
-  int size = (int)offsets.size();
-
-  ImGuiListClipper clipper; // clip the buffer string
-  clipper.Begin(size);
-
-  const char* begin = buffer.begin();
-  const char* end = buffer.end();
-
-  while (clipper.Step())
+  if (viewPlot)
   {
-    for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
+    if (ImPlot::BeginPlot("Profiler plot"))
     {
-      const char* line_start = begin + offsets[line_no];
-      const char* line_end = (line_no + 1 < size) ? (begin + offsets[line_no + 1] - 1) : end;
-      ImGui::TextUnformatted(line_start, line_end);
+      // plot lines here...
+
+      ImPlot::EndPlot();
     }
   }
-  clipper.End();
+  else
+  {
+    int size = (int)offsets.size();
+
+    ImGuiListClipper clipper; // clip the buffer string
+    clipper.Begin(size);
+
+    const char* begin = buffer.begin();
+    const char* end = buffer.end();
+
+    while (clipper.Step())
+    {
+      for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
+      {
+        const char* line_start = begin + offsets[line_no];
+        const char* line_end = (line_no + 1 < size) ? (begin + offsets[line_no + 1] - 1) : end;
+        ImGui::TextUnformatted(line_start, line_end);
+      }
+    }
+    clipper.End();
+  }
+
 }
 
 void Profiler::clearLog()
@@ -55,6 +69,16 @@ void Profiler::addLogEntry(const char* format, ...) // variadic
     }
     oldSize++;
   }
+}
+
+Profiler::ThreadInfo& Profiler::initThreadInfo(uint32_t threadIndex, uint32_t taskSize)
+{
+  std::lock_guard<std::mutex> lock(mutex); // needed?
+  Profiler::ThreadInfo& info = threads[threadIndex];
+  info.id = threadIndex;
+  info.pixels = taskSize;
+  addLogEntry("Thread %u launched with %u pixels\n", threadIndex, taskSize);
+  return info;
 }
 
 void Profiler::writeLogToFile()

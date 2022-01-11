@@ -11,7 +11,7 @@ Texture::Texture()
   : glId{ 0 }, image{ nullptr }, format{ GL_NONE }
 { }
 
-Texture::Texture(Image* image, GLenum format)
+Texture::Texture(Image<byte_t>* image, GLenum format)
   : glId{ 0 }, image{ image }, format{ format }
 { }
 

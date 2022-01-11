@@ -8,6 +8,7 @@
 // Image class definition 
 //
 
+/*
 #include <core/core.h>
 #include <core/debug.h>
 #include <image/Image.h>
@@ -158,3 +159,4 @@ void Image::release()
     data = nullptr;
   }
 }
+*/

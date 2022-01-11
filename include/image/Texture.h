@@ -25,7 +25,7 @@ class Texture
 public:
   Texture();
 
-  Texture(Image* image, GLenum format);
+  Texture(Image<byte_t>* image, GLenum format);
 
   ~Texture();
 
@@ -37,15 +37,13 @@ public:
 
   void generate(bool mip);
 
-public:
   static constexpr float REC_255 = 0.003921568627450980392157f; // 1 / 255;
 
-protected:
   GLenum format;
 
   uint32_t glId;
 
-  Image* image;
+  Image<byte_t>* image;
   
 };
 

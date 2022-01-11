@@ -15,6 +15,7 @@
 #include <image/Image.h>
 #include <render/raytracer/Ray.h>
 #include <scene/Scene.h>
+#include <atomic>
 
 class Profiler;
 
@@ -28,7 +29,10 @@ namespace rt
     float aaKernel;
   };
 
-  void rayTrace(const Scene* scene, RayTracerSettings settings, Image* outImage, Profiler* profiler = nullptr);
+  void rayTraceFast(const Scene* scene, RayTracerSettings settings, Image<byte_t>* raytraced);
+
+  void rayTrace(const Scene* scene, RayTracerSettings settings, Image<byte_t>* raytraced, std::atomic<bool>& updateTex,
+    std::atomic<int>& taskCount, Profiler* profiler = nullptr);
 
   Colour castRay(const Scene* scene, const Ray& ray, uint32_t depth);
 

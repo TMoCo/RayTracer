@@ -12,6 +12,7 @@
 #include <render/Shader.h>
 #include <resource/SceneLoader.h>
 #include <resource/ResourceManager.h>
+#include <image/Texture.h>
 #include <widgets/UserInterface.h>
 
 Application::Application() 
@@ -96,15 +97,16 @@ int Application::run(int argc, char* argv[])
 
     scene.buildLinearBVH();
 
-    settings.aaKernel = strtof(argv[5], NULL);
+    settings.aaKernel = clamp<float>(strtof(argv[5], NULL), 0.0f, 1.0f);
 
     strcpy_s(settings.imageName, 128, argc == 7 ? argv[6] : "out");
 
     scene.mainCamera.vpHeight = 2.0f * tanf(radians(scene.mainCamera.fov * 0.5f));
     scene.mainCamera.vpWidth = scene.mainCamera.vpHeight * scene.mainCamera.ar;
 
-    Image out{ 0, 0, 3 };
-    rt::rayTrace(&scene, settings, &out);
+    Image<byte_t> out{ width, height, 3 };
+    rt::rayTraceFast(&scene, settings, &out);
+    out.writeToImageFile(SCREENSHOTS + settings.imageName + ".jpg");
 
     return 0;
   }
@@ -130,10 +132,10 @@ void Application::loop(Scene* scene)
   Matrix4 PV; // projection * view
 
   Profiler profiler;
-
-  rt::RayTracerSettings settings { "out", { 500, 500 }, 1, 1.0f };
-  Image rayTracedImage{ 0, 0, 3 };
-  
+    
+  Texture* rayTraced = ResourceManager::get().addTexture("raytraced", new Texture{ new Image<byte_t>{ 0, 0, 3 }, GL_RGB });
+  rayTraced->generate(true);
+    
   float deltaTime = 0.0f, previous = 0.0f;
 
   while (!glfwWindowShouldClose(window.getWindowPointer()))
@@ -149,7 +151,7 @@ void Application::loop(Scene* scene)
       break;
     }
 
-    UserInterface::get().set(this, scene, &settings, rayTracedImage, profiler);
+    UserInterface::get().set(this, scene, rayTraced, profiler);
 
     // RENDER SCENE ------------
 

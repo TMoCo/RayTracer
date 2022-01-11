@@ -10,7 +10,10 @@
 #include <resource/MaterialLoader.h>
 #include <resource/ResourceManager.h>
 
+
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
 bool MaterialLoader::loadMaterialFromFile(const std::string& path, const std::string& materialName)
