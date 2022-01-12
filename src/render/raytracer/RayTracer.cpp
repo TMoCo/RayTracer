@@ -13,7 +13,6 @@
 #include <render/raytracer/RayTracer.h>
 #include <resource/ResourceManager.h>
 
-#define PARALLEL 
 #define SUBTASKS 20
 #define MAX_DEPTH 10
 
@@ -83,89 +82,15 @@ namespace rt
       std::chrono::duration_cast<std::chrono::milliseconds>(t1- t0).count());
   }
 
-  void rayTrace(const Scene* scene, rt::RayTracerSettings settings, Image<byte_t>* raytraced, std::atomic<bool>& update,
-    std::atomic<int>& taskCount, Profiler* profiler)
+  void rayTraceSlow(const Scene* scene, rt::RayTracerSettings settings, Image<byte_t>* raytraced, std::atomic<bool>& update,
+    std::atomic<int>& taskCount, Profiler* profiler, uint32_t accelMask)
   {
-#ifdef PARALLEL
     if (parallel::pool.numTasks() > 0)
     {
-      fprintf(stdout, "Cannot add tasks, already rendering\n");
+      fprintf(stdout, "Cannot add tasks, already rendering.\n");
       return;
     }
-#endif // !PARALLEL
 
-    if (settings.imgDim[0] != raytraced->getWidth() ||
-      settings.imgDim[1] != raytraced->getHeight())
-    {
-      raytraced->resize(settings.imgDim[0], settings.imgDim[1]);
-    }
-
-    raytraced->clear();
-
-    auto rayTraceLoop = [settings, scene, raytraced, &update, &taskCount](const uint32_t& begin, const uint32_t& end)
-    {
-      uint32_t width = (uint32_t)settings.imgDim[0], height = (uint32_t)settings.imgDim[1];
-      float rWidth = 1.0f / (float)settings.imgDim[0], rHeight = 1.0f / (float)settings.imgDim[1];
-      float inversNumSamples = 1.0f / (float)settings.nSamples;
-
-      Colour c;
-      uint32_t vp_x = 0, vp_y = 0;
-
-      Image<float> localHDR  = { (int)(end - begin), 1, 3 };
-      Image<byte_t> localLDR = { (int)(end - begin), 1, 3 };
-      localHDR.clear(); // to zero
-      localLDR.clear();
-
-      size_t pixelOffset;
-      float* c0;
-      byte_t* c1;
-      for (int sample = 0; sample < settings.nSamples; ++sample)
-      {
-        pixelOffset = 0;
-        for (uint32_t i = begin; i < end; ++i)
-        {
-          vp_x = i % width;
-          vp_y = i / height;
-
-          c = rt::castRay(scene, Ray::getCameraRay(&scene->mainCamera,
-            { (vp_x + random::ud_float_0_1(random::generator) * settings.aaKernel) * rWidth,
-              (vp_y + random::ud_float_0_1(random::generator) * settings.aaKernel) * rHeight }),
-            MAX_DEPTH);
-
-          c0 = localHDR[0] + pixelOffset;
-          *c0       += c[0]; // r
-          *(c0 + 1) += c[1]; // g
-          *(c0 + 2) += c[2]; // b
-          
-          // r
-          c1 = localLDR[0] + pixelOffset;
-          *c1 = (byte_t)(sqrtf( ((*c0) * inversNumSamples) / (((*c0) * inversNumSamples) + 1.0f)) * 255.0f);
-
-          // g
-          c0 += 1;
-          c1 += 1;
-          *c1 = (byte_t)(sqrtf( ((*c0) * inversNumSamples) / (((*c0) * inversNumSamples) + 1.0f)) * 255.0f);
-
-          // b
-          c0 += 1;
-          c1 += 1;
-          *c1 = (byte_t)(sqrtf( ((*c0) * inversNumSamples) / (((*c0) * inversNumSamples) + 1.0f)) * 255.0f);
-          
-          pixelOffset += 3;
-        }
-
-        if (raytraced->tryWriteBlockAt(localLDR.size(), localLDR[0], (size_t)begin * 3))
-        {
-          update = true;
-        }
-        taskCount++;
-      }
-
-      raytraced->writeBlockAt(localLDR.size(), localLDR[0], (size_t)begin * 3);
-      update = true;
-    };
-  
-#ifdef PARALLEL
     // divide the image into equal sized ranges
     uint32_t tasksTotal = (uint32_t)(settings.imgDim[0] * settings.imgDim[1]);
     uint32_t taskSize = tasksTotal / (uint32_t)parallel::pool.numThreads();
@@ -197,17 +122,22 @@ namespace rt
         {
           vp_x = i % width;
           vp_y = i / height;
+          
           float depth = 0;
+
+          auto pixelStart = sys_clock::now();
           for (int sample = 0; sample < profiler->settings.nSamples; ++sample)
           {
             depth += rt::castProfilerRay(scene, Ray::getCameraRay(&scene->mainCamera,
               { (vp_x + random::ud_float_0_1(random::generator) * aaKernel) * rWidth,
                 (vp_y + random::ud_float_0_1(random::generator) * aaKernel) * rHeight }), 0);
           }
+          auto pixelEnd = sys_clock::now();
+          float value = (float)std::chrono::duration_cast<std::chrono::microseconds>(pixelEnd - pixelStart).count();
+          byte_t b = (byte_t)std::max(0.0f, 255.0f * (value - 1.0f));
+          byte_t r = (byte_t)std::max(0.0f, 255.0f * (1.0f - value));
+          
           byte_t* p = local[0] + pixelOffset;
-          float value = depth * rsamples * 0.2f; 
-          byte_t r = (byte_t)std::max(0.0f, 255.0f * (value - 1.0f));
-          byte_t b = (byte_t)std::max(0.0f, 255.0f * (1.0f - value));
           *p       = r;
           *(p + 2) = b;
           *(p + 1) = 255 - r - b;
@@ -234,8 +164,87 @@ namespace rt
         parallel::pool.pushTask(profilingLoop, i * taskSize, 
           (i + 1ull) == parallel::pool.numThreads() ?  tasksTotal : (i + 1) * taskSize);
       }
+
+      return;
     }
-    else
+
+    if (settings.imgDim[0] != raytraced->getWidth() ||
+      settings.imgDim[1] != raytraced->getHeight())
+    {
+      raytraced->resize(settings.imgDim[0], settings.imgDim[1]);
+    }
+
+    std::function<Colour(const Scene*, const Ray&, uint32_t )> rayCast = &rt::castRay;
+    if (accelMask & kAcceleration::LBVH)
+    {
+      rayCast = &rt::castRayBVH; // use BVH intersection
+    }
+
+    auto rayTraceLoop = [settings, scene, raytraced, rayCast, &update, &taskCount](const uint32_t& begin, const uint32_t& end)
+    {
+      uint32_t width = (uint32_t)settings.imgDim[0], height = (uint32_t)settings.imgDim[1];
+      float rWidth = 1.0f / (float)settings.imgDim[0], rHeight = 1.0f / (float)settings.imgDim[1];
+      float inversNumSamples = 1.0f / (float)settings.nSamples;
+
+      Colour c;
+      uint32_t vp_x = 0, vp_y = 0;
+
+      Image<float> localHDR = { (int)(end - begin), 1, 3 };
+      Image<byte_t> localLDR = { (int)(end - begin), 1, 3 };
+      localHDR.clear(); // to zero
+      localLDR.clear();
+
+      size_t pixelOffset;
+      float* c0;
+      byte_t* c1;
+      for (int sample = 0; sample < settings.nSamples; ++sample)
+      {
+        pixelOffset = 0;
+        for (uint32_t i = begin; i < end; ++i)
+        {
+          vp_x = i % width;
+          vp_y = i / height;
+
+          // ray cast func may depend based on gui parameters
+          c = rayCast(scene, Ray::getCameraRay(&scene->mainCamera,
+            { (vp_x + random::ud_float_0_1(random::generator) * settings.aaKernel) * rWidth,
+              (vp_y + random::ud_float_0_1(random::generator) * settings.aaKernel) * rHeight }), 0);
+
+          c0 = localHDR[0] + pixelOffset;
+          *c0 += c[0];
+          *(c0 + 1) += c[1];
+          *(c0 + 2) += c[2];
+
+          // r
+          c1 = localLDR[0] + pixelOffset;
+          *c1 = (byte_t)(sqrtf(((*c0) * inversNumSamples) / (((*c0) * inversNumSamples) + 1.0f)) * 255.0f);
+
+          // g
+          c0 += 1;
+          c1 += 1;
+          *c1 = (byte_t)(sqrtf(((*c0) * inversNumSamples) / (((*c0) * inversNumSamples) + 1.0f)) * 255.0f);
+
+          // b
+          c0 += 1;
+          c1 += 1;
+          *c1 = (byte_t)(sqrtf(((*c0) * inversNumSamples) / (((*c0) * inversNumSamples) + 1.0f)) * 255.0f);
+
+          pixelOffset += 3;
+        }
+
+        if (raytraced->tryWriteBlockAt(localLDR.size(), localLDR[0], (size_t)begin * 3))
+        {
+          update = true;
+        }
+        taskCount++;
+      }
+
+      raytraced->writeBlockAt(localLDR.size(), localLDR[0], (size_t)begin * 3);
+      update = true;
+    };
+
+    // check mask
+    if (accelMask & kAcceleration::PARALLEL)
     {
       for (uint32_t i = 0; i < parallel::pool.numThreads(); ++i)
       {
@@ -243,22 +252,20 @@ namespace rt
           (i + 1ull) == parallel::pool.numThreads() ? tasksTotal : (i + 1) * taskSize);
       }
     }
-#else
-    rayTraceLoop(0u, size);
-    outImage->writeToImageFile(SCREENSHOTS + settings.imageName + ".jpg");
-#endif // PARALLEL
+    else
+    {
+      parallel::pool.pushTask(rayTraceLoop, 0u, tasksTotal);
+    }
   }
 
   Colour castRay(const Scene* scene, const Ray& inRay, uint32_t depth)
   {
-    if (depth == 0) // stop recursion 
+    if (depth == MAX_DEPTH) // stop recursion 
     {
       return colour::Black;
     }
-
     Surfel surfel;
-
-    if (scene->intersect(inRay, &surfel))
+    if (scene->intersectPrimitives(inRay, &surfel))
     {
       Ray scattered;
       Colour attenuation;
@@ -267,7 +274,7 @@ namespace rt
 
       if (surfel.material->scatter(inRay, surfel, attenuation, scattered))
       {
-        return emition + attenuation * rt::castRay(scene, scattered, --depth);
+        return emition + attenuation * rt::castRay(scene, scattered, ++depth);
       }
 
       return emition;
@@ -276,14 +283,40 @@ namespace rt
     return colour::Black;
   }
 
-  float castProfilerRay(const Scene* scene, const rt::Ray& inRay, float depth)
+  Colour castRayBVH(const Scene* scene, const Ray& inRay, uint32_t depth)
   {
     if (depth == MAX_DEPTH) // stop recursion 
+    {
+      return colour::Black;
+    }
+
+    Surfel surfel;
+
+    if (scene->intersectPrimitives(inRay, &surfel))
+    {
+      Ray scattered;
+      Colour attenuation;
+
+      Colour emition = surfel.material->emit(surfel.uv);
+
+      if (surfel.material->scatter(inRay, surfel, attenuation, scattered))
+      {
+        return emition + attenuation * rt::castRay(scene, scattered, ++depth);
+      }
+
+      return emition;
+    }
+    return colour::Black;
+  }
+
+  float castProfilerRay(const Scene* scene, const rt::Ray& inRay, float depth)
+  {
+    if (depth == MAX_DEPTH)
     {
       return depth;
     }
     Surfel surfel;
-    if (scene->intersect(inRay, &surfel))
+    if (scene->intersectLBVH(inRay, &surfel))
     {
       rt::Ray scattered;
       Colour attenuation;

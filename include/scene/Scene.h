@@ -34,7 +34,9 @@ public:
 
   LinearBVH* buildLinearBVH();
 
-  bool intersect(const rt::Ray& inRay, Surfel* surfel) const;
+  bool intersectLBVH(const rt::Ray& inRay, Surfel* surfel) const;
+
+  bool intersectPrimitives(const rt::Ray& inRay, Surfel* surfel) const;
 
   Camera mainCamera;
 

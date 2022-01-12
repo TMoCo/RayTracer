@@ -21,6 +21,13 @@ class Profiler;
 
 namespace rt
 {
+  enum kAcceleration : uint32_t
+  {
+    NONE = 0x0u,
+    PARALLEL = 0x1u,
+    LBVH = 0x2u
+  };
+
   struct RayTracerSettings
   {
     char imageName[128];
@@ -31,10 +38,12 @@ namespace rt
 
   void rayTraceFast(const Scene* scene, RayTracerSettings settings, Image<byte_t>* raytraced);
 
-  void rayTrace(const Scene* scene, RayTracerSettings settings, Image<byte_t>* raytraced, std::atomic<bool>& updateTex,
-    std::atomic<int>& taskCount, Profiler* profiler = nullptr);
+  void rayTraceSlow(const Scene* scene, RayTracerSettings settings, Image<byte_t>* raytraced, std::atomic<bool>& updateTex,
+    std::atomic<int>& taskCount, Profiler* profiler = nullptr,uint32_t accelMask = 0x3u);
 
   Colour castRay(const Scene* scene, const Ray& ray, uint32_t depth);
+  
+  Colour castRayBVH(const Scene* scene, const Ray& ray, uint32_t depth);
 
   float castProfilerRay(const Scene* scene, const Ray& inRay, float depth);
 }

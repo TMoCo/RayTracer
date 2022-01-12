@@ -29,7 +29,7 @@ public:
 
   Profiler();
 
-  void drawGui(bool viewPlot = false);
+  void drawGui();
 
   void addLogEntry(const char* format, ...);
 

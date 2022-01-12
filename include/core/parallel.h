@@ -250,8 +250,7 @@ namespace parallel
     std::this_thread::sleep_for(std::chrono::milliseconds(threadSleepDuration));
   }
   
-  static ThreadPool pool{ std::thread::hardware_concurrency() };
-  //static ThreadPool pool{ 3 };
+  static ThreadPool pool{ std::thread::hardware_concurrency() > 4 ? std::thread::hardware_concurrency() / 2 : 1 };
 }
 
 #endif // !PARALLEL_H

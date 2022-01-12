@@ -9,51 +9,29 @@
 #include <implot.h>
 
 Profiler::Profiler()
-  : settings{ "profiler_output", { 500, 500 }, 20, 1.0f }, threads{}, buffer{}, offsets{ 0 }, heatMap{ 0, 0, 3 }
+  : settings{ "profiler_output", { 500, 500 }, 5, 1.0f }, threads{}, buffer{}, offsets{ 0 }, heatMap{ 0, 0, 3 }
 {}
 
-void Profiler::drawGui(bool viewPlot)
+void Profiler::drawGui()
 {
-  if (viewPlot)
+  int size = (int)offsets.size();
+
+  ImGuiListClipper clipper; // clip the buffer string
+  clipper.Begin(size);
+
+  const char* begin = buffer.begin();
+  const char* end = buffer.end();
+
+  while (clipper.Step())
   {
-    char plotName[48];;
-    if (ImPlot::BeginPlot("Profiler plot"))
+    for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
     {
-
-      /*
-      // plot lines here...
-      for (auto thread = threads.begin(); thread != threads.end(); ++thread)
-      {
-        sprintf_s(plotName, 48, "Thread %u", thread->second.id);
-        ImPlot::PlotLine(plotName, plotAxis.data(), thread->second.depths.data(), (int)plotAxis.size());
-      }
-      */
-
-      ImPlot::EndPlot();
+      const char* line_start = begin + offsets[line_no];
+      const char* line_end = (line_no + 1 < size) ? (begin + offsets[line_no + 1] - 1) : end;
+      ImGui::TextUnformatted(line_start, line_end);
     }
   }
-  else
-  {
-    int size = (int)offsets.size();
-
-    ImGuiListClipper clipper; // clip the buffer string
-    clipper.Begin(size);
-
-    const char* begin = buffer.begin();
-    const char* end = buffer.end();
-
-    while (clipper.Step())
-    {
-      for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
-      {
-        const char* line_start = begin + offsets[line_no];
-        const char* line_end = (line_no + 1 < size) ? (begin + offsets[line_no + 1] - 1) : end;
-        ImGui::TextUnformatted(line_start, line_end);
-      }
-    }
-    clipper.End();
-  }
-
+  clipper.End();
 }
 
 void Profiler::addLogEntry(const char* format, ...) // variadic 

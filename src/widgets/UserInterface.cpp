@@ -165,7 +165,7 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
   // OpenGL scene
   ImGui::Image((void*)(intptr_t)application->window.framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); 
 
-  if (shouldGenerate) // every three samples, update gl texture
+  if (shouldGenerate)
   {
     rayTraced->generate(true);
     shouldGenerate = false;
@@ -190,34 +190,71 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
   ImGui::Separator();
 
   ImGui::BeginGroup();
+
   ImGui::Text("Ray Tracer Options:");
   ImGui::InputText(".jpg", settings.imageName, sizeof(settings.imageName));
+  
+
   ImGui::PushItemWidth(region.x * 0.37f);
+
+  static bool linearBVH = false;
+  ImGui::Checkbox("Linear BVH", &linearBVH);
+  static bool multiThreaded = false;
+  ImGui::Checkbox("Multi-Threaded", &multiThreaded);
+    
   int* dim = settings.imgDim; // must be multiple of 4 (GL_RGB format of raytraced image)
   ImGui::InputInt("Width", dim, 4, 4);
   *dim = clamp(*dim, MIN_IMG_SIZE, MAX_IMG_SIZE);
+  
   ImGui::SameLine();
+  
   ImGui::InputInt("Height", dim + 1, 4, 4);
   *(dim + 1) = clamp(*(dim + 1), MIN_IMG_SIZE, MAX_IMG_SIZE);
   ImGui::PopItemWidth();
+  
   int* numSamples = &settings.nSamples;
   ImGui::InputInt("Samples num", numSamples, 1, 10);
   *numSamples = *numSamples < 1 ? 1 : *numSamples;
+  
   ImGui::SliderFloat("Anti-aliasing", &settings.aaKernel, 0.0f, 1.0f);
+
+
+  static std::chrono::system_clock::time_point t0;
   if (ImGui::Button("Ray trace image", { region.x, 0 }))
   {
     scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
     scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
+    
+    uint32_t accelMask = rt::kAcceleration::NONE;
+    if (multiThreaded)
+    {
+      accelMask |= rt::kAcceleration::PARALLEL;
+    }
+    if (linearBVH)
+    {
+      accelMask |= rt::kAcceleration::LBVH;
+    }
     // launch ray trace
+    t0 = sys_clock::now(); // measure ray tracin time
+
     rayTraced->image->clear();
-    rt::rayTrace(scene, settings, rayTraced->image, shouldGenerate, tasksCount);
-    rt_progress = 0.0f;
+    rayTraced->generate(true);
+    
+    profiler.addLogEntry("Started ray tracing...\n");
+    rt::rayTraceSlow(scene, settings, rayTraced->image, shouldGenerate, tasksCount, nullptr, accelMask);
+    
     tasksCount = 0;
+
+    // progress bar
+    rt_progress = 0.0f;
     rt_finished = false;
   }
 
-  if (tasksCount == parallel::pool.numThreads() * settings.nSamples)
+  if (tasksCount == (multiThreaded ? parallel::pool.numThreads() : 1) * settings.nSamples)
   {
+    profiler.addLogEntry("Finished ray tracing in %llu ms.\n",
+      std::chrono::duration_cast<std::chrono::milliseconds>(sys_clock::now() - t0).count());
+
     rayTraced->generate(true); // final update
     rayTraced->image->writeToImageFile(SCREENSHOTS + settings.imageName + ".jpg");
     tasksCount = 0;
@@ -233,21 +270,24 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
 
   ImGui::BeginGroup();
   ImGui::Text("Camera Options:");
+  
   ImGui::SliderFloat("Aspect ratio", &scene->mainCamera.ar, 0.0f, 2.0f);
+  
   ImGui::SliderFloat("Field of view", &scene->mainCamera.fov, 0.0f, 90.0f);
+  
   ImGui::EndGroup();
 
   ImGui::Separator();
   
   if (ImGui::Button("Run profiler", { region.x * 0.5f, 0 }))
   {
-    rt::rayTrace(scene, settings, rayTraced->image, shouldGenerate, tasksCount, &profiler);
+    rt::rayTraceSlow(scene, settings, rayTraced->image, shouldGenerate, tasksCount, &profiler);
   }
-  ImGui::SameLine();
-  static bool viewPlot = false;
-  ImGui::Checkbox("View plot", &viewPlot);
+  
   ImGui::BeginChild("Profiler");
-  profiler.drawGui(viewPlot);
+  
+  profiler.drawGui();
+  
   if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
   {
     ImGui::SetScrollHereY(1.0f);
