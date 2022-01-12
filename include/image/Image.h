@@ -12,6 +12,7 @@
 #define IMAGE_H 1
 
 #include <core/core.h>
+#include <mutex>
 #include <string>
 
 #include <stb_image.h>
@@ -56,6 +57,8 @@ public:
 
   inline void writeBlockAt(size_t blockSize, void* inData, size_t offset = 0);
 
+  inline bool tryWriteBlockAt(size_t blockSize, void* inData, size_t offset);
+
   inline bool writeToImageFile(const std::string& path) const;
 
   inline const T* getTexel(float u, float v) const;
@@ -64,6 +67,8 @@ private:
   T* data;
 
   int width, height, channels;
+
+  std::mutex mutex;
 
   void allocate();
 
@@ -176,6 +181,17 @@ void Image<T>::writeBlockAt(size_t blockSize, void* inData, size_t offset)
 {
   DEBUG_ASSERT(offset + blockSize <= size(), "Trying to write more than image size");
   memcpy(data + offset, inData, blockSize);
+}
+
+template<typename T>
+bool Image<T>::tryWriteBlockAt(size_t blockSize, void* inData, size_t offset)
+{
+  bool ret = false;
+  DEBUG_ASSERT(offset + blockSize <= size(), "Trying to write more than image size");
+  std::lock_guard<std::mutex> lock(mutex);
+  memcpy(data + offset, inData, blockSize);
+  ret = true;
+  return ret;
 }
 
 template<typename T>

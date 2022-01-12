@@ -19,7 +19,7 @@
 
 namespace parallel
 {
-  static constexpr size_t threadSleepDuration = 100;
+  static constexpr size_t threadSleepDuration = 10;
 
   // thread safe data structures
   template <typename T>
@@ -250,7 +250,8 @@ namespace parallel
     std::this_thread::sleep_for(std::chrono::milliseconds(threadSleepDuration));
   }
   
-  static ThreadPool pool{ std::thread::hardware_concurrency() > 2 ? std::thread::hardware_concurrency() - 2 : 2 };
+  static ThreadPool pool{ std::thread::hardware_concurrency() };
+  //static ThreadPool pool{ 3 };
 }
 
 #endif // !PARALLEL_H

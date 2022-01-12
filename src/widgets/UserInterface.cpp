@@ -133,10 +133,16 @@ void UserInterface::init(GLFWwindow* window)
 
 void UserInterface::set(Application* application, Scene* scene, Texture* rayTraced, Profiler& profiler)
 {
+  static rt::RayTracerSettings settings{ "out", { 500, 500 }, 1, 1.0f };
+  
+  // ray traced image
+  static float rt_progress = 1.0f;
+  static bool rt_finished = true;
+  
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
-
+  
   // gui design here
   ImGui::SetNextWindowSize({ (float)application->window.getWidth(), (float)application->window.getHeight() });
   ImGui::SetNextWindowPos({ 0.0f, 0.0f });
@@ -158,10 +164,8 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
   ImGui::BeginChild("Renders", { region.x * 0.5f, region.y });
   // OpenGL scene
   ImGui::Image((void*)(intptr_t)application->window.framebuffer.buffers[0], { region.x * 0.5f, region.y * 0.5f }, { 0,0 }, { 1,-1 }); 
-  
-  // ray traced image
-  const static size_t threadCount = parallel::pool.numThreads();
-  if (shouldGenerate)
+
+  if (shouldGenerate) // every three samples, update gl texture
   {
     rayTraced->generate(true);
     shouldGenerate = false;
@@ -184,8 +188,6 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
   ImGui::EndGroup();
   
   ImGui::Separator();
-  
-  static rt::RayTracerSettings settings{ "out", { 500, 500 }, 1, 1.0f };
 
   ImGui::BeginGroup();
   ImGui::Text("Ray Tracer Options:");
@@ -207,8 +209,24 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
     scene->mainCamera.vpHeight = 2.0f * tanf(radians(scene->mainCamera.fov * 0.5f));
     scene->mainCamera.vpWidth = scene->mainCamera.vpHeight * scene->mainCamera.ar;
     // launch ray trace
+    rayTraced->image->clear();
     rt::rayTrace(scene, settings, rayTraced->image, shouldGenerate, tasksCount);
+    rt_progress = 0.0f;
+    tasksCount = 0;
+    rt_finished = false;
   }
+
+  if (tasksCount == parallel::pool.numThreads() * settings.nSamples)
+  {
+    rayTraced->generate(true); // final update
+    rayTraced->image->writeToImageFile(SCREENSHOTS + settings.imageName + ".jpg");
+    tasksCount = 0;
+    rt_finished = true;
+  }
+
+  rt_progress = rt_finished ? 1.0f : tasksCount / (float)(parallel::pool.numThreads() * settings.nSamples);
+  ImGui::ProgressBar(rt_progress, { -1.0f, 0.0f });
+
   ImGui::EndGroup();
 
   ImGui::Separator();
@@ -237,13 +255,8 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
   ImGui::EndChild();
 
   ImGui::EndChild();
-
-  if (tasksCount == threadCount)
-  {
-    rayTraced->image->writeToImageFile(SCREENSHOTS + settings.imageName + ".jpg");
-    tasksCount = 0;
-  }
   
+  ImPlot::ShowDemoWindow();
 #ifndef NDEBUG
     static bool t = true;
     ImGui::ShowDemoWindow(&t);

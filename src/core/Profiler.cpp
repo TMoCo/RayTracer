@@ -9,16 +9,25 @@
 #include <implot.h>
 
 Profiler::Profiler()
-  : settings{ "profiler_output", { 500, 500 }, 5, 1.0f }, threads{}, buffer{}, offsets{ 0 } // TODO: change in UI
+  : settings{ "profiler_output", { 500, 500 }, 20, 1.0f }, threads{}, buffer{}, offsets{ 0 }, heatMap{ 0, 0, 3 }
 {}
 
 void Profiler::drawGui(bool viewPlot)
 {
   if (viewPlot)
   {
+    char plotName[48];;
     if (ImPlot::BeginPlot("Profiler plot"))
     {
+
+      /*
       // plot lines here...
+      for (auto thread = threads.begin(); thread != threads.end(); ++thread)
+      {
+        sprintf_s(plotName, 48, "Thread %u", thread->second.id);
+        ImPlot::PlotLine(plotName, plotAxis.data(), thread->second.depths.data(), (int)plotAxis.size());
+      }
+      */
 
       ImPlot::EndPlot();
     }
@@ -47,12 +56,6 @@ void Profiler::drawGui(bool viewPlot)
 
 }
 
-void Profiler::clearLog()
-{
-  buffer.clear();
-  offsets = { 0 };
-}
-
 void Profiler::addLogEntry(const char* format, ...) // variadic 
 {
   int oldSize = buffer.size();
@@ -79,6 +82,34 @@ Profiler::ThreadInfo& Profiler::initThreadInfo(uint32_t threadIndex, uint32_t ta
   info.pixels = taskSize;
   addLogEntry("Thread %u launched with %u pixels\n", threadIndex, taskSize);
   return info;
+}
+
+bool Profiler::updateProfilerThreadData(uint32_t threadId)
+{
+  bool ret = false;
+  std::lock_guard<std::mutex> lock(mutex);
+
+  ThreadInfo& info = threads[threadId];
+  
+  size_t taskSize = info.pixels;    
+  
+  if (taskSize > plotAxis.size())
+  {
+    size_t start = plotAxis.size();
+    plotAxis.resize(plotAxis.size() + taskSize - plotAxis.size()); // enough to accomodate new x
+    for (start; start < plotAxis.size(); ++start)
+    {
+      plotAxis[start] = (uint32_t)start;
+    }
+  }
+  ret = true;
+  return ret;
+}
+
+void Profiler::clearLog()
+{
+  buffer.clear();
+  offsets = { 0 };
 }
 
 void Profiler::writeLogToFile()

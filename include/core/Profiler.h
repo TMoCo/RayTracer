@@ -24,6 +24,7 @@ public:
     uint32_t id;
     uint32_t pixels;
     uint32_t runtime;
+    std::vector<uint32_t> depths;
   };
 
   Profiler();
@@ -34,9 +35,13 @@ public:
 
   ThreadInfo& initThreadInfo(uint32_t threadIndex, uint32_t taskSize);
 
+  bool updateProfilerThreadData(uint32_t threadId);
+
   rt::RayTracerSettings settings;
 
   std::unordered_map<uint32_t, ThreadInfo> threads;
+
+  Image<byte_t> heatMap;
 
 private:
   void clearLog();
@@ -46,6 +51,8 @@ private:
   ImGuiTextBuffer buffer;
 
   std::vector<uint32_t> offsets;
+
+  std::vector<uint32_t> plotAxis; // x axis
 
   std::mutex mutex;
 };

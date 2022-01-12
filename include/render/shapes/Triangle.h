@@ -34,15 +34,11 @@ public:
   bool intersect(const rt::Ray& ray, Surfel* surfel) const override
   {
     rt::Ray toObjRay = toWorld->applyInverseToRay(ray);
-    // TODO: perform moller trumbore algorithm here
-    Vector3 edge1, edge2, h, s, q;
-    float k;
+    const Vector3& edge1 = mesh->pos[*(index + 1)] - mesh->pos[*index];
+    const Vector3& edge2 = mesh->pos[*(index + 2)] - mesh->pos[*index];
 
-    edge1 = mesh->pos[*(index + 1)] - mesh->pos[*index];
-    edge2 = mesh->pos[*(index + 2)] - mesh->pos[*index];
-
-    h = toObjRay.direction.cross(edge2);
-    k = edge1.dot(h);
+    const Vector3& h = toObjRay.direction.cross(edge2);
+    float k = edge1.dot(h);
 
     // if cross prod of ray and edge2 is perpendicular to egde1, then 
     // ray is parallel to triangle
@@ -51,17 +47,12 @@ public:
       return false;
     }
 
-    k = 1.0f / k; // reuse k
+    k = 1.0f / k;
+    const Vector3& s = toObjRay.origin - mesh->pos[*index];
+    const Vector3& q = s.cross(edge1);
 
-    // s = origin - v0
-    s = toObjRay.origin - mesh->pos[*index];
-    q = s.cross(edge1);
-
-    float a, b;
-
-    a = k * s.dot(h);
-    b = k * toObjRay.direction.dot(q); // barycentric uv
-    if (b < 0.0f || a < 0.0f || a + b > 1.0f)
+    float a = k * s.dot(h), b = k * toObjRay.direction.dot(q), g = 1.0f - a - b;
+    if (b < 0.0f || a < 0.0f || g < 0.0f)
     {
       return false;
     }
@@ -69,10 +60,14 @@ public:
     float t = k * edge2.dot(q);
     if (t > EPSILON && t < ray.tMax)
     {
-      Vector3 pHit = ray.at(t);
-      Vector3 normal = mesh->nor[*index] * a + mesh->nor[*(index + 1)] * b + mesh->nor[*(index + 2)] * (1.0f - a - b);
-      Vector2 uv = mesh->tex[*index] * a + mesh->tex[*(index + 1)] * b + mesh->tex[*(index + 2)] * (1.0f - a - b);
-      *surfel = { pHit, normal, uv, -ray.direction, this };
+      *surfel =
+      {
+        ray.at(t),
+        mesh->nor[*index] * a + mesh->nor[*(index + 1)] * b + mesh->nor[*(index + 2)] * g,
+        mesh->tex[*index] * a + mesh->tex[*(index + 1)] * b + mesh->tex[*(index + 2)] * g,
+        -ray.direction,
+        this
+      };
       surfel->material = mesh->material;
       ray.tMax = t;
       return true;

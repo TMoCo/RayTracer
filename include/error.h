@@ -28,7 +28,7 @@ inline void __error_msg(const char* file, int line, const char* format, ...)
     __crt_va_end(args);
   }
   fflush(stderr);
-#ifdef WIN32
+#if  defined(WIN32) && defined(NDEBUG)
   __debugbreak();
 #endif
 }

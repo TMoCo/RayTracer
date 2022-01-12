@@ -36,7 +36,7 @@ namespace rt
 
   Colour castRay(const Scene* scene, const Ray& ray, uint32_t depth);
 
-  uint32_t castProfilerRay(const Scene* scene, const Ray& inRay, uint32_t depth);
+  float castProfilerRay(const Scene* scene, const Ray& inRay, float depth);
 }
 
 #endif 

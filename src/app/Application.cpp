@@ -186,4 +186,6 @@ void Application::loop(Scene* scene)
     glfwSwapBuffers(window.getWindowPointer());
     glfwPollEvents();
   }
+
+  profiler.heatMap.writeToImageFile(SCREENSHOTS + "hmap.jpg");
 }

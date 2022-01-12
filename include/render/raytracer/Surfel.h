@@ -22,7 +22,7 @@ class Surfel
 public:
   Surfel() : shape{ nullptr }, material{ nullptr }, isFrontFace{ false } {}
 
-  Surfel(const Vector3& position, const Vector3& normal, const Vector2& uv, const Vector3& outDirection, const Shape* shape)
+  Surfel(Vector3& position, Vector3& normal, Vector2& uv, Vector3& outDirection, const Shape* shape)
     : position{ position }, normal{ normal }, uv{ uv }, outDirection{ outDirection }, shape{ shape }, material{ nullptr },
     isFrontFace{ normal.dot(-outDirection) < 0.0f }
   { 
