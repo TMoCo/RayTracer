@@ -1,5 +1,5 @@
 scene triangle
-{  
+{
   geometry triangle
   {
     position 1 2 1
@@ -7,6 +7,7 @@ scene triangle
     shape mesh triangle.obj
     material container.mtl
   }
+
 
   geometry floor
   {

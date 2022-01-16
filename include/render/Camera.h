@@ -29,7 +29,7 @@ class Camera
 public:
   Camera();
 
-  Camera(const Vector3& pos, float aspect = 1.0f, float fov = 45.0f, float near = 0.1f, float far = 10.0f);
+  Camera(const Vector3& pos, float aspect = 1.0f, float fov = 45.0f, float near = 0.1f, float far = 2000.0f);
 
   Vector3 getCameraVector(const Vector2& PNDC) const;
 

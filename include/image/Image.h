@@ -221,8 +221,9 @@ bool Image<T>::writeToImageFile(const std::string& path) const
 template<typename T>
 const T* Image<T>::getTexel(float u, float v) const
 {
-  int col = (int)(u * (width - 1));
-  int row = (int)(v * (height - 1));
+  u = fabs(u), v = fabs(v);
+  int col = (int)(u * width) % (width - 1);
+  int row = (int)(v * height) % (height - 1);
   return &data[(row * width + col) * channels];
 }
 

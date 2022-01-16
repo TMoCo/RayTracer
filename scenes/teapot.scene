@@ -2,7 +2,7 @@ scene teapot
 {
   geometry teapot
   {
-    position 0 -0.3 -1.5
+    position 0 0 0
     rotation 0 0 0
     material diffuse.mtl
     shape mesh teapot.obj

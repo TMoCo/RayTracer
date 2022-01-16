@@ -25,13 +25,14 @@ public:
       float cosTheta = fmin(surfel.normal.dot(-inRay.direction), 1.0f);
       attenuation = fresnelSchlick(cosTheta, lerp(F0, maps[MAT_MAPS::ALBEDO]->sample(surfel.uv), metallicity));
 
-      Vector3 B = surfel.normal.cross(surfel.tangent).normalize();
-
       // normal mapping
+      /*
+      Vector3 B = surfel.normal.cross(surfel.tangent).normalize();
       Vector3 mapped = (maps[MAT_MAPS::NORMAL]->sample(surfel.uv) * 2.0f) - 1.0f;
       Vector3 N = (surfel.tangent * mapped[0] + B * mapped[1] + surfel.normal * mapped[2]).normalize();
+      */
       
-      Vector3 outDir = Vector3::reflect(inRay.direction, N);
+      Vector3 outDir = Vector3::reflect(inRay.direction, surfel.normal);
 
       outRay = { surfel.position,
         // roughness affects fuzziness

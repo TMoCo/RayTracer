@@ -241,7 +241,7 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
     rayTraced->generate(true);
     
     profiler.addLogEntry("Started ray tracing...\n");
-    rt::rayTraceSlow(scene, settings, rayTraced->image, shouldGenerate, tasksCount, nullptr, accelMask);
+    rt::rayTraceSlow(scene, settings, rayTraced->image, shouldGenerate, tasksCount, &profiler, accelMask);
     
     tasksCount = 0;
 
@@ -296,7 +296,6 @@ void UserInterface::set(Application* application, Scene* scene, Texture* rayTrac
 
   ImGui::EndChild();
   
-  ImPlot::ShowDemoWindow();
 #ifndef NDEBUG
     static bool t = true;
     ImGui::ShowDemoWindow(&t);

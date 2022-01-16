@@ -1,0 +1,5 @@
+type mixture
+albedoMap boomboxalbedo.png
+aoMetallicRoughnessMap boomboxaometallicroughness.png
+normalMap boomboxnormal.png
+emissiveMap boomboxemissive.png

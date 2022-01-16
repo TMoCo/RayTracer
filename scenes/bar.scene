@@ -1,0 +1,38 @@
+scene bar
+{
+  camera 1.2 75 0.1 1000
+  # lookat eye target
+  lookat 1.25 1.25 -1.25 0 0.25 0
+
+  geometry chair1
+  {
+    position -1 0 0
+    rotation 0 0 0
+    material chair.mtl
+    shape mesh chair.obj
+  }
+
+  geometry chair2
+  {
+    position 1 0 0
+    rotation 0 180 0
+    material chair.mtl
+    shape mesh chair.obj
+  }
+
+  geometry table
+  {
+    position 0 0 0
+    rotation 0 0 0
+    material table.mtl
+    shape mesh table.obj
+  }
+
+  geometry light
+  {
+    position 0 10 0
+    rotation 0 0 0
+    material light.mtl
+    shape mesh bigsquarelight.obj
+  }
+}

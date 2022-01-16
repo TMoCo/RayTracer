@@ -1,0 +1,5 @@
+type mixture
+albedoMap table_albedo.png
+metallicMap table_metallic.jpg
+roughnessMap table_roughness.jpg
+normalMap table_normal.png

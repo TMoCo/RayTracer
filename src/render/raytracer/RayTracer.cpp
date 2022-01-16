@@ -13,6 +13,7 @@
 #include <render/raytracer/RayTracer.h>
 #include <resource/ResourceManager.h>
 
+#define PARALLEL_ENABLED
 #define SUBTASKS 20
 #define MAX_DEPTH 10
 
@@ -44,7 +45,7 @@ namespace rt
         {
           c += rt::castRay(scene, Ray::getCameraRay(&scene->mainCamera,
             { (vp_x + random::ud_float_0_1(random::generator) * settings.aaKernel) * rWidth,
-              (vp_y + random::ud_float_0_1(random::generator) * settings.aaKernel) * rHeight }), MAX_DEPTH);
+              (vp_y + random::ud_float_0_1(random::generator) * settings.aaKernel) * rHeight }), 0);
         }
         
         c *= inversNumSamples;
@@ -66,6 +67,7 @@ namespace rt
     uint32_t imageSize = (uint32_t)(settings.imgDim[0] * settings.imgDim[1]);
 
     auto t0 = sys_clock::now();
+#ifdef  PARALLEL_ENABLED
 #ifdef SUBTASKS
     uint32_t taskSize = imageSize / SUBTASKS;
     for (int i = 0; i < SUBTASKS; ++i)
@@ -76,6 +78,9 @@ namespace rt
 #else
     parallel::pool.parallelFor(0u, imageSize, rayTraceLoop);
 #endif // SUBTASKS
+#else
+    rayTraceLoop(0u, imageSize);
+#endif //  PARRALLEL
     auto t1 = sys_clock::now();
 
     fprintf_s(stdout, " Finished! Took: %lli ms.\n", 
@@ -94,6 +99,7 @@ namespace rt
     // divide the image into equal sized ranges
     uint32_t tasksTotal = (uint32_t)(settings.imgDim[0] * settings.imgDim[1]);
     uint32_t taskSize = tasksTotal / (uint32_t)parallel::pool.numThreads();
+#ifndef NDEBUG
     if (profiler)
     {
       profiler->heatMap.resize(settings.imgDim[0], settings.imgDim[1]);
@@ -167,7 +173,7 @@ namespace rt
 
       return;
     }
-
+#endif // !NDEBUG
     if (settings.imgDim[0] != raytraced->getWidth() ||
       settings.imgDim[1] != raytraced->getHeight())
     {
@@ -248,6 +254,14 @@ namespace rt
     {
       for (uint32_t i = 0; i < parallel::pool.numThreads(); ++i)
       {
+        parallel::pool.pushTask([profiler]() 
+        {
+          profiler->addLogEntry("Thread %u received task.\n", _Thrd_id());
+        });
+      }
+
+      for (uint32_t i = 0; i < parallel::pool.numThreads(); ++i)
+      {
         parallel::pool.pushTask(rayTraceLoop, i * taskSize,
           (i + 1ull) == parallel::pool.numThreads() ? tasksTotal : (i + 1) * taskSize);
       }
@@ -292,7 +306,7 @@ namespace rt
 
     Surfel surfel;
 
-    if (scene->intersectPrimitives(inRay, &surfel))
+    if (scene->intersectLBVH(inRay, &surfel))
     {
       Ray scattered;
       Colour attenuation;

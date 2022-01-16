@@ -1,0 +1,28 @@
+# depbug sphere
+scene sphere
+{
+  geometry test_sphere
+  {
+    position 0 0 -3
+    rotation 0 0 0
+    shape sphere 1
+    material metal.mtl
+  }
+
+  geometry test_sphere1
+  {
+    position 0 0 0
+    rotation 0 0 0
+    shape sphere 1
+    material glass.mtl
+  }
+
+  geometry test_sphere2
+  {
+    position 0 -502 0
+    rotation 0 0 0
+    shape sphere 500
+    material diffuse.mtl
+  }
+
+}

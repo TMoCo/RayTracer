@@ -1,0 +1,5 @@
+type mixture
+albedoMap chair_albedo.png
+metallicMap chair_metallic.jpg
+roughnessMap chair_roughness.jpg
+normalMap chair_normal.png

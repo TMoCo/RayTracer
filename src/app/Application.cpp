@@ -73,7 +73,7 @@ int Application::run(int argc, char* argv[])
     if (width < MIN_IMG_SIZE || width > MAX_IMG_SIZE || width % 4 || 
       height < MIN_IMG_SIZE || height > MAX_IMG_SIZE || height % 4)
     {
-      ERROR_MSG("Invalid image dimensions!\nMust be: greater than 500, smaller than 4000 and a multiple of 4.");
+      ERROR_MSG("Invalid image dimensions!\nMust be: greater than 50, smaller than 4000 and a multiple of 4.");
     }
 
     rt::RayTracerSettings settings{};
